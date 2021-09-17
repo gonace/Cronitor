@@ -6,8 +6,6 @@ namespace Cronitor.Constants
     {
         public static readonly Command Run = new Command(HttpMethod.Get, "run");
         public static readonly Command Complete = new Command(HttpMethod.Get, "complete");
-        public static readonly Command Pause = new Command(HttpMethod.Get, "pause");
-        public static readonly Command Unpause = new Command(HttpMethod.Get, "pause");
         public static readonly Command Fail = new Command(HttpMethod.Get, "fail");
         public static readonly Command Tick = new Command(HttpMethod.Get, "tick");
 

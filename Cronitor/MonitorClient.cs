@@ -27,7 +27,7 @@ namespace Cronitor
 
         public Pageable<Monitor> Find(FindRequest request)
         {
-            return Task.Run(() => FindAsync(request)).Result;
+            return Task.Run(async () => await FindAsync(request)).Result;
         }
 
         public async Task<Pageable<Monitor>> FindAsync(FindRequest request)
@@ -37,7 +37,7 @@ namespace Cronitor
          
         public Monitor Get(string monitorKey)
         {
-            return Task.Run(() => GetAsync(monitorKey)).Result;
+            return Task.Run(async () => await GetAsync(monitorKey)).Result;
         }
 
         public async Task<Monitor> GetAsync(string monitorKey)
@@ -49,7 +49,7 @@ namespace Cronitor
 
         public IEnumerable<Monitor> Create(CreateRequest request)
         {
-            return Task.Run(() => CreateAsync(request)).Result;
+            return Task.Run(async () => await CreateAsync(request)).Result;
         }
 
         public async Task<IEnumerable<Monitor>> CreateAsync(CreateRequest request)
@@ -61,7 +61,7 @@ namespace Cronitor
 
         public IEnumerable<Monitor> Update(UpdateRequest request)
         {
-            return Task.Run(() => UpdateAsync(request)).Result;
+            return Task.Run(async () => await UpdateAsync(request)).Result;
         }
 
         public async Task<IEnumerable<Monitor>> UpdateAsync(UpdateRequest request)
@@ -73,7 +73,7 @@ namespace Cronitor
 
         public void Delete(DeleteRequest request)
         {
-            Task.Run(() => DeleteAsync(request));
+            Task.Run(async () => await DeleteAsync(request));
         }
 
         public async Task DeleteAsync(DeleteRequest request)
@@ -83,7 +83,7 @@ namespace Cronitor
         
         public TResponse Send<TResponse>(Requests.Request request)
         {
-            return Task.Run(() => SendAsync<TResponse>(request)).Result;
+            return Task.Run(async () => await SendAsync<TResponse>(request)).Result;
         }
 
         public async Task<TResponse> SendAsync<TResponse>(Requests.Request request)

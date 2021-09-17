@@ -1,4 +1,5 @@
-﻿using Xunit;
+﻿using System.Threading.Tasks;
+using Xunit;
 
 namespace Cronitor.Tests
 {
@@ -8,13 +9,13 @@ namespace Cronitor.Tests
 
         public TelemetryClientTests()
         {
-            _telemetryClient = new TelemetryClient("");
+            _telemetryClient = new TelemetryClient("7512d43fa0884893b2e0533c44971fa1");
         }
 
         [Fact]
         public void ShouldInsertMultipleItems()
         {
-            _telemetryClient.Run("");
+            _telemetryClient.Complete("v26rUxXl");
         }
     }
 }

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -14,13 +15,19 @@ namespace Cronitor
     public class HttpClient : IDisposable
     {
         private readonly System.Net.Http.HttpClient _httpClient;
+        private readonly string _apiKey;
+        private readonly Uri _apiUri;
 
         public HttpClient(string apiUrl, string apiKey, bool useHttps = true)
         {
+            _apiKey = apiKey;
+
             var uri = new Uri(apiUrl);
 
             if (!useHttps)
                 uri.AsHttp();
+
+            _apiUri = uri;
 
             _httpClient = new System.Net.Http.HttpClient
             {
@@ -35,27 +42,39 @@ namespace Cronitor
                 ));
         }
 
-        public async Task SendAsync(Command command)
+        //TODO: Send to FallbackUrl
+        //TODO: Move Url parsing/building to command constant?
+        public async Task SendAsync(Command command, string monitorKey)
         {
-            for (var i = 0; i < 8; i++)
+            var dictionary = new Dictionary<string, string>
             {
-                var message = new HttpRequestMessage
-                {
-                    Method = command.Method,
-                    //RequestUri = new Uri(requestUri),
-                    Content = command.Content
-                };
+                { ":apiKey", _apiKey },
+                { ":key", monitorKey },
+                { ":command", command.ToString() }
+            };
 
-                await _httpClient.SendAsync(message);
-            }
+            var requestUri = _apiUri.Build(dictionary);
+
+            var message = new HttpRequestMessage
+            {
+                Method = command.Method,
+                RequestUri = requestUri,
+                Content = new StringContent("{}", Encoding.UTF8, "application/json")
+            };
+            var task = _httpClient.SendAsync(message);
+
+            await PerformRequestAsync(task);
         }
 
+        //TODO: send to FallbackUrl
         public async Task SendAsync(Request request)
         {
+            var requestUri = new Uri($"{_apiUri.Combine(request.ToUrl())}");
+
             var message = new HttpRequestMessage
             {
                 Method = request.Method,
-                RequestUri = new Uri(request.Endpoint),
+                RequestUri = requestUri,
                 Content = request.Content
             };
             var task = _httpClient.SendAsync(message);
@@ -63,12 +82,15 @@ namespace Cronitor
             await PerformRequestAsync(task);
         }
 
+        //TODO: send to FallbackUrl
         public async Task<TReturn> SendAsync<TReturn>(Request request)
         {
+            var requestUri = new Uri($"{_apiUri.Combine(request.ToUrl())}");
+
             var message = new HttpRequestMessage
             {
                 Method = request.Method,
-                RequestUri = new Uri($"{Urls.PrimaryApiUrl}{request.ToUrl()}"),
+                RequestUri = requestUri,
                 Content = request.Content
             };
             var task = _httpClient.SendAsync(message);

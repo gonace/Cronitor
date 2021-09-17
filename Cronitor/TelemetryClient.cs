@@ -21,75 +21,60 @@ namespace Cronitor
 
         public void Run(string monitorKey)
         {
-            Task.Run(() => RunAsync(monitorKey));
+            Task.Run(async () => await RunAsync(monitorKey))
+                .Wait();
         }
 
         public async Task RunAsync(string monitorKey)
         {
-            await PingAsync(monitorKey, Command.Run);
+            await PingAsync(Command.Run, monitorKey);
         }
 
         public void Complete(string monitorKey)
         {
-            Task.Run(() => CompleteAsync(monitorKey));
+            Task.Run(async () => await CompleteAsync(monitorKey))
+                .Wait();
         }
 
         public async Task CompleteAsync(string monitorKey)
         {
-            await PingAsync(monitorKey, Command.Complete);
+            await PingAsync(Command.Complete, monitorKey);
         }
 
         public void Fail(string monitorKey)
         {
-            Task.Run(() => FailAsync(monitorKey));
+            Task.Run(async () => await FailAsync(monitorKey))
+                .Wait();
         }
 
         public async Task FailAsync(string monitorKey)
         {
-            await PingAsync(monitorKey, Command.Fail);
+            await PingAsync(Command.Fail, monitorKey);
         }
 
         public void Tick(string monitorKey)
         {
-            Task.Run(() => TickAsync(monitorKey));
+            Task.Run(async () => await TickAsync(monitorKey))
+                .Wait();
         }
 
         public async Task TickAsync(string monitorKey)
         {
-            await PingAsync(monitorKey, Command.Tick);
+            await PingAsync(Command.Tick, monitorKey);
         }
 
-        public void Pause(string monitorKey)
+
+        public void Ping(Command command, string monitorKey)
         {
-            Task.Run(() => PauseAsync(monitorKey));
+            Task.Run(async () => await PingAsync(command, monitorKey))
+                .Wait();
         }
 
-        public async Task PauseAsync(string monitorKey)
-        {
-            await PingAsync(monitorKey, Command.Pause);
-        }
-
-        public void Unpause(string monitorKey)
-        {
-            Task.Run(() => UnpauseAsync(monitorKey));
-        }
-
-        public async Task UnpauseAsync(string monitorKey)
-        {
-            await PingAsync(monitorKey, Command.Unpause);
-        }
-
-
-        public void Ping(string monitorKey, Command command)
-        {
-            Task.Run(() => PingAsync(monitorKey, command));
-        }
-
-        public async Task PingAsync(string monitorKey, Command command)
+        public async Task PingAsync(Command command, string monitorKey)
         {
             using (var client = new HttpClient(Urls.PrimaryBaseUrl, _apiKey, _useHttps))
             {
-                await client.SendAsync(command);
+                await client.SendAsync(command, monitorKey);
             }
         }
     }
