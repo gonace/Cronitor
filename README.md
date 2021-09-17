@@ -15,6 +15,45 @@ This .NET library provides a simple abstraction for the pinging of a Cronitor mo
 You can download the cronitor client nuget.
 [https://www.nuget.org/packages/Cronitor](https://www.nuget.org/packages/Cronitor)
 
+## Usage
+```c#
+public class SomeClass
+{
+    private readonly TelemetryClient _client;
+
+    public SomeClass()
+    {
+        _client = new TelemetryClient("apiKey");
+    }
+
+    public void SomeMethod()
+    {
+        # Begin / ping a monitor
+        _client.Run("monitorKey");
+        # Begin / ping a monitor asynchronous
+        _client.RunAsync("monitorKey");
+
+
+        # Complete a monitor
+        _client.Complete("monitorKey");
+        # Complete a monitor asynchronous
+        _client.CompleteAsync("monitorKey");
+        
+
+        # Complete a monitor
+        _client.Fail("monitorKey");
+        # Complete a monitor asynchronous
+        _client.FailAsync("monitorKey");
+
+
+        # Tick a monitor
+        _client.Tick("monitorKey");
+        # Tick a monitor asynchronous
+        _client.TickAsync("monitorKey");
+    }
+}
+```
+
 ## Development
 
 
