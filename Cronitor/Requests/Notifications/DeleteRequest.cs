@@ -3,24 +3,24 @@ using System.Collections.Generic;
 using System.Net.Http;
 using Cronitor.Extensions;
 
-namespace Cronitor.Requests.Monitor
+namespace Cronitor.Requests.Notifications
 {
     public class DeleteRequest : Request
     {
-        public override string Endpoint { get; set; } = "monitors/:key";
+        public override string Endpoint { get; set; } = "templates/:key";
         public override HttpMethod Method => HttpMethod.Delete;
-        public string MonitorKey { get; set; }
+        public string Key { get; set; }
 
-        public DeleteRequest(string monitorKey)
+        public DeleteRequest(string key)
         {
-            MonitorKey = monitorKey;
+            Key = key;
         }
 
         public override Uri ToUri()
         {
             var dictionary = new Dictionary<string, string>
             {
-                { ":key", MonitorKey },
+                { ":key", Key }
             };
 
             return base.ToUri().Build(dictionary);

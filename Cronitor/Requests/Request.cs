@@ -1,4 +1,7 @@
-﻿using System.Net.Http;
+﻿using System;
+using System.Net.Http;
+using Cronitor.Constants;
+using Cronitor.Extensions;
 
 namespace Cronitor.Requests
 {
@@ -16,9 +19,14 @@ namespace Cronitor.Requests
             return this;
         }
 
-        public virtual string ToUrl()
+        public virtual Uri ToUri()
         {
-            return Endpoint;
+            return new Uri(Urls.ApiUrl).Combine(Endpoint);
+        }
+
+        public string ToUrl()
+        {
+            return ToUri().ToString();
         }
     }
 }

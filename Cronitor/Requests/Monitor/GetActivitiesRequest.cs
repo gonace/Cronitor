@@ -4,12 +4,12 @@ using Cronitor.Extensions;
 
 namespace Cronitor.Requests.Monitor
 {
-    public class GetRequest : Request
+    public class GetActivitiesRequest : Request
     {
-        public override string Endpoint { get; set; } = "monitors/:key";
+        public override string Endpoint { get; set; } = "monitors/:key/activity";
         public string MonitorKey { get; set; }
 
-        public GetRequest(string monitorKey)
+        public GetActivitiesRequest(string monitorKey)
         {
             MonitorKey = monitorKey;
         }
@@ -18,7 +18,7 @@ namespace Cronitor.Requests.Monitor
         {
             var dictionary = new Dictionary<string, string>
             {
-                { ":key", MonitorKey },
+                { ":key", MonitorKey }
             };
 
             return base.ToUri().Build(dictionary);

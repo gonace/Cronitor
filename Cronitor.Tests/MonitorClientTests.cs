@@ -1,28 +1,14 @@
-﻿using Cronitor.Models;
-using Cronitor.Requests.Monitor;
-using Xunit;
-
-namespace Cronitor.Tests
+﻿namespace Cronitor.Tests
 {
     public class MonitorClientTests
     {
-        private readonly MonitorClient _monitorClient;
+        private readonly MonitorClient _client;
 
         public MonitorClientTests()
         {
-            _monitorClient = new MonitorClient("");
+            _client = new MonitorClient("");
         }
 
-        [Fact]
-        public void Test()
-        {
-            //var monitor = new Monitor("v26rUxXl")
-            //{
-            //    Schedule = "5 * * * *",
-            //    Name = "Testing"
-            //};
-            var request = new DeleteRequest("v26rUxXl");
-            _monitorClient.Delete(request);
-        }
+        //TODO: Write tests
     }
 }

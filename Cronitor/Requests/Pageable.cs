@@ -14,8 +14,12 @@ namespace Cronitor.Requests
         [JsonProperty("version")]
         public string Version { get; set; }
 
+        public IEnumerable<TResponse> Result { get; set; }
+
         //TODO: Move this?
         [JsonProperty("monitors")]
-        public IEnumerable<TResponse> Result { get; set; }
+        public IEnumerable<TResponse> Monitors { set => Result = value; }
+        [JsonProperty("templates")]
+        public IEnumerable<TResponse> Templates { set => Result = value; }
     }
 }

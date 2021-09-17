@@ -2,23 +2,23 @@
 using System.Collections.Generic;
 using Cronitor.Extensions;
 
-namespace Cronitor.Requests.Monitor
+namespace Cronitor.Requests.Notifications
 {
     public class GetRequest : Request
     {
-        public override string Endpoint { get; set; } = "monitors/:key";
-        public string MonitorKey { get; set; }
+        public override string Endpoint { get; set; } = "templates/:key";
+        public string Key { get; set; }
 
-        public GetRequest(string monitorKey)
+        public GetRequest(string key)
         {
-            MonitorKey = monitorKey;
+            Key = key;
         }
 
         public override Uri ToUri()
         {
             var dictionary = new Dictionary<string, string>
             {
-                { ":key", MonitorKey },
+                { ":key", Key }
             };
 
             return base.ToUri().Build(dictionary);

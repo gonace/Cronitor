@@ -3,10 +3,10 @@ using Newtonsoft.Json;
 
 namespace Cronitor.Models
 {
-    public class Activity
+    public class Ping
     {
         [JsonProperty("stamp")]
-        public decimal Timestamp { get; set; }
+        public decimal? Timestamp { get; set; }
         [JsonProperty("monitor_name")]
         public string MonitorName { get; set; }
         [JsonProperty("monitor_code")]

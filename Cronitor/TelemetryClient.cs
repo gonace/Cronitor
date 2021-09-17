@@ -1,22 +1,21 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using Cronitor.Constants;
 
 namespace Cronitor
 {
-    public class TelemetryClient
+    public class TelemetryClient : BaseClient
     {
-        private readonly string _apiKey;
-        private readonly bool _useHttps = true;
-
         public TelemetryClient(string apiKey)
+            : base(apiKey)
         {
-            _apiKey = apiKey;
+            BaseUri = new Uri(Urls.PrimaryBaseUrl);
         }
 
         public TelemetryClient(string apiKey, bool useHttps)
+            : base(apiKey, useHttps)
         {
-            _apiKey = apiKey;
-            _useHttps = useHttps;
+            BaseUri = new Uri(Urls.PrimaryBaseUrl);
         }
 
         public void Run(string monitorKey)
@@ -27,7 +26,11 @@ namespace Cronitor
 
         public async Task RunAsync(string monitorKey)
         {
-            await PingAsync(Command.Run, monitorKey);
+            var command = Command.Run
+                .SetApiKey(ApiKey)
+                .SetMonitorKey(monitorKey);
+
+            await PingAsync(command);
         }
 
         public void Complete(string monitorKey)
@@ -38,7 +41,11 @@ namespace Cronitor
 
         public async Task CompleteAsync(string monitorKey)
         {
-            await PingAsync(Command.Complete, monitorKey);
+            var command = Command.Complete
+                .SetApiKey(ApiKey)
+                .SetMonitorKey(monitorKey);
+
+            await PingAsync(command);
         }
 
         public void Fail(string monitorKey)
@@ -49,7 +56,11 @@ namespace Cronitor
 
         public async Task FailAsync(string monitorKey)
         {
-            await PingAsync(Command.Fail, monitorKey);
+            var command = Command.Fail
+                .SetApiKey(ApiKey)
+                .SetMonitorKey(monitorKey);
+
+            await PingAsync(command);
         }
 
         public void Tick(string monitorKey)
@@ -60,22 +71,23 @@ namespace Cronitor
 
         public async Task TickAsync(string monitorKey)
         {
-            await PingAsync(Command.Tick, monitorKey);
+            var command = Command.Fail
+                .SetApiKey(ApiKey)
+                .SetMonitorKey(monitorKey);
+
+            await PingAsync(command);
         }
 
 
-        public void Ping(Command command, string monitorKey)
+        public void Ping(Command command)
         {
-            Task.Run(async () => await PingAsync(command, monitorKey))
+            Task.Run(async () => await PingAsync(command))
                 .Wait();
         }
 
-        public async Task PingAsync(Command command, string monitorKey)
+        public async Task PingAsync(Command command)
         {
-            using (var client = new HttpClient(Urls.PrimaryBaseUrl, _apiKey, _useHttps))
-            {
-                await client.SendAsync(command, monitorKey);
-            }
+            await SendAsync(command);
         }
     }
 }

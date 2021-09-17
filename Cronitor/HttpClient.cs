@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
@@ -15,23 +14,15 @@ namespace Cronitor
     public class HttpClient : IDisposable
     {
         private readonly System.Net.Http.HttpClient _httpClient;
-        private readonly string _apiKey;
-        private readonly Uri _apiUri;
 
-        public HttpClient(string apiUrl, string apiKey, bool useHttps = true)
+        public HttpClient(Uri apiUrl, string apiKey, bool useHttps = true)
         {
-            _apiKey = apiKey;
-
-            var uri = new Uri(apiUrl);
-
             if (!useHttps)
-                uri.AsHttp();
-
-            _apiUri = uri;
+                apiUrl.AsHttp();
 
             _httpClient = new System.Net.Http.HttpClient
             {
-                BaseAddress = uri
+                BaseAddress = apiUrl
             };
 
             _httpClient.DefaultRequestHeaders.Accept.Clear();
@@ -42,34 +33,24 @@ namespace Cronitor
                 ));
         }
 
-        //TODO: Send to FallbackUrl
-        //TODO: Move Url parsing/building to command constant?
-        public async Task SendAsync(Command command, string monitorKey)
+        //TODO: send to FallbackUrl
+        public async Task SendAsync(Command command)
         {
-            var dictionary = new Dictionary<string, string>
-            {
-                { ":apiKey", _apiKey },
-                { ":key", monitorKey },
-                { ":command", command.ToString() }
-            };
-
-            var requestUri = _apiUri.Build(dictionary);
+            var requestUri = command.ToUri();
 
             var message = new HttpRequestMessage
             {
                 Method = command.Method,
-                RequestUri = requestUri,
-                Content = new StringContent("{}", Encoding.UTF8, "application/json")
+                RequestUri = requestUri
             };
             var task = _httpClient.SendAsync(message);
 
             await PerformRequestAsync(task);
         }
-
-        //TODO: send to FallbackUrl
+        
         public async Task SendAsync(Request request)
         {
-            var requestUri = new Uri($"{_apiUri.Combine(request.ToUrl())}");
+            var requestUri = request.ToUri();
 
             var message = new HttpRequestMessage
             {
@@ -81,11 +62,10 @@ namespace Cronitor
 
             await PerformRequestAsync(task);
         }
-
-        //TODO: send to FallbackUrl
+        
         public async Task<TReturn> SendAsync<TReturn>(Request request)
         {
-            var requestUri = new Uri($"{_apiUri.Combine(request.ToUrl())}");
+            var requestUri = request.ToUri();
 
             var message = new HttpRequestMessage
             {

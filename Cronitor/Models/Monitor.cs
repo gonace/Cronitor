@@ -178,12 +178,25 @@ namespace Cronitor.Models
         public string Type { get; set; }
         [JsonProperty("request")]
         public Request Request { get; set; }
+        [JsonProperty("request_interval_seconds")]
+        public int? RequestIntervalSeconds { get; set; }
+        [JsonProperty("has_duration_history")]
+        public bool? HasDurationHistory { get; set; }
+        [JsonProperty("rules")]
+        public dynamic Rules { get; set; }
+        /// <summary>
+        /// Where/how you wish to be contacted when a monitor's alerting is triggered. The following key/value pairs are all options,
+        /// at least one of which must not be empty. Note: When extending notification template(s), passing an empty array will
+        /// overload the templated notification settings for that key.
+        /// </summary>
+        [JsonProperty("notifications")]
+        public dynamic Notifications { get; set; }
 
         /// <summary>
         /// ISO 8601 formatted timestamp of when the monitor was created.
         /// </summary>
-        [JsonProperty("createdAt")]
-        public DateTime Created { get; set; }
+        [JsonProperty("created")]
+        public DateTime CreatedAt { get; set; }
         [JsonProperty("next_expected_at")]
         public long? ExpectedAt { get; set; }
 

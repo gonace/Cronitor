@@ -1,21 +1,16 @@
-﻿using System.Threading.Tasks;
-using Xunit;
+﻿using Xunit;
 
 namespace Cronitor.Tests
 {
     public class TelemetryClientTests
     {
-        private readonly TelemetryClient _telemetryClient;
+        private readonly TelemetryClient _client;
 
         public TelemetryClientTests()
         {
-            _telemetryClient = new TelemetryClient("7512d43fa0884893b2e0533c44971fa1");
+            _client = new TelemetryClient("");
         }
 
-        [Fact]
-        public void ShouldInsertMultipleItems()
-        {
-            _telemetryClient.Complete("v26rUxXl");
-        }
+        //TODO: Write tests
     }
 }
