@@ -1,6 +1,4 @@
-﻿using Xunit;
-
-namespace Cronitor.Tests
+﻿namespace Cronitor.Tests
 {
     public class TelemetryClientTests
     {

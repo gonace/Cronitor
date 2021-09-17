@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading.Tasks;
+using Cronitor.Commands;
 using Cronitor.Constants;
 
 namespace Cronitor
@@ -26,9 +27,9 @@ namespace Cronitor
 
         public async Task RunAsync(string monitorKey)
         {
-            var command = Command.Run
-                .SetApiKey(ApiKey)
-                .SetMonitorKey(monitorKey);
+            var command = new RunCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(monitorKey);
 
             await PingAsync(command);
         }
@@ -41,9 +42,9 @@ namespace Cronitor
 
         public async Task CompleteAsync(string monitorKey)
         {
-            var command = Command.Complete
-                .SetApiKey(ApiKey)
-                .SetMonitorKey(monitorKey);
+            var command = new CompleteCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(monitorKey);
 
             await PingAsync(command);
         }
@@ -56,9 +57,9 @@ namespace Cronitor
 
         public async Task FailAsync(string monitorKey)
         {
-            var command = Command.Fail
-                .SetApiKey(ApiKey)
-                .SetMonitorKey(monitorKey);
+            var command = new FailCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(monitorKey);
 
             await PingAsync(command);
         }
@@ -71,9 +72,9 @@ namespace Cronitor
 
         public async Task TickAsync(string monitorKey)
         {
-            var command = Command.Fail
-                .SetApiKey(ApiKey)
-                .SetMonitorKey(monitorKey);
+            var command = new TickCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(monitorKey);
 
             await PingAsync(command);
         }

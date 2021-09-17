@@ -17,6 +17,14 @@ namespace Cronitor.Extensions
             return new Uri(address);
         }
 
+        public static Uri AddQueryString(this Uri uri, string queryString)
+        {
+            var address = uri.ToString();
+            var builder = new UriBuilder(address+queryString);
+
+            return builder.Uri;
+        }
+
         public static Uri Combine(this Uri uri, string endpoint)
         {
             var address = $"{uri}/{endpoint}";

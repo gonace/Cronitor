@@ -3,7 +3,7 @@ using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
-using Cronitor.Constants;
+using Cronitor.Commands;
 using Cronitor.Exceptions;
 using Cronitor.Extensions;
 using Cronitor.Requests;
