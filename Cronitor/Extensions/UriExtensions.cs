@@ -27,7 +27,7 @@ namespace Cronitor.Extensions
 
         public static Uri Combine(this Uri uri, string endpoint)
         {
-            var address = $"{uri}/{endpoint}";
+            var address = $"{uri}{endpoint}";
 
             return new Uri(address);
         }
