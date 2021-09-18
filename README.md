@@ -92,7 +92,40 @@ public class SomeClass
         _client.TickAsync("monitorKey", "message");
     }
 }
-``` 
+```
+
+### Advanced
+> You can choose to use `Ping` and/or `PingAsync` to send a `Command` (`CompleteCommand`, `FailCommand`, `RunCommand` and `TickCommand`) with extended properties!
+
+#### `WithEnvironment` (`environment` or `env`)
+> The environment the telemetry event is being sent from. Use this for monitors that are running in multiple environments (e.g. staging and production). Alerting can be configured per environment.
+#### `WithHost` (`host`)
+> The hostname of the server sending the telemetry event.
+#### `WithMessage` (`message`)
+> A url-encoded message of up to 2000 characters.
+#### `WithMetric` (`metric`)
+> Performance related metrics. Must be one of:
+  `count:*` - record counts of important events.
+  `duration:*` - the duration of the job/task being monitored.
+  `error_count:*` - the number of errors that occurred
+#### `WithSeries` (`series`)
+> A unique user-supplied ID to collate related pings, i.e. matching state=run and state=complete|fail to one another. If a job is pinging very frequently (every 2-3s or faster), it will greatly improve matching accurracy.
+
+```c#
+    var command = new CompleteCommand()
+        .WithApiKey("apiKey")
+        .WithMonitorKey("monitorKey")
+        .WithEnvironment("Production")
+        .WithHost("127.0.0.1")
+        .WithMessage("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+        .WithSeries("3de5db91-9c02-4e95-b8a9-9a2442702336")
+        .WithMetric(Metric.Count, new decimal(99.99));
+    
+    # Ping a monitor
+    _client.Ping("monitorKey", "message");
+    # Ping a monitor asynchronous
+    _client.PingAsync("monitorKey", "message");
+```
 
 ## Development
 
