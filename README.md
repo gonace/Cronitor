@@ -110,13 +110,13 @@ public class SomeClass
 > The hostname of the server sending the telemetry event.
 ##### `WithMessage` (`message`)
 > A url-encoded message of up to 2000 characters.
+##### `WithSeries` (`series`)
+> A unique user-supplied ID to collate related pings, i.e. matching state=run and state=complete|fail to one another. If a job is pinging very frequently (every 2-3s or faster), it will greatly improve matching accurracy.
 ##### `WithMetric` (`metric`)
 > Performance related metrics. Must be one of:
   `Metric.Count` (`count:*`) - record counts of important events.
   `Metric.Duration` (`duration:*`) - the duration of the job/task being monitored.
   `Metric.Errors` (`error_count:*`) - the number of errors that occurred
-##### `WithSeries` (`series`)
-> A unique user-supplied ID to collate related pings, i.e. matching state=run and state=complete|fail to one another. If a job is pinging very frequently (every 2-3s or faster), it will greatly improve matching accurracy.
 
 #### Example
 ```c#
