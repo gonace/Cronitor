@@ -95,7 +95,7 @@ public class SomeClass
 ```
 
 ### Advanced
-> You can choose to use `Ping` and/or `PingAsync` to send a `Command` (`CompleteCommand`, `FailCommand`, `RunCommand` and `TickCommand`) with extended properties!
+> You can choose to use `Ping` and/or `PingAsync` to send a `Command` (`CompleteCommand`, `FailCommand`, `RunCommand` and `TickCommand`) with extended properties! To find more about telemetry event enrichers please read the [documentation](https://cronitor.io/docs/telemetry-api#parameters)!
 
 #### `WithEnvironment` (`environment` or `env`)
 > The environment the telemetry event is being sent from. Use this for monitors that are running in multiple environments (e.g. staging and production). Alerting can be configured per environment.
