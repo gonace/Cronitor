@@ -5,7 +5,7 @@ Cronitor is a service for heartbeat-style monitoring of anything that can send a
 ![Nuget](https://img.shields.io/nuget/dt/Cronitor)
 
 ## Supported APIs
-This .NET library provides a simple abstraction for the pinging of a Cronitor monitor. For a better understanding of the API this library talks to, please see the documentation, links bellow.
+This .NET library provides a simple abstraction for the pinging of a Cronitor monitor. For a better understanding of the API this library talks to, please see the documentation, links below.
 * [Activity API](https://cronitor.io/docs/activity-api)
 * [Monitor API](https://cronitor.io/docs/monitor-api)
 * [Notifications API](https://cronitor.io/docs/template-api)
@@ -53,6 +53,46 @@ public class SomeClass
     }
 }
 ```
+
+### Message
+> Each `Command`-method in `TelemetryClient` can be sent with a message.
+```c#
+public class SomeClass
+{
+    private readonly TelemetryClient _client;
+
+    public SomeClass()
+    {
+        _client = new TelemetryClient("apiKey");
+    }
+
+    public void SomeMethod()
+    {
+        # Begin / ping a monitor
+        _client.Run("monitorKey", "message");
+        # Begin / ping a monitor asynchronous
+        _client.RunAsync("monitorKey", "message");
+
+
+        # Complete a monitor
+        _client.Complete("monitorKey", "message");
+        # Complete a monitor asynchronous
+        _client.CompleteAsync("monitorKey", "message");
+        
+
+        # Complete a monitor
+        _client.Fail("monitorKey", "message");
+        # Complete a monitor asynchronous
+        _client.FailAsync("monitorKey", "message");
+
+
+        # Tick a monitor
+        _client.Tick("monitorKey", "message");
+        # Tick a monitor asynchronous
+        _client.TickAsync("monitorKey", "message");
+    }
+}
+``` 
 
 ## Development
 

@@ -34,6 +34,24 @@ namespace Cronitor
             await PingAsync(command);
         }
 
+        public void Run(string monitorKey, string message)
+        {
+            Task.Run(async () => await RunAsync(monitorKey, message))
+                .Wait();
+        }
+
+        public async Task RunAsync(string monitorKey, string message)
+        {
+            var command = new RunCommand
+            {
+                Message = message
+            }
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(monitorKey);
+
+            await PingAsync(command);
+        }
+
         public void Complete(string monitorKey)
         {
             Task.Run(async () => await CompleteAsync(monitorKey))
@@ -43,6 +61,24 @@ namespace Cronitor
         public async Task CompleteAsync(string monitorKey)
         {
             var command = new CompleteCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(monitorKey);
+
+            await PingAsync(command);
+        }
+
+        public void Complete(string monitorKey, string message)
+        {
+            Task.Run(async () => await CompleteAsync(monitorKey, message))
+                .Wait();
+        }
+
+        public async Task CompleteAsync(string monitorKey, string message)
+        {
+            var command = new CompleteCommand
+            {
+                Message = message
+            }
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(monitorKey);
 
@@ -64,6 +100,24 @@ namespace Cronitor
             await PingAsync(command);
         }
 
+        public void Fail(string monitorKey, string message)
+        {
+            Task.Run(async () => await FailAsync(monitorKey, message))
+                .Wait();
+        }
+
+        public async Task FailAsync(string monitorKey, string message)
+        {
+            var command = new FailCommand
+            {
+                Message = message
+            }
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(monitorKey);
+
+            await PingAsync(command);
+        }
+
         public void Tick(string monitorKey)
         {
             Task.Run(async () => await TickAsync(monitorKey))
@@ -73,6 +127,24 @@ namespace Cronitor
         public async Task TickAsync(string monitorKey)
         {
             var command = new TickCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(monitorKey);
+
+            await PingAsync(command);
+        }
+
+        public void Tick(string monitorKey, string message)
+        {
+            Task.Run(async () => await TickAsync(monitorKey, message))
+                .Wait();
+        }
+
+        public async Task TickAsync(string monitorKey, string message)
+        {
+            var command = new TickCommand
+            {
+                Message = message
+            }
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(monitorKey);
 
