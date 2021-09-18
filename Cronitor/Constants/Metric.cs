@@ -14,28 +14,6 @@
             Key = key;
         }
 
-        //public Metric(string key, string value)
-        //{
-        //    Key = key;
-        //    Value = value;
-        //}
-
-        //public Metric WithValue(string value)
-        //{
-        //    Value = value;
-
-        //    return this;
-        //}
-
-        //public Metric WithValue(int value) => WithValue(value.ToString());
-        //public Metric WithValue(decimal value) => WithValue(value.ToString(CultureInfo.InvariantCulture));
-        //public Metric WithValue(double value) => WithValue(value.ToString(CultureInfo.InvariantCulture));
-
-        //public override string ToString()
-        //{
-        //    return $"{Key}:{Value}";
-        //}
-
         public override string ToString()
         {
             return Key;
