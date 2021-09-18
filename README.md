@@ -110,13 +110,15 @@ public class SomeClass
 > The hostname of the server sending the telemetry event.
 ##### `WithMessage` (`message`)
 > A url-encoded message of up to 2000 characters.
-##### `WithSeries` (`series`)
-> A unique user-supplied ID to collate related pings, i.e. matching state=run and state=complete|fail to one another. If a job is pinging very frequently (every 2-3s or faster), it will greatly improve matching accurracy.
 ##### `WithMetric` (`metric`)
 > Performance related metrics. Must be one of:
   `Metric.Count` (`count:*`) - record counts of important events.
   `Metric.Duration` (`duration:*`) - the duration of the job/task being monitored.
-  `Metric.Errors` (`error_count:*`) - the number of errors that occurred
+  `Metric.Errors` (`error_count:*`) - the number of errors that occurred.
+##### `WithSeries` (`series`)
+> A unique user-supplied ID to collate related pings, i.e. matching state=run and state=complete|fail to one another. If a job is pinging very frequently (every 2-3s or faster), it will greatly improve matching accurracy.
+##### `WithStatus` (`series`)
+> Exit code returned from a background job.
 
 #### Example
 ```c#
@@ -126,8 +128,9 @@ public class SomeClass
         .WithEnvironment("Production")
         .WithHost("127.0.0.1")
         .WithMessage("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+        .WithMetric(Metric.Count, new decimal(99.99))
         .WithSeries("3de5db91-9c02-4e95-b8a9-9a2442702336")
-        .WithMetric(Metric.Count, new decimal(99.99));
+        .WithStatus(0);
     
     # Ping a monitor
     _client.Ping(command);

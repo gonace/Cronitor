@@ -18,16 +18,18 @@ namespace Cronitor.Commands
         public string ApiKey { get; set; }
         public string MonitorKey { get; set; }
 
+        [QueryString("env")]
+        public string Environment { get; set; }
         [QueryString("host")]
         public string Host { get; set; }
         [QueryString("message")]
         public string Message { get; set; }
-        [QueryString("env")]
-        public string Environment { get; set; }
-        [QueryString("series")]
-        public string Series { get; set; }
         [QueryString("metric")]
         public string Metric { get; set; }
+        [QueryString("series")]
+        public string Series { get; set; }
+        [QueryString("status_code")]
+        public string Status { get; set; }
 
 
         protected Command()
@@ -88,6 +90,13 @@ namespace Cronitor.Commands
             return this;
         }
 
+        public Command WithMonitorKey(string monitorKey)
+        {
+            MonitorKey = monitorKey;
+
+            return this;
+        }
+
         public Command WithSeries(string series)
         {
             Series = series;
@@ -95,9 +104,9 @@ namespace Cronitor.Commands
             return this;
         }
 
-        public Command WithMonitorKey(string monitorKey)
+        public Command WithStatus(string status)
         {
-            MonitorKey = monitorKey;
+            Status = status;
 
             return this;
         }
