@@ -111,6 +111,7 @@ public class SomeClass
 #### `WithSeries` (`series`)
 > A unique user-supplied ID to collate related pings, i.e. matching state=run and state=complete|fail to one another. If a job is pinging very frequently (every 2-3s or faster), it will greatly improve matching accurracy.
 
+#### Example
 ```c#
     var command = new CompleteCommand()
         .WithApiKey("apiKey")
