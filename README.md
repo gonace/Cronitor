@@ -57,7 +57,8 @@ public class SomeClass
 ```
 
 ## Development
-
+### TODO
+* Write tests for each client
 
 ## Authors
 - [@gonace](https://github.com/gonace)
