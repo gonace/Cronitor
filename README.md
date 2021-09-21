@@ -143,4 +143,3 @@ public class SomeClass
 
 ## Authors
 - [@gonace](https://github.com/gonace)
-- [@laget-se](https://github.com/laget-se)
