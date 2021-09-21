@@ -34,28 +34,28 @@ namespace Cronitor.Tests.Commands
                 {
                     Environment = "Production",
                     Host = "127.0.0.1",
-                    Message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.",
                     Series = "3de5db91-9c02-4e95-b8a9-9a2442702336"
                 }
                 .WithApiKey("apiKey")
                 .WithMonitorKey("monitorKey")
+                .WithMessage("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
                 .WithMetric(Metric.Count, 100);
 
             Assert.Equal("apiKey", command.ApiKey);
             Assert.Equal("monitorKey", command.MonitorKey);
             Assert.Equal("custom", command.Endpoint);
             Assert.Equal("custom", command.ToString());
-
-            var expected = "https://cronitor.link/p/apiKey/monitorKey/custom?env=Production&host=127.0.0.1&message=Lorem ipsum dolor sit amet%2C consectetur adipiscing elit.&metric=count%3A100&series=3de5db91-9c02-4e95-b8a9-9a2442702336";
+            
+            var expected = "https://cronitor.link/p/apiKey/monitorKey/custom?env=Production&host=127.0.0.1&message='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'&metric=count:100&series=3de5db91-9c02-4e95-b8a9-9a2442702336";
             var actual = command.ToUrl();
 
             Assert.Equal(expected, actual);
         }
 
         [Fact]
-        public void ShouldThrowException()
+        public void ShouldThrowExceptionWhenMissingRequiredFields()
         {
-            var command = new CompleteCommand();
+            var command = new Command(HttpMethod.Get, "foo/bar");
 
             Assert.Throws<ArgumentException>(() => command.ToUrl());
         }

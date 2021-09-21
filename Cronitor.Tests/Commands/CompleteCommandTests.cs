@@ -34,7 +34,7 @@ namespace Cronitor.Tests.Commands
                 .WithMonitorKey("monitorKey")
                 .WithEnvironment("Production")
                 .WithHost("127.0.0.1")
-                .WithMessage("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+                .WithMessage("'Lorem ipsum dolor sit amet, consectetur adipiscing elit.'")
                 .WithMetric(Metric.Count, new decimal(99.99))
                 .WithSeries("3de5db91-9c02-4e95-b8a9-9a2442702336");
 
@@ -44,7 +44,7 @@ namespace Cronitor.Tests.Commands
             Assert.Equal("complete", command.ToString());
             Assert.Equal(HttpMethod.Get, command.Method);
 
-            var expected = "https://cronitor.link/p/apiKey/monitorKey/complete?env=Production&host=127.0.0.1&message=Lorem ipsum dolor sit amet%2C consectetur adipiscing elit.&metric=count%3A99.99&series=3de5db91-9c02-4e95-b8a9-9a2442702336";
+            var expected = "https://cronitor.link/p/apiKey/monitorKey/complete?env=Production&host=127.0.0.1&message='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'&metric=count:99.99&series=3de5db91-9c02-4e95-b8a9-9a2442702336";
             var actual = command.ToUrl();
 
             Assert.Equal(expected, actual);

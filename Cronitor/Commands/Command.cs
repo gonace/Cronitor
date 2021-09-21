@@ -23,7 +23,7 @@ namespace Cronitor.Commands
         [QueryString("host")]
         public string Host { get; set; }
         [QueryString("message")]
-        public string Message { get; set; }
+        public string Message { get; private set; }
         [QueryString("metric")]
         public string Metric { get; set; }
         [QueryString("series")]
@@ -85,7 +85,15 @@ namespace Cronitor.Commands
 
         public Command WithMessage(string message)
         {
-            Message = message;
+            if (message.StartsWith("'") &&
+                message.EndsWith("'"))
+            {
+                Message = message;
+            }
+            else
+            {
+                Message = $"'{message}'";
+            }
 
             return this;
         }

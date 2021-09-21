@@ -10,7 +10,7 @@ namespace Cronitor.Tests.Extensions
         [Fact]
         public void ShouldConvertObjectToQueryString()
         {
-            const string expected = "?name=Jane%20Doe&age=18&wage=25400%2C99&working=true&startedat=2019-06-01%2008%3A00%3A00";
+            const string expected = "?name=Jane Doe&age=18&wage=25400,99&working=true&startedat=2019-06-01 08:00:00";
             var actual = new Model().ToQueryString();
 
             Assert.Equal(expected, actual);

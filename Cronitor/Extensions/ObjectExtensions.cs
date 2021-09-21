@@ -29,13 +29,13 @@ namespace Cronitor.Extensions
                 {
                     name = attribute.PropertyName ?? name.ToLower();
                     value = attribute.Lower
-                        ? value.ToString().UrlEscape().ToLower()
-                        : value.ToString().UrlEscape();
+                        ? value.ToString().ToLower()
+                        : value.ToString();
 
                     // Check's if this is the last property, if so, don't add an '&'
                     queryStringBuilder.Append(props.IndexOf(prop) != (props.Count - 1)
-                        ? $"{name.UrlEscape()}={value}&"
-                        : $"{name.UrlEscape()}={value}");
+                        ? $"{name}={value}&"
+                        : $"{name}={value}");
                 }
             }
 
