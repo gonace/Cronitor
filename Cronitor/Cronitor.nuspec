@@ -4,21 +4,21 @@
     <id>Cronitor</id>
     <title>Cronitor</title>
     <version>$version$</version>
-    <authors>gonace,laget.se</authors>
-    <owners>laget.se</owners>
+    <authors>gonace</authors>
+    <owners>gonace</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>NET Client for Activity, Monitor, Notifications and Telemetry API...</description>
     <summary></summary>
-    <license type="expression">Apache-2.0</license>
-    <projectUrl>https://laget.se</projectUrl>
+    <license type="expression">MIT</license>
+    <projectUrl>https://github.com/gonace/Cronitor</projectUrl>
     <icon>assets\icon.png</icon>
-    <repository type="git" url="https://github.com/laget-se/Cronitor" branch="master" />
+    <repository type="git" url="https://github.com/gonace/Cronitor" branch="master" />
     <dependencies>
       <group targetFramework="netstandard2.1">
-        <dependency id="Newtonsoft.Json" version="12.0.3" />
+        <dependency id="Newtonsoft.Json" version="13.0.1" />
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="Newtonsoft.Json" version="12.0.3" />
+        <dependency id="Newtonsoft.Json" version="13.0.1" />
       </group>
     </dependencies>
   </metadata>

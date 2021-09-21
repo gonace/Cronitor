@@ -13,9 +13,16 @@ namespace Cronitor.Requests.Notifications
             Content = new StringContent(Serializer.Serialize(template), Encoding.UTF8, "application/json");
         }
 
-        //public CreateRequest(IEnumerable<Models.Monitor> monitors)
-        //{
-        //    Content = new StringContent(Serializer.Serialize(new { monitors }), Encoding.UTF8, "application/json");
-        //}
+        public CreateRequest(string name, string key, Models.Notifications notifications)
+        {
+            var template = new Models.Template
+            {
+                Name = name,
+                Key = key,
+                Notifications = notifications
+            };
+
+            Content = new StringContent(Serializer.Serialize(template), Encoding.UTF8, "application/json");
+        }
     }
 }

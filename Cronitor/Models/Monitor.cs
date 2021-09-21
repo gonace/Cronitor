@@ -217,17 +217,30 @@ namespace Cronitor.Models
             Name = name;
         }
 
+        public Monitor(MonitorType type, string name, string key)
+        {
+            Key = key;
+            Type = type.ToString();
+            Name = name;
+        }
+
 
         private static string GenerateKey()
         {
+            var allowedChars = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ123456790";
+
             using (var crypto = new RNGCryptoServiceProvider())
             {
                 var tokenBuffer = new byte[6];
                 crypto.GetBytes(tokenBuffer);
+                var chars = new char[6];
+                var count = allowedChars.Length;
 
-                var key = Convert.ToBase64String(tokenBuffer);
-
-                return key;
+                for (var i = 0; i < 6; i++)
+                {
+                    chars[i] = allowedChars[tokenBuffer[i] % count];
+                }
+                return new string(chars);
             }
         }
     }

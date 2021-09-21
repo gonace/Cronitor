@@ -39,24 +39,14 @@ namespace Cronitor
             return await SendAsync<Pageable<Monitor>>(request);
         }
 
-        public Pageable<Monitor> Find(FindRequest request)
+        public Monitor Get(string key)
         {
-            return Task.Run(async () => await FindAsync(request)).Result;
+            return Task.Run(async () => await GetAsync(key)).Result;
         }
 
-        public async Task<Pageable<Monitor>> FindAsync(FindRequest request)
+        public async Task<Monitor> GetAsync(string key)
         {
-            return await SendAsync<Pageable<Monitor>>(request);
-        }
-         
-        public Monitor Get(string monitorKey)
-        {
-            return Task.Run(async () => await GetAsync(monitorKey)).Result;
-        }
-
-        public async Task<Monitor> GetAsync(string monitorKey)
-        {
-            var request = new GetRequest(monitorKey);
+            var request = new GetRequest(key);
 
             return await SendAsync<Monitor>(request);
         }
@@ -85,50 +75,52 @@ namespace Cronitor
             return response.Monitors;
         }
 
-        public void Delete(DeleteRequest request)
+        public void Delete(string key)
         {
-            Task.Run(async () => await DeleteAsync(request))
+            Task.Run(async () => await DeleteAsync(key))
                 .Wait(); ;
         }
 
-        public async Task DeleteAsync(DeleteRequest request)
+        public async Task DeleteAsync(string key)
         {
+            var request = new DeleteRequest(key);
+
             await SendAsync<Task>(request);
         }
 
-        public IEnumerable<Activity> Activities(string monitorKey)
+        public IEnumerable<Activity> Activities(string key)
         {
-            return Task.Run(async () => await ActivitiesAsync(monitorKey)).Result;
+            return Task.Run(async () => await ActivitiesAsync(key)).Result;
         }
 
-        public async Task<IEnumerable<Activity>> ActivitiesAsync(string monitorKey)
+        public async Task<IEnumerable<Activity>> ActivitiesAsync(string key)
         {
-            var request = new GetActivitiesRequest(monitorKey);
+            var request = new GetActivitiesRequest(key);
 
             return await SendAsync<IEnumerable<Activity>>(request);
         }
 
-        public IEnumerable<Alert> Alerts(string monitorKey)
+        public IEnumerable<Alert> Alerts(string key)
         {
-            return Task.Run(async () => await AlertsAsync(monitorKey)).Result;
+            return Task.Run(async () => await AlertsAsync(key)).Result;
         }
 
-        public async Task<IEnumerable<Alert>> AlertsAsync(string monitorKey)
+        public async Task<IEnumerable<Alert>> AlertsAsync(string key)
         {
-            var request = new GetAlertsRequest(monitorKey);
+            var request = new GetAlertsRequest(key);
             var response = await SendAsync<Dictionary<string, IEnumerable<Alert>>>(request);
 
             return response.FirstOrDefault().Value;
         }
 
-        public IEnumerable<Ping> Pings(string monitorKey)
+        public IEnumerable<Ping> Pings(string key)
         {
-            return Task.Run(async () => await PingsAsync(monitorKey)).Result;
+            return Task.Run(async () => await PingsAsync(key)).Result;
         }
 
-        public async Task<IEnumerable<Ping>> PingsAsync(string monitorKey)
+        public async Task<IEnumerable<Ping>> PingsAsync(string key)
         {
-            var request = new GetPingsRequest(monitorKey);
+            var request = new GetPingsRequest(key);
             var response = await SendAsync<Dictionary<string, IEnumerable<Ping>>>(request);
 
             return response.FirstOrDefault().Value;

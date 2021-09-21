@@ -67,14 +67,16 @@ namespace Cronitor
             return await SendAsync<Template>(request);
         }
 
-        public void Delete(DeleteRequest request)
+        public void Delete(string key)
         {
-            Task.Run(async () => await DeleteAsync(request))
+            Task.Run(async () => await DeleteAsync(key))
                 .Wait();
         }
 
-        public async Task DeleteAsync(DeleteRequest request)
+        public async Task DeleteAsync(string key)
         {
+            var request = new DeleteRequest(key);
+
             await SendAsync<Task>(request);
         }
     }
