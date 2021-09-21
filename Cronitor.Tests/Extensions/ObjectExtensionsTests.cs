@@ -1,16 +1,18 @@
 ﻿using System;
 using Cronitor.Attributes;
 using Cronitor.Extensions;
+using Cronitor.Tests.Helpers;
 using Xunit;
 
 namespace Cronitor.Tests.Extensions
 {
+    [UseCulture("en-US")]
     public class ObjectExtensionsTests
     {
         [Fact]
         public void ShouldConvertObjectToQueryString()
         {
-            const string expected = "?name=Jane Doe&age=18&wage=25400,99&working=true&startedat=2019-06-01 08:00:00";
+            const string expected = "?name=Jane Doe&age=18&wage=25400.99&working=true&startedat=6/1/2019 8:00:00 AM";
             var actual = new Model().ToQueryString();
 
             Assert.Equal(expected, actual);

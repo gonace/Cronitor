@@ -27,7 +27,7 @@ namespace Cronitor.Tests.Extensions
         public void ShouldAddQueryString()
         {
             var uri = new Uri("https://www.google.se");
-            const string qs = "?host=127.0.0.1&message=Lorem ipsum&env=Production&series=3de5db91-9c02-4e95-b8a9-9a2442702336&metric=count%3A9.99";
+            const string qs = "?host=127.0.0.1&message=Lorem ipsum&env=Production&series=3de5db91-9c02-4e95-b8a9-9a2442702336&metric=count:9.99";
 
             var expected = $"https://www.google.se/{qs}";
             var actual = uri.AddQueryString(qs).ToString();
