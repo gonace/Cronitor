@@ -41,7 +41,7 @@ namespace Cronitor.Tests.Commands
             Assert.Equal("monitorKey", command.MonitorKey);
             Assert.Equal("custom", command.Endpoint);
             Assert.Equal("custom", command.ToString());
-            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/custom?host=127.0.0.1&message=Lorem ipsum dolor sit amet%2C consectetur adipiscing elit.&env=Production&series=3de5db91-9c02-4e95-b8a9-9a2442702336&metric=count%3A100", command.ToUrl());
+            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/custom?env=Production&host=127.0.0.1&message=Lorem ipsum dolor sit amet%2C consectetur adipiscing elit.&metric=count%3A100&series=3de5db91-9c02-4e95-b8a9-9a2442702336", command.ToUrl());
         }
 
         [Fact]
