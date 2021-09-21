@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Text;
+using System.Web;
 
 namespace Cronitor.Extensions
 {
@@ -20,6 +21,12 @@ namespace Cronitor.Extensions
         {
             var bytes = Convert.FromBase64String(@string);
             return Encoding.ASCII.GetString(bytes);
+        }
+
+        public static string UrlEscape(this string @string)
+        {
+            //return Uri.EscapeDataString(@string);
+            return HttpUtility.UrlEncode(@string);
         }
     }
 }

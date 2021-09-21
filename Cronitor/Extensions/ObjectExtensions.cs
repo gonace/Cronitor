@@ -28,12 +28,14 @@ namespace Cronitor.Extensions
                 if (value != null)
                 {
                     name = attribute.PropertyName ?? name.ToLower();
-                    value = attribute.Lower ? Uri.EscapeDataString(value.ToString().ToLower()) : Uri.EscapeDataString(value.ToString());
+                    value = attribute.Lower
+                        ? value.ToString().UrlEscape().ToLower()
+                        : value.ToString().UrlEscape();
 
                     // Check's if this is the last property, if so, don't add an '&'
                     queryStringBuilder.Append(props.IndexOf(prop) != (props.Count - 1)
-                        ? $"{Uri.EscapeDataString(name)}={value}&"
-                        : $"{Uri.EscapeDataString(name)}={value}");
+                        ? $"{name.UrlEscape()}={value}&"
+                        : $"{name.UrlEscape()}={value}");
                 }
             }
 
