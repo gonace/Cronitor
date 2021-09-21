@@ -10,9 +10,9 @@
     <description>NET Client for Activity, Monitor, Notifications and Telemetry API...</description>
     <summary></summary>
     <license type="expression">MIT</license>
-    <projectUrl>https://github.com/gonace/Cronitor</projectUrl>
+    <projectUrl>https://github.com/gonace/cronitor-net</projectUrl>
     <icon>assets\icon.png</icon>
-    <repository type="git" url="https://github.com/gonace/Cronitor" branch="master" />
+    <repository type="git" url="https://github.com/gonace/cronitor-net" branch="master" />
     <dependencies>
       <group targetFramework="netstandard2.1">
         <dependency id="Newtonsoft.Json" version="13.0.1" />
