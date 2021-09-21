@@ -16,7 +16,7 @@ You can download the cronitor client nuget.
 [https://www.nuget.org/packages/Cronitor](https://www.nuget.org/packages/Cronitor)
 
 ## Usage
-> For the full documentation please read our [wiki](wiki/Telemetry)!
+> For the full documentation please read our [wiki](https://github.com/gonace/cronitor-net/wiki), [Telemetry](https://github.com/gonace/cronitor-net/wiki/Telemetry)!
 
 ```c#
 public class SomeClass
