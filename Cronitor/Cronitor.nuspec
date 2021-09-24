@@ -6,6 +6,7 @@
     <version>$version$</version>
     <authors>gonace</authors>
     <owners>gonace</owners>
+    <readme>https://raw.githubusercontent.com/gonace/cronitor-net/master/README.md</readme>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>NET Client for Activity, Monitor, Notifications and Telemetry API...</description>
     <summary></summary>
