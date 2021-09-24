@@ -78,12 +78,38 @@ namespace Cronitor
         public void Delete(string key)
         {
             Task.Run(async () => await DeleteAsync(key))
-                .Wait(); ;
+                .Wait();
         }
 
         public async Task DeleteAsync(string key)
         {
             var request = new DeleteRequest(key);
+
+            await SendAsync<Task>(request);
+        }
+
+        public void Pause(string key, int? hours = null)
+        {
+            Task.Run(async () => await PauseAsync(key, hours))
+                .Wait();
+        }
+
+        public async Task PauseAsync(string key, int? hours = null)
+        {
+            var request = hours != null ? new PauseRequest(key, hours.Value) : new PauseRequest(key);
+
+            await SendAsync<Task>(request);
+        }
+
+        public void Unpause(string key)
+        {
+            Task.Run(async () => await UnpauseAsync(key))
+                .Wait();
+        }
+
+        public async Task UnpauseAsync(string key)
+        {
+            var request = new UnpauseRequest(key);
 
             await SendAsync<Task>(request);
         }
