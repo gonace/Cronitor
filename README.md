@@ -58,7 +58,18 @@ public class SomeClass
 
 ## Development
 ### TODO
+* Implement timezone constant (if not too big of a hassle to maintain)
+* Implement cron expression-language (if found as needed?)
+* Implement cronitor `assertions`-language
 * Write tests for each client
 
-## Authors
-- [@gonace](https://github.com/gonace)
+## Contributing
+Pull requests and features are happily considered! By participating in this project you agree to abide by the [Code of Conduct](http://contributor-covenant.org/version/2/0).
+
+### To contribute
+
+Fork, then clone the repo:
+```
+git clone git@github.com:your-username/cronitor-net.git
+```
+Push to your fork and [submit a pull request](https://github.com/gonace/cronitor-net/compare/)
