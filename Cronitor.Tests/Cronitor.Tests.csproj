@@ -28,4 +28,10 @@
     <ProjectReference Include="..\Cronitor\Cronitor.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="NewFolder\" />
+    <Folder Include="Requests\Monitor\" />
+    <Folder Include="Requests\Notifications\" />
+  </ItemGroup>
+
 </Project>

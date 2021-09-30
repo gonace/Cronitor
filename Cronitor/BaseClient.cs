@@ -7,19 +7,21 @@ namespace Cronitor
 {
     public class BaseClient
     {
-        protected string ApiKey;
-        protected Uri BaseUri;
-        protected bool UseHttps = true;
-
-        public BaseClient(string apiKey)
+        private readonly HttpClient _httpClient;
+        
+        public BaseClient(Uri baseUri, string apiKey)
         {
-            ApiKey = apiKey;
+            _httpClient = new HttpClient(baseUri, apiKey);
         }
 
-        public BaseClient(string apiKey, bool useHttps)
+        public BaseClient(Uri baseUri, string apiKey, bool useHttps)
         {
-            ApiKey = apiKey;
-            UseHttps = useHttps;
+            _httpClient = new HttpClient(baseUri, apiKey, useHttps);
+        }
+
+        public BaseClient(HttpClient client)
+        {
+            _httpClient = client;
         }
 
 
@@ -31,10 +33,7 @@ namespace Cronitor
 
         public async Task SendAsync(Command command)
         {
-            using (var client = new HttpClient(BaseUri, ApiKey, UseHttps))
-            {
-                await client.SendAsync(command);
-            }
+            await _httpClient.SendAsync(command);
         }
 
         public TResponse Send<TResponse>(Request request)
@@ -44,10 +43,7 @@ namespace Cronitor
 
         public async Task<TResponse> SendAsync<TResponse>(Request request)
         {
-            using (var client = new HttpClient(BaseUri, ApiKey, UseHttps))
-            {
-                return await client.SendAsync<TResponse>(request);
-            }
+            return await _httpClient.SendAsync<TResponse>(request);
         }
     }
 }

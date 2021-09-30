@@ -5,19 +5,20 @@ using System.Threading;
 using Xunit.Sdk;
 
 namespace Cronitor.Tests.Helpers
-{/// <summary>
- /// Apply this attribute to your test method to replace the
- /// <see cref="Thread.CurrentThread" /> <see cref="CultureInfo.CurrentCulture" /> and
- /// <see cref="CultureInfo.CurrentUICulture" /> with another culture.
- /// </summary>
+{
+    /// <summary>
+    /// Apply this attribute to your test method to replace the
+    /// <see cref="Thread.CurrentThread" /> <see cref="CultureInfo.CurrentCulture" /> and
+    /// <see cref="CultureInfo.CurrentUICulture" /> with another culture.
+    /// </summary>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class UseCultureAttribute : BeforeAfterTestAttribute
     {
-        readonly Lazy<CultureInfo> culture;
-        readonly Lazy<CultureInfo> uiCulture;
+        private readonly Lazy<CultureInfo> _culture;
+        private readonly Lazy<CultureInfo> _uiCulture;
 
-        CultureInfo originalCulture;
-        CultureInfo originalUICulture;
+        private CultureInfo _originalCulture;
+        private CultureInfo _originalUiCulture;
 
         /// <summary>
         /// Replaces the culture and UI culture of the current thread with
@@ -31,7 +32,9 @@ namespace Cronitor.Tests.Helpers
         /// </para>
         /// </remarks>
         public UseCultureAttribute(string culture)
-            : this(culture, culture) { }
+            : this(culture, culture)
+        {
+        }
 
         /// <summary>
         /// Replaces the culture and UI culture of the current thread with
@@ -41,19 +44,19 @@ namespace Cronitor.Tests.Helpers
         /// <param name="uiCulture">The name of the UI culture.</param>
         public UseCultureAttribute(string culture, string uiCulture)
         {
-            this.culture = new Lazy<CultureInfo>(() => new CultureInfo(culture));
-            this.uiCulture = new Lazy<CultureInfo>(() => new CultureInfo(uiCulture));
+            _culture = new Lazy<CultureInfo>(() => new CultureInfo(culture));
+            _uiCulture = new Lazy<CultureInfo>(() => new CultureInfo(uiCulture));
         }
 
         /// <summary>
         /// Gets the culture.
         /// </summary>
-        public CultureInfo Culture => culture.Value;
+        public CultureInfo Culture => _culture.Value;
 
         /// <summary>
         /// Gets the UI culture.
         /// </summary>
-        public CultureInfo UICulture => uiCulture.Value;
+        public CultureInfo UICulture => _uiCulture.Value;
 
         /// <summary>
         /// Stores the current <see cref="Thread.CurrentPrincipal" />
@@ -63,8 +66,8 @@ namespace Cronitor.Tests.Helpers
         /// <param name="methodUnderTest">The method under test</param>
         public override void Before(MethodInfo methodUnderTest)
         {
-            originalCulture = Thread.CurrentThread.CurrentCulture;
-            originalUICulture = Thread.CurrentThread.CurrentUICulture;
+            _originalCulture = Thread.CurrentThread.CurrentCulture;
+            _originalUiCulture = Thread.CurrentThread.CurrentUICulture;
 
             Thread.CurrentThread.CurrentCulture = Culture;
             Thread.CurrentThread.CurrentUICulture = UICulture;
@@ -77,8 +80,8 @@ namespace Cronitor.Tests.Helpers
         /// <param name="methodUnderTest">The method under test</param>
         public override void After(MethodInfo methodUnderTest)
         {
-            Thread.CurrentThread.CurrentCulture = originalCulture;
-            Thread.CurrentThread.CurrentUICulture = originalUICulture;
+            Thread.CurrentThread.CurrentCulture = _originalCulture;
+            Thread.CurrentThread.CurrentUICulture = _originalUiCulture;
         }
     }
 }

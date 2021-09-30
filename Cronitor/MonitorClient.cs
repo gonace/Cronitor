@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Cronitor.Constants;
@@ -13,16 +12,20 @@ namespace Cronitor
     public class MonitorClient : BaseClient
     {
         public MonitorClient(string apiKey)
-            : base(apiKey)
+            : base(Urls.ApiUrl, apiKey)
         {
-            BaseUri = new Uri(Urls.ApiUrl);
         }
 
         public MonitorClient(string apiKey, bool useHttps)
-            : base(apiKey, useHttps)
+            : base(Urls.ApiUrl, apiKey, useHttps)
         {
-            BaseUri = new Uri(Urls.ApiUrl);
         }
+
+        public MonitorClient(HttpClient client)
+            : base(client)
+        {
+        }
+
 
         public Pageable<Monitor> Find(int page = 1)
         {
@@ -34,7 +37,7 @@ namespace Cronitor
             var request = new FindRequest
             {
                 Page = page
-            }; 
+            };
 
             return await SendAsync<Pageable<Monitor>>(request);
         }
@@ -60,7 +63,7 @@ namespace Cronitor
         {
             var response = await SendAsync<CreateResponse>(request);
 
-            return response.Monitors;
+            return response?.Monitors;
         }
 
         public IEnumerable<Monitor> Update(UpdateRequest request)
