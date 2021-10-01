@@ -25,7 +25,7 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteFindMethod()
         {
-            var response = new Pageable<Template> { Result = new List<Template> { Response } };
+            var response = new Pageable<Template> { Result = new List<Template> { Template } };
 
             // Setup
             _httpClient.Setup(x => x.SendAsync<Pageable<Template>>(It.IsAny<FindRequest>())).Returns(Task.FromResult(response));
@@ -50,7 +50,7 @@ namespace Cronitor.Tests
         [Fact]
         public async Task ShouldExecuteFindAsyncMethod()
         {
-            var response = new Pageable<Template> { Result = new List<Template> { Response } };
+            var response = new Pageable<Template> { Result = new List<Template> { Template } };
 
             // Setup
             _httpClient.Setup(x => x.SendAsync<Pageable<Template>>(It.IsAny<FindRequest>())).Returns(Task.FromResult(response));
@@ -76,7 +76,7 @@ namespace Cronitor.Tests
         public void ShouldExecuteGetMethod()
         {
             // Setup
-            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<GetRequest>())).Returns(Task.FromResult(Response));
+            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<GetRequest>())).Returns(Task.FromResult(Template));
 
             // Run
             var result = _client.Get(TemplateKey);
@@ -95,7 +95,7 @@ namespace Cronitor.Tests
         public async Task ShouldExecuteGetAsyncMethod()
         {
             // Setup
-            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<GetRequest>())).Returns(Task.FromResult(Response));
+            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<GetRequest>())).Returns(Task.FromResult(Template));
 
             // Run
             var result = await _client.GetAsync(TemplateKey);
@@ -110,7 +110,7 @@ namespace Cronitor.Tests
             _httpClient.VerifyNoOtherCalls();
         }
 
-        private static Template Response => new Template
+        protected static Template Template => new Template
         {
             Key = TemplateKey,
             Monitors = new List<string> { MonitorKey },
