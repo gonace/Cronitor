@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Cronitor.Constants;
 using Newtonsoft.Json;
 
 namespace Cronitor.Models
@@ -9,12 +11,12 @@ namespace Cronitor.Models
         /// The URL of the resource to monitor.
         /// </summary>
         [JsonProperty("url")]
-        public string Url { get; set; }
+        public string Url { get; protected set; }
         /// <summary>
         /// The HTTP request method: GET, HEAD, PATCH, POST, PUT
         /// </summary>
         [JsonProperty("method")]
-        public string Method { get; set; }
+        public string Method { get; set; } = "GET";
         /// <summary>
         /// The request body. Required for PUT, PATCH, and POST requests.
         /// </summary>
@@ -34,8 +36,19 @@ namespace Cronitor.Models
         /// The timeout enforced when making the request. An alert will be triggered upon timeout.
         /// </summary>
         [JsonProperty("timeout_seconds")]
-        public string TimeoutSeconds { get; set; }
+        public int TimeoutSeconds { get; set; } = 10;
         [JsonProperty("regions")]
-        public IEnumerable<string> Regions { get; set; }
+        public IEnumerable<string> Regions { get; protected set; }
+
+        [JsonConstructor]
+        private Request()
+        {
+        }
+
+        public Request(string url, IEnumerable<Region> regions)
+        {
+            Url = url;
+            Regions = regions.Select(x => x.Value);
+        }
     }
 }

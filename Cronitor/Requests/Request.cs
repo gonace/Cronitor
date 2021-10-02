@@ -21,7 +21,7 @@ namespace Cronitor.Requests
 
         public virtual Uri ToUri()
         {
-            return new Uri(Urls.ApiUrl).Combine(Endpoint);
+            return new Uri(Urls.ApiUrl.ToString()).Combine(Endpoint);
         }
 
         public string ToUrl()

@@ -34,14 +34,14 @@ namespace Cronitor.Commands
 
         protected Command()
         {
-            Uri = new Uri(Urls.PrimaryBaseUrl);
+            Uri = new Uri(Urls.PrimaryBaseUrl.ToString());
         }
 
         public Command(HttpMethod method, string endpoint)
         {
             Method = method;
             Endpoint = endpoint;
-            Uri = new Uri(Urls.PrimaryBaseUrl);
+            Uri = new Uri(Urls.PrimaryBaseUrl.ToString());
         }
 
         public Command WithApiKey(string apiKey)

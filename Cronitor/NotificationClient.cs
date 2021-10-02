@@ -1,5 +1,4 @@
-﻿using System;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 using Cronitor.Constants;
 using Cronitor.Models;
 using Cronitor.Requests;
@@ -10,17 +9,20 @@ namespace Cronitor
     public class NotificationClient : BaseClient
     {
         public NotificationClient(string apiKey)
-            : base(apiKey)
+            : base(Urls.ApiUrl, apiKey)
         {
-            BaseUri = new Uri(Urls.ApiUrl);
         }
 
         public NotificationClient(string apiKey, bool useHttps)
-            : base(apiKey, useHttps)
+            : base(Urls.ApiUrl, apiKey, useHttps)
         {
-            BaseUri = new Uri(Urls.ApiUrl);
         }
-         
+
+        public NotificationClient(HttpClient client)
+            : base(client)
+        {
+        }
+
 
         public Pageable<Template> Find()
         {
