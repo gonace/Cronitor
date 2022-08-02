@@ -505,7 +505,7 @@ namespace Cronitor.Tests
             _httpClient.VerifyNoOtherCalls();
         }
 
-                [Fact]
+        [Fact]
         public void ShouldExecuteFailMethodWithEnvironment()
         {
             var environment = "Production";
@@ -609,6 +609,8 @@ namespace Cronitor.Tests
 
         #endregion
 
+        #region Tick & TickAsync
+
         [Fact]
         public void ShouldExecuteTickMethod()
         {
@@ -698,5 +700,109 @@ namespace Cronitor.Tests
                 c.Message == $"'{message}'")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public void ShouldExecuteTickMethodWithEnvironment()
+        {
+            var environment = "Production";
+            var command = new TickCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            _client.Tick(MonitorKey, environment: environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "tick" &&
+                c.Environment == environment)), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldExecuteTickAsyncMethodWithEnvironment()
+        {
+            var environment = "Production";
+            var command = new TickCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            await _client.TickAsync(MonitorKey, environment: environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "tick" &&
+                c.Environment == environment)), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void ShouldExecuteTickMethodWithMessageAndEnvironment()
+        {
+            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            var environment = "Production";
+            var command = new TickCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithMessage(message)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            _client.Tick(MonitorKey, message, environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "tick" &&
+                c.Message == $"'{message}'" &&
+                c.Environment == environment)), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldExecuteTickAsyncMethodWithMessageAndEnvironment()
+        {
+            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            var environment = "Production";
+            var command = new TickCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithMessage(message)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            await _client.TickAsync(MonitorKey, message, environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "tick" &&
+                c.Message == $"'{message}'" &&
+                c.Environment == environment)), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        #endregion
     }
 }

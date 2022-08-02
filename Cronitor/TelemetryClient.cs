@@ -101,37 +101,30 @@ namespace Cronitor
             await PingAsync(command);
         }
 
-        public void Tick(string monitorKey)
+        public void Tick(string monitorKey, string message = null, string environment = null)
         {
-            Task.Run(async () => await TickAsync(monitorKey))
+            Task.Run(async () => await TickAsync(monitorKey, message, environment))
                 .Wait();
         }
 
-        public async Task TickAsync(string monitorKey)
+        public async Task TickAsync(string monitorKey, string message = null, string environment = null)
         {
             var command = new TickCommand()
                 .WithApiKey(_apiKey)
                 .WithMonitorKey(monitorKey);
 
-            await PingAsync(command);
-        }
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                command.WithMessage(message);
+            }
 
-        public void Tick(string monitorKey, string message)
-        {
-            Task.Run(async () => await TickAsync(monitorKey, message))
-                .Wait();
-        }
-
-        public async Task TickAsync(string monitorKey, string message)
-        {
-            var command = new TickCommand()
-                .WithApiKey(_apiKey)
-                .WithMonitorKey(monitorKey)
-                .WithMessage(message);
+            if (!string.IsNullOrWhiteSpace(environment))
+            {
+                command.WithEnvironment(environment);
+            }
 
             await PingAsync(command);
         }
-
 
         public void Ping(Command command)
         {
