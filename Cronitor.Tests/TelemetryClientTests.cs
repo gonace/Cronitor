@@ -175,7 +175,7 @@ namespace Cronitor.Tests
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Run(MonitorKey, message,environment);
+            _client.Run(MonitorKey, message, environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
@@ -210,12 +210,14 @@ namespace Cronitor.Tests
                 c.ApiKey == ApiKey &&
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "run" &&
-                c.Message == $"'{message}'"&&
+                c.Message == $"'{message}'" &&
                 c.Environment == environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
         #endregion
+
+        #region Complete & CompleteAsync
 
         [Fact]
         public void ShouldExecuteCompleteMethod()
@@ -308,6 +310,112 @@ namespace Cronitor.Tests
         }
 
         [Fact]
+        public void ShouldExecuteCompleteMethodWithEnvironment()
+        {
+            var environment = "Production";
+            var command = new CompleteCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            _client.Complete(MonitorKey, environment: environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "complete" &&
+                c.Environment == environment)), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldExecuteCompleteAsyncMethodWithException()
+        {
+            var environment = "Production";
+            var command = new CompleteCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            await _client.CompleteAsync(MonitorKey, environment: environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "complete" &&
+                c.Environment == environment)), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void ShouldExecuteCompleteMethodWithMessageAndEnvironment()
+        {
+            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            var environment = "Production";
+            var command = new CompleteCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithMessage(message)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            _client.Complete(MonitorKey, message, environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "complete" &&
+                c.Message == $"'{message}'" &&
+                c.Environment == environment)), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldExecuteCompleteAsyncMethodWithMessageAndEnvironment()
+        {
+            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            var environment = "Production";
+            var command = new CompleteCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithMessage(message)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            await _client.CompleteAsync(MonitorKey, message, environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "complete" &&
+                c.Message == $"'{message}'" &&
+                c.Environment == environment)), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        #endregion
+
+        #region Fail & FailAsync
+
+        [Fact]
         public void ShouldExecuteFailMethod()
         {
             var command = new FailCommand()
@@ -396,6 +504,110 @@ namespace Cronitor.Tests
                 c.Message == $"'{message}'")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
+
+                [Fact]
+        public void ShouldExecuteFailMethodWithEnvironment()
+        {
+            var environment = "Production";
+            var command = new FailCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            _client.Fail(MonitorKey, environment: environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "fail" &&
+                c.Environment == environment)), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldExecuteFailAsyncMethodWithEnvironment()
+        {
+            var environment = "Production";
+            var command = new FailCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            await _client.FailAsync(MonitorKey, environment: environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "fail" &&
+                c.Environment == environment)), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void ShouldExecuteFailMethodWithMessageAndEnvironment()
+        {
+            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            var environment = "Production";
+            var command = new FailCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithMessage(message)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            _client.Fail(MonitorKey, message, environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "fail" &&
+                c.Message == $"'{message}'" &&
+                c.Environment == environment)), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldExecuteFailAsyncMethodWithMessageAndEnvironment()
+        {
+            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            var environment = "Production";
+            var command = new FailCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithMessage(message)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            await _client.FailAsync(MonitorKey, message, environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "fail" &&
+                c.Message == $"'{message}'" &&
+                c.Environment == environment)), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        #endregion
 
         [Fact]
         public void ShouldExecuteTickMethod()

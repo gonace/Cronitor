@@ -51,64 +51,52 @@ namespace Cronitor
             await PingAsync(command);
         }
 
-        public void Complete(string monitorKey)
+        public void Complete(string monitorKey, string message = null, string environment = null)
         {
-            Task.Run(async () => await CompleteAsync(monitorKey))
+            Task.Run(async () => await CompleteAsync(monitorKey, message, environment))
                 .Wait();
         }
 
-        public async Task CompleteAsync(string monitorKey)
+        public async Task CompleteAsync(string monitorKey, string message = null, string environment = null)
         {
             var command = new CompleteCommand()
                 .WithApiKey(_apiKey)
                 .WithMonitorKey(monitorKey);
 
-            await PingAsync(command);
-        }
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                command.WithMessage(message);
+            }
 
-        public void Complete(string monitorKey, string message)
-        {
-            Task.Run(async () => await CompleteAsync(monitorKey, message))
-                .Wait();
-        }
-
-        public async Task CompleteAsync(string monitorKey, string message)
-        {
-            var command = new CompleteCommand()
-                .WithApiKey(_apiKey)
-                .WithMonitorKey(monitorKey)
-                .WithMessage(message);
+            if (!string.IsNullOrWhiteSpace(environment))
+            {
+                command.WithEnvironment(environment);
+            }
 
             await PingAsync(command);
         }
 
-        public void Fail(string monitorKey)
+        public void Fail(string monitorKey, string message = null, string environment = null)
         {
-            Task.Run(async () => await FailAsync(monitorKey))
+            Task.Run(async () => await FailAsync(monitorKey, message, environment))
                 .Wait();
         }
 
-        public async Task FailAsync(string monitorKey)
+        public async Task FailAsync(string monitorKey, string message = null, string environment = null)
         {
             var command = new FailCommand()
                 .WithApiKey(_apiKey)
                 .WithMonitorKey(monitorKey);
 
-            await PingAsync(command);
-        }
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                command.WithMessage(message);
+            }
 
-        public void Fail(string monitorKey, string message)
-        {
-            Task.Run(async () => await FailAsync(monitorKey, message))
-                .Wait();
-        }
-
-        public async Task FailAsync(string monitorKey, string message)
-        {
-            var command = new FailCommand()
-                .WithApiKey(_apiKey)
-                .WithMonitorKey(monitorKey)
-                .WithMessage(message);
+            if (!string.IsNullOrWhiteSpace(environment))
+            {
+                command.WithEnvironment(environment);
+            }
 
             await PingAsync(command);
         }
