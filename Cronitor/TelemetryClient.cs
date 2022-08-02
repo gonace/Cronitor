@@ -26,33 +26,27 @@ namespace Cronitor
             _apiKey = apiKey;
         }
 
-        public void Run(string monitorKey)
+        public void Run(string monitorKey, string message = null, string environment = null)
         {
-            Task.Run(async () => await RunAsync(monitorKey))
+            Task.Run(async () => await RunAsync(monitorKey, message, environment))
                 .Wait();
         }
 
-        public async Task RunAsync(string monitorKey)
+        public async Task RunAsync(string monitorKey, string message = null, string environment = null)
         {
             var command = new RunCommand()
                 .WithApiKey(_apiKey)
                 .WithMonitorKey(monitorKey);
 
-            await PingAsync(command);
-        }
+            if (!string.IsNullOrWhiteSpace(message))
+            {
+                command.WithMessage(message);
+            }
 
-        public void Run(string monitorKey, string message)
-        {
-            Task.Run(async () => await RunAsync(monitorKey, message))
-                .Wait();
-        }
-
-        public async Task RunAsync(string monitorKey, string message)
-        {
-            var command = new RunCommand()
-                .WithApiKey(_apiKey)
-                .WithMonitorKey(monitorKey)
-                .WithMessage(message);
+            if (!string.IsNullOrWhiteSpace(environment))
+            {
+                command.WithEnvironment(environment);
+            }
 
             await PingAsync(command);
         }

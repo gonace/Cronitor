@@ -16,7 +16,9 @@ namespace Cronitor.Tests
             _httpClient = new Mock<HttpClient>();
             _client = new TelemetryClient(ApiKey, _httpClient.Object);
         }
-        
+
+        #region Run & RunAsync
+
         [Fact]
         public void ShouldExecuteRunMethod()
         {
@@ -106,6 +108,114 @@ namespace Cronitor.Tests
                 c.Message == $"'{message}'")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
+
+        [Fact]
+        public void ShouldExecuteRunMethodWithEnvironment()
+        {
+            var environment = "Production";
+
+            var command = new RunCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            _client.Run(MonitorKey, environment: environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Environment == environment &&
+                c.Endpoint == "run")), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldExecuteRunAsyncMethodWithEnvironment()
+        {
+            var environment = "Production";
+
+            var command = new RunCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            await _client.RunAsync(MonitorKey, environment: environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Environment == environment &&
+                c.Endpoint == "run")), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void ShouldExecuteRunMethodWithMessageAndEnvironment()
+        {
+            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            var environment = "Production";
+
+            var command = new RunCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithMessage(message)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            _client.Run(MonitorKey, message,environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "run" &&
+                c.Message == $"'{message}'" &&
+                c.Environment == environment)), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldExecuteRunAsyncMethodWithMessageAndEnvironment()
+        {
+            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            var environment = "Production";
+
+            var command = new RunCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey)
+                .WithMessage(message)
+                .WithEnvironment(environment);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            await _client.RunAsync(MonitorKey, message, environment);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "run" &&
+                c.Message == $"'{message}'"&&
+                c.Environment == environment)), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        #endregion
 
         [Fact]
         public void ShouldExecuteCompleteMethod()
