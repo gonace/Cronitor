@@ -33,25 +33,25 @@ public class SomeClass
         # Begin / ping a monitor
         _client.Run("monitorKey");
         # Begin / ping a monitor asynchronous
-        _client.RunAsync("monitorKey");
+        await _client.RunAsync("monitorKey");
 
 
         # Complete a monitor
         _client.Complete("monitorKey");
         # Complete a monitor asynchronous
-        _client.CompleteAsync("monitorKey");
+        await _client.CompleteAsync("monitorKey");
         
 
         # Complete a monitor
         _client.Fail("monitorKey");
         # Complete a monitor asynchronous
-        _client.FailAsync("monitorKey");
+        await _client.FailAsync("monitorKey");
 
 
         # Tick a monitor
         _client.Tick("monitorKey");
         # Tick a monitor asynchronous
-        _client.TickAsync("monitorKey");
+        await _client.TickAsync("monitorKey");
     }
 }
 ```
