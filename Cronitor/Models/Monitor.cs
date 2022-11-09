@@ -1,9 +1,9 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Cryptography;
-using Newtonsoft.Json;
 
 namespace Cronitor.Models
 {
@@ -72,14 +72,14 @@ namespace Cronitor.Models
         /// <summary>
         /// Configure where alerts sent when Cronitor detects an error. Additionally, notify can be used to specify
         /// occurrence based alerts - alerts based on receiving telemetry pings.
-        /// 
+        ///
         /// All accounts have a default Notification List(key= "default"). If notify is left empty or omitted, the default list will be used.
-        /// 
+        ///
         /// Array: An array of Notification List keys. Notification Lists are used for configuring how alerts are sent to your team.
         ///   "notify": [‘devops-channel’]
-        /// 
+        ///
         /// Hash: To specify separate notification preferences a hash containing the keys "alerts" and "events" can be used.
-        /// 
+        ///
         /// The "alerts" key accepts an array of Notification List keys. The "events" key accepts a hash with keys corresponding to the
         /// lifecycle telemetry events - run, complete.If these keys are set to true, Cronitor will send a notification when the event occurs.
         ///   { "notify": { "alerts": [‘foo-bar’], "events": { "complete": true} }
@@ -102,13 +102,13 @@ namespace Cronitor.Models
         public string AlertInterval { get; set; }
         /// <summary>
         /// Schedule has different meanings depending on the monitor type.
-        /// 
+        ///
         /// job & event: the schedule tells Cronitor when to expect telemetry events from your system. If events are not received on schedule, an alert is sent.
         ///
         /// An interval expression (‘every 5 minutes’) or a cron expression(‘0 0 * * *’) must be used.
-        /// 
+        ///
         /// check: the schedule is used to tell Cronitor how frequently to make requests to the resource being monitored.
-        /// 
+        ///
         /// An interval expression must be used.The range of accepted values is 30 seconds to 1 hour.e.g. ‘every 2 minutes’.
         /// </summary>
         [JsonProperty("schedule")]
@@ -131,13 +131,13 @@ namespace Cronitor.Models
         /// <summary>
         /// The type attribute determines which of Cronitor's monitoring capabilities are used to assess the health of your system.
         /// Based on the type provided, other attributes may be required — e.g. the checks type requires the request attribute to be set.
-        /// 
+        ///
         /// jobs monitor the execution of a backend job(cron job, windows scheduled task, etc).
         /// This involves tracking the lifecycle of the job - the start_time, end_time and exit_state of the job.
-        /// 
+        ///
         /// events monitor the health of a system via telemetry events.There is no lifecycle to measure, the occurrence (or absence)
         /// of healthy/unhealthy events, as well as data passed as custom metrics are used to determine the health of an event monitor.
-        /// 
+        ///
         /// checks monitor websites, APIs, proxy servers, cloud storage providers(e.g.S3) or any other HTTP/TCP/UDP networked device.
         /// </summary>
         [JsonProperty("type")]
@@ -152,7 +152,7 @@ namespace Cronitor.Models
         //[JsonProperty("notifications")]
         //public dynamic Notifications { get; set; }
         ///// <summary>
-        ///// when creating a monitor you must specify the rules that will trigger alerts to be sent. 
+        ///// when creating a monitor you must specify the rules that will trigger alerts to be sent.
         ///// </summary>
         //[JsonProperty("rules")]
         //public dynamic Rules { get; protected set; }

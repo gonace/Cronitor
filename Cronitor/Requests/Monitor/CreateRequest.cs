@@ -11,7 +11,7 @@ namespace Cronitor.Requests.Monitor
 
         public CreateRequest(Models.Monitor monitor)
         {
-            Content = new StringContent(Serializer.Serialize(new { monitors = new List<Models.Monitor> { monitor }}), Encoding.UTF8, "application/json");
+            Content = new StringContent(Serializer.Serialize(new { monitors = new List<Models.Monitor> { monitor } }), Encoding.UTF8, "application/json");
         }
 
         public CreateRequest(IEnumerable<Models.Monitor> monitors)

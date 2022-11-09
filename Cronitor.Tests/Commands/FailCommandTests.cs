@@ -1,6 +1,6 @@
-﻿using System.Net.Http;
-using Cronitor.Commands;
+﻿using Cronitor.Commands;
 using Cronitor.Constants;
+using System.Net.Http;
 using Xunit;
 
 namespace Cronitor.Tests.Commands

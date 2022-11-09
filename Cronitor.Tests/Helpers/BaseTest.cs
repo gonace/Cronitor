@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
-using Cronitor.Constants;
+﻿using Cronitor.Constants;
 using Cronitor.Models.Monitors;
+using System.Collections.Generic;
 
 namespace Cronitor.Tests.Helpers
 {

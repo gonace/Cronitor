@@ -1,14 +1,14 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Cronitor.Models;
+﻿using Cronitor.Models;
 using Cronitor.Models.Monitors;
 using Cronitor.Requests;
 using Cronitor.Requests.Monitor;
 using Cronitor.Responses.Monitor;
 using Cronitor.Tests.Helpers;
 using Moq;
+using System.Collections.Generic;
+using System.Linq;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Cronitor.Tests
@@ -23,7 +23,7 @@ namespace Cronitor.Tests
             _httpClient = new Mock<HttpClient>();
             _client = new MonitorClient(_httpClient.Object);
         }
-        
+
         [Fact]
         public void ShouldExecuteFindMethod()
         {

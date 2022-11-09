@@ -55,6 +55,23 @@ public class SomeClass
     }
 }
 ```
+```c#
+using (var client = new TelemetryClient("apiKey"))
+{
+    try
+    {
+        client.Run("monitorKey");
+
+        // Code here
+
+        client.Complete("monitorKey");
+    }
+    catch (Exception)
+    {
+        client.Fail("monitorKey");
+    }
+}
+```
 
 ## Development
 ### TODO

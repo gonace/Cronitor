@@ -1,10 +1,10 @@
-﻿using System;
+﻿using Cronitor.Attributes;
+using Cronitor.Constants;
+using Cronitor.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
-using Cronitor.Attributes;
-using Cronitor.Constants;
-using Cronitor.Extensions;
 
 namespace Cronitor.Commands
 {

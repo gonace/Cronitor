@@ -1,7 +1,7 @@
-﻿using System.Threading.Tasks;
-using Cronitor.Commands;
+﻿using Cronitor.Commands;
 using Cronitor.Tests.Helpers;
 using Moq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Cronitor.Tests
@@ -16,6 +16,7 @@ namespace Cronitor.Tests
             _httpClient = new Mock<HttpClient>();
             _client = new TelemetryClient(ApiKey, _httpClient.Object);
         }
+
 
         #region Run & RunAsync
 
@@ -801,6 +802,34 @@ namespace Cronitor.Tests
                 c.Message == $"'{message}'" &&
                 c.Environment == environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
+        }
+
+        #endregion
+
+        #region Disposable
+
+        [Fact]
+        public void ShouldExecuteDisposableBlock()
+        {
+            using (var client = new TelemetryClient(ApiKey, _httpClient.Object))
+            {
+                var command = new RunCommand()
+                    .WithApiKey(ApiKey)
+                    .WithMonitorKey(MonitorKey);
+
+                // Setup
+                _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+                // Run
+                client.Run(MonitorKey);
+
+                // Verify
+                _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
+                    c.ApiKey == ApiKey &&
+                    c.MonitorKey == MonitorKey &&
+                    c.Endpoint == "run")), Times.Once);
+                _httpClient.VerifyNoOtherCalls();
+            }
         }
 
         #endregion

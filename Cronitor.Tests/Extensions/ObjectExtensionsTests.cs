@@ -1,7 +1,7 @@
-﻿using System;
-using Cronitor.Attributes;
+﻿using Cronitor.Attributes;
 using Cronitor.Extensions;
 using Cronitor.Tests.Helpers;
+using System;
 using Xunit;
 
 namespace Cronitor.Tests.Extensions

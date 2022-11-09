@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Cronitor.Attributes;
+using System;
 using System.Linq;
 using System.Text;
-using Cronitor.Attributes;
 
 namespace Cronitor.Extensions
 {

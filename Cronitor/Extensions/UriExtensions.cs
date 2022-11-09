@@ -20,7 +20,7 @@ namespace Cronitor.Extensions
         public static Uri AddQueryString(this Uri uri, string queryString)
         {
             var address = uri.ToString();
-            var builder = new UriBuilder(address+queryString);
+            var builder = new UriBuilder(address + queryString);
 
             return builder.Uri;
         }

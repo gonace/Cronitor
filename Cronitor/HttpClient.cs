@@ -1,25 +1,30 @@
-﻿using System;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Threading.Tasks;
-using Cronitor.Commands;
+﻿using Cronitor.Commands;
 using Cronitor.Exceptions;
 using Cronitor.Extensions;
 using Cronitor.Requests;
 using Newtonsoft.Json;
+using System;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Text;
+using System.Threading.Tasks;
 
 namespace Cronitor
 {
     public class HttpClient : IDisposable
     {
         private readonly string _apiKey;
-        private readonly Uri _apiUrl;
+        private readonly Uri _apiUri;
 
-        public HttpClient(Uri apiUrl, string apiKey, bool useHttps = true)
+        public HttpClient(Uri apiUri)
+        {
+            _apiUri = apiUri;
+        }
+
+        public HttpClient(Uri apiUri, string apiKey, bool useHttps = true)
         {
             _apiKey = apiKey;
-            _apiUrl = useHttps ? apiUrl.AsHttps() : apiUrl.AsHttp();
+            _apiUri = useHttps ? apiUri.AsHttps() : apiUri.AsHttp();
         }
 
         protected HttpClient()
@@ -119,20 +124,19 @@ namespace Cronitor
         {
             var httpClient = new System.Net.Http.HttpClient
             {
-                BaseAddress = _apiUrl
+                BaseAddress = _apiUri
             };
 
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
-                Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_apiKey}:")));
+            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_apiKey}:")));
 
             return httpClient;
         }
 
         public void Dispose()
         {
-            //_httpClient?.Dispose();
+            //TODO What can we do here?
         }
     }
 }

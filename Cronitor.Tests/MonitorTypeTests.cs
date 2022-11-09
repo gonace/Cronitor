@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
-using System.Linq;
-using Cronitor.Constants;
+﻿using Cronitor.Constants;
 using Cronitor.Models;
 using Cronitor.Models.Monitors;
 using Cronitor.Tests.Helpers;
+using System.Collections.Generic;
+using System.Linq;
 using Xunit;
 
 namespace Cronitor.Tests

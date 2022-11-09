@@ -1,14 +1,19 @@
-﻿using System;
-using System.Threading.Tasks;
-using Cronitor.Commands;
+﻿using Cronitor.Commands;
 using Cronitor.Requests;
+using System;
+using System.Threading.Tasks;
 
 namespace Cronitor
 {
-    public class BaseClient
+    public class BaseClient : IDisposable
     {
         private readonly HttpClient _httpClient;
-        
+
+        public BaseClient(Uri baseUri)
+        {
+            _httpClient = new HttpClient(baseUri);
+        }
+
         public BaseClient(Uri baseUri, string apiKey)
         {
             _httpClient = new HttpClient(baseUri, apiKey);
@@ -44,6 +49,11 @@ namespace Cronitor
         public async Task<TResponse> SendAsync<TResponse>(Request request)
         {
             return await _httpClient.SendAsync<TResponse>(request);
+        }
+
+        public void Dispose()
+        {
+            _httpClient?.Dispose();
         }
     }
 }

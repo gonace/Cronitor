@@ -1,12 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Threading.Tasks;
-using Cronitor.Models;
+﻿using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Requests.Notifications;
 using Cronitor.Tests.Helpers;
 using Moq;
+using System;
+using System.Collections.Generic;
+using System.Net.Http;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Cronitor.Tests

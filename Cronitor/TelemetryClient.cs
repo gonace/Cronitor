@@ -1,12 +1,17 @@
-﻿using System.Threading.Tasks;
-using Cronitor.Commands;
+﻿using Cronitor.Commands;
 using Cronitor.Constants;
+using System.Threading.Tasks;
 
 namespace Cronitor
 {
     public class TelemetryClient : BaseClient
     {
         private readonly string _apiKey;
+
+        public TelemetryClient()
+            : base(Urls.PrimaryBaseUrl)
+        {
+        }
 
         public TelemetryClient(string apiKey)
             : base(Urls.PrimaryBaseUrl, apiKey)
@@ -26,11 +31,15 @@ namespace Cronitor
             _apiKey = apiKey;
         }
 
-        public void Run(string monitorKey, string message = null, string environment = null)
+        public TelemetryClient(HttpClient client)
+            : base(client)
         {
+        }
+
+
+        public void Run(string monitorKey, string message = null, string environment = null) =>
             Task.Run(async () => await RunAsync(monitorKey, message, environment))
                 .Wait();
-        }
 
         public async Task RunAsync(string monitorKey, string message = null, string environment = null)
         {
@@ -51,11 +60,9 @@ namespace Cronitor
             await PingAsync(command);
         }
 
-        public void Complete(string monitorKey, string message = null, string environment = null)
-        {
+        public void Complete(string monitorKey, string message = null, string environment = null) =>
             Task.Run(async () => await CompleteAsync(monitorKey, message, environment))
                 .Wait();
-        }
 
         public async Task CompleteAsync(string monitorKey, string message = null, string environment = null)
         {
@@ -76,11 +83,9 @@ namespace Cronitor
             await PingAsync(command);
         }
 
-        public void Fail(string monitorKey, string message = null, string environment = null)
-        {
+        public void Fail(string monitorKey, string message = null, string environment = null) =>
             Task.Run(async () => await FailAsync(monitorKey, message, environment))
                 .Wait();
-        }
 
         public async Task FailAsync(string monitorKey, string message = null, string environment = null)
         {
@@ -101,11 +106,9 @@ namespace Cronitor
             await PingAsync(command);
         }
 
-        public void Tick(string monitorKey, string message = null, string environment = null)
-        {
+        public void Tick(string monitorKey, string message = null, string environment = null) =>
             Task.Run(async () => await TickAsync(monitorKey, message, environment))
                 .Wait();
-        }
 
         public async Task TickAsync(string monitorKey, string message = null, string environment = null)
         {
@@ -126,15 +129,11 @@ namespace Cronitor
             await PingAsync(command);
         }
 
-        public void Ping(Command command)
-        {
+        public void Ping(Command command) =>
             Task.Run(async () => await PingAsync(command))
                 .Wait();
-        }
 
-        public async Task PingAsync(Command command)
-        {
+        public async Task PingAsync(Command command) =>
             await SendAsync(command);
-        }
     }
 }

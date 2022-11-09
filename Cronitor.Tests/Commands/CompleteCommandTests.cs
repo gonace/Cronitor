@@ -1,11 +1,11 @@
-﻿using System.Net.Http;
-using Cronitor.Commands;
+﻿using Cronitor.Commands;
 using Cronitor.Constants;
+using System.Net.Http;
 using Xunit;
 
 namespace Cronitor.Tests.Commands
 {
-    public  class CompleteCommandTests
+    public class CompleteCommandTests
     {
         [Fact]
         public void ShouldCreateCompleteCommand()
