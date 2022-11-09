@@ -72,6 +72,13 @@ using (var client = new TelemetryClient("apiKey"))
     }
 }
 ```
+```c#
+Cronitor.Cronitor.Configure("apiKey")
+
+Cronitor.Monitor...
+Cronitor.Notification...
+Cronitor.Telemetry...
+```
 
 ## Development
 ### TODO
