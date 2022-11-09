@@ -65,7 +65,8 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteRunMethodWithMessage()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
             var command = new RunCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
@@ -89,7 +90,8 @@ namespace Cronitor.Tests
         [Fact]
         public async Task ShouldExecuteRunAsyncMethodWithMessage()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
             var command = new RunCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
@@ -113,24 +115,22 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteRunMethodWithEnvironment()
         {
-            var environment = "Production";
-
             var command = new RunCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Run(MonitorKey, environment: environment);
+            _client.Run(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
                 c.ApiKey == ApiKey &&
                 c.MonitorKey == MonitorKey &&
-                c.Environment == environment &&
+                c.Environment == Environment &&
                 c.Endpoint == "run")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
@@ -138,24 +138,22 @@ namespace Cronitor.Tests
         [Fact]
         public async Task ShouldExecuteRunAsyncMethodWithEnvironment()
         {
-            var environment = "Production";
-
             var command = new RunCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.RunAsync(MonitorKey, environment: environment);
+            await _client.RunAsync(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
                 c.ApiKey == ApiKey &&
                 c.MonitorKey == MonitorKey &&
-                c.Environment == environment &&
+                c.Environment == Environment &&
                 c.Endpoint == "run")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
@@ -163,20 +161,19 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteRunMethodWithMessageAndEnvironment()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-            var environment = "Production";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
             var command = new RunCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
                 .WithMessage(message)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Run(MonitorKey, message, environment);
+            _client.Run(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
@@ -184,27 +181,26 @@ namespace Cronitor.Tests
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "run" &&
                 c.Message == $"'{message}'" &&
-                c.Environment == environment)), Times.Once);
+                c.Environment == Environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task ShouldExecuteRunAsyncMethodWithMessageAndEnvironment()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-            var environment = "Production";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
             var command = new RunCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
                 .WithMessage(message)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.RunAsync(MonitorKey, message, environment);
+            await _client.RunAsync(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
@@ -212,7 +208,7 @@ namespace Cronitor.Tests
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "run" &&
                 c.Message == $"'{message}'" &&
-                c.Environment == environment)), Times.Once);
+                c.Environment == Environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
@@ -265,7 +261,8 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteCompleteMethodWithMessage()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
             var command = new CompleteCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
@@ -289,7 +286,8 @@ namespace Cronitor.Tests
         [Fact]
         public async Task ShouldExecuteCompleteAsyncMethodWithMessage()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
             var command = new CompleteCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
@@ -313,48 +311,46 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteCompleteMethodWithEnvironment()
         {
-            var environment = "Production";
             var command = new CompleteCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Complete(MonitorKey, environment: environment);
+            _client.Complete(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
                 c.ApiKey == ApiKey &&
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "complete" &&
-                c.Environment == environment)), Times.Once);
+                c.Environment == Environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task ShouldExecuteCompleteAsyncMethodWithException()
         {
-            var environment = "Production";
             var command = new CompleteCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.CompleteAsync(MonitorKey, environment: environment);
+            await _client.CompleteAsync(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
                 c.ApiKey == ApiKey &&
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "complete" &&
-                c.Environment == environment)), Times.Once);
+                c.Environment == Environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
@@ -362,18 +358,18 @@ namespace Cronitor.Tests
         public void ShouldExecuteCompleteMethodWithMessageAndEnvironment()
         {
             var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-            var environment = "Production";
+
             var command = new CompleteCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
                 .WithMessage(message)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Complete(MonitorKey, message, environment);
+            _client.Complete(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
@@ -381,7 +377,7 @@ namespace Cronitor.Tests
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "complete" &&
                 c.Message == $"'{message}'" &&
-                c.Environment == environment)), Times.Once);
+                c.Environment == Environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
@@ -389,18 +385,18 @@ namespace Cronitor.Tests
         public async Task ShouldExecuteCompleteAsyncMethodWithMessageAndEnvironment()
         {
             var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-            var environment = "Production";
+
             var command = new CompleteCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
                 .WithMessage(message)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.CompleteAsync(MonitorKey, message, environment);
+            await _client.CompleteAsync(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
@@ -408,7 +404,7 @@ namespace Cronitor.Tests
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "complete" &&
                 c.Message == $"'{message}'" &&
-                c.Environment == environment)), Times.Once);
+                c.Environment == Environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
@@ -461,7 +457,8 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteFailMethodWithMessage()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
             var command = new FailCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
@@ -485,7 +482,8 @@ namespace Cronitor.Tests
         [Fact]
         public async Task ShouldExecuteFailAsyncMethodWithMessage()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
             var command = new FailCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
@@ -509,67 +507,65 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteFailMethodWithEnvironment()
         {
-            var environment = "Production";
             var command = new FailCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Fail(MonitorKey, environment: environment);
+            _client.Fail(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
                 c.ApiKey == ApiKey &&
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "fail" &&
-                c.Environment == environment)), Times.Once);
+                c.Environment == Environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task ShouldExecuteFailAsyncMethodWithEnvironment()
         {
-            var environment = "Production";
             var command = new FailCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.FailAsync(MonitorKey, environment: environment);
+            await _client.FailAsync(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
                 c.ApiKey == ApiKey &&
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "fail" &&
-                c.Environment == environment)), Times.Once);
+                c.Environment == Environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
         [Fact]
         public void ShouldExecuteFailMethodWithMessageAndEnvironment()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-            var environment = "Production";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
             var command = new FailCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
                 .WithMessage(message)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Fail(MonitorKey, message, environment);
+            _client.Fail(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
@@ -577,26 +573,26 @@ namespace Cronitor.Tests
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "fail" &&
                 c.Message == $"'{message}'" &&
-                c.Environment == environment)), Times.Once);
+                c.Environment == Environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task ShouldExecuteFailAsyncMethodWithMessageAndEnvironment()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-            var environment = "Production";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
             var command = new FailCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
                 .WithMessage(message)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.FailAsync(MonitorKey, message, environment);
+            await _client.FailAsync(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
@@ -604,7 +600,7 @@ namespace Cronitor.Tests
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "fail" &&
                 c.Message == $"'{message}'" &&
-                c.Environment == environment)), Times.Once);
+                c.Environment == Environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
@@ -657,7 +653,8 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteTickMethodWithMessage()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
             var command = new TickCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
@@ -681,7 +678,8 @@ namespace Cronitor.Tests
         [Fact]
         public async Task ShouldExecuteTickAsyncMethodWithMessage()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
             var command = new TickCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
@@ -705,67 +703,65 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteTickMethodWithEnvironment()
         {
-            var environment = "Production";
             var command = new TickCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Tick(MonitorKey, environment: environment);
+            _client.Tick(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
                 c.ApiKey == ApiKey &&
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "tick" &&
-                c.Environment == environment)), Times.Once);
+                c.Environment == Environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task ShouldExecuteTickAsyncMethodWithEnvironment()
         {
-            var environment = "Production";
             var command = new TickCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.TickAsync(MonitorKey, environment: environment);
+            await _client.TickAsync(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
                 c.ApiKey == ApiKey &&
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "tick" &&
-                c.Environment == environment)), Times.Once);
+                c.Environment == Environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
         [Fact]
         public void ShouldExecuteTickMethodWithMessageAndEnvironment()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-            var environment = "Production";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
             var command = new TickCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
                 .WithMessage(message)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Tick(MonitorKey, message, environment);
+            _client.Tick(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
@@ -773,26 +769,26 @@ namespace Cronitor.Tests
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "tick" &&
                 c.Message == $"'{message}'" &&
-                c.Environment == environment)), Times.Once);
+                c.Environment == Environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task ShouldExecuteTickAsyncMethodWithMessageAndEnvironment()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-            var environment = "Production";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
             var command = new TickCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey)
                 .WithMessage(message)
-                .WithEnvironment(environment);
+                .WithEnvironment(Environment);
 
             // Setup
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.TickAsync(MonitorKey, message, environment);
+            await _client.TickAsync(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
@@ -800,7 +796,7 @@ namespace Cronitor.Tests
                 c.MonitorKey == MonitorKey &&
                 c.Endpoint == "tick" &&
                 c.Message == $"'{message}'" &&
-                c.Environment == environment)), Times.Once);
+                c.Environment == Environment)), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 

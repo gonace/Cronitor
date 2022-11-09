@@ -8,8 +8,8 @@ namespace Cronitor.Tests.Helpers
     {
         protected const string ApiKey = "00000000000000000000000000000000";
         protected const string MonitorKey = "AbCdEf";
+        protected const string Environment = "Production";
         protected const string TemplateKey = "default";
-
 
         protected static Check Check => new Check(new Models.Request("http://www.google.se", new List<Region>
         {
