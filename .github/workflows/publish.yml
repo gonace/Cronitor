@@ -37,7 +37,7 @@ jobs:
     - name: Build
       run: dotnet build Cronitor/Cronitor.csproj --no-restore --configuration Release
     - name: Publish
-      uses: laget-se/publish-nuget@v2.6.7
+      uses: laget-se/publish-nuget@v2.6.9
       with:
         PROJECT_FILE_PATH: Cronitor/Cronitor.csproj
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
