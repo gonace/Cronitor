@@ -24,7 +24,7 @@ namespace Cronitor
             _httpClient = new HttpClient(baseUri, apiKey, useHttps);
         }
 
-        public BaseClient(HttpClient client)
+        internal BaseClient(HttpClient client)
         {
             _httpClient = client;
         }

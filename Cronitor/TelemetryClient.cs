@@ -25,13 +25,13 @@ namespace Cronitor
             _apiKey = apiKey;
         }
 
-        public TelemetryClient(string apiKey, HttpClient client)
+        internal TelemetryClient(string apiKey, HttpClient client)
             : base(client)
         {
             _apiKey = apiKey;
         }
 
-        public TelemetryClient(HttpClient client)
+        internal TelemetryClient(HttpClient client)
             : base(client)
         {
         }

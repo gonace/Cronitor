@@ -23,7 +23,7 @@ namespace Cronitor
         {
         }
 
-        public NotificationClient(HttpClient client)
+        internal NotificationClient(HttpClient client)
             : base(client)
         {
         }

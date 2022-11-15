@@ -11,23 +11,23 @@ using System.Threading.Tasks;
 
 namespace Cronitor
 {
-    public class HttpClient : IDisposable
+    internal class HttpClient : IDisposable
     {
         private readonly string _apiKey;
         private readonly Uri _apiUri;
 
-        public HttpClient(Uri apiUri)
+        internal HttpClient(Uri apiUri)
         {
             _apiUri = apiUri;
         }
 
-        public HttpClient(Uri apiUri, string apiKey, bool useHttps = true)
+        internal HttpClient(Uri apiUri, string apiKey, bool useHttps = true)
         {
             _apiKey = apiKey;
             _apiUri = useHttps ? apiUri.AsHttps() : apiUri.AsHttp();
         }
 
-        protected HttpClient()
+        internal HttpClient()
         {
         }
 

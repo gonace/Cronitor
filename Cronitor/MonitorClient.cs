@@ -26,7 +26,7 @@ namespace Cronitor
         {
         }
 
-        public MonitorClient(HttpClient client)
+        internal MonitorClient(HttpClient client)
             : base(client)
         {
         }
