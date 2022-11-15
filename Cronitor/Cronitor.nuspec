@@ -15,10 +15,13 @@
     <icon>assets\icon.png</icon>
     <repository type="git" url="https://github.com/gonace/cronitor-net" branch="master" />
     <dependencies>
+      <group targetFramework="netstandard2.0">
+        <dependency id="Newtonsoft.Json" version="13.0.1" />
+      </group>
       <group targetFramework="netstandard2.1">
         <dependency id="Newtonsoft.Json" version="13.0.1" />
       </group>
-      <group targetFramework="netstandard2.0">
+      <group targetFramework="net6.0">
         <dependency id="Newtonsoft.Json" version="13.0.1" />
       </group>
     </dependencies>
