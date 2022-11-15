@@ -2,7 +2,7 @@
 
   <PropertyGroup>
       <!--
-          Test all target frameworks from src/StatsdClient/StatsdClient.csproj
+          Test all target frameworks from Cronitor/Cronitor.csproj
             - netcoreapp2.1 -> netstandard2.0
             - netcoreapp3.1 -> netstandard2.1
             - net6.0 -> net6.0
