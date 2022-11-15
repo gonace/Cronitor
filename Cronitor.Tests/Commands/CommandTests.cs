@@ -21,7 +21,7 @@ namespace Cronitor.Tests.Commands
             Assert.Equal("custom", command.ToString());
             Assert.Equal(HttpMethod.Options, command.Method);
 
-            var expected = "https://cronitor.link/p/apiKey/monitorKey/custom";
+            const string expected = "https://cronitor.link/p/apiKey/monitorKey/custom";
             var actual = command.ToUrl();
 
             Assert.Equal(expected, actual);
@@ -46,7 +46,7 @@ namespace Cronitor.Tests.Commands
             Assert.Equal("custom", command.Endpoint);
             Assert.Equal("custom", command.ToString());
 
-            var expected = "https://cronitor.link/p/apiKey/monitorKey/custom?env=Production&host=127.0.0.1&message='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'&metric=count:100&series=3de5db91-9c02-4e95-b8a9-9a2442702336";
+            const string expected = "https://cronitor.link/p/apiKey/monitorKey/custom?env=Production&host=127.0.0.1&message='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'&metric=count:100&series=3de5db91-9c02-4e95-b8a9-9a2442702336";
             var actual = command.ToUrl();
 
             Assert.Equal(expected, actual);

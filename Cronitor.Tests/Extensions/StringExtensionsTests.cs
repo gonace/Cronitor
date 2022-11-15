@@ -14,7 +14,6 @@ namespace Cronitor.Tests.Extensions
             const string queryString = "?host=127.0.0.1&message=Lorem ipsum&env=Production&series=3de5db91-9c02-4e95-b8a9-9a2442702336&metric=count%3A9.99";
             var actual = address.AddQueryString(queryString);
 
-
             Assert.Equal(expected, actual);
         }
 

@@ -40,7 +40,7 @@ namespace Cronitor.Tests.Extensions
         {
             var uri = new Uri("https://www.google.se/");
 
-            var expected = "https://www.google.se/foo/bar";
+            const string expected = "https://www.google.se/foo/bar";
             var actual = uri.Combine("foo/bar").ToString();
 
             Assert.Equal(expected, actual);

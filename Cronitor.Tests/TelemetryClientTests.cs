@@ -357,7 +357,7 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteCompleteMethodWithMessageAndEnvironment()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
             var command = new CompleteCommand()
                 .WithApiKey(ApiKey)
@@ -384,7 +384,7 @@ namespace Cronitor.Tests
         [Fact]
         public async Task ShouldExecuteCompleteAsyncMethodWithMessageAndEnvironment()
         {
-            var message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
             var command = new CompleteCommand()
                 .WithApiKey(ApiKey)
