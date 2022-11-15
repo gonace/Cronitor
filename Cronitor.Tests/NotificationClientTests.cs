@@ -13,12 +13,12 @@ namespace Cronitor.Tests
 {
     public class NotificationClientTests : BaseTest
     {
-        private readonly Mock<HttpClient> _httpClient;
+        private readonly Mock<Internals.HttpClient> _httpClient;
         private readonly NotificationClient _client;
 
         public NotificationClientTests()
         {
-            _httpClient = new Mock<HttpClient>();
+            _httpClient = new Mock<Internals.HttpClient>();
             _client = new NotificationClient(_httpClient.Object);
         }
 

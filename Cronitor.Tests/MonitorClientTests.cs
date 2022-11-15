@@ -15,12 +15,12 @@ namespace Cronitor.Tests
 {
     public class MonitorClientTests : BaseTest
     {
-        private readonly Mock<HttpClient> _httpClient;
+        private readonly Mock<Internals.HttpClient> _httpClient;
         private readonly MonitorClient _client;
 
         public MonitorClientTests()
         {
-            _httpClient = new Mock<HttpClient>();
+            _httpClient = new Mock<Internals.HttpClient>();
             _client = new MonitorClient(_httpClient.Object);
         }
 

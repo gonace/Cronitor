@@ -1,4 +1,5 @@
 ﻿using Cronitor.Commands;
+using Cronitor.Internals;
 using Cronitor.Tests.Helpers;
 using Moq;
 using System.Threading.Tasks;

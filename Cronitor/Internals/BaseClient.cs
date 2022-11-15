@@ -3,23 +3,23 @@ using Cronitor.Requests;
 using System;
 using System.Threading.Tasks;
 
-namespace Cronitor
+namespace Cronitor.Internals
 {
-    public class BaseClient : IDisposable
+    public abstract class BaseClient : IDisposable
     {
         private readonly HttpClient _httpClient;
 
-        public BaseClient(Uri baseUri)
+        protected BaseClient(Uri baseUri)
         {
             _httpClient = new HttpClient(baseUri);
         }
 
-        public BaseClient(Uri baseUri, string apiKey)
+        protected BaseClient(Uri baseUri, string apiKey)
         {
             _httpClient = new HttpClient(baseUri, apiKey);
         }
 
-        public BaseClient(Uri baseUri, string apiKey, bool useHttps)
+        protected BaseClient(Uri baseUri, string apiKey, bool useHttps)
         {
             _httpClient = new HttpClient(baseUri, apiKey, useHttps);
         }
