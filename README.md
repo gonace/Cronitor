@@ -79,6 +79,18 @@ Cronitor.Monitor...
 Cronitor.Notification...
 Cronitor.Telemetry...
 ```
+```c#
+internal class Program
+{
+    private static async Task Main(string[] args)
+    {
+        await Host.CreateDefaultBuilder()
+            .UseCronitor((context) => context.Configuration.GetValue<string>("Cronitor:ApiKey"))
+            .Build()
+            .RunAsync();
+    }
+}
+```
 
 ## Development
 ### TODO
