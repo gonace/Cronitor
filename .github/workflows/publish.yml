@@ -47,4 +47,4 @@ jobs:
         NUGET_KEY: ${{secrets.NUGET_API_KEY}}
         NUSPEC_FILE: Cronitor.nuspec
         PROJECT_FILE_PATH: Cronitor/Cronitor.csproj
-        VERSION_STATIC: "1.2.${{github.run_number}}"
+        VERSION_STATIC: "1.3.${{github.run_number}}"
