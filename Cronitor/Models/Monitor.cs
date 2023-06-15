@@ -225,10 +225,10 @@ namespace Cronitor.Models
             if (expression.Body is MemberExpression memberSelectorExpression)
             {
                 var property = memberSelectorExpression.Member as PropertyInfo;
-                if (property != null)
-                {
-                    property.SetValue(this, value, null);
-                }
+
+                if (property == null) return this;
+
+                property.SetValue(this, value, null);
             }
 
             return this;

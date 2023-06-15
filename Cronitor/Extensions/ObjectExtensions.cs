@@ -28,7 +28,7 @@ namespace Cronitor.Extensions
 
                 if (value != null)
                 {
-                    name = attribute?.PropertyName ?? name.ToLower();
+                    name = attribute?.PropertyName ?? name.ToLower(CultureInfo.CurrentCulture);
                     value = attribute != null && attribute.Lower
                         ? value.ToString()?.ToLower(CultureInfo.CurrentCulture)
                         : value.ToString();
