@@ -1,4 +1,5 @@
-﻿using Cronitor.Constants;
+﻿using Cronitor.Abstractions;
+using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Models;
 using Cronitor.Requests;
@@ -34,7 +35,7 @@ namespace Cronitor
 
 
         public Pageable<Monitor> Find(int page = 1) =>
-            Task.Run(async () => await FindAsync()).Result;
+            Task.Run(async () => await FindAsync(page)).Result;
 
         public async Task<Pageable<Monitor>> FindAsync(int page = 1)
         {

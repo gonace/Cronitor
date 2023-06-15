@@ -27,19 +27,19 @@ namespace Cronitor.Tests.Extensions
 
             Assert.Equal(expected, actual);
         }
-    }
 
-    public class Model
-    {
-        [QueryString]
-        public string Name => "Jane Doe";
-        [QueryString]
-        public int Age => 18;
-        [QueryString("wage")]
-        public decimal Salary => new decimal(25400.99);
-        [QueryString("working", true)]
-        public bool IsWorking => true;
-        [QueryString]
-        public DateTime StartedAt => DateTime.Parse("2019-06-01T08:00:00");
+        private class Model
+        {
+            [QueryString]
+            public string Name => "Jane Doe";
+            [QueryString]
+            public int Age => 18;
+            [QueryString("wage")]
+            public decimal Salary => new decimal(25400.99);
+            [QueryString("working", true)]
+            public bool IsWorking => true;
+            [QueryString]
+            public DateTime StartedAt => DateTime.Parse("2019-06-01T08:00:00");
+        }
     }
 }

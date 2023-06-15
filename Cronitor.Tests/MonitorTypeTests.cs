@@ -29,7 +29,7 @@ namespace Cronitor.Tests
             };
             const string schedule = "every 60 seconds";
             const string timezone = "Europe/Stockholm";
-            const string url = "http://www.google.se";
+            const string url = "https://www.google.se";
 
             var monitor = new Check(MonitorKey, new Request(url, regions))
             {
