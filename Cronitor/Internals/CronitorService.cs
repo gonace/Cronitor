@@ -3,7 +3,7 @@ using System;
 
 namespace Cronitor.Internals
 {
-    public class CronitorService : IDisposable
+    internal class CronitorService : IDisposable
     {
         public MonitorClient MonitorClient;
         public NotificationClient NotificationClient;
