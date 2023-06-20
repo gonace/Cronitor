@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Cronitor.Clients;
+using System;
 
-namespace Cronitor
+namespace Cronitor.Internals
 {
     public class CronitorService : IDisposable
     {

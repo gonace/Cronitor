@@ -4,7 +4,7 @@ using Cronitor.Constants;
 using Cronitor.Internals;
 using System.Threading.Tasks;
 
-namespace Cronitor
+namespace Cronitor.Clients
 {
     public class TelemetryClient : BaseClient
     {

@@ -1,4 +1,5 @@
-﻿using Cronitor.Models;
+﻿using Cronitor.Clients;
+using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Requests.Notifications;
 using Cronitor.Tests.Helpers;

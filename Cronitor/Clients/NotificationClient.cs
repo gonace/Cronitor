@@ -6,7 +6,7 @@ using Cronitor.Requests;
 using Cronitor.Requests.Notifications;
 using System.Threading.Tasks;
 
-namespace Cronitor
+namespace Cronitor.Clients
 {
     public class NotificationClient : BaseClient
     {

@@ -1,4 +1,7 @@
-﻿namespace Cronitor
+﻿using Cronitor.Clients;
+using Cronitor.Internals;
+
+namespace Cronitor
 {
     public static class Cronitor
     {
