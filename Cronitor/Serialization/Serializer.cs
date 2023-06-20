@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
 
-namespace Cronitor
+namespace Cronitor.Serialization
 {
     public static class Serializer
     {
