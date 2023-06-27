@@ -14,7 +14,7 @@ namespace Cronitor.Extensions
             var objType = obj.GetType();
 
             var props = objType.GetProperties()
-                .Where(p => Attribute.IsDefined(p, typeof(QueryStringAttribute)) && (p.GetValue(obj, null) != null))
+                .Where(p => Attribute.IsDefined(p, typeof(QueryStringPropertyAttribute)) && (p.GetValue(obj, null) != null))
                 .ToList();
 
             if (props.Any())
@@ -24,7 +24,7 @@ namespace Cronitor.Extensions
             {
                 var name = prop.Name;
                 var value = prop.GetValue(obj, null);
-                var attribute = (QueryStringAttribute)Attribute.GetCustomAttribute(prop, typeof(QueryStringAttribute));
+                var attribute = (QueryStringPropertyAttribute)Attribute.GetCustomAttribute(prop, typeof(QueryStringPropertyAttribute));
 
                 if (value != null)
                 {

@@ -23,17 +23,17 @@ namespace Cronitor.Commands
         /// Use this for monitors that are running in multiple environments
         /// (e.g. staging and production). Alerting can be configured per environment.
         /// </summary>
-        [QueryString("env")]
+        [QueryStringProperty("env")]
         public string Environment { get; set; }
         /// <summary>
         /// The hostname of the server sending the telemetry event.
         /// </summary>
-        [QueryString("host")]
+        [QueryStringProperty("host")]
         public string Host { get; set; }
         /// <summary>
         /// A url-encoded message of up to 2000 characters.
         /// </summary>
-        [QueryString("message")]
+        [QueryStringProperty("message")]
         public string Message { get; private set; }
         /// <summary>
         /// Performance related metrics. Must be one of:
@@ -41,19 +41,19 @@ namespace Cronitor.Commands
         ///     duration:* - the duration of the job/task being monitored.
         ///     error_count:* - the number of errors that occurred
         /// </summary>
-        [QueryString("metric")]
+        [QueryStringProperty("metric")]
         public string Metric { get; set; }
         /// <summary>
         /// A unique user-supplied ID to collate related pings, i.e. matching state=run and
         /// state=complete|fail to one another. If a job is pinging very frequently
         /// (every 2-3s or faster), it will greatly improve matching accuracy.
         /// </summary>
-        [QueryString("series")]
+        [QueryStringProperty("series")]
         public string Series { get; set; }
         /// <summary>
         /// Exit code returned from a background job.
         /// </summary>
-        [QueryString("status_code")]
+        [QueryStringProperty("status_code")]
         public string Status { get; set; }
 
 
