@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using Cronitor.Serialization;
 
 namespace Cronitor.Requests.Monitor
 {
