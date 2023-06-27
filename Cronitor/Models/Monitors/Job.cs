@@ -17,15 +17,5 @@ namespace Cronitor.Models.Monitors
             : base(key)
         {
         }
-
-        //public static explicit operator Job(Monitor monitor)
-        //{
-        //    return new Job(monitor.Key)
-        //    {
-        //        AlertInterval = monitor.AlertInterval,
-        //        Assertions = monitor.Assertions,
-        //        Name = monitor.Name
-        //    };
-        //}
     }
 }

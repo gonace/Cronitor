@@ -6,34 +6,49 @@ using System.Threading.Tasks;
 
 namespace Cronitor.Clients
 {
-    public class TelemetryClient : BaseClient
+    public interface ITelemetriesClient
+    {
+        void Run(string monitorKey, string message = null, string environment = null);
+        Task RunAsync(string monitorKey, string message = null, string environment = null);
+        void Complete(string monitorKey, string message = null, string environment = null);
+        Task CompleteAsync(string monitorKey, string message = null, string environment = null);
+        void Fail(string monitorKey, string message = null, string environment = null);
+        Task FailAsync(string monitorKey, string message = null, string environment = null);
+        void Tick(string monitorKey, string message = null, string environment = null);
+        Task TickAsync(string monitorKey, string message = null, string environment = null);
+        void Ping(Command command);
+        Task PingAsync(Command command);
+    }
+
+    public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClient
+
     {
         private readonly string _apiKey;
 
-        public TelemetryClient()
+        public TelemetriesClient()
             : base(Urls.PrimaryBaseUrl)
         {
         }
 
-        public TelemetryClient(string apiKey)
+        public TelemetriesClient(string apiKey)
             : base(Urls.PrimaryBaseUrl, apiKey)
         {
             _apiKey = apiKey;
         }
 
-        public TelemetryClient(string apiKey, bool useHttps)
+        public TelemetriesClient(string apiKey, bool useHttps)
             : base(Urls.PrimaryBaseUrl, apiKey, useHttps)
         {
             _apiKey = apiKey;
         }
 
-        internal TelemetryClient(string apiKey, HttpClient client)
+        internal TelemetriesClient(string apiKey, HttpClient client)
             : base(client)
         {
             _apiKey = apiKey;
         }
 
-        internal TelemetryClient(HttpClient client)
+        internal TelemetriesClient(HttpClient client)
             : base(client)
         {
         }

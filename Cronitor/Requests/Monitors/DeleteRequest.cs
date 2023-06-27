@@ -1,16 +1,18 @@
-﻿using Cronitor.Extensions;
+﻿using Cronitor.Abstractions;
+using Cronitor.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 
-namespace Cronitor.Requests.Monitor
+namespace Cronitor.Requests.Monitors
 {
-    public class UnpauseRequest : Request
+    public class DeleteRequest : Request
     {
-        public sealed override string Endpoint { get; set; } = "monitors/:key/pause/:duration";
+        public override string Endpoint { get; set; } = "monitors/:key";
+        public override HttpMethod Method => HttpMethod.Delete;
         public string MonitorKey { get; set; }
-        public int Duration { get; set; } = 0;
 
-        public UnpauseRequest(string monitorKey)
+        public DeleteRequest(string monitorKey)
         {
             MonitorKey = monitorKey;
         }
@@ -20,7 +22,6 @@ namespace Cronitor.Requests.Monitor
             var dictionary = new Dictionary<string, string>
             {
                 { ":key", MonitorKey },
-                { ":duration", Duration.ToString() }
             };
 
             return base.ToUri().Build(dictionary);

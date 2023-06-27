@@ -1,6 +1,8 @@
-﻿namespace Cronitor.Requests.Notifications
+﻿using Cronitor.Abstractions;
+
+namespace Cronitor.Requests.Notifications
 {
-    public class FindRequest : Request
+    public class ListRequest : Request
     {
         public override string Endpoint { get; set; } = "templates";
         public int Page { get; set; } = 1;

@@ -16,88 +16,67 @@ You can download the cronitor client nuget.
 [https://www.nuget.org/packages/Cronitor](https://www.nuget.org/packages/Cronitor)
 
 ## Usage
-> For the full documentation please read our [wiki](https://github.com/gonace/cronitor-net/wiki), [telemetry wiki](https://github.com/gonace/cronitor-net/wiki/Telemetry)!
+> For the full documentation please read our [wiki](https://github.com/gonace/Cronitor/wiki), [telemetry wiki](https://github.com/gonace/Cronitor/wiki/Telemetry)!
 
+### Simple
+> If you're using .NET (former .NET Core) and utilizing the default hosting and startup pattern (`Microsoft.Extensions.Hosting`) you use [`Cronitor.Extensions.Hosting`](https://github.com/gonace/Cronitor.Extensions.Hosting).
+
+The easiest way to use the client is to run `.Configure()`, this will create a static instance (`Cronitor`) of the client that can be used throughout your application.
+
+#### Examples
 ```c#
+using Cronitor.Models;
+using Cronitor.Requests;
+
+Cronitor.Configure("apiKey")
+
+var monitor = new Monitor();
+var request = new CreateRequest(monitor);
+var response = Cronitor.Monitors.Create(request);
+```
+
+### Advanced
+If you only need access to one (or a few) clients you're able to configure each client individually.
+
+#### Examples
+```c#
+using Cronitor.Models;
+using Cronitor.Requests;
+
 public class SomeClass
 {
-    private readonly TelemetryClient _client;
+    private readonly ITelemetriesClient _client;
 
     public SomeClass()
     {
-        _client = new TelemetryClient("apiKey");
+        _client = new TelemetriesClient("apiKey");
     }
 
-    public void SomeMethod()
+    public Monitor Create()
     {
-        # Begin / ping a monitor
-        _client.Run("monitorKey");
-        # Begin / ping a monitor asynchronous
-        await _client.RunAsync("monitorKey");
+        var monitor = new Monitor();
+        var request = new CreateRequest(monitor);
+        var response = Cronitor.Monitors.Create(request);
 
-
-        # Complete a monitor
-        _client.Complete("monitorKey");
-        # Complete a monitor asynchronous
-        await _client.CompleteAsync("monitorKey");
-        
-
-        # Complete a monitor
-        _client.Fail("monitorKey");
-        # Complete a monitor asynchronous
-        await _client.FailAsync("monitorKey");
-
-
-        # Tick a monitor
-        _client.Tick("monitorKey");
-        # Tick a monitor asynchronous
-        await _client.TickAsync("monitorKey");
+        return response;
     }
-}
-```
-```c#
-using (var client = new TelemetryClient("apiKey"))
-{
-    try
-    {
-        client.Run("monitorKey");
 
-        // Code here
-
-        client.Complete("monitorKey");
-    }
-    catch (Exception)
+    public async Task<Monitor> CreateAsync()
     {
-        client.Fail("monitorKey");
-    }
-}
-```
-```c#
-Cronitor.Cronitor.Configure("apiKey")
+        var monitor = new Monitor();
+        var request = new CreateRequest(monitor);
+        var response = await Cronitor.Monitors.CreateAsync(request);
 
-Cronitor.Monitor...
-Cronitor.Notification...
-Cronitor.Telemetry...
-```
-```c#
-internal class Program
-{
-    private static async Task Main(string[] args)
-    {
-        await Host.CreateDefaultBuilder()
-            .UseCronitor((context) => context.Configuration.GetValue<string>("Cronitor:ApiKey"))
-            .Build()
-            .RunAsync();
+        return resposne;
     }
 }
 ```
 
 ## Development
 ### TODO
-* Implement timezone constant (if not too big of a hassle to maintain)
+* Implement Timezone constant (if not too big of a hassle to maintain)
 * Implement cron expression-language (if found as needed?)
 * Implement cronitor `assertions`-language
-* Write tests for each client
 
 ## Contributing
 Pull requests and features are happily considered! By participating in this project you agree to abide by the [Code of Conduct](http://contributor-covenant.org/version/2/0).
@@ -106,6 +85,6 @@ Pull requests and features are happily considered! By participating in this proj
 
 Fork, then clone the repo:
 ```
-git clone git@github.com:your-username/cronitor-net.git
+git clone git@github.com:your-username/Cronitor.git
 ```
-Push to your fork and [submit a pull request](https://github.com/gonace/cronitor-net/compare/)
+Push to your fork and [submit a pull request](https://github.com/gonace/Cronitor/compare/)

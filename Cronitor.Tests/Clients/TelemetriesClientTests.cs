@@ -6,17 +6,17 @@ using Moq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cronitor.Tests
+namespace Cronitor.Tests.Clients
 {
-    public class TelemetryClientTests : BaseTest
+    public class TelemetriesClientTests : BaseTest
     {
         private readonly Mock<HttpClient> _httpClient;
-        private readonly TelemetryClient _client;
+        private readonly TelemetriesClient _client;
 
-        public TelemetryClientTests()
+        public TelemetriesClientTests()
         {
             _httpClient = new Mock<HttpClient>();
-            _client = new TelemetryClient(ApiKey, _httpClient.Object);
+            _client = new TelemetriesClient(ApiKey, _httpClient.Object);
         }
 
 
@@ -809,7 +809,7 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteDisposableBlock()
         {
-            using (var client = new TelemetryClient(ApiKey, _httpClient.Object))
+            using (var client = new TelemetriesClient(ApiKey, _httpClient.Object))
             {
                 var command = new RunCommand()
                     .WithApiKey(ApiKey)

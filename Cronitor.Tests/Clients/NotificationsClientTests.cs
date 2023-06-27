@@ -1,7 +1,7 @@
 ﻿using Cronitor.Clients;
 using Cronitor.Models;
-using Cronitor.Requests;
 using Cronitor.Requests.Notifications;
+using Cronitor.Responses.Notifications;
 using Cronitor.Tests.Helpers;
 using Moq;
 using System;
@@ -10,38 +10,38 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cronitor.Tests
+namespace Cronitor.Tests.Clients
 {
-    public class NotificationClientTests : BaseTest
+    public class NotificationsClientTests : BaseTest
     {
         private readonly Mock<Internals.HttpClient> _httpClient;
-        private readonly NotificationClient _client;
+        private readonly NotificationsClient _client;
 
-        public NotificationClientTests()
+        public NotificationsClientTests()
         {
             _httpClient = new Mock<Internals.HttpClient>();
-            _client = new NotificationClient(_httpClient.Object);
+            _client = new NotificationsClient(_httpClient.Object);
         }
 
         [Fact]
-        public void ShouldExecuteFindMethod()
+        public void ShouldExecuteListMethod()
         {
-            var response = new Pageable<Template> { Result = new List<Template> { Template } };
+            var response = new ListResponse { Data = new List<Template> { Template } };
 
             // Setup
-            _httpClient.Setup(x => x.SendAsync<Pageable<Template>>(It.IsAny<FindRequest>())).Returns(Task.FromResult(response));
+            _httpClient.Setup(x => x.SendAsync<ListResponse>(It.IsAny<ListRequest>())).Returns(Task.FromResult(response));
 
             // Run
-            var result = _client.Find();
+            var result = _client.List();
 
             // Assert
             Assert.NotNull(result);
-            Assert.NotEmpty(result.Result);
+            Assert.NotEmpty(result.Data);
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
 
             // Verify
-            _httpClient.Verify(x => x.SendAsync<Pageable<Template>>(It.Is<FindRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<ListResponse>(It.Is<ListRequest>(c =>
                 c.Page == 1 &&
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "templates")), Times.Once);
@@ -49,24 +49,24 @@ namespace Cronitor.Tests
         }
 
         [Fact]
-        public async Task ShouldExecuteFindAsyncMethod()
+        public async Task ShouldExecuteListAsyncMethod()
         {
-            var response = new Pageable<Template> { Result = new List<Template> { Template } };
+            var response = new ListResponse { Data = new List<Template> { Template } };
 
             // Setup
-            _httpClient.Setup(x => x.SendAsync<Pageable<Template>>(It.IsAny<FindRequest>())).Returns(Task.FromResult(response));
+            _httpClient.Setup(x => x.SendAsync<ListResponse>(It.IsAny<ListRequest>())).Returns(Task.FromResult(response));
 
             // Run
-            var result = await _client.FindAsync();
+            var result = await _client.ListAsync();
 
             // Assert
             Assert.NotNull(result);
-            Assert.NotEmpty(result.Result);
+            Assert.NotEmpty(result.Data);
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
 
             // Verify
-            _httpClient.Verify(x => x.SendAsync<Pageable<Template>>(It.Is<FindRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<ListResponse>(It.Is<ListRequest>(c =>
                 c.Page == 1 &&
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "templates")), Times.Once);

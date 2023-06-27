@@ -1,15 +1,17 @@
-﻿using Cronitor.Extensions;
+﻿using Cronitor.Abstractions;
+using Cronitor.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace Cronitor.Requests.Monitor
+namespace Cronitor.Requests.Monitors
 {
-    public class GetRequest : Request
+    public class UnpauseRequest : Request
     {
-        public override string Endpoint { get; set; } = "monitors/:key";
+        public sealed override string Endpoint { get; set; } = "monitors/:key/pause/:duration";
         public string MonitorKey { get; set; }
+        public int Duration { get; set; } = 0;
 
-        public GetRequest(string monitorKey)
+        public UnpauseRequest(string monitorKey)
         {
             MonitorKey = monitorKey;
         }
@@ -19,6 +21,7 @@ namespace Cronitor.Requests.Monitor
             var dictionary = new Dictionary<string, string>
             {
                 { ":key", MonitorKey },
+                { ":duration", Duration.ToString() }
             };
 
             return base.ToUri().Build(dictionary);

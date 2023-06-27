@@ -1,8 +1,9 @@
-﻿using Cronitor.Extensions;
+﻿using Cronitor.Abstractions;
+using Cronitor.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace Cronitor.Requests.Monitor
+namespace Cronitor.Requests.Monitors
 {
     public class GetAlertsRequest : Request
     {

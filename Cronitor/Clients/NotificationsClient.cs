@@ -2,42 +2,55 @@
 using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Models;
-using Cronitor.Requests;
 using Cronitor.Requests.Notifications;
+using Cronitor.Responses.Notifications;
 using System.Threading.Tasks;
 
 namespace Cronitor.Clients
 {
-    public class NotificationClient : BaseClient
+    public interface INotificationsClient
     {
-        public NotificationClient()
+        ListResponse List();
+        Task<ListResponse> ListAsync();
+        Template Get(string name);
+        Template Create(CreateRequest request);
+        Task<Template> CreateAsync(CreateRequest request);
+        Template Update(UpdateRequest request);
+        Task<Template> UpdateAsync(UpdateRequest request);
+        void Delete(string key);
+        Task DeleteAsync(string key);
+    }
+
+    public class NotificationsClient : BaseClient<NotificationsClient>, INotificationsClient
+    {
+        public NotificationsClient()
             : base(Urls.ApiUrl)
         {
         }
 
-        public NotificationClient(string apiKey)
+        public NotificationsClient(string apiKey)
             : base(Urls.ApiUrl, apiKey)
         {
         }
 
-        public NotificationClient(string apiKey, bool useHttps)
+        public NotificationsClient(string apiKey, bool useHttps)
             : base(Urls.ApiUrl, apiKey, useHttps)
         {
         }
 
-        internal NotificationClient(HttpClient client)
+        internal NotificationsClient(HttpClient client)
             : base(client)
         {
         }
 
 
-        public Pageable<Template> Find() =>
-            Task.Run(async () => await FindAsync()).Result;
+        public ListResponse List() =>
+            Task.Run(async () => await ListAsync()).Result;
 
-        public async Task<Pageable<Template>> FindAsync()
+        public async Task<ListResponse> ListAsync()
         {
-            var request = new FindRequest();
-            var response = await SendAsync<Pageable<Template>>(request);
+            var request = new ListRequest();
+            var response = await SendAsync<ListResponse>(request);
 
             return response;
         }

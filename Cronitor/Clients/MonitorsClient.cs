@@ -2,49 +2,73 @@
 using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Models;
-using Cronitor.Requests;
-using Cronitor.Requests.Monitor;
-using Cronitor.Responses.Monitor;
+using Cronitor.Requests.Monitors;
+using Cronitor.Responses.Monitors;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
 namespace Cronitor.Clients
 {
-    public class MonitorClient : BaseClient
+    public interface IMonitorsClient
     {
-        public MonitorClient()
+        ListResponse List(int page = 1);
+        Task<ListResponse> ListAsync(int page = 1);
+        Monitor Get(string key);
+        Task<Monitor> GetAsync(string key);
+        IEnumerable<Monitor> Create(CreateRequest request);
+        Task<IEnumerable<Monitor>> CreateAsync(CreateRequest request);
+        IEnumerable<Monitor> Update(UpdateRequest request);
+        Task<IEnumerable<Monitor>> UpdateAsync(UpdateRequest request);
+        void Delete(string key);
+        Task DeleteAsync(string key);
+        void Pause(string key, int? hours = null);
+        Task PauseAsync(string key, int? hours = null);
+        void Unpause(string key);
+        Task UnpauseAsync(string key);
+
+        IEnumerable<Activity> Activities(string key);
+        Task<IEnumerable<Activity>> ActivitiesAsync(string key);
+        IEnumerable<Alert> Alerts(string key);
+        Task<IEnumerable<Alert>> AlertsAsync(string key);
+        IEnumerable<Ping> Pings(string key);
+        Task<IEnumerable<Ping>> PingsAsync(string key);
+    }
+
+    public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
+    {
+        public MonitorsClient()
             : base(Urls.ApiUrl)
         {
         }
 
-        public MonitorClient(string apiKey)
+        public MonitorsClient(string apiKey)
             : base(Urls.ApiUrl, apiKey)
         {
         }
 
-        public MonitorClient(string apiKey, bool useHttps)
+        public MonitorsClient(string apiKey, bool useHttps)
             : base(Urls.ApiUrl, apiKey, useHttps)
         {
         }
 
-        internal MonitorClient(HttpClient client)
+        internal MonitorsClient(HttpClient client)
             : base(client)
         {
         }
 
 
-        public Pageable<Monitor> Find(int page = 1) =>
-            Task.Run(async () => await FindAsync(page)).Result;
+        public ListResponse List(int page = 1) =>
+            Task.Run(async () => await ListAsync(page)).Result;
 
-        public async Task<Pageable<Monitor>> FindAsync(int page = 1)
+        public async Task<ListResponse> ListAsync(int page = 1)
         {
-            var request = new FindRequest
+            var request = new ListRequest
             {
                 Page = page
             };
 
-            return await SendAsync<Pageable<Monitor>>(request);
+            return await SendAsync<ListResponse>(request);
         }
 
         public Monitor Get(string key) =>

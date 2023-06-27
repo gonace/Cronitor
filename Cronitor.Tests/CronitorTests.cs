@@ -14,7 +14,7 @@ namespace Cronitor.Tests
             // Assert
             Assert.NotNull(Cronitor.Monitor);
             Assert.NotNull(Cronitor.Notification);
-            Assert.NotNull(Cronitor.Telemetry);
+            Assert.NotNull(Cronitor.Telemetries);
         }
     }
 }

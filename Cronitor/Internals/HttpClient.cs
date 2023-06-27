@@ -1,7 +1,7 @@
-﻿using Cronitor.Commands;
+﻿using Cronitor.Abstractions;
+using Cronitor.Commands;
 using Cronitor.Exceptions;
 using Cronitor.Extensions;
-using Cronitor.Requests;
 using Newtonsoft.Json;
 using System;
 using System.Net.Http;

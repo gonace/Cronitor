@@ -1,12 +1,11 @@
 ﻿using Cronitor.Commands;
 using Cronitor.Internals;
-using Cronitor.Requests;
 using System;
 using System.Threading.Tasks;
 
 namespace Cronitor.Abstractions
 {
-    public abstract class BaseClient : IDisposable
+    public abstract class BaseClient<T> : IDisposable
     {
         private readonly HttpClient _httpClient;
 

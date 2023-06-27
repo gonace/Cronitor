@@ -1,4 +1,5 @@
-﻿using Cronitor.Extensions;
+﻿using Cronitor.Abstractions;
+using Cronitor.Extensions;
 using Cronitor.Serialization;
 using System;
 using System.Collections.Generic;

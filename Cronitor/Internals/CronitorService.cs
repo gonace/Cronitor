@@ -5,9 +5,9 @@ namespace Cronitor.Internals
 {
     internal class CronitorService : IDisposable
     {
-        public MonitorClient MonitorClient;
-        public NotificationClient NotificationClient;
-        public TelemetryClient TelemetryClient;
+        public MonitorsClient Monitors;
+        public NotificationsClient Notifications;
+        public TelemetriesClient Telemetries;
 
         /// <summary>
         /// Configures the instance.
@@ -15,16 +15,16 @@ namespace Cronitor.Internals
         /// </summary>
         public void Configure(string key)
         {
-            MonitorClient = new MonitorClient(key);
-            NotificationClient = new NotificationClient(key);
-            TelemetryClient = new TelemetryClient(key);
+            Monitors = new MonitorsClient(key);
+            Notifications = new NotificationsClient(key);
+            Telemetries = new TelemetriesClient(key);
         }
 
         public void Dispose()
         {
-            MonitorClient?.Dispose();
-            NotificationClient?.Dispose();
-            TelemetryClient?.Dispose();
+            Monitors?.Dispose();
+            Notifications?.Dispose();
+            Telemetries?.Dispose();
         }
     }
 }

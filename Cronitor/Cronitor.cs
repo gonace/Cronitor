@@ -16,8 +16,8 @@ namespace Cronitor
             CronitorService.Configure(key);
         }
 
-        public static MonitorClient Monitor => CronitorService.MonitorClient;
-        public static NotificationClient Notification => CronitorService.NotificationClient;
-        public static TelemetryClient Telemetry => CronitorService.TelemetryClient;
+        public static IMonitorsClient Monitor => CronitorService.Monitors;
+        public static INotificationsClient Notification => CronitorService.Notifications;
+        public static ITelemetriesClient Telemetries => CronitorService.Telemetries;
     }
 }

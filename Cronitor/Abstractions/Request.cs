@@ -3,7 +3,7 @@ using Cronitor.Extensions;
 using System;
 using System.Net.Http;
 
-namespace Cronitor.Requests
+namespace Cronitor.Abstractions
 {
     public abstract class Request
     {

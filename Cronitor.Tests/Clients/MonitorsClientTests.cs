@@ -1,9 +1,8 @@
 ﻿using Cronitor.Clients;
 using Cronitor.Models;
 using Cronitor.Models.Monitors;
-using Cronitor.Requests;
-using Cronitor.Requests.Monitor;
-using Cronitor.Responses.Monitor;
+using Cronitor.Requests.Monitors;
+using Cronitor.Responses.Monitors;
 using Cronitor.Tests.Helpers;
 using Moq;
 using System.Collections.Generic;
@@ -12,39 +11,39 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cronitor.Tests
+namespace Cronitor.Tests.Clients
 {
-    public class MonitorClientTests : BaseTest
+    public class MonitorsClientTests : BaseTest
     {
         private readonly Mock<Internals.HttpClient> _httpClient;
-        private readonly MonitorClient _client;
+        private readonly MonitorsClient _client;
 
-        public MonitorClientTests()
+        public MonitorsClientTests()
         {
             _httpClient = new Mock<Internals.HttpClient>();
-            _client = new MonitorClient(_httpClient.Object);
+            _client = new MonitorsClient(_httpClient.Object);
         }
 
         [Fact]
-        public void ShouldExecuteFindMethod()
+        public void ShouldExecuteListMethod()
         {
-            var response = new Pageable<Monitor> { Monitors = new List<Monitor> { Check, Heartbeat, Job } };
+            var response = new ListResponse { Data = new List<Monitor> { Check, Heartbeat, Job } };
 
             // Setup
-            _httpClient.Setup(x => x.SendAsync<Pageable<Monitor>>(It.IsAny<FindRequest>())).Returns(Task.FromResult(response));
+            _httpClient.Setup(x => x.SendAsync<ListResponse>(It.IsAny<ListRequest>())).Returns(Task.FromResult(response));
 
             // Run
-            var result = _client.Find();
+            var result = _client.List();
 
             // Assert
             Assert.NotNull(result);
-            Assert.NotEmpty(result.Result);
-            Assert.Equal(3, result.Result.Count());
+            Assert.NotEmpty(result.Data);
+            Assert.Equal(3, result.Data.Count());
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
 
             // Verify
-            _httpClient.Verify(x => x.SendAsync<Pageable<Monitor>>(It.Is<FindRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<ListResponse>(It.Is<ListRequest>(c =>
                 c.Page == 1 &&
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "monitors")), Times.Once);
@@ -52,25 +51,25 @@ namespace Cronitor.Tests
         }
 
         [Fact]
-        public async Task ShouldExecuteFindAsyncMethod()
+        public async Task ShouldExecuteListAsyncMethod()
         {
-            var response = new Pageable<Monitor> { Monitors = new List<Monitor> { Check, Heartbeat, Job } };
+            var response = new ListResponse { Data = new List<Monitor> { Check, Heartbeat, Job } };
 
             // Setup
-            _httpClient.Setup(x => x.SendAsync<Pageable<Monitor>>(It.IsAny<FindRequest>())).Returns(Task.FromResult(response));
+            _httpClient.Setup(x => x.SendAsync<ListResponse>(It.IsAny<ListRequest>())).Returns(Task.FromResult(response));
 
             // Run
-            var result = await _client.FindAsync();
+            var result = await _client.ListAsync();
 
             // Assert
             Assert.NotNull(result);
-            Assert.NotEmpty(result.Result);
-            Assert.Equal(3, result.Result.Count());
+            Assert.NotEmpty(result.Data);
+            Assert.Equal(3, result.Data.Count());
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
 
             // Verify
-            _httpClient.Verify(x => x.SendAsync<Pageable<Monitor>>(It.Is<FindRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<ListResponse>(It.Is<ListRequest>(c =>
                 c.Page == 1 &&
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "monitors")), Times.Once);

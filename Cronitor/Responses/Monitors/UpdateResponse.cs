@@ -1,4 +1,4 @@
-﻿namespace Cronitor.Responses.Monitor
+﻿namespace Cronitor.Responses.Monitors
 {
     public class UpdateResponse : CreateResponse
     {
