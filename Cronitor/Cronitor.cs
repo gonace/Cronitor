@@ -7,6 +7,8 @@ namespace Cronitor
     {
         private static readonly CronitorService CronitorService = new CronitorService();
 
+        public static bool IsConfigured { get; private set; }
+
         /// <summary>
         /// Configures the instance.
         /// Must be called before any other methods.
@@ -14,6 +16,7 @@ namespace Cronitor
         public static void Configure(string key)
         {
             CronitorService.Configure(key);
+            IsConfigured = true;
         }
 
         public static IMonitorsClient Monitor => CronitorService.Monitors;

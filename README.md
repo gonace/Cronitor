@@ -73,10 +73,11 @@ public class SomeClass
 ```
 
 ## Development
-### TODO
+### Suggestions
+* Add support for Quartz.NET Jobs
 * Implement Timezone constant (if not too big of a hassle to maintain)
 * Implement cron expression-language (if found as needed?)
-* Implement cronitor `assertions`-language
+* Implement Cronitor `assertions`-language (if found as needed?)
 
 ## Contributing
 Pull requests and features are happily considered! By participating in this project you agree to abide by the [Code of Conduct](http://contributor-covenant.org/version/2/0).
