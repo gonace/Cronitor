@@ -18,11 +18,26 @@ You can download the cronitor client nuget.
 ## Usage
 > For the full documentation please read our [wiki](https://github.com/gonace/Cronitor/wiki), [telemetry wiki](https://github.com/gonace/Cronitor/wiki/Telemetry)!
 
-### Simple
+### NET Generic Host
 > If you're using .NET (former .NET Core) and utilizing the default hosting and startup pattern (`Microsoft.Extensions.Hosting`) you use [`Cronitor.Extensions.Hosting`](https://github.com/gonace/Cronitor.Extensions.Hosting).
+>
+> The easiest way to use the client is to run `.Configure()`, this will create a static instance (`Cronitor`) of the client that can be used throughout your application.
 
-The easiest way to use the client is to run `.Configure()`, this will create a static instance (`Cronitor`) of the client that can be used throughout your application.
+#### Examples
+```c#
+await Host.CreateDefaultBuilder()
+    .UseCronitor("apiKey")
+    .Build()
+    .RunAsync();
+```
+```c#
+await Host.CreateDefaultBuilder()
+    .UseCronitor((context) => context.Configuration.GetValue<string>("Cronitor:ApiKey"))
+    .Build()
+    .RunAsync();
+```
 
+### Simple
 #### Examples
 ```c#
 using Cronitor.Models;
