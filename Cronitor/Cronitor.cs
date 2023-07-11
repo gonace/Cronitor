@@ -1,11 +1,12 @@
 ﻿using Cronitor.Clients;
+using Cronitor.Exceptions;
 using Cronitor.Internals;
 
 namespace Cronitor
 {
     public static class Cronitor
     {
-        private static readonly CronitorService CronitorService = new CronitorService();
+        private static readonly Service Service = new Service();
 
         public static bool IsConfigured { get; private set; }
 
@@ -15,12 +16,41 @@ namespace Cronitor
         /// </summary>
         public static void Configure(string key)
         {
-            CronitorService.Configure(key);
+            Service.Configure(key);
             IsConfigured = true;
         }
 
-        public static IMonitorsClient Monitor => CronitorService.Monitors;
-        public static INotificationsClient Notification => CronitorService.Notifications;
-        public static ITelemetriesClient Telemetries => CronitorService.Telemetries;
+        public static IMonitorsClient Monitor
+        {
+            get
+            {
+                if (!IsConfigured || Service.Monitors == null)
+                    throw new NotConfiguredException();
+
+                return Service.Monitors;
+            }
+        }
+
+        public static INotificationsClient Notification
+        {
+            get
+            {
+                if (!IsConfigured || Service.Notifications == null)
+                    throw new NotConfiguredException();
+
+                return Service.Notifications;
+            }
+        }
+
+        public static ITelemetriesClient Telemetries
+        {
+            get
+            {
+                if (!IsConfigured || Service.Telemetries == null)
+                    throw new NotConfiguredException();
+
+                return Service.Telemetries;
+            }
+        }
     }
 }
