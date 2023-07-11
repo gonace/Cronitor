@@ -9,19 +9,15 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+    - uses: actions/setup-dotnet@v3
       with:
         dotnet-version: |
           7.0.x
           6.0.x
           3.1.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build --no-restore --configuration Release
-    - name: Test
-      run: dotnet test --no-build --configuration Release --verbosity normal
+    - run: dotnet restore
+    - run: dotnet build --no-restore --configuration Release
+    - run: dotnet test --no-build --configuration Release --verbosity normal
 
   publish:
     runs-on: ubuntu-latest
