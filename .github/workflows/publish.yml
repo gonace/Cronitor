@@ -1,4 +1,4 @@
-name: Publish
+﻿name: Publish
 
 on:
   workflow_dispatch: {}
@@ -25,23 +25,13 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
-    needs: tests
 
     steps:
     - uses: actions/checkout@v3
-    - name: Setup .NET
-      uses: actions/setup-dotnet@v3
+    - uses: actions/setup-dotnet@v3
       with:
         dotnet-version: 6.0.x
-    - name: Restore dependencies
-      run: dotnet restore
-    - name: Build
-      run: dotnet build Cronitor/Cronitor.csproj --no-restore --configuration Release
-    - name: Publish
-      uses: laget-se/publish-nuget@v2.7.2
-      with:
-        INCLUDE_SYMBOLS: true
-        NUGET_KEY: ${{secrets.NUGET_API_KEY}}
-        NUSPEC_FILE: Cronitor.nuspec
-        PROJECT_FILE_PATH: Cronitor/Cronitor.csproj
-        VERSION_STATIC: "1.3.${{github.run_number}}"
+    - run: dotnet restore
+    - run: dotnet build --configuration Release Cronitor/Cronitor.csproj
+    - run: dotnet pack --configuration Release Cronitor/Cronitor.csproj --no-build -p:Version=${{vars.VERSION}}.${{github.run_number}}-alpha -p:PackageVersion=${{vars.VERSION}}.${{github.run_number}}-alpha -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:NuspecFile=Cronitor.nuspec
+    - run: dotnet nuget push Cronitor/bin/Release/Cronitor.${{vars.VERSION}}.${{github.run_number}}-alpha.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate
