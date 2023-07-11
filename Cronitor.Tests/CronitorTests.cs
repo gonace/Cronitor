@@ -13,9 +13,9 @@ namespace Cronitor.Tests
             Cronitor.Configure(ApiKey);
 
             // Assert
-            Assert.True(Cronitor.IsConfigured);
-            Assert.NotNull(Cronitor.Monitor);
-            Assert.NotNull(Cronitor.Notification);
+            Assert.True(Cronitor.Configured);
+            Assert.NotNull(Cronitor.Monitors);
+            Assert.NotNull(Cronitor.Notifications);
             Assert.NotNull(Cronitor.Telemetries);
         }
 
@@ -23,9 +23,9 @@ namespace Cronitor.Tests
         public void ShouldThrowExceptionIfNotConfigured()
         {
             // Assert
-            Assert.False(Cronitor.IsConfigured);
-            Assert.Throws<NotConfiguredException>(() => Cronitor.Monitor);
-            Assert.Throws<NotConfiguredException>(() => Cronitor.Notification);
+            Assert.False(Cronitor.Configured);
+            Assert.Throws<NotConfiguredException>(() => Cronitor.Monitors);
+            Assert.Throws<NotConfiguredException>(() => Cronitor.Notifications);
             Assert.Throws<NotConfiguredException>(() => Cronitor.Telemetries);
         }
     }

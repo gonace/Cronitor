@@ -17,7 +17,7 @@ namespace Cronitor
             Service.Configure(key);
         }
 
-        public static IMonitorsClient Monitor
+        public static IMonitorsClient Monitors
         {
             get
             {
@@ -28,7 +28,7 @@ namespace Cronitor
             }
         }
 
-        public static INotificationsClient Notification
+        public static INotificationsClient Notifications
         {
             get
             {
@@ -50,10 +50,10 @@ namespace Cronitor
             }
         }
 
-        public static bool IsConfigured =>
-            Monitor != null &&
-            Notification != null &&
-            Telemetries != null;
+        public static bool Configured =>
+            Service.Monitors != null &&
+            Service.Notifications != null &&
+            Service.Telemetries != null;
 
         public static void Dispose()
         {
