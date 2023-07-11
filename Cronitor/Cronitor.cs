@@ -8,8 +8,6 @@ namespace Cronitor
     {
         private static readonly Service Service = new Service();
 
-        public static bool IsConfigured { get; private set; }
-
         /// <summary>
         /// Configures the instance.
         /// Must be called before any other methods.
@@ -17,14 +15,13 @@ namespace Cronitor
         public static void Configure(string key)
         {
             Service.Configure(key);
-            IsConfigured = true;
         }
 
         public static IMonitorsClient Monitor
         {
             get
             {
-                if (!IsConfigured || Service.Monitors == null)
+                if (Service.Monitors == null)
                     throw new NotConfiguredException();
 
                 return Service.Monitors;
@@ -35,7 +32,7 @@ namespace Cronitor
         {
             get
             {
-                if (!IsConfigured || Service.Notifications == null)
+                if (Service.Notifications == null)
                     throw new NotConfiguredException();
 
                 return Service.Notifications;
@@ -46,11 +43,21 @@ namespace Cronitor
         {
             get
             {
-                if (!IsConfigured || Service.Telemetries == null)
+                if (Service.Telemetries == null)
                     throw new NotConfiguredException();
 
                 return Service.Telemetries;
             }
+        }
+
+        public static bool IsConfigured =>
+            Monitor != null &&
+            Notification != null &&
+            Telemetries != null;
+
+        public static void Dispose()
+        {
+            Service.Dispose();
         }
     }
 }

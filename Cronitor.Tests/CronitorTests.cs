@@ -13,6 +13,7 @@ namespace Cronitor.Tests
             Cronitor.Configure(ApiKey);
 
             // Assert
+            Assert.True(Cronitor.IsConfigured);
             Assert.NotNull(Cronitor.Monitor);
             Assert.NotNull(Cronitor.Notification);
             Assert.NotNull(Cronitor.Telemetries);
