@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Cronitor.Requests.Notifications
 {
-    public class GetRequest : Request
+    public class GetRequest : BaseRequest
     {
         public override string Endpoint { get; set; } = "templates/:key";
         public string Key { get; set; }

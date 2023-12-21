@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Cronitor.Responses.Notifications
 {
-    public class ListResponse : Response<Template>
+    public class ListResponse : BaseResponse<Template>
     {
         [JsonProperty("templates")]
         public override IEnumerable<Template> Data { get; set; }

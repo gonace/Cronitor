@@ -6,7 +6,7 @@ using System.Text;
 
 namespace Cronitor.Requests.Monitors
 {
-    public class UpdateRequest : Request
+    public class UpdateRequest : BaseRequest
     {
         public override string Endpoint { get; set; } = "monitors";
         public override HttpMethod Method => HttpMethod.Put;

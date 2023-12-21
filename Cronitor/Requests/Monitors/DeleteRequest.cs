@@ -6,7 +6,7 @@ using System.Net.Http;
 
 namespace Cronitor.Requests.Monitors
 {
-    public class DeleteRequest : Request
+    public class DeleteRequest : BaseRequest
     {
         public override string Endpoint { get; set; } = "monitors/:key";
         public override HttpMethod Method => HttpMethod.Delete;

@@ -41,12 +41,12 @@ namespace Cronitor.Abstractions
             await _httpClient.SendAsync(command);
         }
 
-        public TResponse Send<TResponse>(Request request)
+        public TResponse Send<TResponse>(BaseRequest request)
         {
             return Task.Run(async () => await SendAsync<TResponse>(request)).Result;
         }
 
-        public async Task<TResponse> SendAsync<TResponse>(Request request)
+        public async Task<TResponse> SendAsync<TResponse>(BaseRequest request)
         {
             return await _httpClient.SendAsync<TResponse>(request);
         }

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Cronitor.Requests.Monitors
 {
-    public class GetPingsRequest : Request
+    public class GetPingsRequest : BaseRequest
     {
         public override string Endpoint { get; set; } = "monitors/:key/pings";
         public string MonitorKey { get; set; }

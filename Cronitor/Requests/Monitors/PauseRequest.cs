@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Cronitor.Requests.Monitors
 {
-    public class PauseRequest : Request
+    public class PauseRequest : BaseRequest
     {
         public sealed override string Endpoint { get; set; } = "monitors/:key/pause";
         public string MonitorKey { get; set; }

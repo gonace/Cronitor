@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Cronitor.Requests.Notifications
 {
-    public class CreateRequest : Request
+    public class CreateRequest : BaseRequest
     {
         public override string Endpoint { get; set; } = "templates";
         public override HttpMethod Method => HttpMethod.Post;

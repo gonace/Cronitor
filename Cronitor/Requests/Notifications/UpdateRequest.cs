@@ -8,7 +8,7 @@ using System.Text;
 
 namespace Cronitor.Requests.Notifications
 {
-    public class UpdateRequest : Request
+    public class UpdateRequest : BaseRequest
     {
         public override string Endpoint { get; set; } = "templates/:key";
         public override HttpMethod Method => HttpMethod.Put;

@@ -5,7 +5,7 @@ using System.Collections.Generic;
 
 namespace Cronitor.Responses.Monitors
 {
-    public class ListResponse : Response<Monitor>
+    public class ListResponse : BaseResponse<Monitor>
     {
         [JsonProperty("monitors")]
         public override IEnumerable<Monitor> Data { get; set; }

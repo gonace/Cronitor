@@ -49,7 +49,7 @@ namespace Cronitor.Internals
             }
         }
 
-        public virtual async Task SendAsync(Request request)
+        public virtual async Task SendAsync(BaseRequest request)
         {
             using (var httpClient = GetHttpClient())
             {
@@ -67,7 +67,7 @@ namespace Cronitor.Internals
             }
         }
 
-        public virtual async Task<TReturn> SendAsync<TReturn>(Request request)
+        public virtual async Task<TReturn> SendAsync<TReturn>(BaseRequest request)
         {
             using (var httpClient = GetHttpClient())
             {
