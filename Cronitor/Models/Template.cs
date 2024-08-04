@@ -1,6 +1,6 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Cronitor.Models
 {
@@ -10,17 +10,17 @@ namespace Cronitor.Models
         /// The unique identifier for this list.
         /// May contain letters, numbers, dashes, and underscores.
         /// </summary>
-        [JsonProperty("key")]
+        [JsonPropertyName("key")]
         public string Key { get; set; }
         /// <summary>
         /// The name of your Notification List
         /// </summary>
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
         /// <summary>
         /// A list of monitors attached to this Notification List.
         /// </summary>
-        [JsonProperty("monitors")]
+        [JsonPropertyName("monitors")]
         public IEnumerable<string> Monitors { get; set; }
         /// <summary>
         /// Where/how you wish to be contacted when alerting is triggered.
@@ -29,19 +29,19 @@ namespace Cronitor.Models
         /// use and extend multiple notification lists. This gives you flexibility to create
         /// focused Notification List that can be composed into your desired notification strategies.
         /// </summary>
-        [JsonProperty("notifications")]
+        [JsonPropertyName("notifications")]
         public Notifications Notifications { get; set; }
         /// <summary>
         /// A plain text status description of this monitor
         /// </summary>
-        [JsonProperty("status")]
+        [JsonPropertyName("status")]
         public string Status { get; set; }
 
         /// <summary>
         /// ISO formatted string of when the Notification
         /// List was created
         /// </summary>
-        [JsonProperty("created")]
+        [JsonPropertyName("created")]
         public DateTime CreatedAt { get; set; }
     }
 }

@@ -1,13 +1,13 @@
 ﻿using Cronitor.Abstractions;
 using Cronitor.Models;
-using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Cronitor.Responses.Monitors
 {
     public class ListResponse : BaseResponse<Monitor>
     {
-        [JsonProperty("monitors")]
-        public override IEnumerable<Monitor> Data { get; set; }
+        [JsonPropertyName("monitors")]
+        public override IEnumerable<Monitor> Items { get; set; }
     }
 }

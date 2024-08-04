@@ -139,7 +139,7 @@ namespace Cronitor.Clients
 
         public async Task<IEnumerable<Activity>> ActivitiesAsync(string key)
         {
-            var request = new GetActivitiesRequest(key);
+            var request = new ListActivitiesRequest(key);
 
             return await SendAsync<IEnumerable<Activity>>(request);
         }
@@ -149,7 +149,7 @@ namespace Cronitor.Clients
 
         public async Task<IEnumerable<Alert>> AlertsAsync(string key)
         {
-            var request = new GetAlertsRequest(key);
+            var request = new ListAlertsRequest(key);
             var response = await SendAsync<Dictionary<string, IEnumerable<Alert>>>(request);
 
             return response.FirstOrDefault().Value;
@@ -160,7 +160,7 @@ namespace Cronitor.Clients
 
         public async Task<IEnumerable<Ping>> PingsAsync(string key)
         {
-            var request = new GetPingsRequest(key);
+            var request = new ListPingsRequest(key);
             var response = await SendAsync<Dictionary<string, IEnumerable<Ping>>>(request);
 
             return response.FirstOrDefault().Value;

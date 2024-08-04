@@ -5,21 +5,21 @@ using System.Collections.Generic;
 
 namespace Cronitor.Requests.Monitors
 {
-    public class GetActivitiesRequest : BaseRequest
+    public class ListPingsRequest : BaseRequest
     {
-        public override string Endpoint { get; set; } = "monitors/:key/activity";
-        public string MonitorKey { get; set; }
+        public override string Endpoint { get; set; } = "monitors/:key/pings";
+        public string Key { get; set; }
 
-        public GetActivitiesRequest(string monitorKey)
+        public ListPingsRequest(string monitorKey)
         {
-            MonitorKey = monitorKey;
+            Key = monitorKey;
         }
 
         public override Uri ToUri()
         {
             var dictionary = new Dictionary<string, string>
             {
-                { ":key", MonitorKey }
+                { ":key", Key }
             };
 
             return base.ToUri().Build(dictionary);

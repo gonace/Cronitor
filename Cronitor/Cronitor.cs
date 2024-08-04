@@ -17,6 +17,17 @@ namespace Cronitor
             Service.Configure(key);
         }
 
+        public static IssuesClient Issues
+        {
+            get
+            {
+                if (Service.Issues == null)
+                    throw new NotConfiguredException();
+
+                return Service.Issues;
+            }
+        }
+
         public static IMonitorsClient Monitors
         {
             get
@@ -51,6 +62,7 @@ namespace Cronitor
         }
 
         public static bool Configured =>
+            Service.Issues != null &&
             Service.Monitors != null &&
             Service.Notifications != null &&
             Service.Telemetries != null;

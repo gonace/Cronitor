@@ -2,11 +2,12 @@
 using Cronitor.Commands;
 using Cronitor.Exceptions;
 using Cronitor.Extensions;
-using Newtonsoft.Json;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Cronitor.Internals
@@ -94,10 +95,10 @@ namespace Cronitor.Internals
                 return;
 
             var details = response?.Content != null
-                ? JsonConvert.DeserializeObject<Models.ApiException>(await response.Content.ReadAsStringAsync(),
-                    new JsonSerializerSettings
+                ? JsonSerializer.Deserialize<Models.ApiException>(await response.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions
                     {
-                        NullValueHandling = NullValueHandling.Ignore
+                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
                     })
                 : null;
             throw new ApiException(details, response.StatusCode);
@@ -108,13 +109,13 @@ namespace Cronitor.Internals
             var response = await request;
 
             if (response.IsSuccessStatusCode)
-                return JsonConvert.DeserializeObject<TReturn>(await response.Content.ReadAsStringAsync());
+                return JsonSerializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync());
 
             var details = response?.Content != null
-                ? JsonConvert.DeserializeObject<Models.ApiException>(await response.Content.ReadAsStringAsync(),
-                    new JsonSerializerSettings
+                ? JsonSerializer.Deserialize<Models.ApiException>(await response.Content.ReadAsStringAsync(),
+                    new JsonSerializerOptions
                     {
-                        NullValueHandling = NullValueHandling.Ignore
+                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
                     })
                 : null;
             throw new ApiException(details, response.StatusCode);

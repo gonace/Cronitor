@@ -1,9 +1,9 @@
-﻿using Newtonsoft.Json;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Cryptography;
+using System.Text.Json.Serialization;
 
 namespace Cronitor.Models
 {
@@ -15,12 +15,12 @@ namespace Cronitor.Models
         ///
         /// It is also the required identifier for sending telemetry events.https://cronitor.link/ping/API_KEY/:monitorKey
         /// </summary>
-        [JsonProperty("key")]
+        [JsonPropertyName("key")]
         public string Key { get; set; }
         /// <summary>
         /// The display name of this monitor. Used to identify your monitor in alerts and within the Cronitor application.
         /// </summary>
-        [JsonProperty("name")]
+        [JsonPropertyName("name")]
         public string Name { get; set; }
         /// <summary>
         ///  Monitors are continuously evaluated for both schedule and assertion violations. When Cronitor detects a problem, an alert is sent.
@@ -36,38 +36,38 @@ namespace Cronitor.Models
         ///  "response.json new_user.count > 10"
         ///  "response.header X-App-Version = 1.2.3"
         /// </summary>
-        [JsonProperty("assertions")]
+        [JsonPropertyName("assertions")]
         public IEnumerable<string> Assertions { get; set; }
         /// <summary>
         /// job & event: number of telemetry events with state='fail' to allow before sending an alert.
         /// check: number of consecutive failed requests allow before sending an alert.
         /// </summary>
-        [JsonProperty("failure_tolerance")]
+        [JsonPropertyName("failure_tolerance")]
         public int? FailureTolerance { get; set; }
         /// <summary>
         /// The number of seconds that Cronitor should wait after detecting a failure before dispatching an alert.
         /// If the monitor recovers during the grace period no alert will be sent.
         /// </summary>
-        [JsonProperty("grace_seconds")]
+        [JsonPropertyName("grace_seconds")]
         public int GraceSeconds { get; set; }
         /// <summary>
         /// Groups are user-defined collections of monitors, that are used to group monitors in the Cronitor application.
         /// Each group has a unique URL with the format https://cronitor.io/app/groups/:groupKey
         /// </summary>
-        [JsonProperty("group")]
+        [JsonPropertyName("group")]
         public string Group { get; set; }
         /// <summary>
         /// A JSON serializable set of arbitrary key/value pairs that contain useful information about a job.
         ///
         /// For example, cronitor-kubernetes stores fields like backoffLimit and startingDeadlineSeconds.
         /// </summary>
-        [JsonProperty("metadata")]
+        [JsonPropertyName("metadata")]
         public object Metadata { get; set; }
         /// <summary>
         /// A useful place to provide additional context/troubleshooting information about the job/system being monitored.
         /// The note is sent in alerts (excluding SMS), and are accessible from the monitor details view in the Cronitor application.
         /// </summary>
-        [JsonProperty("note")]
+        [JsonPropertyName("note")]
         public string Note { get; set; }
         /// <summary>
         /// Configure where alerts sent when Cronitor detects an error. Additionally, notify can be used to specify
@@ -84,12 +84,12 @@ namespace Cronitor.Models
         /// lifecycle telemetry events - run, complete.If these keys are set to true, Cronitor will send a notification when the event occurs.
         ///   { "notify": { "alerts": [‘foo-bar’], "events": { "complete": true} }
         /// </summary>
-        [JsonProperty("notify")]
+        [JsonPropertyName("notify")]
         public IEnumerable<string> Notify { get; set; }
         /// <summary>
         /// The platform attribute is used in conjunction with the type attribute to tell Cronitor about where and how a monitor is being run beyond.
         /// </summary>
-        [JsonProperty("platform")]
+        [JsonPropertyName("platform")]
         public virtual string Platform { get; set; }
         /// <summary>
         /// Interval expression telling Cronitor how long to wait before sending follow up alerts after a monitor fails (and does not recover).
@@ -98,7 +98,7 @@ namespace Cronitor.Models
         ///
         /// After 10 alerts, Cronitor will mute alerting until the monitor recovers.
         /// </summary>
-        [JsonProperty("realert_interval")]
+        [JsonPropertyName("realert_interval")]
         public string AlertInterval { get; set; }
         /// <summary>
         /// Schedule has different meanings depending on the monitor type.
@@ -111,22 +111,22 @@ namespace Cronitor.Models
         ///
         /// An interval expression must be used.The range of accepted values is 30 seconds to 1 hour.e.g. ‘every 2 minutes’.
         /// </summary>
-        [JsonProperty("schedule")]
+        [JsonPropertyName("schedule")]
         public string Schedule { get; set; }
         /// <summary>
         /// Number of missed scheduled executions to allow before sending an alert.
         /// </summary>
-        [JsonProperty("schedule_tolerance")]
+        [JsonPropertyName("schedule_tolerance")]
         public int? ScheduleTolerance { get; set; }
         /// <summary>
         /// Tags are user provided strings that can be used to associate and filter monitors in the Cronitor dashboard. Use tags however you would like.
         /// </summary>
-        [JsonProperty("tags")]
+        [JsonPropertyName("tags")]
         public IEnumerable<string> Tags { get; set; }
         /// <summary>
         /// The timezone your system is running in.
         /// </summary>
-        [JsonProperty("timezone")]
+        [JsonPropertyName("timezone")]
         public string Timezone { get; set; }
         /// <summary>
         /// The type attribute determines which of Cronitor's monitoring capabilities are used to assess the health of your system.
@@ -140,7 +140,7 @@ namespace Cronitor.Models
         ///
         /// checks monitor websites, APIs, proxy servers, cloud storage providers(e.g.S3) or any other HTTP/TCP/UDP networked device.
         /// </summary>
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public virtual string Type { get; set; }
 
         //TODO: Is these used? (documented here: https://cronitor.io/docs/monitor-api-v3)
@@ -160,51 +160,52 @@ namespace Cronitor.Models
 
         #region Read Only Attributes
 
-        [JsonProperty("group_name")]
+        [JsonPropertyName("group_name")]
         public string GroupName { get; protected set; }
-        [JsonProperty("latest_event")]
+        [JsonPropertyName("latest_event")]
         public Event LatestEvent { get; private set; }
-        [JsonProperty("latest_events")]
+        [JsonPropertyName("latest_events")]
         public IEnumerable<Event> LatestEvents { get; protected set; }
-        [JsonProperty("latest_incident")]
+        [JsonPropertyName("latest_incident")]
         public Incident LatestIncident { get; protected set; }
-        [JsonProperty("latest_invocations")]
+        [JsonPropertyName("latest_invocations")]
         public dynamic LatestInvocations { get; protected set; }
         /// <summary>
         /// Whether the monitor is currently disabled.
         /// </summary>
-        [JsonProperty("disabled")]
+        [JsonPropertyName("disabled")]
         public bool? Disabled { get; protected set; }
         /// <summary>
         /// Whether the monitor has received a telemetry event.
         /// </summary>
-        [JsonProperty("initialized")]
+        [JsonPropertyName("initialized")]
         public bool? Initialized { get; protected set; }
         /// <summary>
         /// Whether the monitor is currently passing or failing.
         /// </summary>
-        [JsonProperty("passing")]
+        [JsonPropertyName("passing")]
         public bool? Passing { get; protected set; }
         /// <summary>
         /// Whether sending alerts is currently paused.
         /// </summary>
-        [JsonProperty("paused")]
+        [JsonPropertyName("paused")]
         public bool? Paused { get; protected set; }
         /// <summary>
         /// Whether a job is running (only applicable for type: job).
         /// </summary>
-        [JsonProperty("running")]
+        [JsonPropertyName("running")]
         public bool? Running { get; protected set; }
-        [JsonProperty("has_duration_history")]
+        [JsonPropertyName("has_duration_history")]
         public bool? HasDurationHistory { get; protected set; }
-        [JsonProperty("request_interval_seconds")]
+        [JsonPropertyName("request_interval_seconds")]
         public int? RequestIntervalSeconds { get; protected set; }
-        [JsonProperty("next_expected_at")]
+        [JsonPropertyName("next_expected_at")]
         public long? ExpectedAt { get; protected set; }
+
         /// <summary>
         /// ISO 8601 formatted timestamp of when the monitor was created.
         /// </summary>
-        [JsonProperty("created")]
+        [JsonPropertyName("created")]
         public DateTime CreatedAt { get; protected set; }
 
         #endregion

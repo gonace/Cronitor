@@ -27,7 +27,7 @@ namespace Cronitor.Tests.Clients
         [Fact]
         public void ShouldExecuteListMethod()
         {
-            var response = new ListResponse { Data = new List<Monitor> { Check, Heartbeat, Job } };
+            var response = new ListResponse { Items = new List<Monitor> { Check, Heartbeat, Job } };
 
             // Setup
             _httpClient.Setup(x => x.SendAsync<ListResponse>(It.IsAny<ListRequest>())).Returns(Task.FromResult(response));
@@ -37,8 +37,8 @@ namespace Cronitor.Tests.Clients
 
             // Assert
             Assert.NotNull(result);
-            Assert.NotEmpty(result.Data);
-            Assert.Equal(3, result.Data.Count());
+            Assert.NotEmpty(result.Items);
+            Assert.Equal(3, result.Items.Count());
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
 
@@ -53,7 +53,7 @@ namespace Cronitor.Tests.Clients
         [Fact]
         public async Task ShouldExecuteListAsyncMethod()
         {
-            var response = new ListResponse { Data = new List<Monitor> { Check, Heartbeat, Job } };
+            var response = new ListResponse { Items = new List<Monitor> { Check, Heartbeat, Job } };
 
             // Setup
             _httpClient.Setup(x => x.SendAsync<ListResponse>(It.IsAny<ListRequest>())).Returns(Task.FromResult(response));
@@ -63,8 +63,8 @@ namespace Cronitor.Tests.Clients
 
             // Assert
             Assert.NotNull(result);
-            Assert.NotEmpty(result.Data);
-            Assert.Equal(3, result.Data.Count());
+            Assert.NotEmpty(result.Items);
+            Assert.Equal(3, result.Items.Count());
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
 

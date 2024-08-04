@@ -13,6 +13,7 @@ namespace Cronitor.Clients
         ListResponse List();
         Task<ListResponse> ListAsync();
         Template Get(string name);
+        Task<Template> GetAsync(string name);
         Template Create(CreateRequest request);
         Task<Template> CreateAsync(CreateRequest request);
         Template Update(UpdateRequest request);

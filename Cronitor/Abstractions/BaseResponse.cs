@@ -1,19 +1,19 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Cronitor.Abstractions
 {
     public abstract class BaseResponse<TResponse>
     {
-        [JsonProperty("page")]
+        [JsonPropertyName("page")]
         public virtual int Page { get; set; } = 1;
-        [JsonProperty("page_size")]
+        [JsonPropertyName("page_size")]
         public virtual int PageSize { get; set; } = 50;
-        [JsonProperty("total_monitor_count")]
+        [JsonPropertyName("total_monitor_count")]
         public virtual int Total { get; set; }
-        [JsonProperty("version")]
+        [JsonPropertyName("version")]
         public virtual string Version { get; set; }
 
-        public abstract IEnumerable<TResponse> Data { get; set; }
+        public abstract IEnumerable<TResponse> Items { get; set; }
     }
 }

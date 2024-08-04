@@ -1,13 +1,13 @@
 ﻿using Cronitor.Abstractions;
 using Cronitor.Models;
-using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Cronitor.Responses.Notifications
 {
     public class ListResponse : BaseResponse<Template>
     {
-        [JsonProperty("templates")]
-        public override IEnumerable<Template> Data { get; set; }
+        [JsonPropertyName("templates")]
+        public override IEnumerable<Template> Items { get; set; }
     }
 }

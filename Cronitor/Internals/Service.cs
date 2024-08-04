@@ -5,6 +5,7 @@ namespace Cronitor.Internals
 {
     internal class Service : IDisposable
     {
+        public IssuesClient Issues;
         public MonitorsClient Monitors;
         public NotificationsClient Notifications;
         public TelemetriesClient Telemetries;
@@ -15,6 +16,7 @@ namespace Cronitor.Internals
         /// </summary>
         public void Configure(string key)
         {
+            Issues = new IssuesClient(key);
             Monitors = new MonitorsClient(key);
             Notifications = new NotificationsClient(key);
             Telemetries = new TelemetriesClient(key);
@@ -22,6 +24,7 @@ namespace Cronitor.Internals
 
         public void Dispose()
         {
+            Issues?.Dispose();
             Monitors?.Dispose();
             Notifications?.Dispose();
             Telemetries?.Dispose();

@@ -1,7 +1,7 @@
 ﻿using Cronitor.Constants;
-using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Cronitor.Models
 {
@@ -10,34 +10,34 @@ namespace Cronitor.Models
         /// <summary>
         /// The URL of the resource to monitor.
         /// </summary>
-        [JsonProperty("url")]
+        [JsonPropertyName("url")]
         public string Url { get; protected set; }
         /// <summary>
         /// The HTTP request method: GET, HEAD, PATCH, POST, PUT
         /// </summary>
-        [JsonProperty("method")]
+        [JsonPropertyName("method")]
         public string Method { get; set; } = "GET";
         /// <summary>
         /// The request body. Required for PUT, PATCH, and POST requests.
         /// </summary>
-        [JsonProperty("body")]
+        [JsonPropertyName("body")]
         public string Body { get; set; }
         /// <summary>
         /// The HTTP headers of the request (e.g. User-Agent). Limited to 5120 chars.
         /// </summary>
-        [JsonProperty("headers")]
+        [JsonPropertyName("headers")]
         public dynamic Headers { get; set; }
         /// <summary>
         /// Cookies to set before each request. Limited to 5120 chars.
         /// </summary>
-        [JsonProperty("cookies")]
+        [JsonPropertyName("cookies")]
         public dynamic Cookies { get; set; }
         /// <summary>
         /// The timeout enforced when making the request. An alert will be triggered upon timeout.
         /// </summary>
-        [JsonProperty("timeout_seconds")]
+        [JsonPropertyName("timeout_seconds")]
         public int TimeoutSeconds { get; set; } = 10;
-        [JsonProperty("regions")]
+        [JsonPropertyName("regions")]
         public IEnumerable<string> Regions { get; protected set; }
 
         [JsonConstructor]

@@ -7,6 +7,7 @@ Cronitor is a service for heartbeat-style monitoring of anything that can send a
 ## Supported APIs
 This .NET library provides a simple abstraction for the pinging of a Cronitor monitor. For a better understanding of the API this library talks to, please see the documentation, links below.
 * [Activity API](https://cronitor.io/docs/activity-api)
+* [Issues API](https://cronitor.io/docs/issues-api)
 * [Monitor API](https://cronitor.io/docs/monitor-api)
 * [Notifications API](https://cronitor.io/docs/template-api)
 * [Telemetry API](https://cronitor.io/docs/telemetry-api)

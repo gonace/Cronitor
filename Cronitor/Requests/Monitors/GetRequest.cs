@@ -8,18 +8,18 @@ namespace Cronitor.Requests.Monitors
     public class GetRequest : BaseRequest
     {
         public override string Endpoint { get; set; } = "monitors/:key";
-        public string MonitorKey { get; set; }
+        public string Key { get; set; }
 
         public GetRequest(string monitorKey)
         {
-            MonitorKey = monitorKey;
+            Key = monitorKey;
         }
 
         public override Uri ToUri()
         {
             var dictionary = new Dictionary<string, string>
             {
-                { ":key", MonitorKey },
+                { ":key", Key }
             };
 
             return base.ToUri().Build(dictionary);

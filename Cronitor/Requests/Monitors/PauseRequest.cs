@@ -8,17 +8,17 @@ namespace Cronitor.Requests.Monitors
     public class PauseRequest : BaseRequest
     {
         public sealed override string Endpoint { get; set; } = "monitors/:key/pause";
-        public string MonitorKey { get; set; }
+        public string Key { get; set; }
         public int? Duration { get; set; }
 
         public PauseRequest(string monitorKey)
         {
-            MonitorKey = monitorKey;
+            Key = monitorKey;
         }
 
         public PauseRequest(string monitorKey, int duration)
         {
-            MonitorKey = monitorKey;
+            Key = monitorKey;
             Duration = duration;
             Endpoint = $"{Endpoint}/:duration";
         }
@@ -27,7 +27,7 @@ namespace Cronitor.Requests.Monitors
         {
             var dictionary = new Dictionary<string, string>
             {
-                { ":key", MonitorKey },
+                { ":key", Key },
                 { ":duration", Duration.ToString() }
             };
 
