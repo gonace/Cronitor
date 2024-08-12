@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-  <!--
+    <!--
       Test all target frameworks from Cronitor/Cronitor.csproj
         - net8.0 -> net8.0
         - net7.0 -> net7.0

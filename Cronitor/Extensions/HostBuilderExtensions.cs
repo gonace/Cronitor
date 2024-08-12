@@ -38,7 +38,6 @@ namespace Cronitor.Extensions
             return builder;
         }
 
-
         public static IHostBuilder UseCronitor(this IHostBuilder builder, string apiKey)
         {
             if (builder == null) throw new ArgumentNullException(nameof(builder));
