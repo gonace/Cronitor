@@ -20,9 +20,9 @@ You can download the cronitor client nuget.
 > For the full documentation please read our [wiki](https://github.com/gonace/Cronitor/wiki), [telemetry wiki](https://github.com/gonace/Cronitor/wiki/Telemetry)!
 
 ### NET Generic Host
-> If you're using .NET (former .NET Core) and utilizing the default hosting and startup pattern (`Microsoft.Extensions.Hosting`) you use [`Cronitor.Extensions.Hosting`](https://github.com/gonace/Cronitor.Extensions.Hosting).
+> If you're using .NET HostBuilder and utilizing the default hosting and startup pattern (`Microsoft.Extensions.Hosting`).
 >
-> The easiest way to use the client is to run `.Configure()`, this will create a static instance (`Cronitor`) of the client that can be used throughout your application.
+> The easiest way to use the client is to run `.UseCronitor()`, this will create a static instance (`Cronitor`) of the client that can be used throughout your application.
 
 #### Examples
 ```c#
@@ -38,6 +38,53 @@ await Host.CreateDefaultBuilder()
     .RunAsync();
 ```
 
+If you much rather like to use each client (`IssuesClient`, `MonitorsClient`, `NotificationsClient` or `TelemetriesClient`) you can use each client on its own by running `.ConfigureCronitor()` instead, this will not configure the static client.
+
+#### Examples
+```c#
+await Host.CreateDefaultBuilder()
+    .ConfigureCronitor("apiKey")
+    .Build()
+    .RunAsync();
+```
+```c#
+await Host.CreateDefaultBuilder()
+    .ConfigureCronitor((context) => context.Configuration.GetValue<string>("Cronitor:ApiKey"))
+    .Build()
+    .RunAsync();
+```
+
+And then you'll be able to use these clients like this: 
+```c#
+public class SomeClass
+{
+    private readonly IMonitorsClient _monitorsClient;
+
+    public SomeClass(IMonitorsClient monitorsClient)
+    {
+        _monitorsClient = monitorsClient;
+    }
+    
+    public Monitor Create()
+    {
+        var monitor = new Monitor();
+        var request = new CreateRequest(monitor);
+        var response = _monitorsClient.Create(request);
+
+        return response;
+    }
+
+    public async Task<Monitor> CreateAsync()
+    {
+        var monitor = new Monitor();
+        var request = new CreateRequest(monitor);
+        var response = await _monitorsClient.CreateAsync(request);
+
+        return resposne;
+    }
+}
+```
+
 ### Simple
 #### Examples
 ```c#
@@ -51,7 +98,7 @@ var request = new CreateRequest(monitor);
 var response = Cronitor.Monitors.Create(request);
 ```
 
-### Advanced
+### Manual
 If you only need access to one (or a few) clients you're able to configure each client individually.
 
 #### Examples
@@ -61,18 +108,18 @@ using Cronitor.Requests;
 
 public class SomeClass
 {
-    private readonly ITelemetriesClient _client;
+    private readonly IMonitorsClient _monitorsClient;
 
     public SomeClass()
     {
-        _client = new TelemetriesClient("apiKey");
+        _monitorsClient = new IMonitorsClient("apiKey");
     }
 
     public Monitor Create()
     {
         var monitor = new Monitor();
         var request = new CreateRequest(monitor);
-        var response = Cronitor.Monitors.Create(request);
+        var response = _monitorsClient.Create(request);
 
         return response;
     }
@@ -81,7 +128,7 @@ public class SomeClass
     {
         var monitor = new Monitor();
         var request = new CreateRequest(monitor);
-        var response = await Cronitor.Monitors.CreateAsync(request);
+        var response = await _monitorsClient.CreateAsync(request);
 
         return resposne;
     }
