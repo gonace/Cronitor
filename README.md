@@ -68,7 +68,7 @@ public class SomeClass
     public Monitor Create()
     {
         var monitor = new Monitor();
-        var request = new CreateRequest(monitor);
+        var request = new CreateMonitorRequest(monitor);
         var response = _monitorsClient.Create(request);
 
         return response;
@@ -77,7 +77,7 @@ public class SomeClass
     public async Task<Monitor> CreateAsync()
     {
         var monitor = new Monitor();
-        var request = new CreateRequest(monitor);
+        var request = new CreateMonitorRequest(monitor);
         var response = await _monitorsClient.CreateAsync(request);
 
         return resposne;
@@ -94,7 +94,7 @@ using Cronitor.Requests;
 Cronitor.Configure("apiKey")
 
 var monitor = new Monitor();
-var request = new CreateRequest(monitor);
+var request = new CreateMonitorRequest(monitor);
 var response = Cronitor.Monitors.Create(request);
 ```
 
@@ -118,7 +118,7 @@ public class SomeClass
     public Monitor Create()
     {
         var monitor = new Monitor();
-        var request = new CreateRequest(monitor);
+        var request = new CreateMonitorRequest(monitor);
         var response = _monitorsClient.Create(request);
 
         return response;
@@ -127,7 +127,7 @@ public class SomeClass
     public async Task<Monitor> CreateAsync()
     {
         var monitor = new Monitor();
-        var request = new CreateRequest(monitor);
+        var request = new CreateMonitorRequest(monitor);
         var response = await _monitorsClient.CreateAsync(request);
 
         return resposne;
