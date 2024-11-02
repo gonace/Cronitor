@@ -3,14 +3,14 @@ using Cronitor.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace Cronitor.Requests.Monitors
+namespace Cronitor.Requests
 {
-    public class ListPingsRequest : BaseRequest
+    public class ListAlertsRequest : BaseRequest
     {
-        public override string Endpoint { get; set; } = "monitors/:key/pings";
+        public override string Endpoint { get; set; } = "monitors/:key/alerts";
         public string Key { get; set; }
 
-        public ListPingsRequest(string monitorKey)
+        public ListAlertsRequest(string monitorKey)
         {
             Key = monitorKey;
         }

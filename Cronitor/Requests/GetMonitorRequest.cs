@@ -3,14 +3,14 @@ using Cronitor.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace Cronitor.Requests.Monitors
+namespace Cronitor.Requests
 {
-    public class ListActivitiesRequest : BaseRequest
+    public class GetMonitorRequest : BaseRequest
     {
-        public override string Endpoint { get; set; } = "monitors/:key/activity";
+        public override string Endpoint { get; set; } = "monitors/:key";
         public string Key { get; set; }
 
-        public ListActivitiesRequest(string monitorKey)
+        public GetMonitorRequest(string monitorKey)
         {
             Key = monitorKey;
         }

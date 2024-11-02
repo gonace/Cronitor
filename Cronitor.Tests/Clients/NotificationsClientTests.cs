@@ -1,7 +1,7 @@
 ﻿using Cronitor.Clients;
 using Cronitor.Models;
-using Cronitor.Requests.Notifications;
-using Cronitor.Responses.Notifications;
+using Cronitor.Requests;
+using Cronitor.Responses;
 using Cronitor.Tests.Helpers;
 using Moq;
 using System;
@@ -26,10 +26,10 @@ namespace Cronitor.Tests.Clients
         [Fact]
         public void ShouldExecuteListMethod()
         {
-            var response = new ListResponse { Items = new List<Template> { Template } };
+            var response = new ListNotificationResponse { Items = new List<Template> { Template } };
 
             // Setup
-            _httpClient.Setup(x => x.SendAsync<ListResponse>(It.IsAny<ListRequest>())).Returns(Task.FromResult(response));
+            _httpClient.Setup(x => x.SendAsync<ListNotificationResponse>(It.IsAny<ListNotificationRequest>())).Returns(Task.FromResult(response));
 
             // Run
             var result = _client.List();
@@ -41,7 +41,7 @@ namespace Cronitor.Tests.Clients
             Assert.Equal(50, result.PageSize);
 
             // Verify
-            _httpClient.Verify(x => x.SendAsync<ListResponse>(It.Is<ListRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<ListNotificationResponse>(It.Is<ListNotificationRequest>(c =>
                 c.Page == 1 &&
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "templates")), Times.Once);
@@ -51,10 +51,10 @@ namespace Cronitor.Tests.Clients
         [Fact]
         public async Task ShouldExecuteListAsyncMethod()
         {
-            var response = new ListResponse { Items = new List<Template> { Template } };
+            var response = new ListNotificationResponse { Items = new List<Template> { Template } };
 
             // Setup
-            _httpClient.Setup(x => x.SendAsync<ListResponse>(It.IsAny<ListRequest>())).Returns(Task.FromResult(response));
+            _httpClient.Setup(x => x.SendAsync<ListNotificationResponse>(It.IsAny<ListNotificationRequest>())).Returns(Task.FromResult(response));
 
             // Run
             var result = await _client.ListAsync();
@@ -66,7 +66,7 @@ namespace Cronitor.Tests.Clients
             Assert.Equal(50, result.PageSize);
 
             // Verify
-            _httpClient.Verify(x => x.SendAsync<ListResponse>(It.Is<ListRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<ListNotificationResponse>(It.Is<ListNotificationRequest>(c =>
                 c.Page == 1 &&
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "templates")), Times.Once);
@@ -77,7 +77,7 @@ namespace Cronitor.Tests.Clients
         public void ShouldExecuteGetMethod()
         {
             // Setup
-            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<GetRequest>())).Returns(Task.FromResult(Template));
+            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<GetNotificationRequest>())).Returns(Task.FromResult(Template));
 
             // Run
             var result = _client.Get(TemplateKey);
@@ -86,7 +86,7 @@ namespace Cronitor.Tests.Clients
             Assert.NotNull(result);
 
             // Verify
-            _httpClient.Verify(x => x.SendAsync<Template>(It.Is<GetRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<Template>(It.Is<GetNotificationRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "templates/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
@@ -96,7 +96,7 @@ namespace Cronitor.Tests.Clients
         public async Task ShouldExecuteGetAsyncMethod()
         {
             // Setup
-            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<GetRequest>())).Returns(Task.FromResult(Template));
+            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<GetNotificationRequest>())).Returns(Task.FromResult(Template));
 
             // Run
             var result = await _client.GetAsync(TemplateKey);
@@ -105,7 +105,7 @@ namespace Cronitor.Tests.Clients
             Assert.NotNull(result);
 
             // Verify
-            _httpClient.Verify(x => x.SendAsync<Template>(It.Is<GetRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<Template>(It.Is<GetNotificationRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "templates/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();

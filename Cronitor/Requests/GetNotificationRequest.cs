@@ -3,16 +3,16 @@ using Cronitor.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace Cronitor.Requests.Issues
+namespace Cronitor.Requests
 {
-    public class GetRequest : BaseRequest
+    public class GetNotificationRequest : BaseRequest
     {
-        public override string Endpoint { get; set; } = "issues/:key";
+        public override string Endpoint { get; set; } = "templates/:key";
         public string Key { get; set; }
 
-        public GetRequest(string issueKey)
+        public GetNotificationRequest(string key)
         {
-            Key = issueKey;
+            Key = key;
         }
 
         public override Uri ToUri()

@@ -6,15 +6,15 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 
-namespace Cronitor.Requests.Notifications
+namespace Cronitor.Requests
 {
-    public class UpdateRequest : BaseRequest
+    public class UpdateNotificationRequest : BaseRequest
     {
         public override string Endpoint { get; set; } = "templates/:key";
         public override HttpMethod Method => HttpMethod.Put;
         public string Key { get; set; }
 
-        public UpdateRequest(string key, Models.Template template)
+        public UpdateNotificationRequest(string key, Models.Template template)
         {
             Key = key;
             Content = new StringContent(Serializer.Serialize(template), Encoding.UTF8, "application/json");

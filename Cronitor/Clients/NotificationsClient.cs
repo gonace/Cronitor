@@ -2,22 +2,22 @@
 using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Models;
-using Cronitor.Requests.Notifications;
-using Cronitor.Responses.Notifications;
+using Cronitor.Requests;
+using Cronitor.Responses;
 using System.Threading.Tasks;
 
 namespace Cronitor.Clients
 {
     public interface INotificationsClient
     {
-        ListResponse List();
-        Task<ListResponse> ListAsync();
+        ListNotificationResponse List();
+        Task<ListNotificationResponse> ListAsync();
         Template Get(string name);
         Task<Template> GetAsync(string name);
-        Template Create(CreateRequest request);
-        Task<Template> CreateAsync(CreateRequest request);
-        Template Update(UpdateRequest request);
-        Task<Template> UpdateAsync(UpdateRequest request);
+        Template Create(CreateNotificationRequest request);
+        Task<Template> CreateAsync(CreateNotificationRequest request);
+        Template Update(UpdateNotificationRequest request);
+        Task<Template> UpdateAsync(UpdateNotificationRequest request);
         void Delete(string key);
         Task DeleteAsync(string key);
     }
@@ -45,13 +45,13 @@ namespace Cronitor.Clients
         }
 
 
-        public ListResponse List() =>
+        public ListNotificationResponse List() =>
             Task.Run(async () => await ListAsync()).Result;
 
-        public async Task<ListResponse> ListAsync()
+        public async Task<ListNotificationResponse> ListAsync()
         {
-            var request = new ListRequest();
-            var response = await SendAsync<ListResponse>(request);
+            var request = new ListNotificationRequest();
+            var response = await SendAsync<ListNotificationResponse>(request);
 
             return response;
         }
@@ -61,21 +61,21 @@ namespace Cronitor.Clients
 
         public async Task<Template> GetAsync(string name)
         {
-            var request = new GetRequest(name);
+            var request = new GetNotificationRequest(name);
 
             return await SendAsync<Template>(request);
         }
 
-        public Template Create(CreateRequest request) =>
+        public Template Create(CreateNotificationRequest request) =>
             Task.Run(async () => await CreateAsync(request)).Result;
 
-        public async Task<Template> CreateAsync(CreateRequest request) =>
+        public async Task<Template> CreateAsync(CreateNotificationRequest request) =>
             await SendAsync<Template>(request);
 
-        public Template Update(UpdateRequest request) =>
+        public Template Update(UpdateNotificationRequest request) =>
             Task.Run(async () => await UpdateAsync(request)).Result;
 
-        public async Task<Template> UpdateAsync(UpdateRequest request) =>
+        public async Task<Template> UpdateAsync(UpdateNotificationRequest request) =>
             await SendAsync<Template>(request);
 
         public void Delete(string key) =>
@@ -84,7 +84,7 @@ namespace Cronitor.Clients
 
         public async Task DeleteAsync(string key)
         {
-            var request = new DeleteRequest(key);
+            var request = new DeleteNotificationRequest(key);
 
             await SendAsync<Task>(request);
         }

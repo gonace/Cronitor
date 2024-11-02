@@ -3,9 +3,9 @@ using Cronitor.Models;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Cronitor.Responses.Issues
+namespace Cronitor.Responses
 {
-    public class ListResponse : BaseResponse<Issue>
+    public class ListIssueResponse : BaseResponse<Issue>
     {
         [JsonPropertyName("data")]
         public override IEnumerable<Issue> Items { get; set; }

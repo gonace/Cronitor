@@ -5,19 +5,19 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 
-namespace Cronitor.Requests.Issues
+namespace Cronitor.Requests
 {
-    public class CreateRequest : BaseRequest
+    public class CreateIssueRequest : BaseRequest
     {
         public override string Endpoint { get; set; } = "issues";
         public override HttpMethod Method => HttpMethod.Post;
 
-        public CreateRequest(Issue issue)
+        public CreateIssueRequest(Issue issue)
         {
             Content = new StringContent(Serializer.Serialize(new { monitors = new List<Issue> { issue } }), Encoding.UTF8, "application/json");
         }
 
-        public CreateRequest(IEnumerable<Issue> issues)
+        public CreateIssueRequest(IEnumerable<Issue> issues)
         {
             Content = new StringContent(Serializer.Serialize(new { monitors = issues }), Encoding.UTF8, "application/json");
         }

@@ -3,15 +3,15 @@ using Cronitor.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace Cronitor.Requests.Monitors
+namespace Cronitor.Requests
 {
-    public class UnpauseRequest : BaseRequest
+    public class UnpauseMonitorRequest : BaseRequest
     {
         public sealed override string Endpoint { get; set; } = "monitors/:key/pause/:duration";
         public string Key { get; set; }
         public int Duration { get; set; } = 0;
 
-        public UnpauseRequest(string monitorKey)
+        public UnpauseMonitorRequest(string monitorKey)
         {
             Key = monitorKey;
         }

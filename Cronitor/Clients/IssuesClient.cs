@@ -2,22 +2,22 @@
 using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Models;
-using Cronitor.Requests.Issues;
-using Cronitor.Responses.Issues;
+using Cronitor.Requests;
+using Cronitor.Responses;
 using System.Threading.Tasks;
 
 namespace Cronitor.Clients
 {
     public interface IIssuesClient
     {
-        ListResponse List(int page = 1);
-        Task<ListResponse> ListAsync(int page = 1);
+        ListIssueResponse List(int page = 1);
+        Task<ListIssueResponse> ListAsync(int page = 1);
         Issue Get(string key);
         Task<Issue> GetAsync(string key);
-        Issue Create(CreateRequest request);
-        Task<Issue> CreateAsync(CreateRequest request);
-        Issue Update(UpdateRequest request);
-        Task<Issue> UpdateAsync(UpdateRequest request);
+        Issue Create(CreateIssueRequest request);
+        Task<Issue> CreateAsync(CreateIssueRequest request);
+        Issue Update(UpdateIssueRequest request);
+        Task<Issue> UpdateAsync(UpdateIssueRequest request);
     }
 
     public class IssuesClient : BaseClient<IssuesClient>, IIssuesClient
@@ -42,17 +42,17 @@ namespace Cronitor.Clients
         {
         }
 
-        public ListResponse List(int page = 1) =>
+        public ListIssueResponse List(int page = 1) =>
             Task.Run(async () => await ListAsync(page)).Result;
 
-        public async Task<ListResponse> ListAsync(int page = 1)
+        public async Task<ListIssueResponse> ListAsync(int page = 1)
         {
-            var request = new ListRequest
+            var request = new ListIssueRequest
             {
                 Page = page
             };
 
-            return await SendAsync<ListResponse>(request);
+            return await SendAsync<ListIssueResponse>(request);
         }
 
         public Issue Get(string key) =>
@@ -60,23 +60,23 @@ namespace Cronitor.Clients
 
         public async Task<Issue> GetAsync(string key)
         {
-            var request = new GetRequest(key);
+            var request = new GetIssueRequest(key);
 
             return await SendAsync<Issue>(request);
         }
 
-        public Issue Create(CreateRequest request) =>
+        public Issue Create(CreateIssueRequest request) =>
             Task.Run(async () => await CreateAsync(request)).Result;
 
-        public async Task<Issue> CreateAsync(CreateRequest request)
+        public async Task<Issue> CreateAsync(CreateIssueRequest request)
         {
             return await SendAsync<Issue>(request);
         }
 
-        public Issue Update(UpdateRequest request) =>
+        public Issue Update(UpdateIssueRequest request) =>
             Task.Run(async () => await UpdateAsync(request)).Result;
 
-        public async Task<Issue> UpdateAsync(UpdateRequest request)
+        public async Task<Issue> UpdateAsync(UpdateIssueRequest request)
         {
             return await SendAsync<Issue>(request);
         }

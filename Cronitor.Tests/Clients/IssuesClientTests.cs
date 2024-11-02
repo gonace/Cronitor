@@ -1,7 +1,7 @@
 ﻿using Cronitor.Clients;
 using Cronitor.Models;
-using Cronitor.Requests.Issues;
-using Cronitor.Responses.Issues;
+using Cronitor.Requests;
+using Cronitor.Responses;
 using Cronitor.Tests.Helpers;
 using Moq;
 using System;
@@ -26,10 +26,10 @@ namespace Cronitor.Tests.Clients
         [Fact]
         public void ShouldExecuteListMethod()
         {
-            var response = new ListResponse { Items = new List<Issue> { Issue } };
+            var response = new ListIssueResponse { Items = new List<Issue> { Issue } };
 
             // Setup
-            _httpClient.Setup(x => x.SendAsync<ListResponse>(It.IsAny<ListRequest>())).Returns(Task.FromResult(response));
+            _httpClient.Setup(x => x.SendAsync<ListIssueResponse>(It.IsAny<ListIssueRequest>())).Returns(Task.FromResult(response));
 
             // Run
             var result = _client.List();
@@ -42,7 +42,7 @@ namespace Cronitor.Tests.Clients
             Assert.Equal(50, result.PageSize);
 
             // Verify
-            _httpClient.Verify(x => x.SendAsync<ListResponse>(It.Is<ListRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<ListIssueResponse>(It.Is<ListIssueRequest>(c =>
                 c.Page == 1 &&
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "issues")), Times.Once);

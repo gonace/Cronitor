@@ -3,9 +3,9 @@ using Cronitor.Models;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Cronitor.Responses.Notifications
+namespace Cronitor.Responses
 {
-    public class ListResponse : BaseResponse<Template>
+    public class ListNotificationResponse : BaseResponse<Template>
     {
         [JsonPropertyName("templates")]
         public override IEnumerable<Template> Items { get; set; }

@@ -2,15 +2,17 @@
 using Cronitor.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Net.Http;
 
-namespace Cronitor.Requests.Notifications
+namespace Cronitor.Requests
 {
-    public class GetRequest : BaseRequest
+    public class DeleteNotificationRequest : BaseRequest
     {
         public override string Endpoint { get; set; } = "templates/:key";
+        public override HttpMethod Method => HttpMethod.Delete;
         public string Key { get; set; }
 
-        public GetRequest(string key)
+        public DeleteNotificationRequest(string key)
         {
             Key = key;
         }

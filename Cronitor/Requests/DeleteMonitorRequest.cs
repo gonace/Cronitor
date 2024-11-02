@@ -4,17 +4,17 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 
-namespace Cronitor.Requests.Notifications
+namespace Cronitor.Requests
 {
-    public class DeleteRequest : BaseRequest
+    public class DeleteMonitorRequest : BaseRequest
     {
-        public override string Endpoint { get; set; } = "templates/:key";
+        public override string Endpoint { get; set; } = "monitors/:key";
         public override HttpMethod Method => HttpMethod.Delete;
         public string Key { get; set; }
 
-        public DeleteRequest(string key)
+        public DeleteMonitorRequest(string monitorKey)
         {
-            Key = key;
+            Key = monitorKey;
         }
 
         public override Uri ToUri()

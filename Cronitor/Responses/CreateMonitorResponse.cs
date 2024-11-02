@@ -1,9 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Cronitor.Responses.Monitors
+namespace Cronitor.Responses
 {
-    public class CreateResponse
+    public class CreateMonitorResponse
     {
         [JsonPropertyName("monitors")]
         public IEnumerable<Models.Monitor> Monitors { get; set; }

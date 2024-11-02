@@ -2,17 +2,15 @@
 using Cronitor.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 
-namespace Cronitor.Requests.Monitors
+namespace Cronitor.Requests
 {
-    public class DeleteRequest : BaseRequest
+    public class ListPingsRequest : BaseRequest
     {
-        public override string Endpoint { get; set; } = "monitors/:key";
-        public override HttpMethod Method => HttpMethod.Delete;
+        public override string Endpoint { get; set; } = "monitors/:key/pings";
         public string Key { get; set; }
 
-        public DeleteRequest(string monitorKey)
+        public ListPingsRequest(string monitorKey)
         {
             Key = monitorKey;
         }

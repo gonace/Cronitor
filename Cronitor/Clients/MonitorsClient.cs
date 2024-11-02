@@ -2,8 +2,8 @@
 using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Models;
-using Cronitor.Requests.Monitors;
-using Cronitor.Responses.Monitors;
+using Cronitor.Requests;
+using Cronitor.Responses;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,14 +12,14 @@ namespace Cronitor.Clients
 {
     public interface IMonitorsClient
     {
-        ListResponse List(int page = 1);
-        Task<ListResponse> ListAsync(int page = 1);
+        ListMonitorResponse List(int page = 1);
+        Task<ListMonitorResponse> ListAsync(int page = 1);
         Monitor Get(string key);
         Task<Monitor> GetAsync(string key);
-        IEnumerable<Monitor> Create(CreateRequest request);
-        Task<IEnumerable<Monitor>> CreateAsync(CreateRequest request);
-        IEnumerable<Monitor> Update(UpdateRequest request);
-        Task<IEnumerable<Monitor>> UpdateAsync(UpdateRequest request);
+        IEnumerable<Monitor> Create(CreateMonitorRequest request);
+        Task<IEnumerable<Monitor>> CreateAsync(CreateMonitorRequest request);
+        IEnumerable<Monitor> Update(UpdateMonitorRequest request);
+        Task<IEnumerable<Monitor>> UpdateAsync(UpdateMonitorRequest request);
         void Delete(string key);
         Task DeleteAsync(string key);
         void Pause(string key, int? hours = null);
@@ -58,17 +58,17 @@ namespace Cronitor.Clients
         }
 
 
-        public ListResponse List(int page = 1) =>
+        public ListMonitorResponse List(int page = 1) =>
             Task.Run(async () => await ListAsync(page)).Result;
 
-        public async Task<ListResponse> ListAsync(int page = 1)
+        public async Task<ListMonitorResponse> ListAsync(int page = 1)
         {
-            var request = new ListRequest
+            var request = new ListMonitorRequest
             {
                 Page = page
             };
 
-            return await SendAsync<ListResponse>(request);
+            return await SendAsync<ListMonitorResponse>(request);
         }
 
         public Monitor Get(string key) =>
@@ -76,27 +76,27 @@ namespace Cronitor.Clients
 
         public async Task<Monitor> GetAsync(string key)
         {
-            var request = new GetRequest(key);
+            var request = new GetMonitorRequest(key);
 
             return await SendAsync<Monitor>(request);
         }
 
-        public IEnumerable<Monitor> Create(CreateRequest request) =>
+        public IEnumerable<Monitor> Create(CreateMonitorRequest request) =>
             Task.Run(async () => await CreateAsync(request)).Result;
 
-        public async Task<IEnumerable<Monitor>> CreateAsync(CreateRequest request)
+        public async Task<IEnumerable<Monitor>> CreateAsync(CreateMonitorRequest request)
         {
-            var response = await SendAsync<CreateResponse>(request);
+            var response = await SendAsync<CreateMonitorResponse>(request);
 
             return response?.Monitors;
         }
 
-        public IEnumerable<Monitor> Update(UpdateRequest request) =>
+        public IEnumerable<Monitor> Update(UpdateMonitorRequest request) =>
             Task.Run(async () => await UpdateAsync(request)).Result;
 
-        public async Task<IEnumerable<Monitor>> UpdateAsync(UpdateRequest request)
+        public async Task<IEnumerable<Monitor>> UpdateAsync(UpdateMonitorRequest request)
         {
-            var response = await SendAsync<UpdateResponse>(request);
+            var response = await SendAsync<UpdateMonitorResponse>(request);
 
             return response.Monitors;
         }
@@ -107,7 +107,7 @@ namespace Cronitor.Clients
 
         public async Task DeleteAsync(string key)
         {
-            var request = new DeleteRequest(key);
+            var request = new DeleteMonitorRequest(key);
 
             await SendAsync<Task>(request);
         }
@@ -118,7 +118,7 @@ namespace Cronitor.Clients
 
         public async Task PauseAsync(string key, int? hours = null)
         {
-            var request = hours != null ? new PauseRequest(key, hours.Value) : new PauseRequest(key);
+            var request = hours != null ? new PauseMonitorRequest(key, hours.Value) : new PauseMonitorRequest(key);
 
             await SendAsync<Task>(request);
         }
@@ -129,7 +129,7 @@ namespace Cronitor.Clients
 
         public async Task UnpauseAsync(string key)
         {
-            var request = new UnpauseRequest(key);
+            var request = new UnpauseMonitorRequest(key);
 
             await SendAsync<Task>(request);
         }
