@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Cronitor.Models
 {
@@ -15,37 +15,37 @@ namespace Cronitor.Models
         /// <summary>
         /// A list of emails to send alerts to.
         /// </summary>
-        [JsonProperty("emails")]
+        [JsonPropertyName("emails")]
         public IEnumerable<string> Emails { get; set; }
-        [JsonProperty("hipchat")]
+        [JsonPropertyName("hipchat")]
         public IEnumerable<string> Hipchat { get; set; }
-        [JsonProperty("microsoft-teams")]
+        [JsonPropertyName("microsoft-teams")]
         public IEnumerable<string> MicrosoftTeams { get; set; }
-        [JsonProperty("opsgenie")]
+        [JsonPropertyName("opsgenie")]
         public IEnumerable<string> Opsgenie { get; set; }
         /// <summary>
         /// A list of pagerduty keys (found on account settings page).
         /// </summary>
-        [JsonProperty("pagerduty")]
+        [JsonPropertyName("pagerduty")]
         public IEnumerable<string> Pagerduty { get; set; }
         /// <summary>
         /// A list of phone numbers to send SMS alerts to.
         /// </summary>
-        [JsonProperty("phones")]
+        [JsonPropertyName("phones")]
         public IEnumerable<string> Phones { get; set; }
         /// <summary>
         /// A list of slack webhook URLs (found on account settings page).
         /// </summary>
-        [JsonProperty("slack")]
+        [JsonPropertyName("slack")]
         public IEnumerable<string> Slack { get; set; }
-        [JsonProperty("telegram")]
+        [JsonPropertyName("telegram")]
         public IEnumerable<string> Telegram { get; set; }
-        [JsonProperty("victorops")]
+        [JsonPropertyName("victorops")]
         public IEnumerable<string> Victorops { get; set; }
         /// <summary>
         /// A list of URLs (prefixed with http:// or https://) to callback to.
         /// </summary>
-        [JsonProperty("webhooks")]
+        [JsonPropertyName("webhooks")]
         public IEnumerable<string> Webhooks { get; set; }
     }
 }

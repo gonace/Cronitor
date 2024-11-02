@@ -3,19 +3,19 @@ using Cronitor.Serialization;
 using System.Net.Http;
 using System.Text;
 
-namespace Cronitor.Requests.Notifications
+namespace Cronitor.Requests
 {
-    public class CreateRequest : BaseRequest
+    public class CreateNotificationRequest : BaseRequest
     {
         public override string Endpoint { get; set; } = "templates";
         public override HttpMethod Method => HttpMethod.Post;
 
-        public CreateRequest(Models.Template template)
+        public CreateNotificationRequest(Models.Template template)
         {
             Content = new StringContent(Serializer.Serialize(template), Encoding.UTF8, "application/json");
         }
 
-        public CreateRequest(string name, string key, Models.Notifications notifications)
+        public CreateNotificationRequest(string name, string key, Models.Notifications notifications)
         {
             var template = new Models.Template
             {

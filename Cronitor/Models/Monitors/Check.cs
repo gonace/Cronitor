@@ -1,14 +1,14 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Cronitor.Models.Monitors
 {
     public class Check : Monitor
     {
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public override string Type { get; set; } = "check";
-        [JsonProperty("platform")]
+        [JsonPropertyName("platform")]
         public override string Platform { get; set; } = "http";
-        [JsonProperty("request")]
+        [JsonPropertyName("request")]
         public Request Request { get; set; }
 
 

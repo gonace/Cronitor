@@ -1,8 +1,8 @@
 ﻿using Cronitor.Abstractions;
 
-namespace Cronitor.Requests.Monitors
+namespace Cronitor.Requests
 {
-    public class ListRequest : BaseRequest
+    public class ListMonitorRequest : BaseRequest
     {
         public override string Endpoint { get; set; } = "monitors";
         public int Page { get; set; } = 1;

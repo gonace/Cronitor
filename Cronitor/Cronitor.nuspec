@@ -16,19 +16,24 @@
     <repository type="git" url="https://github.com/gonace/cronitor" branch="master" />
     <dependencies>
       <group targetFramework="net8.0">
-        <dependency id="Newtonsoft.Json" version="13.0.3" />
+        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="8.0.1" />
+        <dependency id="System.Text.Json" version="8.0.5" />
       </group>
       <group targetFramework="net7.0">
-        <dependency id="Newtonsoft.Json" version="13.0.3" />
+        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="8.0.1" />
+        <dependency id="System.Text.Json" version="8.0.5" />
       </group>
       <group targetFramework="net6.0">
-        <dependency id="Newtonsoft.Json" version="13.0.3" />
+        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="8.0.1" />
+        <dependency id="System.Text.Json" version="8.0.5" />
       </group>
       <group targetFramework="netstandard2.1">
-        <dependency id="Newtonsoft.Json" version="13.0.3" />
+        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="8.0.1" />
+        <dependency id="System.Text.Json" version="8.0.5" />
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="Newtonsoft.Json" version="13.0.3" />
+        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="8.0.1" />
+        <dependency id="System.Text.Json" version="8.0.5" />
       </group>
     </dependencies>
   </metadata>

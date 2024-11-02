@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Cronitor.Models.Monitors
 {
     public class Heartbeat : Monitor
     {
-        [JsonProperty("type")]
+        [JsonPropertyName("type")]
         public override string Type { get; set; } = "event";
 
         public Heartbeat(string schedule)

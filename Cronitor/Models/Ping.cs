@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Cronitor.Models
 {
@@ -15,62 +15,63 @@ namespace Cronitor.Models
         /// <summary>
         /// Decimal timestamp
         /// </summary>
-        [JsonProperty("stamp")]
+        [JsonPropertyName("stamp")]
         public decimal? Timestamp { get; set; }
         /// <summary>
         /// The display name of the monitor
         /// </summary>
-        [JsonProperty("monitor_name")]
+        [JsonPropertyName("monitor_name")]
         public string MonitorName { get; set; }
         /// <summary>
         /// The unique identifier
         /// </summary>
-        [JsonProperty("monitor_code")]
+        [JsonPropertyName("monitor_code")]
         public string MonitorKey { get; set; }
         /// <summary>
         /// Enum(alert, healthcheck, ping)
         /// </summary>
-        [JsonProperty("description")]
+        [JsonPropertyName("description")]
         public string Description { get; set; }
         /// <summary>
         /// Healthchecks: The location we pinged from
         /// Heartbeat: The IP the ping was received from.
         /// Alert: None.
         /// </summary>
-        [JsonProperty("from")]
+        [JsonPropertyName("from")]
         public string From { get; set; }
         /// <summary>
         /// Healthchecks: The description of the check
         /// Heartbeat: The supplied ?msg, or an empty string.
         /// Alert: Failure description.
         /// </summary>
-        [JsonProperty("message")]
+        [JsonPropertyName("message")]
         public string Message { get; set; }
         /// <summary>
         /// Healthchecks: null
         /// Heartbeat: enum(run, complete, fail)
         /// Alert: enum(failure, recovery)
         /// </summary>
-        [JsonProperty("event")]
+        [JsonPropertyName("event")]
         public string Event { get; set; }
         /// <summary>
         /// Healthchecks: The result of the healthcheck
         /// Heartbeat: None
         /// Alert: None
         /// </summary>
-        [JsonProperty("status")]
+        [JsonPropertyName("status")]
         public string Status { get; set; }
         /// <summary>
         /// Healthchecks: The response time of your healthcheck
         /// Heartbeat: None
         /// Alert: None
         /// </summary>
-        [JsonProperty("duration")]
+        [JsonPropertyName("duration")]
         public decimal? Duration { get; set; }
+
         /// <summary>
         /// A datetime display of the provided stamp.
         /// </summary>
-        [JsonProperty("created")]
+        [JsonPropertyName("created")]
         public string CreatedAt { get; set; }
     }
 }

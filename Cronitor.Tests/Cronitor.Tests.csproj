@@ -1,32 +1,32 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-      <!--
-          Test all target frameworks from Cronitor/Cronitor.csproj
-            - net8.0 -> net8.0
-            - net7.0 -> net7.0
-            - net6.0 -> net6.0
-            - netcoreapp3.1 -> netstandard2.1
-            - net48 -> netstandard2.0
-        -->
+    <!--
+      Test all target frameworks from Cronitor/Cronitor.csproj
+        - net8.0 -> net8.0
+        - net7.0 -> net7.0
+        - net6.0 -> net6.0
+        - netcoreapp3.1 -> netstandard2.1
+        - net48 -> netstandard2.0
+    -->
     <TargetFrameworks>net8.0;net7.0;net6.0;netcoreapp3.1;net48</TargetFrameworks>
     <IsPackable>false</IsPackable>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.9.0" />
-    <PackageReference Include="Moq" Version="4.20.70" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="Moq" Version="4.20.72" />
     <PackageReference Include="System.Net.Http" Version="4.3.4" />
-    <PackageReference Include="xunit" Version="2.7.0" />
-    <PackageReference Include="xunit.runner.console" Version="2.7.0">
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.console" Version="2.9.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="xunit.runner.msbuild" Version="2.7.0">
+    <PackageReference Include="xunit.runner.msbuild" Version="2.9.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="xunit.runner.visualstudio" Version="2.5.7">
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>

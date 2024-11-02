@@ -2,26 +2,24 @@
 using Cronitor.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
 
-namespace Cronitor.Requests.Monitors
+namespace Cronitor.Requests
 {
-    public class DeleteRequest : BaseRequest
+    public class GetMonitorRequest : BaseRequest
     {
         public override string Endpoint { get; set; } = "monitors/:key";
-        public override HttpMethod Method => HttpMethod.Delete;
-        public string MonitorKey { get; set; }
+        public string Key { get; set; }
 
-        public DeleteRequest(string monitorKey)
+        public GetMonitorRequest(string monitorKey)
         {
-            MonitorKey = monitorKey;
+            Key = monitorKey;
         }
 
         public override Uri ToUri()
         {
             var dictionary = new Dictionary<string, string>
             {
-                { ":key", MonitorKey },
+                { ":key", Key }
             };
 
             return base.ToUri().Build(dictionary);

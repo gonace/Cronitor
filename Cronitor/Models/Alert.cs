@@ -1,24 +1,25 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Cronitor.Models
 {
     public class Alert
     {
-        [JsonProperty("stamp")]
+        [JsonPropertyName("stamp")]
         public decimal? Timestamp { get; set; }
-        [JsonProperty("monitor_name")]
+        [JsonPropertyName("monitor_name")]
         public string MonitorName { get; set; }
-        [JsonProperty("monitor_code")]
+        [JsonPropertyName("monitor_code")]
         public string MonitorKey { get; set; }
-        [JsonProperty("description")]
+        [JsonPropertyName("description")]
         public string Description { get; set; }
-        [JsonProperty("from")]
+        [JsonPropertyName("from")]
         public string From { get; set; }
-        [JsonProperty("message")]
+        [JsonPropertyName("message")]
         public string Message { get; set; }
-        [JsonProperty("event")]
+        [JsonPropertyName("event")]
         public string Event { get; set; }
-        [JsonProperty("created")]
+
+        [JsonPropertyName("created")]
         public string CreatedAt { get; set; }
     }
 }

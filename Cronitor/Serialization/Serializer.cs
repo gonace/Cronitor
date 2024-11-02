@@ -1,5 +1,5 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Serialization;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
 
 namespace Cronitor.Serialization
 {
@@ -7,20 +7,10 @@ namespace Cronitor.Serialization
     {
         public static string Serialize(object obj)
         {
-            var json = JsonConvert.SerializeObject(obj, new JsonSerializerSettings
+            var json = JsonSerializer.Serialize(obj, new JsonSerializerOptions
             {
-                ContractResolver = new DefaultContractResolver
-                {
-                    NamingStrategy = new CamelCaseNamingStrategy
-                    {
-                        ProcessDictionaryKeys = true,
-                        ProcessExtensionDataNames = true,
-                        OverrideSpecifiedNames = true
-                    }
-                },
-                DefaultValueHandling = DefaultValueHandling.Ignore,
-                Formatting = Formatting.Indented,
-                NullValueHandling = NullValueHandling.Ignore
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                WriteIndented = true
             });
 
             return json;

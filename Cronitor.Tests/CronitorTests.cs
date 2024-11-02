@@ -14,6 +14,7 @@ namespace Cronitor.Tests
 
             // Assert
             Assert.True(Cronitor.Configured);
+            Assert.NotNull(Cronitor.Issues);
             Assert.NotNull(Cronitor.Monitors);
             Assert.NotNull(Cronitor.Notifications);
             Assert.NotNull(Cronitor.Telemetries);
@@ -24,6 +25,7 @@ namespace Cronitor.Tests
         {
             // Assert
             Assert.False(Cronitor.Configured);
+            Assert.Throws<NotConfiguredException>(() => Cronitor.Issues);
             Assert.Throws<NotConfiguredException>(() => Cronitor.Monitors);
             Assert.Throws<NotConfiguredException>(() => Cronitor.Notifications);
             Assert.Throws<NotConfiguredException>(() => Cronitor.Telemetries);

@@ -1,10 +1,10 @@
-﻿using Newtonsoft.Json;
+﻿using System.Text.Json.Serialization;
 
 namespace Cronitor.Models
 {
     public class ApiException
     {
-        [JsonProperty("detail")]
+        [JsonPropertyName("detail")]
         public string Message { get; set; }
     }
 }
