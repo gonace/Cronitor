@@ -115,7 +115,7 @@ namespace Cronitor.Tests.Clients
         {
             Key = TemplateKey,
             Monitors = new List<string> { MonitorKey },
-            CreatedAt = DateTime.Now,
+            CreatedAt = DateTime.UtcNow,
             Name = TemplateKey,
             Notifications = new Notifications
             {
