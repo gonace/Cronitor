@@ -51,8 +51,8 @@ namespace Cronitor.Tests.Clients
         {
             Key = TemplateKey,
             Name = TemplateKey,
-            CreatedAt = DateTime.Now.AddMinutes(-5),
-            UpdatedAt = DateTime.Now
+            CreatedAt = DateTime.UtcNow.AddMinutes(-5),
+            UpdatedAt = DateTime.UtcNow
         };
     }
 }
