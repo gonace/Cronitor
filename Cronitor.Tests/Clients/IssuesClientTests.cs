@@ -6,7 +6,6 @@ using Cronitor.Tests.Helpers;
 using Moq;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -36,8 +35,7 @@ namespace Cronitor.Tests.Clients
 
             // Assert
             Assert.NotNull(result);
-            Assert.NotEmpty(result.Items);
-            Assert.Equal(1, result.Items.Count());
+            Assert.Single(result.Items);
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
 
