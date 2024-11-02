@@ -2,6 +2,7 @@
 using Cronitor.Extensions;
 using Cronitor.Tests.Helpers;
 using System;
+using System.Globalization;
 using Xunit;
 
 namespace Cronitor.Tests.Extensions
@@ -39,7 +40,7 @@ namespace Cronitor.Tests.Extensions
             [QueryStringProperty("working", true)]
             public bool IsWorking => true;
             [QueryStringProperty("starts_at")]
-            public DateTime StartedAt => DateTime.Parse("2019-06-01T08:00:00");
+            public DateTime StartedAt => DateTime.Parse("2019-06-01T08:00:00", new CultureInfo("en-US"));
         }
     }
 }
