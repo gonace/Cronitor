@@ -55,7 +55,7 @@ public class SomeClass
     {
         var monitor = new Monitor();
         var request = new CreateMonitorRequest(monitor);
-        var response = await _monitorsClient.CreateAsync(request);
+        var response = await Cronitor.Monitors.CreateAsync(request);
 
         return resposne;
     }
