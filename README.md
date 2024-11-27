@@ -5,7 +5,7 @@ Cronitor is a service for heartbeat-style monitoring of anything that can send a
 ![Nuget](https://img.shields.io/nuget/dt/Cronitor)
 
 ## Supported APIs
-This .NET library provides a simple abstraction for the pinging of a Cronitor monitor. For a better understanding of the API this library talks to, please see the documentation, links below.
+This .NET library provides a simple way of pinging a Cronitor monitor. For a better understanding of the API this library talks to, please see the documentation, links below.
 * [Activity API](https://cronitor.io/docs/activity-api)
 * [Issues API](https://cronitor.io/docs/issues-api)
 * [Monitor API](https://cronitor.io/docs/monitor-api)
@@ -38,6 +38,30 @@ await Host.CreateDefaultBuilder()
     .RunAsync();
 ```
 
+And then you'll be able to use it like this: 
+```c#
+public class SomeClass
+{
+    public Monitor Create()
+    {
+        var monitor = new Monitor();
+        var request = new CreateMonitorRequest(monitor);
+        var response = Cronitor.Monitors.Create(request);
+
+        return response;
+    }
+
+    public async Task<Monitor> CreateAsync()
+    {
+        var monitor = new Monitor();
+        var request = new CreateMonitorRequest(monitor);
+        var response = await _monitorsClient.CreateAsync(request);
+
+        return resposne;
+    }
+}
+```
+
 If you much rather like to use each client (`IssuesClient`, `MonitorsClient`, `NotificationsClient` or `TelemetriesClient`) you can use each client on its own by running `.ConfigureCronitor()` instead, this will not configure the static client.
 
 #### Examples
@@ -54,7 +78,7 @@ await Host.CreateDefaultBuilder()
     .RunAsync();
 ```
 
-And then you'll be able to use these clients like this: 
+And then you'll be able to use it like this: 
 ```c#
 public class SomeClass
 {
