@@ -6,6 +6,7 @@ using Cronitor.Requests;
 using Cronitor.Responses;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Cronitor.Clients
@@ -47,8 +48,8 @@ namespace Cronitor.Clients
         {
         }
 
-        public MonitorsClient(string apiKey, bool useHttps)
-            : base(Urls.ApiUrl, apiKey, useHttps)
+        public MonitorsClient(string apiKey, JsonSerializerOptions jsonSerializerOptions)
+            : base(Urls.ApiUrl, apiKey, jsonSerializerOptions)
         {
         }
 

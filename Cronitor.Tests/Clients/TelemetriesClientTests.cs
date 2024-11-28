@@ -11,12 +11,34 @@ namespace Cronitor.Tests.Clients
     public class TelemetriesClientTests : BaseTest
     {
         private readonly Mock<HttpClient> _httpClient;
-        private readonly TelemetriesClient _client;
+        private readonly TelemetriesClient _telemetriesClient;
 
         public TelemetriesClientTests()
         {
             _httpClient = new Mock<HttpClient>();
-            _client = new TelemetriesClient(ApiKey, _httpClient.Object);
+            _telemetriesClient = new TelemetriesClient(ApiKey, _httpClient.Object);
+        }
+
+
+        [Fact]
+        public void ShouldExecuteWhenUtilizingUsingBlock()
+        {
+            var command = new RunCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey);
+
+             // Setup
+             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+             // Run
+             _telemetriesClient.Run(MonitorKey);
+
+             // Verify
+             _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
+                 c.ApiKey == ApiKey &&
+                 c.MonitorKey == MonitorKey &&
+                 c.Endpoint == "run")), Times.Once);
+             _httpClient.VerifyNoOtherCalls();
         }
 
 
@@ -33,7 +55,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Run(MonitorKey);
+            _telemetriesClient.Run(MonitorKey);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
@@ -54,7 +76,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.RunAsync(MonitorKey);
+            await _telemetriesClient.RunAsync(MonitorKey);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
@@ -78,7 +100,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Run(MonitorKey, message);
+            _telemetriesClient.Run(MonitorKey, message);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
@@ -103,7 +125,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.RunAsync(MonitorKey, message);
+            await _telemetriesClient.RunAsync(MonitorKey, message);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
@@ -126,7 +148,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Run(MonitorKey, environment: Environment);
+            _telemetriesClient.Run(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
@@ -149,7 +171,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.RunAsync(MonitorKey, environment: Environment);
+            await _telemetriesClient.RunAsync(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
@@ -175,7 +197,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Run(MonitorKey, message, Environment);
+            _telemetriesClient.Run(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
@@ -202,7 +224,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.RunAsync(MonitorKey, message, Environment);
+            await _telemetriesClient.RunAsync(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
@@ -229,7 +251,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Complete(MonitorKey);
+            _telemetriesClient.Complete(MonitorKey);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
@@ -250,7 +272,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.CompleteAsync(MonitorKey);
+            await _telemetriesClient.CompleteAsync(MonitorKey);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
@@ -274,7 +296,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Complete(MonitorKey, message);
+            _telemetriesClient.Complete(MonitorKey, message);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
@@ -299,7 +321,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.CompleteAsync(MonitorKey, message);
+            await _telemetriesClient.CompleteAsync(MonitorKey, message);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
@@ -322,7 +344,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Complete(MonitorKey, environment: Environment);
+            _telemetriesClient.Complete(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
@@ -345,7 +367,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.CompleteAsync(MonitorKey, environment: Environment);
+            await _telemetriesClient.CompleteAsync(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
@@ -371,7 +393,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Complete(MonitorKey, message, Environment);
+            _telemetriesClient.Complete(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
@@ -398,7 +420,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.CompleteAsync(MonitorKey, message, Environment);
+            await _telemetriesClient.CompleteAsync(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
@@ -425,7 +447,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Fail(MonitorKey);
+            _telemetriesClient.Fail(MonitorKey);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
@@ -446,7 +468,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.FailAsync(MonitorKey);
+            await _telemetriesClient.FailAsync(MonitorKey);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
@@ -470,7 +492,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Fail(MonitorKey, message);
+            _telemetriesClient.Fail(MonitorKey, message);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
@@ -495,7 +517,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.FailAsync(MonitorKey, message);
+            await _telemetriesClient.FailAsync(MonitorKey, message);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
@@ -518,7 +540,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Fail(MonitorKey, environment: Environment);
+            _telemetriesClient.Fail(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
@@ -541,7 +563,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.FailAsync(MonitorKey, environment: Environment);
+            await _telemetriesClient.FailAsync(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
@@ -567,7 +589,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Fail(MonitorKey, message, Environment);
+            _telemetriesClient.Fail(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
@@ -594,7 +616,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.FailAsync(MonitorKey, message, Environment);
+            await _telemetriesClient.FailAsync(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<FailCommand>(c =>
@@ -621,7 +643,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Tick(MonitorKey);
+            _telemetriesClient.Tick(MonitorKey);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
@@ -642,7 +664,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.TickAsync(MonitorKey);
+            await _telemetriesClient.TickAsync(MonitorKey);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
@@ -666,7 +688,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Tick(MonitorKey, message);
+            _telemetriesClient.Tick(MonitorKey, message);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
@@ -691,7 +713,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.TickAsync(MonitorKey, message);
+            await _telemetriesClient.TickAsync(MonitorKey, message);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
@@ -714,7 +736,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Tick(MonitorKey, environment: Environment);
+            _telemetriesClient.Tick(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
@@ -737,7 +759,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.TickAsync(MonitorKey, environment: Environment);
+            await _telemetriesClient.TickAsync(MonitorKey, environment: Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
@@ -763,7 +785,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            _client.Tick(MonitorKey, message, Environment);
+            _telemetriesClient.Tick(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
@@ -790,7 +812,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
             // Run
-            await _client.TickAsync(MonitorKey, message, Environment);
+            await _telemetriesClient.TickAsync(MonitorKey, message, Environment);
 
             // Verify
             _httpClient.Verify(x => x.SendAsync(It.Is<TickCommand>(c =>
@@ -804,30 +826,49 @@ namespace Cronitor.Tests.Clients
 
         #endregion
 
-        #region Disposable
+        #region Ping & PingAsync
+
 
         [Fact]
-        public void ShouldExecuteDisposableBlock()
+        public void ShouldExecutePingMethod()
         {
-            using (var client = new TelemetriesClient(ApiKey, _httpClient.Object))
-            {
-                var command = new RunCommand()
-                    .WithApiKey(ApiKey)
-                    .WithMonitorKey(MonitorKey);
+            var command = new CompleteCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey);
 
-                // Setup
-                _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
 
-                // Run
-                client.Run(MonitorKey);
+            // Run
+            _telemetriesClient.Ping(command);
 
-                // Verify
-                _httpClient.Verify(x => x.SendAsync(It.Is<RunCommand>(c =>
-                    c.ApiKey == ApiKey &&
-                    c.MonitorKey == MonitorKey &&
-                    c.Endpoint == "run")), Times.Once);
-                _httpClient.VerifyNoOtherCalls();
-            }
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "complete")), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldExecutePingAsyncMethod()
+        {
+            var command = new CompleteCommand()
+                .WithApiKey(ApiKey)
+                .WithMonitorKey(MonitorKey);
+
+            // Setup
+            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+
+            // Run
+            await _telemetriesClient.PingAsync(command);
+
+            // Verify
+            _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
+                c.ApiKey == ApiKey &&
+                c.MonitorKey == MonitorKey &&
+                c.Endpoint == "complete")), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
         }
 
         #endregion

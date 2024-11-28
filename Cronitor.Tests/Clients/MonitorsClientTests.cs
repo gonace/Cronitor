@@ -1,6 +1,5 @@
 ﻿using Cronitor.Clients;
 using Cronitor.Models;
-using Cronitor.Models.Monitors;
 using Cronitor.Requests;
 using Cronitor.Responses;
 using Cronitor.Tests.Helpers;
@@ -9,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Cronitor.Tests.Builders;
 using Xunit;
 
 namespace Cronitor.Tests.Clients
@@ -16,29 +16,30 @@ namespace Cronitor.Tests.Clients
     public class MonitorsClientTests : BaseTest
     {
         private readonly Mock<Internals.HttpClient> _httpClient;
-        private readonly MonitorsClient _client;
+        private readonly MonitorsClient _monitorsClient;
 
         public MonitorsClientTests()
         {
             _httpClient = new Mock<Internals.HttpClient>();
-            _client = new MonitorsClient(_httpClient.Object);
+            _monitorsClient = new MonitorsClient(_httpClient.Object);
         }
 
-        [Fact]
-        public void ShouldExecuteListMethod()
+        [Theory]
+        [JsonData("ListMonitors.json")]
+        public void ShouldExecuteListMethod(string json)
         {
-            var response = new ListMonitorResponse { Items = new List<Monitor> { Check, Heartbeat, Job } };
+            var response = json.Deserialize<ListMonitorResponse>();
 
             // Setup
             _httpClient.Setup(x => x.SendAsync<ListMonitorResponse>(It.IsAny<ListMonitorRequest>())).Returns(Task.FromResult(response));
 
             // Run
-            var result = _client.List();
+            var result = _monitorsClient.List();
 
             // Assert
             Assert.NotNull(result);
             Assert.NotEmpty(result.Items);
-            Assert.Equal(3, result.Items.Count());
+            Assert.Single(result.Items);
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
 
@@ -53,13 +54,13 @@ namespace Cronitor.Tests.Clients
         [Fact]
         public async Task ShouldExecuteListAsyncMethod()
         {
-            var response = new ListMonitorResponse { Items = new List<Monitor> { Check, Heartbeat, Job } };
+            var response = new ListMonitorResponse { Items = new List<Monitor> { Make.Check.Build(), Make.Heartbeat.Build(), Make.Job.Build() } };
 
             // Setup
             _httpClient.Setup(x => x.SendAsync<ListMonitorResponse>(It.IsAny<ListMonitorRequest>())).Returns(Task.FromResult(response));
 
             // Run
-            var result = await _client.ListAsync();
+            var result = await _monitorsClient.ListAsync();
 
             // Assert
             Assert.NotNull(result);
@@ -85,7 +86,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync<Monitor>(It.IsAny<GetMonitorRequest>())).Returns(Task.FromResult(response));
 
             // Run
-            var result = _client.Get(MonitorKey);
+            var result = _monitorsClient.Get(MonitorKey);
 
             // Assert
             Assert.NotNull(result);
@@ -107,7 +108,7 @@ namespace Cronitor.Tests.Clients
             _httpClient.Setup(x => x.SendAsync<Monitor>(It.IsAny<GetMonitorRequest>())).Returns(Task.FromResult(response));
 
             // Run
-            var result = await _client.GetAsync(MonitorKey);
+            var result = await _monitorsClient.GetAsync(MonitorKey);
 
             // Assert
             Assert.NotNull(result);
@@ -123,32 +124,21 @@ namespace Cronitor.Tests.Clients
         [Fact]
         public void ShouldExecuteCreateMethod()
         {
-            var assertions = new List<string>
-            {
-                "metric.duration < 30s",
-                "metric.error_count < 5"
-            };
             var notify = new List<string>
             {
                 "developers",
                 "administrators"
             };
-            const string schedule = "every 60 seconds";
-            const string timezone = "Europe/Stockholm";
-
-            var monitor = new Job(MonitorKey)
-            {
-                Assertions = assertions,
-                Notify = notify,
-                Schedule = schedule,
-                Timezone = timezone
-            };
+            var monitor = Make.Job
+                .Notify(notify)
+                .Schedule("every 60 seconds")
+                .Build();
 
             // Setup
-            _httpClient.Setup(x => x.SendAsync<CreateMonitorResponse>(It.IsAny<CreateMonitorRequest>())).Returns(Task.FromResult(new CreateMonitorResponse { Monitors = new List<Monitor> { (Monitor)monitor } }));
+            _httpClient.Setup(x => x.SendAsync<CreateMonitorResponse>(It.IsAny<CreateMonitorRequest>())).Returns(Task.FromResult(new CreateMonitorResponse { Monitors = new List<Monitor> { monitor } }));
 
             // Run
-            var result = _client.Create(new CreateMonitorRequest(monitor));
+            var result = _monitorsClient.Create(new CreateMonitorRequest(monitor));
 
             // Assert
             Assert.NotNull(result);
@@ -158,13 +148,13 @@ namespace Cronitor.Tests.Clients
         [Fact]
         public async Task ShouldExecuteCreateAsyncMethod()
         {
-            var monitor = Job;
+            var monitor = Make.Job.Build();
 
             // Setup
-            _httpClient.Setup(x => x.SendAsync<CreateMonitorResponse>(It.IsAny<CreateMonitorRequest>())).Returns(Task.FromResult(new CreateMonitorResponse { Monitors = new List<Monitor> { (Monitor)monitor } }));
+            _httpClient.Setup(x => x.SendAsync<CreateMonitorResponse>(It.IsAny<CreateMonitorRequest>())).Returns(Task.FromResult(new CreateMonitorResponse { Monitors = new List<Monitor> { monitor } }));
 
             // Run
-            var result = await _client.CreateAsync(new CreateMonitorRequest(monitor));
+            var result = await _monitorsClient.CreateAsync(new CreateMonitorRequest(monitor));
 
             // Assert
             Assert.NotNull(result);

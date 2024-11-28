@@ -1,4 +1,5 @@
-﻿using Cronitor.Abstractions;
+﻿using System.Text.Json;
+using Cronitor.Abstractions;
 using Cronitor.Commands;
 using Cronitor.Constants;
 using Cronitor.Internals;
@@ -21,7 +22,6 @@ namespace Cronitor.Clients
     }
 
     public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClient
-
     {
         private readonly string _apiKey;
 
@@ -31,15 +31,13 @@ namespace Cronitor.Clients
         }
 
         public TelemetriesClient(string apiKey)
-            : base(Urls.PrimaryBaseUrl, apiKey)
+            : base(Urls.ApiUrl, apiKey)
         {
-            _apiKey = apiKey;
         }
 
-        public TelemetriesClient(string apiKey, bool useHttps)
-            : base(Urls.PrimaryBaseUrl, apiKey, useHttps)
+        public TelemetriesClient(string apiKey, JsonSerializerOptions jsonSerializerOptions)
+            : base(Urls.ApiUrl, apiKey, jsonSerializerOptions)
         {
-            _apiKey = apiKey;
         }
 
         internal TelemetriesClient(string apiKey, HttpClient client)

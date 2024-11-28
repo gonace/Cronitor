@@ -37,16 +37,19 @@ namespace Cronitor.Tests.Commands
                 Series = "3de5db91-9c02-4e95-b8a9-9a2442702336"
             }
                 .WithApiKey("apiKey")
+                .WithContent(new StringContent("custom"))
                 .WithMonitorKey("monitorKey")
                 .WithMessage("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
-                .WithMetric(Metric.Count, 100);
+                .WithMetric(Metric.Count, 100)
+                .WithStatus("130");
 
             Assert.Equal("apiKey", command.ApiKey);
             Assert.Equal("monitorKey", command.MonitorKey);
             Assert.Equal("custom", command.Endpoint);
             Assert.Equal("custom", command.ToString());
+            Assert.Equivalent(new StringContent("custom"), command.Content);
 
-            const string expected = "https://cronitor.link/p/apiKey/monitorKey/custom?env=Production&host=127.0.0.1&message='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'&metric=count:100&series=3de5db91-9c02-4e95-b8a9-9a2442702336";
+            const string expected = "https://cronitor.link/p/apiKey/monitorKey/custom?env=Production&host=127.0.0.1&message='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'&metric=count:100&series=3de5db91-9c02-4e95-b8a9-9a2442702336&status_code=130";
             var actual = command.ToUrl();
 
             Assert.Equal(expected, actual);

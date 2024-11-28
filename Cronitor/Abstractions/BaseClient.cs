@@ -1,30 +1,32 @@
 ﻿using Cronitor.Commands;
 using Cronitor.Internals;
 using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Cronitor.Abstractions
 {
     public abstract class BaseClient<T> : IDisposable
     {
-        private readonly HttpClient _httpClient;
+        private HttpClient _httpClient;
 
-        protected BaseClient(Uri baseUri)
+        protected BaseClient(Uri apiUri)
         {
-            _httpClient = new HttpClient(baseUri);
+            _httpClient = new HttpClient(apiUri, _jsonSerializerOptions);
         }
 
-        protected BaseClient(Uri baseUri, string apiKey)
+        protected BaseClient(Uri apiUri, string apiKey)
         {
-            _httpClient = new HttpClient(baseUri, apiKey);
+            _httpClient = new HttpClient(apiUri, apiKey, _jsonSerializerOptions);
         }
 
-        protected BaseClient(Uri baseUri, string apiKey, bool useHttps)
+        protected BaseClient(Uri apiUri, string apiKey, JsonSerializerOptions serializerOptions)
         {
-            _httpClient = new HttpClient(baseUri, apiKey, useHttps);
+            _httpClient = new HttpClient(apiUri, apiKey, serializerOptions);
         }
 
-        private protected BaseClient(HttpClient client)
+        internal BaseClient(HttpClient client)
         {
             _httpClient = client;
         }
@@ -53,7 +55,13 @@ namespace Cronitor.Abstractions
 
         public void Dispose()
         {
-            _httpClient?.Dispose();
+            _httpClient = null;
         }
+
+        private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            NumberHandling = JsonNumberHandling.AllowReadingFromString
+        };
     }
 }

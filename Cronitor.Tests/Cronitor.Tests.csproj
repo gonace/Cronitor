@@ -36,4 +36,10 @@
     <ProjectReference Include="..\Cronitor\Cronitor.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Files\ListMonitors.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>

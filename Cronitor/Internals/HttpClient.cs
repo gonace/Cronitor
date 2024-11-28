@@ -12,24 +12,32 @@ using System.Threading.Tasks;
 
 namespace Cronitor.Internals
 {
-    internal class HttpClient : IDisposable
+    internal class HttpClient
     {
         private readonly string _apiKey;
         private readonly Uri _apiUri;
-
-        internal HttpClient(Uri apiUri)
-        {
-            _apiUri = apiUri;
-        }
-
-        internal HttpClient(Uri apiUri, string apiKey, bool useHttps = true)
-        {
-            _apiKey = apiKey;
-            _apiUri = useHttps ? apiUri.AsHttps() : apiUri.AsHttp();
-        }
+        private readonly JsonSerializerOptions _serializerOptions;
 
         internal HttpClient()
         {
+            _serializerOptions = new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                NumberHandling = JsonNumberHandling.AllowReadingFromString
+            };
+        }
+
+        internal HttpClient(Uri apiUri, JsonSerializerOptions serializerOptions)
+        {
+            _apiUri = apiUri;
+            _serializerOptions = serializerOptions;
+        }
+
+        internal HttpClient(Uri apiUri, string apiKey, JsonSerializerOptions serializerOptions)
+        {
+            _apiKey = apiKey;
+            _apiUri = apiUri.AsHttps();
+            _serializerOptions = serializerOptions;
         }
 
         //TODO: send to FallbackUrl
@@ -38,7 +46,6 @@ namespace Cronitor.Internals
             using (var httpClient = GetHttpClient())
             {
                 var requestUri = command.ToUri();
-
                 var message = new HttpRequestMessage
                 {
                     Method = command.Method,
@@ -55,7 +62,6 @@ namespace Cronitor.Internals
             using (var httpClient = GetHttpClient())
             {
                 var requestUri = request.ToUri();
-
                 var message = new HttpRequestMessage
                 {
                     Method = request.Method,
@@ -73,7 +79,6 @@ namespace Cronitor.Internals
             using (var httpClient = GetHttpClient())
             {
                 var requestUri = request.ToUri();
-
                 var message = new HttpRequestMessage
                 {
                     Method = request.Method,
@@ -87,37 +92,23 @@ namespace Cronitor.Internals
         }
 
 
-        protected virtual async Task PerformRequestAsync(Task<HttpResponseMessage> request)
+        private async Task PerformRequestAsync(Task<HttpResponseMessage> request)
         {
             var response = await request;
-
             if (response.IsSuccessStatusCode)
                 return;
 
-            var details = response?.Content != null
-                ? JsonSerializer.Deserialize<Models.ApiException>(await response.Content.ReadAsStringAsync(),
-                    new JsonSerializerOptions
-                    {
-                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-                    })
-                : null;
+            var details = JsonSerializer.Deserialize<Models.ApiException>(await response.Content.ReadAsStringAsync(), _serializerOptions);
             throw new ApiException(details, response.StatusCode);
         }
 
-        protected virtual async Task<TReturn> PerformRequestAsync<TReturn>(Task<HttpResponseMessage> request)
+        private async Task<TReturn> PerformRequestAsync<TReturn>(Task<HttpResponseMessage> request)
         {
             var response = await request;
-
             if (response.IsSuccessStatusCode)
                 return JsonSerializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync());
 
-            var details = response?.Content != null
-                ? JsonSerializer.Deserialize<Models.ApiException>(await response.Content.ReadAsStringAsync(),
-                    new JsonSerializerOptions
-                    {
-                        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
-                    })
-                : null;
+            var details = JsonSerializer.Deserialize<Models.ApiException>(await response.Content.ReadAsStringAsync(), _serializerOptions);
             throw new ApiException(details, response.StatusCode);
         }
 
@@ -133,11 +124,6 @@ namespace Cronitor.Internals
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_apiKey}:")));
 
             return httpClient;
-        }
-
-        public void Dispose()
-        {
-            //TODO What can we do here?
         }
     }
 }

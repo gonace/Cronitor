@@ -1,4 +1,6 @@
-﻿using Cronitor.Abstractions;
+﻿using System.Text.Json;
+using System.Text.Json.Serialization;
+using Cronitor.Abstractions;
 using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Models;
@@ -32,10 +34,20 @@ namespace Cronitor.Clients
         {
         }
 
-        public IssuesClient(string apiKey, bool useHttps)
-            : base(Urls.ApiUrl, apiKey, useHttps)
+        public IssuesClient(string apiKey, JsonSerializerOptions jsonSerializerOptions)
+            : base(Urls.ApiUrl, apiKey, jsonSerializerOptions)
         {
         }
+
+        // public IssuesClient(string apiKey, bool useHttps)
+        //     : base(Urls.ApiUrl, JsonSerializerOptions, apiKey, useHttps)
+        // {
+        // }
+        //
+        // public IssuesClient(string apiKey, JsonSerializerOptions jsonSerializerOptions, bool useHttps)
+        //     : base(Urls.ApiUrl, jsonSerializerOptions, apiKey, useHttps)
+        // {
+        // }
 
         internal IssuesClient(HttpClient client)
             : base(client)

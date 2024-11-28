@@ -66,10 +66,5 @@ namespace Cronitor
             Service.Monitors != null &&
             Service.Notifications != null &&
             Service.Telemetries != null;
-
-        public static void Dispose()
-        {
-            Service.Dispose();
-        }
     }
 }

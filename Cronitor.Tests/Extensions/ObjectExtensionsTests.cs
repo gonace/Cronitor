@@ -13,7 +13,7 @@ namespace Cronitor.Tests.Extensions
         [UseCulture("en-US")]
         public void ShouldConvertObjectToQueryStringForCultureEnUs()
         {
-            const string expected = "?name=Jane Doe&age=18&wage=25400.99&working=true&starts_at=6/1/2019 8:00:00 AM";
+            const string expected = "?name=Jane Doe&age=18&wage=25400.99&isonsickleave=true&working=true&starts_at=6/1/2019 8:00:00 AM";
             var actual = new Model().ToQueryString();
 
             Assert.Equal(expected, actual);
@@ -23,7 +23,7 @@ namespace Cronitor.Tests.Extensions
         [UseCulture("sv-SE")]
         public void ShouldConvertObjectToQueryStringSvSe()
         {
-            const string expected = "?name=Jane Doe&age=18&wage=25400,99&working=true&starts_at=2019-06-01 08:00:00";
+            const string expected = "?name=Jane Doe&age=18&wage=25400,99&isonsickleave=true&working=true&starts_at=2019-06-01 08:00:00";
             var actual = new Model().ToQueryString();
 
             Assert.Equal(expected, actual);
@@ -37,6 +37,8 @@ namespace Cronitor.Tests.Extensions
             public int Age => 18;
             [QueryStringProperty("wage")]
             public decimal Salary => new decimal(25400.99);
+            [QueryStringProperty(true)]
+            public bool IsOnSickLeave => true;
             [QueryStringProperty("working", true)]
             public bool IsWorking => true;
             [QueryStringProperty("starts_at")]

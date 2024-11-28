@@ -1,0 +1,69 @@
+﻿{
+  "monitors": [
+    {
+      "attributes": {
+        "group_name": "Restore",
+        "key": "key",
+        "code": "code"
+      },
+      "assertions": [
+        "job.completes every 1 day"
+      ],
+      "created": "2023-11-27T11:45:17+01:00",
+      "disabled": false,
+      "failure_tolerance": null,
+      "grace_seconds": 3600,
+      "consecutive_alert_threshold": 10,
+      "group": "restore",
+      "initialized": true,
+      "key": "key",
+      "latest_event": {
+        "stamp": 1732675428.482,
+        "msg": null,
+        "event": "complete",
+        "metrics": {
+          "duration": 49.243
+        },
+        "client": "browser",
+        "host": null,
+        "ip": "52.169.185.15"
+      },
+      "latest_events": null,
+      "latest_issue": {
+        "stamp": 1711850428,
+        "state": "resolved"
+      },
+      "latest_invocations": null,
+      "public_badge_url": "https://cronitor.io/badges/key/production/hash.svg",
+      "metadata": null,
+      "name": "name",
+      "next_expected_at": 1732759200,
+      "note": null,
+      "notify": [
+        "slack:#alerts | laget.se"
+      ],
+      "passing": true,
+      "paused": false,
+      "platform": "SQL Maintenance Plan",
+      "realert_interval": "every 1 day",
+      "request": null,
+      "running": false,
+      "schedule": "0 3 * * *",
+      "schedule_tolerance": null,
+      "tags": [
+        "database"
+      ],
+      "timezone": "Europe/Stockholm",
+      "type": "job",
+      "environments": [
+        "production"
+      ],
+      "statuspages": [],
+      "site": null
+    }
+  ],
+  "page_size": 50,
+  "page": "1",
+  "total_monitor_count": 1,
+  "version": "2020-10-01"
+}

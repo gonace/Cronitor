@@ -1,4 +1,5 @@
-﻿using Cronitor.Abstractions;
+﻿using System.Text.Json;
+using Cronitor.Abstractions;
 using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Models;
@@ -34,8 +35,8 @@ namespace Cronitor.Clients
         {
         }
 
-        public NotificationsClient(string apiKey, bool useHttps)
-            : base(Urls.ApiUrl, apiKey, useHttps)
+        public NotificationsClient(string apiKey, JsonSerializerOptions jsonSerializerOptions)
+            : base(Urls.ApiUrl, apiKey, jsonSerializerOptions)
         {
         }
 
@@ -43,7 +44,6 @@ namespace Cronitor.Clients
             : base(client)
         {
         }
-
 
         public ListNotificationResponse List() =>
             Task.Run(async () => await ListAsync()).Result;
