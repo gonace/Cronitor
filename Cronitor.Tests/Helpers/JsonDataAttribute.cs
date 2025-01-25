@@ -18,10 +18,9 @@ namespace Cronitor.Tests.Helpers
 
         public override IEnumerable<object[]> GetData(MethodInfo method)
         {
-            var assemblyPath = typeof(JsonDataAttribute).Assembly.Location;
-            assemblyPath = assemblyPath.Remove(assemblyPath.LastIndexOf("\\", StringComparison.Ordinal));
+            var directoryPath = AppContext.BaseDirectory;
 
-            var file = string.Concat(assemblyPath, "\\Files\\", _filePath.Replace("/", "\\"));
+            var file = string.Concat(directoryPath, "\\Files\\", _filePath.Replace("/", "\\"));
             var content = File.ReadAllText(file, Encoding.UTF8);
 
             return new List<object[]> { new object[] { content } };
