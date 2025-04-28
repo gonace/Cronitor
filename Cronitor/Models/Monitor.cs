@@ -234,20 +234,5 @@ namespace Cronitor.Models
 
             return this;
         }
-
-        protected static string GenerateKey()
-        {
-            const string allowedChars = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ123456790";
-
-            var result = string.Empty;
-            var random = new Random();
-            for (var i = 0; i < 6; i++)
-            {
-                var a = random.Next(26);
-                result += allowedChars.ElementAt(a);
-            }
-
-            return result;
-        }
     }
 }

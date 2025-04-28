@@ -7,11 +7,6 @@ namespace Cronitor.Models.Monitors
         [JsonPropertyName("type")]
         public override string Type { get; set; } = "event";
 
-        public Heartbeat(string schedule)
-            : this(GenerateKey(), schedule)
-        {
-        }
-
         public Heartbeat(string key, string schedule)
             : base(key)
         {

@@ -39,16 +39,6 @@ namespace Cronitor.Clients
         {
         }
 
-        // public IssuesClient(string apiKey, bool useHttps)
-        //     : base(Urls.ApiUrl, JsonSerializerOptions, apiKey, useHttps)
-        // {
-        // }
-        //
-        // public IssuesClient(string apiKey, JsonSerializerOptions jsonSerializerOptions, bool useHttps)
-        //     : base(Urls.ApiUrl, jsonSerializerOptions, apiKey, useHttps)
-        // {
-        // }
-
         internal IssuesClient(HttpClient client)
             : base(client)
         {

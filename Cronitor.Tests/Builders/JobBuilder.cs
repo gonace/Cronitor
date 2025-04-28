@@ -5,6 +5,7 @@ namespace Cronitor.Tests.Builders
 {
     public class JobBuilder
     {
+        private string _key = "Key";
         private string _alertInterval = "6 hours";
         private int? _failureTolerance = 2;
         private int _graceSeconds = 900;
@@ -21,7 +22,7 @@ namespace Cronitor.Tests.Builders
 
         public Job Build()
         {
-            return new Job
+            return new Job(_key)
             {
                 AlertInterval = _alertInterval,
                 Assertions = _assertions,

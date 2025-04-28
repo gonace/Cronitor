@@ -6,6 +6,7 @@ namespace Cronitor.Tests.Builders
 {
     public class CheckBuilder
     {
+        private string _key = "Key";
         private string _schedule = "every 60 seconds";
         private string _timezone = "Europe/Stockholm";
         private string _url = "http://www.google.se";
@@ -27,7 +28,7 @@ namespace Cronitor.Tests.Builders
 
         public Check Build()
         {
-            return new Check(new Models.Request(_url, _regions))
+            return new Check(_key, new Models.Request(_url, _regions))
             {
                 Schedule = _schedule,
                 Timezone = _timezone

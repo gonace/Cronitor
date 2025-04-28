@@ -11,12 +11,6 @@ namespace Cronitor.Models.Monitors
         [JsonPropertyName("request")]
         public Request Request { get; set; }
 
-
-        public Check(Request request)
-            : this(GenerateKey(), request)
-        {
-        }
-
         public Check(string key, Request request)
             : base(key)
         {

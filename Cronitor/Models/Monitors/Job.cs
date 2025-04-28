@@ -7,12 +7,6 @@ namespace Cronitor.Models.Monitors
         [JsonPropertyName("type")]
         public override string Type { get; set; } = "job";
 
-
-        public Job()
-            : this(GenerateKey())
-        {
-        }
-
         public Job(string key)
             : base(key)
         {
