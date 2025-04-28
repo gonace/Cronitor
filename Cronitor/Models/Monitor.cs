@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -28,7 +29,6 @@ namespace Cronitor.Models
         /// The syntax for expressing most assertions is:
         ///
         ///  "{assertion} {operator} {value}"
-        ///  "metric.duration < 5 min"
         ///  "response.code = 200"
         ///
         /// Assertions that use an access key to a hash data structure — response.json and response.header assertions — are expressed as:
@@ -39,19 +39,19 @@ namespace Cronitor.Models
         [JsonPropertyName("assertions")]
         public IEnumerable<string> Assertions { get; set; }
         /// <summary>
-        /// job & event: number of telemetry events with state='fail' to allow before sending an alert.
+        /// job and event: number of telemetry events with state='fail' to allow before sending an alert.
         /// check: number of consecutive failed requests allow before sending an alert.
         /// </summary>
         [JsonPropertyName("failure_tolerance")]
         public int? FailureTolerance { get; set; }
         /// <summary>
         /// The number of seconds that Cronitor should wait after detecting a failure before dispatching an alert.
-        /// If the monitor recovers during the grace period no alert will be sent.
+        /// If the monitor recovers during the grace period, no alert will be sent.
         /// </summary>
         [JsonPropertyName("grace_seconds")]
         public int GraceSeconds { get; set; }
         /// <summary>
-        /// Groups are user-defined collections of monitors, that are used to group monitors in the Cronitor application.
+        /// Groups are user-defined collections of monitors, which are used to group monitors in the Cronitor application.
         /// Each group has a unique URL with the format https://cronitor.io/app/groups/:groupKey
         /// </summary>
         [JsonPropertyName("group")]
@@ -65,23 +65,23 @@ namespace Cronitor.Models
         public object Metadata { get; set; }
         /// <summary>
         /// A useful place to provide additional context/troubleshooting information about the job/system being monitored.
-        /// The note is sent in alerts (excluding SMS), and are accessible from the monitor details view in the Cronitor application.
+        /// The note is sent in alerts (excluding SMS) and is accessible from the monitor details view in the Cronitor application.
         /// </summary>
         [JsonPropertyName("note")]
         public string Note { get; set; }
         /// <summary>
         /// Configure where alerts sent when Cronitor detects an error. Additionally, notify can be used to specify
-        /// occurrence based alerts - alerts based on receiving telemetry pings.
+        /// occurrence-based alerts - alerts based on receiving telemetry pings.
         ///
         /// All accounts have a default Notification List(key= "default"). If notify is left empty or omitted, the default list will be used.
         ///
         /// Array: An array of Notification List keys. Notification Lists are used for configuring how alerts are sent to your team.
         ///   "notify": [‘devops-channel’]
         ///
-        /// Hash: To specify separate notification preferences a hash containing the keys "alerts" and "events" can be used.
+        /// Hash: To specify separate notification preferences, a hash containing the keys "alerts" and "events" can be used.
         ///
         /// The "alerts" key accepts an array of Notification List keys. The "events" key accepts a hash with keys corresponding to the
-        /// lifecycle telemetry events - run, complete.If these keys are set to true, Cronitor will send a notification when the event occurs.
+        /// lifecycle telemetry events - run, complete. If these keys are set to true, Cronitor will send a notification when the event occurs.
         ///   { "notify": { "alerts": [‘foo-bar’], "events": { "complete": true} }
         /// </summary>
         [JsonPropertyName("notify")]
@@ -92,9 +92,9 @@ namespace Cronitor.Models
         [JsonPropertyName("platform")]
         public virtual string Platform { get; set; }
         /// <summary>
-        /// Interval expression telling Cronitor how long to wait before sending follow up alerts after a monitor fails (and does not recover).
+        /// Interval expression telling Cronitor how long to wait before sending follow-up alerts after a monitor fails (and does not recover).
         ///
-        /// If an integer is provided it will be interpreted as `X hours`
+        /// If an integer is provided, it will be interpreted as `X hours`
         ///
         /// After 10 alerts, Cronitor will mute alerting until the monitor recovers.
         /// </summary>
@@ -103,13 +103,13 @@ namespace Cronitor.Models
         /// <summary>
         /// Schedule has different meanings depending on the monitor type.
         ///
-        /// job & event: the schedule tells Cronitor when to expect telemetry events from your system. If events are not received on schedule, an alert is sent.
+        /// job and event: the schedule tells Cronitor when to expect telemetry events from your system. If events are not received on schedule, an alert is sent.
         ///
-        /// An interval expression (‘every 5 minutes’) or a cron expression(‘0 0 * * *’) must be used.
+        /// An interval expression (‘every 5 minutes’) or a cron expression ('0 0 * * *’) must be used.
         ///
         /// check: the schedule is used to tell Cronitor how frequently to make requests to the resource being monitored.
         ///
-        /// An interval expression must be used.The range of accepted values is 30 seconds to 1 hour.e.g. ‘every 2 minutes’.
+        /// An interval expression must be used. The range of accepted values is 30 seconds to 1 hour.e.g. ‘every 2 minutes’
         /// </summary>
         [JsonPropertyName("schedule")]
         public string Schedule { get; set; }
@@ -152,7 +152,7 @@ namespace Cronitor.Models
         //[JsonProperty("notifications")]
         //public dynamic Notifications { get; set; }
         ///// <summary>
-        ///// when creating a monitor you must specify the rules that will trigger alerts to be sent.
+        ///// when creating a monitor, you must specify the rules that will trigger alerts to be sent.
         ///// </summary>
         //[JsonProperty("rules")]
         //public dynamic Rules { get; protected set; }
@@ -239,19 +239,15 @@ namespace Cronitor.Models
         {
             const string allowedChars = "abcdefghijkmnopqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ123456790";
 
-            using (var crypto = new RNGCryptoServiceProvider())
+            var result = string.Empty;
+            var random = new Random();
+            for (var i = 0; i < 6; i++)
             {
-                var tokenBuffer = new byte[6];
-                crypto.GetBytes(tokenBuffer);
-                var chars = new char[6];
-                var count = allowedChars.Length;
-
-                for (var i = 0; i < 6; i++)
-                {
-                    chars[i] = allowedChars[tokenBuffer[i] % count];
-                }
-                return new string(chars);
+                var a = random.Next(26);
+                result += allowedChars.ElementAt(a);
             }
+
+            return result;
         }
     }
 }

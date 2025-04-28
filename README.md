@@ -17,7 +17,7 @@ You can download the cronitor client nuget.
 [https://www.nuget.org/packages/Cronitor](https://www.nuget.org/packages/Cronitor)
 
 ## Usage
-> For the full documentation please read our [wiki](https://github.com/gonace/Cronitor/wiki), [telemetry wiki](https://github.com/gonace/Cronitor/wiki/Telemetry)!
+> For the full documentation, please read our [wiki](https://github.com/gonace/Cronitor/wiki), [telemetry wiki](https://github.com/gonace/Cronitor/wiki/Telemetry)!
 
 ### NET Generic Host
 > If you're using .NET HostBuilder and utilizing the default hosting and startup pattern (`Microsoft.Extensions.Hosting`).
@@ -38,7 +38,7 @@ await Host.CreateDefaultBuilder()
     .RunAsync();
 ```
 
-And then you'll be able to use it like this: 
+And then you'll be able to use it like this:
 ```c#
 public class SomeClass
 {
@@ -78,7 +78,7 @@ await Host.CreateDefaultBuilder()
     .RunAsync();
 ```
 
-And then you'll be able to use it like this: 
+And then you'll be able to use it like this:
 ```c#
 public class SomeClass
 {
@@ -88,7 +88,7 @@ public class SomeClass
     {
         _monitorsClient = monitorsClient;
     }
-    
+
     public Monitor Create()
     {
         var monitor = new Monitor();

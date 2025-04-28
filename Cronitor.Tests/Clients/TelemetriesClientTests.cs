@@ -41,7 +41,6 @@ namespace Cronitor.Tests.Clients
              _httpClient.VerifyNoOtherCalls();
         }
 
-
         #region Run & RunAsync
 
         [Fact]
