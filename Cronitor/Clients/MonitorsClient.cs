@@ -39,17 +39,17 @@ namespace Cronitor.Clients
     public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
     {
         public MonitorsClient()
-            : base(Urls.ApiUrl)
+            : base(Urls.DefaultApiUrl)
         {
         }
 
         public MonitorsClient(string apiKey)
-            : base(Urls.ApiUrl, apiKey)
+            : base(Urls.DefaultApiUrl, apiKey)
         {
         }
 
         public MonitorsClient(string apiKey, JsonSerializerOptions jsonSerializerOptions)
-            : base(Urls.ApiUrl, apiKey, jsonSerializerOptions)
+            : base(Urls.DefaultApiUrl, apiKey, jsonSerializerOptions)
         {
         }
 

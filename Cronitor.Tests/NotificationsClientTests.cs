@@ -28,20 +28,14 @@ namespace Cronitor.Tests.Clients
         public void ShouldExecuteListMethod()
         {
             var response = new ListNotificationResponse { Items = new List<Template> { Make.Template.Build() } };
-
-            // Setup
             _httpClient.Setup(x => x.SendAsync<ListNotificationResponse>(It.IsAny<ListNotificationRequest>())).Returns(Task.FromResult(response));
 
-            // Run
             var result = _notificationsClient.List();
 
-            // Assert
             Assert.NotNull(result);
             Assert.NotEmpty(result.Items);
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
-
-            // Verify
             _httpClient.Verify(x => x.SendAsync<ListNotificationResponse>(It.Is<ListNotificationRequest>(c =>
                 c.Page == 1 &&
                 c.Method == HttpMethod.Get &&
@@ -53,20 +47,14 @@ namespace Cronitor.Tests.Clients
         public async Task ShouldExecuteListAsyncMethod()
         {
             var response = new ListNotificationResponse { Items = new List<Template> { Make.Template.Build() } };
-
-            // Setup
             _httpClient.Setup(x => x.SendAsync<ListNotificationResponse>(It.IsAny<ListNotificationRequest>())).Returns(Task.FromResult(response));
 
-            // Run
             var result = await _notificationsClient.ListAsync();
 
-            // Assert
             Assert.NotNull(result);
             Assert.NotEmpty(result.Items);
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
-
-            // Verify
             _httpClient.Verify(x => x.SendAsync<ListNotificationResponse>(It.Is<ListNotificationRequest>(c =>
                 c.Page == 1 &&
                 c.Method == HttpMethod.Get &&
@@ -78,17 +66,11 @@ namespace Cronitor.Tests.Clients
         public void ShouldExecuteGetMethod()
         {
             var response = Make.Template.Build();
-
-            // Setup
             _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<GetNotificationRequest>())).Returns(Task.FromResult(response));
 
-            // Run
             var result = _notificationsClient.Get(TemplateKey);
 
-            // Assert
             Assert.NotNull(result);
-
-            // Verify
             _httpClient.Verify(x => x.SendAsync<Template>(It.Is<GetNotificationRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "templates/:key")), Times.Once);
@@ -99,17 +81,11 @@ namespace Cronitor.Tests.Clients
         public async Task ShouldExecuteGetAsyncMethod()
         {
             var response = Make.Template.Build();
-
-            // Setup
             _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<GetNotificationRequest>())).Returns(Task.FromResult(response));
 
-            // Run
             var result = await _notificationsClient.GetAsync(TemplateKey);
 
-            // Assert
             Assert.NotNull(result);
-
-            // Verify
             _httpClient.Verify(x => x.SendAsync<Template>(It.Is<GetNotificationRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "templates/:key")), Times.Once);
@@ -125,18 +101,11 @@ namespace Cronitor.Tests.Clients
             };
             var request = new CreateNotificationRequest("Notification", TemplateKey, notifications);
             var response = Make.Template.Build();
-
-            // Setup
             _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<CreateNotificationRequest>())).Returns(Task.FromResult(response));
 
-            // Run
             var result = _notificationsClient.Create(request);
 
-            // Assert
             Assert.NotNull(result);
-            //Assert.Equivalent(notifications, result);
-
-            // Verify
             _httpClient.Verify(x => x.SendAsync<Template>(It.Is<CreateNotificationRequest>(c =>
                 c.Method == HttpMethod.Post &&
                 c.Endpoint == "templates")), Times.Once);
@@ -152,17 +121,11 @@ namespace Cronitor.Tests.Clients
             };
             var request = new CreateNotificationRequest("Notification", TemplateKey, notifications);
             var response = Make.Template.Build();
-
-            // Setup
             _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<CreateNotificationRequest>())).Returns(Task.FromResult(response));
 
-            // Run
             var result = await _notificationsClient.CreateAsync(request);
 
-            // Assert
             Assert.NotNull(result);
-
-            // Verify
             _httpClient.Verify(x => x.SendAsync<Template>(It.Is<CreateNotificationRequest>(c =>
                 c.Method == HttpMethod.Post &&
                 c.Endpoint == "templates")), Times.Once);
@@ -174,17 +137,11 @@ namespace Cronitor.Tests.Clients
         {
             var response = Make.Template.Build();
             var request = new UpdateNotificationRequest(TemplateKey, response);
-
-            // Setup
             _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<UpdateNotificationRequest>())).Returns(Task.FromResult(response));
 
-            // Run
             var result = _notificationsClient.Update(request);
 
-            // Assert
             Assert.NotNull(result);
-
-            // Verify
             _httpClient.Verify(x => x.SendAsync<Template>(It.Is<UpdateNotificationRequest>(c =>
                 c.Method == HttpMethod.Put &&
                 c.Endpoint == "templates/:key")), Times.Once);
@@ -196,17 +153,11 @@ namespace Cronitor.Tests.Clients
         {
             var response = Make.Template.Build();
             var request = new UpdateNotificationRequest(TemplateKey, response);
-
-            // Setup
             _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<UpdateNotificationRequest>())).Returns(Task.FromResult(response));
 
-            // Run
             var result = await _notificationsClient.UpdateAsync(request);
 
-            // Assert
             Assert.NotNull(result);
-
-            // Verify
             _httpClient.Verify(x => x.SendAsync<Template>(It.Is<UpdateNotificationRequest>(c =>
                 c.Method == HttpMethod.Put &&
                 c.Endpoint == "templates/:key")), Times.Once);
@@ -216,14 +167,10 @@ namespace Cronitor.Tests.Clients
         [Fact]
         public void ShouldExecuteDeleteMethod()
         {
-
-            // Setup
             _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<DeleteNotificationRequest>()));
 
-            // Run
             _notificationsClient.Delete(TemplateKey);
 
-            // Verify
             _httpClient.Verify(x => x.SendAsync<Task>(It.Is<DeleteNotificationRequest>(c =>
                 c.Method == HttpMethod.Delete &&
                 c.Endpoint == "templates/:key")), Times.Once);
@@ -233,13 +180,10 @@ namespace Cronitor.Tests.Clients
         [Fact]
         public async Task ShouldExecuteDeleteAsyncMethod()
         {
-            // Setup
             _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<DeleteNotificationRequest>()));
 
-            // Run
             await _notificationsClient.DeleteAsync(TemplateKey);
 
-            // Verify
             _httpClient.Verify(x => x.SendAsync<Task>(It.Is<DeleteNotificationRequest>(c =>
                 c.Method == HttpMethod.Delete &&
                 c.Endpoint == "templates/:key")), Times.Once);

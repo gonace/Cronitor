@@ -1,4 +1,5 @@
-﻿using System.Net.Http;
+﻿using Cronitor.Constants;
+using System.Net.Http;
 
 namespace Cronitor.Commands
 {
@@ -7,6 +8,7 @@ namespace Cronitor.Commands
         public override string Endpoint => "complete";
 
         public CompleteCommand()
+            : base(Urls.TelemetryBaseUrl)
         {
             Method = HttpMethod.Get;
         }

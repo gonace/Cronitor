@@ -5,31 +5,27 @@ using Xunit;
 
 namespace Cronitor.Tests.Commands
 {
-    public class FailCommandTests
+    public class RunCommandTests
     {
         [Fact]
-        public void ShouldCreateFailCommand()
+        public void ShouldCreateRunCommand()
         {
-            var command = new FailCommand()
+            var command = new RunCommand()
                 .WithApiKey("apiKey")
                 .WithMonitorKey("monitorKey");
 
             Assert.Equal("apiKey", command.ApiKey);
             Assert.Equal("monitorKey", command.MonitorKey);
-            Assert.Equal("fail", command.Endpoint);
-            Assert.Equal("fail", command.ToString());
+            Assert.Equal("run", command.Endpoint);
+            Assert.Equal("run", command.ToString());
             Assert.Equal(HttpMethod.Get, command.Method);
-
-            const string expected = "https://cronitor.link/p/apiKey/monitorKey/fail";
-            var actual = command.ToUrl();
-
-            Assert.Equal(expected, actual);
+            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/run", command.ToUrl());
         }
 
         [Fact]
-        public void ShouldCreateFailCommandWithExtendedProperties()
+        public void ShouldCreateRunCommandWithExtendedProperties()
         {
-            var command = new FailCommand()
+            var command = new RunCommand()
                 .WithApiKey("apiKey")
                 .WithMonitorKey("monitorKey")
                 .WithEnvironment("Production")
@@ -40,11 +36,11 @@ namespace Cronitor.Tests.Commands
 
             Assert.Equal("apiKey", command.ApiKey);
             Assert.Equal("monitorKey", command.MonitorKey);
-            Assert.Equal("fail", command.Endpoint);
-            Assert.Equal("fail", command.ToString());
+            Assert.Equal("run", command.Endpoint);
+            Assert.Equal("run", command.ToString());
             Assert.Equal(HttpMethod.Get, command.Method);
 
-            const string expected = "https://cronitor.link/p/apiKey/monitorKey/fail?env=Production&host=127.0.0.1&message='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'&metric=count:99.99&series=3de5db91-9c02-4e95-b8a9-9a2442702336";
+            const string expected = "https://cronitor.link/p/apiKey/monitorKey/run?env=Production&host=127.0.0.1&message='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'&metric=count:99.99&series=3de5db91-9c02-4e95-b8a9-9a2442702336";
             var actual = command.ToUrl();
 
             Assert.Equal(expected, actual);

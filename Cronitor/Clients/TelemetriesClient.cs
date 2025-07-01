@@ -28,17 +28,17 @@ namespace Cronitor.Clients
         private readonly string _apiKey;
 
         public TelemetriesClient()
-            : base(Urls.PrimaryBaseUrl)
+            : base(Urls.TelemetryBaseUrl)
         {
         }
 
         public TelemetriesClient(string apiKey)
-            : base(Urls.ApiUrl, apiKey)
+            : base(Urls.DefaultApiUrl, apiKey)
         {
         }
 
         public TelemetriesClient(string apiKey, JsonSerializerOptions jsonSerializerOptions)
-            : base(Urls.ApiUrl, apiKey, jsonSerializerOptions)
+            : base(Urls.DefaultApiUrl, apiKey, jsonSerializerOptions)
         {
         }
 

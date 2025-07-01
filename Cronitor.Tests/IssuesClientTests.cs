@@ -28,20 +28,14 @@ namespace Cronitor.Tests.Clients
         public void ShouldExecuteListMethod()
         {
             var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
-
-            // Setup
             _httpClient.Setup(x => x.SendAsync<ListIssueResponse>(It.IsAny<ListIssueRequest>())).Returns(Task.FromResult(response));
 
-            // Run
             var result = _issuesClient.List();
 
-            // Assert
             Assert.NotNull(result);
             Assert.Single(result.Items);
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
-
-            // Verify
             _httpClient.Verify(x => x.SendAsync<ListIssueResponse>(It.Is<ListIssueRequest>(c =>
                 c.Page == 1 &&
                 c.Method == HttpMethod.Get &&
@@ -53,20 +47,14 @@ namespace Cronitor.Tests.Clients
         public async Task ShouldExecuteListAsyncMethod()
         {
             var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
-
-            // Setup
             _httpClient.Setup(x => x.SendAsync<ListIssueResponse>(It.IsAny<ListIssueRequest>())).Returns(Task.FromResult(response));
 
-            // Run
             var result = await _issuesClient.ListAsync();
 
-            // Assert
             Assert.NotNull(result);
             Assert.Single(result.Items);
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
-
-            // Verify
             _httpClient.Verify(x => x.SendAsync<ListIssueResponse>(It.Is<ListIssueRequest>(c =>
                 c.Page == 1 &&
                 c.Method == HttpMethod.Get &&
@@ -78,21 +66,16 @@ namespace Cronitor.Tests.Clients
         public void ShouldExecuteListMethodInUsingBlock()
         {
             var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
-            // Setup
             _httpClient.Setup(x => x.SendAsync<ListIssueResponse>(It.IsAny<ListIssueRequest>())).Returns(Task.FromResult(response));
 
             using (var client = new IssuesClient(_httpClient.Object))
             {
-                // Run
                 var result = client.List();
 
-                // Assert
                 Assert.NotNull(result);
                 Assert.Single(result.Items);
                 Assert.Equal(1, result.Page);
                 Assert.Equal(50, result.PageSize);
-
-                // Verify
                 _httpClient.Verify(x => x.SendAsync<ListIssueResponse>(It.Is<ListIssueRequest>(c =>
                     c.Page == 1 &&
                     c.Method == HttpMethod.Get &&
@@ -105,18 +88,12 @@ namespace Cronitor.Tests.Clients
         public void ShouldExecuteGetMethod()
         {
             var response = Make.Issue.Key(MonitorKey).Build();
-
-            // Setup
             _httpClient.Setup(x => x.SendAsync<Issue>(It.IsAny<GetIssueRequest>())).Returns(Task.FromResult(response));
 
-            // Run
             var result = _issuesClient.Get(MonitorKey);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Equal(response.Key, result.Key);
-
-            // Verify
             _httpClient.Verify(x => x.SendAsync<GetIssueRequest>(It.Is<GetIssueRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "issues/:key")), Times.Once);
@@ -127,18 +104,12 @@ namespace Cronitor.Tests.Clients
         public async Task ShouldExecuteGetAsyncMethod()
         {
             var response = Make.Issue.Key(MonitorKey).Build();
-
-            // Setup
             _httpClient.Setup(x => x.SendAsync<Issue>(It.IsAny<GetIssueRequest>())).Returns(Task.FromResult(response));
 
-            // Run
             var result = await _issuesClient.GetAsync(MonitorKey);
 
-            // Assert
             Assert.NotNull(result);
             Assert.Equal(response.Key, result.Key);
-
-            // Verify
             _httpClient.Verify(x => x.SendAsync<GetIssueRequest>(It.Is<GetIssueRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "issues/:key")), Times.Once);

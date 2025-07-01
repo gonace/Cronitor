@@ -26,17 +26,17 @@ namespace Cronitor.Clients
     public class NotificationsClient : BaseClient<NotificationsClient>, INotificationsClient
     {
         public NotificationsClient()
-            : base(Urls.ApiUrl)
+            : base(Urls.DefaultApiUrl)
         {
         }
 
         public NotificationsClient(string apiKey)
-            : base(Urls.ApiUrl, apiKey)
+            : base(Urls.DefaultApiUrl, apiKey)
         {
         }
 
         public NotificationsClient(string apiKey, JsonSerializerOptions jsonSerializerOptions)
-            : base(Urls.ApiUrl, apiKey, jsonSerializerOptions)
+            : base(Urls.DefaultApiUrl, apiKey, jsonSerializerOptions)
         {
         }
 

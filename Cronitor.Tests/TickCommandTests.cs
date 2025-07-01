@@ -19,11 +19,7 @@ namespace Cronitor.Tests.Commands
             Assert.Equal("tick", command.Endpoint);
             Assert.Equal("tick", command.ToString());
             Assert.Equal(HttpMethod.Get, command.Method);
-
-            const string expected = "https://cronitor.link/p/apiKey/monitorKey/tick";
-            var actual = command.ToUrl();
-
-            Assert.Equal(expected, actual);
+            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/tick", command.ToUrl());
         }
 
         [Fact]
@@ -43,11 +39,7 @@ namespace Cronitor.Tests.Commands
             Assert.Equal("tick", command.Endpoint);
             Assert.Equal("tick", command.ToString());
             Assert.Equal(HttpMethod.Get, command.Method);
-
-            const string expected = "https://cronitor.link/p/apiKey/monitorKey/tick?env=Production&host=127.0.0.1&message='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'&metric=count:9.99&series=3de5db91-9c02-4e95-b8a9-9a2442702336";
-            var actual = command.ToUrl();
-
-            Assert.Equal(expected, actual);
+            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/tick?env=Production&host=127.0.0.1&message='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'&metric=count:9.99&series=3de5db91-9c02-4e95-b8a9-9a2442702336", command.ToUrl());
         }
     }
 }

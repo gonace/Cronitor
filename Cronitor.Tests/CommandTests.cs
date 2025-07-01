@@ -11,7 +11,7 @@ namespace Cronitor.Tests.Commands
         [Fact]
         public void ShouldCreateCustomCommand()
         {
-            var command = new Command(HttpMethod.Options, "custom")
+            var command = new Command(Urls.TelemetryBaseUrl, HttpMethod.Options, "custom")
                 .WithApiKey("apiKey")
                 .WithMonitorKey("monitorKey");
 
@@ -20,17 +20,13 @@ namespace Cronitor.Tests.Commands
             Assert.Equal("custom", command.Endpoint);
             Assert.Equal("custom", command.ToString());
             Assert.Equal(HttpMethod.Options, command.Method);
-
-            const string expected = "https://cronitor.link/p/apiKey/monitorKey/custom";
-            var actual = command.ToUrl();
-
-            Assert.Equal(expected, actual);
+            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/custom", command.ToUrl());
         }
 
         [Fact]
         public void ShouldCreateCustomCommandWithExtendedProperties()
         {
-            var command = new Command(HttpMethod.Options, "custom")
+            var command = new Command(Urls.TelemetryBaseUrl, HttpMethod.Options, "custom")
             {
                 Environment = "Production",
                 Host = "127.0.0.1",
@@ -48,17 +44,13 @@ namespace Cronitor.Tests.Commands
             Assert.Equal("custom", command.Endpoint);
             Assert.Equal("custom", command.ToString());
             Assert.Equivalent(new StringContent("custom"), command.Content);
-
-            const string expected = "https://cronitor.link/p/apiKey/monitorKey/custom?env=Production&host=127.0.0.1&message='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'&metric=count:100&series=3de5db91-9c02-4e95-b8a9-9a2442702336&status_code=130";
-            var actual = command.ToUrl();
-
-            Assert.Equal(expected, actual);
+            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/custom?env=Production&host=127.0.0.1&message='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'&metric=count:100&series=3de5db91-9c02-4e95-b8a9-9a2442702336&status_code=130", command.ToUrl());
         }
 
         [Fact]
         public void ShouldThrowExceptionWhenMissingRequiredFields()
         {
-            var command = new Command(HttpMethod.Get, "foo/bar");
+            var command = new Command(Urls.TelemetryBaseUrl, HttpMethod.Get, "foo/bar");
 
             Assert.Throws<ArgumentException>(() => command.ToUrl());
         }

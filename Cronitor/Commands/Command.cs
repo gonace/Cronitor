@@ -37,9 +37,9 @@ namespace Cronitor.Commands
         public string Message { get; private set; }
         /// <summary>
         /// Performance related metrics. Must be one of:
-        ///     count:* - record counts of important events.
-        ///     duration:* - the duration of the job/task being monitored.
-        ///     error_count:* - the number of errors that occurred
+        ///   count:* - record counts of important events.
+        ///   duration:* - the duration of the job/task being monitored.
+        ///   error_count:* - the number of errors that occurred
         /// </summary>
         [QueryStringProperty("metric")]
         public string Metric { get; set; }
@@ -57,16 +57,16 @@ namespace Cronitor.Commands
         public string Status { get; set; }
 
 
-        protected Command()
+        protected Command(Uri uri)
         {
-            Uri = new Uri(Urls.PrimaryBaseUrl.ToString());
+            Uri = uri;
         }
 
-        public Command(HttpMethod method, string endpoint)
+        public Command(Uri uri, HttpMethod method, string endpoint)
         {
             Method = method;
             Endpoint = endpoint;
-            Uri = new Uri(Urls.PrimaryBaseUrl.ToString());
+            Uri = uri;
         }
 
         public Command WithApiKey(string apiKey)

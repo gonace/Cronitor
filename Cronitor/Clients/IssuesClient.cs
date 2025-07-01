@@ -25,17 +25,17 @@ namespace Cronitor.Clients
     public class IssuesClient : BaseClient<IssuesClient>, IIssuesClient
     {
         public IssuesClient()
-            : base(Urls.ApiUrl)
+            : base(Urls.DefaultApiUrl)
         {
         }
 
         public IssuesClient(string apiKey)
-            : base(Urls.ApiUrl, apiKey)
+            : base(Urls.DefaultApiUrl, apiKey)
         {
         }
 
         public IssuesClient(string apiKey, JsonSerializerOptions jsonSerializerOptions)
-            : base(Urls.ApiUrl, apiKey, jsonSerializerOptions)
+            : base(Urls.DefaultApiUrl, apiKey, jsonSerializerOptions)
         {
         }
 
