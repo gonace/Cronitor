@@ -5,7 +5,7 @@ using System;
 using System.Globalization;
 using Xunit;
 
-namespace Cronitor.Tests.Extensions
+namespace Cronitor.Tests
 {
     public class ObjectExtensionsTests
     {

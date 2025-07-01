@@ -3,7 +3,7 @@ using Cronitor.Constants;
 using System.Net.Http;
 using Xunit;
 
-namespace Cronitor.Tests.Commands
+namespace Cronitor.Tests
 {
     public class CompleteCommandTests
     {

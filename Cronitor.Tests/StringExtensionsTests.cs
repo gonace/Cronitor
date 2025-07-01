@@ -1,7 +1,7 @@
 ﻿using Cronitor.Extensions;
 using Xunit;
 
-namespace Cronitor.Tests.Extensions
+namespace Cronitor.Tests
 {
     public class StringExtensionsTests
     {

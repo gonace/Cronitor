@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using Xunit;
 
-namespace Cronitor.Tests.Extensions
+namespace Cronitor.Tests
 {
     public class UriExtensionsTests
     {

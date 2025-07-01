@@ -2,16 +2,15 @@
 using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Responses;
+using Cronitor.Tests.Builders;
 using Cronitor.Tests.Helpers;
 using Moq;
-using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Cronitor.Tests.Builders;
 using Xunit;
 
-namespace Cronitor.Tests.Clients
+namespace Cronitor.Tests
 {
     public class NotificationsClientTests : BaseTest
     {

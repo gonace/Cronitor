@@ -6,7 +6,7 @@ using Moq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cronitor.Tests.Clients
+namespace Cronitor.Tests
 {
     public class TelemetriesClient_CompleteTests : BaseTest
     {
