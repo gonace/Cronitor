@@ -2,7 +2,7 @@
 
 namespace Cronitor.Models
 {
-    public class ApiException
+    public class ApiError
     {
         [JsonPropertyName("detail")]
         public string Message { get; set; }

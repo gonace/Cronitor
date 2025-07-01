@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cronitor.Models;
+using System;
 using System.Net;
 
 namespace Cronitor.Exceptions
@@ -15,12 +16,12 @@ namespace Cronitor.Exceptions
         {
         }
 
-        public ApiException(Models.ApiException model)
+        public ApiException(ApiError model)
             : base(model.Message)
         {
         }
 
-        public ApiException(Models.ApiException model, HttpStatusCode statusCode)
+        public ApiException(ApiError model, HttpStatusCode statusCode)
             : base($"{model.Message} ({statusCode})")
         {
         }

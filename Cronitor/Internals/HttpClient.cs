@@ -2,6 +2,7 @@
 using Cronitor.Commands;
 using Cronitor.Exceptions;
 using Cronitor.Extensions;
+using Cronitor.Models;
 using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -98,7 +99,7 @@ namespace Cronitor.Internals
             if (response.IsSuccessStatusCode)
                 return;
 
-            var details = JsonSerializer.Deserialize<Models.ApiException>(await response.Content.ReadAsStringAsync(), _serializerOptions);
+            var details = JsonSerializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync(), _serializerOptions);
             throw new ApiException(details, response.StatusCode);
         }
 
@@ -108,7 +109,7 @@ namespace Cronitor.Internals
             if (response.IsSuccessStatusCode)
                 return JsonSerializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync());
 
-            var details = JsonSerializer.Deserialize<Models.ApiException>(await response.Content.ReadAsStringAsync(), _serializerOptions);
+            var details = JsonSerializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync(), _serializerOptions);
             throw new ApiException(details, response.StatusCode);
         }
 
