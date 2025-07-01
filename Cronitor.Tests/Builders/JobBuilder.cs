@@ -5,20 +5,20 @@ namespace Cronitor.Tests.Builders
 {
     public class JobBuilder
     {
-        private string _key = "Key";
-        private string _alertInterval = "6 hours";
-        private int? _failureTolerance = 2;
-        private int _graceSeconds = 900;
-        private string _group = "Group";
-        private string _note = "Note";
-        private string _platform = "Platform";
+        private readonly string _key = "Key";
+        private readonly string _alertInterval = "6 hours";
+        private readonly int? _failureTolerance = 2;
+        private readonly int _graceSeconds = 900;
+        private readonly string _group = "Group";
+        private readonly string _note = "Note";
+        private readonly string _platform = "Platform";
         private string _schedule = "35 0 * * *";
-        private int? _scheduleTolerance = 1;
-        private string _timeZone = "Europe/Stockholm";
+        private readonly int? _scheduleTolerance = 1;
+        private readonly string _timeZone = "Europe/Stockholm";
 
         private List<string> _assertions = new List<string> { "metric.duration < 30s", "metric.error_count < 5" };
         private List<string>  _notify = new List<string> { "developers" };
-        private List<string> _tags = new List<string> { "tag", "attribute" };
+        private readonly List<string> _tags = new List<string> { "tag", "attribute" };
 
         public Job Build()
         {

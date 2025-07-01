@@ -6,9 +6,9 @@ namespace Cronitor.Tests.Builders
     public class IssueBuilder
     {
         private string _key = "Key";
-        private string _name = "Name";
-        private DateTime _createdAt = DateTime.UtcNow.AddMinutes(-5);
-        private DateTime _updatedAt = DateTime.UtcNow;
+        private readonly string _name = "Name";
+        private readonly DateTime _createdAt = DateTime.UtcNow.AddMinutes(-5);
+        private readonly DateTime _updatedAt = DateTime.UtcNow;
 
         public Issue Build()
         {

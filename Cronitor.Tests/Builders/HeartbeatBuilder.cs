@@ -4,9 +4,9 @@ namespace Cronitor.Tests.Builders
 {
     public class HeartbeatBuilder
     {
-        private string _key = "Key";
-        private string _schedule = "every 60 seconds";
-        private string _timezone = "Europe/Stockholm";
+        private readonly string _key = "Key";
+        private readonly string _schedule = "every 60 seconds";
+        private readonly string _timezone = "Europe/Stockholm";
 
         public Heartbeat Build()
         {

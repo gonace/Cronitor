@@ -6,12 +6,12 @@ namespace Cronitor.Tests.Builders
 {
     public class CheckBuilder
     {
-        private string _key = "Key";
-        private string _schedule = "every 60 seconds";
-        private string _timezone = "Europe/Stockholm";
-        private string _url = "http://www.google.se";
+        private readonly string _key = "Key";
+        private readonly string _schedule = "every 60 seconds";
+        private readonly string _timezone = "Europe/Stockholm";
+        private readonly string _url = "https://www.google.se";
 
-        private List<Region> _regions = new List<Region>
+        private readonly List<Region> _regions = new List<Region>
         {
             Region.Bahrain,
             Region.California,

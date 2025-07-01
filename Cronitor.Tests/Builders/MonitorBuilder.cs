@@ -5,8 +5,8 @@ namespace Cronitor.Tests.Builders
 {
     public class MonitorBuilder
     {
-        private string _key = "Key";
-        private string _name = "Name";
+        private readonly string _key = "Key";
+        private readonly string _name = "Name";
 
         public Monitor Build()
         {
