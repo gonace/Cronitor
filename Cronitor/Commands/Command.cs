@@ -110,15 +110,9 @@ namespace Cronitor.Commands
 
         public Command WithMessage(string message)
         {
-            if (message.StartsWith("'") &&
-                message.EndsWith("'"))
-            {
-                Message = message;
-            }
-            else
-            {
-                Message = $"'{message}'";
-            }
+            Message = message.StartsWith("'") &&
+                      message.EndsWith("'") ?
+                message : $"'{message}'";
 
             return this;
         }
