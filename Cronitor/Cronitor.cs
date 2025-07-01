@@ -1,5 +1,4 @@
 ﻿using Cronitor.Clients;
-using Cronitor.Exceptions;
 using Cronitor.Internals;
 
 namespace Cronitor
@@ -17,54 +16,9 @@ namespace Cronitor
             Service.Configure(key);
         }
 
-        public static IssuesClient Issues
-        {
-            get
-            {
-                if (Service.Issues == null)
-                    throw new NotConfiguredException();
-
-                return Service.Issues;
-            }
-        }
-
-        public static IMonitorsClient Monitors
-        {
-            get
-            {
-                if (Service.Monitors == null)
-                    throw new NotConfiguredException();
-
-                return Service.Monitors;
-            }
-        }
-
-        public static INotificationsClient Notifications
-        {
-            get
-            {
-                if (Service.Notifications == null)
-                    throw new NotConfiguredException();
-
-                return Service.Notifications;
-            }
-        }
-
-        public static ITelemetriesClient Telemetries
-        {
-            get
-            {
-                if (Service.Telemetries == null)
-                    throw new NotConfiguredException();
-
-                return Service.Telemetries;
-            }
-        }
-
-        public static bool Configured =>
-            Service.Issues != null &&
-            Service.Monitors != null &&
-            Service.Notifications != null &&
-            Service.Telemetries != null;
+        public static IssuesClient Issues => Service.Issues;
+        public static IMonitorsClient Monitors => Service.Monitors;
+        public static INotificationsClient Notifications => Service.Notifications;
+        public static ITelemetriesClient Telemetries => Service.Telemetries;
     }
 }

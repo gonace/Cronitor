@@ -1,14 +1,70 @@
 ﻿using Cronitor.Clients;
+using Cronitor.Exceptions;
 using System;
 
 namespace Cronitor.Internals
 {
     internal class Service : IDisposable
     {
-        public IssuesClient Issues;
-        public MonitorsClient Monitors;
-        public NotificationsClient Notifications;
-        public TelemetriesClient Telemetries;
+        private IssuesClient _issues;
+        public IssuesClient Issues
+        {
+            get
+            {
+                if (_issues == null)
+                {
+                    throw new NotConfiguredException();
+                }
+
+                return _issues;
+            }
+            private set => _issues = value;
+        }
+
+        private MonitorsClient _monitors;
+        public MonitorsClient Monitors
+        {
+            get
+            {
+                if (_monitors == null)
+                {
+                    throw new NotConfiguredException();
+                }
+
+                return _monitors;
+            }
+            private set => _monitors = value;
+        }
+
+        private NotificationsClient _notifications;
+        public NotificationsClient Notifications
+        {
+            get
+            {
+                if (_notifications == null)
+                {
+                    throw new NotConfiguredException();
+                }
+
+                return _notifications;
+            }
+            private set => _notifications = value;
+        }
+
+        private TelemetriesClient _telemetries;
+        public TelemetriesClient Telemetries
+        {
+            get
+            {
+                if (_notifications == null)
+                {
+                    throw new NotConfiguredException();
+                }
+
+                return _telemetries;
+            }
+            private set => _telemetries = value;
+        }
 
         /// <summary>
         /// Configures the instance.
