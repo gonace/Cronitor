@@ -4,11 +4,9 @@
     <!--
       Test all target frameworks from Cronitor/Cronitor.csproj
         - net8.0 -> net8.0
-        - net7.0 -> net7.0
-        - net6.0 -> net6.0
         - net48 -> netstandard2.0
     -->
-    <TargetFrameworks>net8.0;net7.0;net6.0;net48</TargetFrameworks>
+    <TargetFrameworks>net8.0;net48</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
@@ -36,10 +34,6 @@
     <Content Include="Files\ListMonitors.json">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Commands\" />
   </ItemGroup>
 
 </Project>
