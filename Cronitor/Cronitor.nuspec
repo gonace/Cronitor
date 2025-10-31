@@ -16,20 +16,20 @@
     <repository type="git" url="https://github.com/gonace/cronitor" branch="master" />
     <dependencies>
       <group targetFramework="net9.0">
-        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="8.0.1" />
-          <dependency id="System.Text.Json" version="8.0.6" />
+        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="9.0.10" />
+        <dependency id="System.Text.Json" version="9.0.10" />
       </group>
       <group targetFramework="net8.0">
-        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="8.0.1" />
-        <dependency id="System.Text.Json" version="8.0.6" />
+        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="9.0.10" />
+        <dependency id="System.Text.Json" version="9.0.10" />
       </group>
       <group targetFramework="netstandard2.1">
-        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="8.0.1" />
-        <dependency id="System.Text.Json" version="8.0.6" />
+        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="9.0.10" />
+        <dependency id="System.Text.Json" version="9.0.10" />
       </group>
       <group targetFramework="netstandard2.0">
-        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="8.0.1" />
-        <dependency id="System.Text.Json" version="8.0.6" />
+        <dependency id="Microsoft.Extensions.Hosting.Abstractions" version="9.0.10" />
+        <dependency id="System.Text.Json" version="9.0.10" />
       </group>
     </dependencies>
   </metadata>
