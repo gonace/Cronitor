@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using System.Text;
+using System.Threading.Tasks;
+using Xunit;
 using Xunit.Sdk;
+using Xunit.v3;
 
 namespace Cronitor.Tests.Helpers
 {
@@ -16,14 +19,20 @@ namespace Cronitor.Tests.Helpers
             _filePath = filePath;
         }
 
-        public override IEnumerable<object[]> GetData(MethodInfo method)
+        public override ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
         {
             var directoryPath = AppContext.BaseDirectory;
 
             var file = string.Concat(directoryPath, "\\Files\\", _filePath.Replace("/", "\\"));
             var content = File.ReadAllText(file, Encoding.UTF8);
+            var data = new List<ITheoryDataRow> { new TheoryDataRow(content) };
 
-            return new List<object[]> { new object[] { content } };
+            return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(data);
+        }
+
+        public override bool SupportsDiscoveryEnumeration()
+        {
+            return true;
         }
     }
 }
