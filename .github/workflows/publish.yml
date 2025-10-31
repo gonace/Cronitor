@@ -1,5 +1,9 @@
 ﻿name: Publish
 
+permissions:
+  packages: write
+  contents: read
+
 on:
   workflow_dispatch: {}
 
