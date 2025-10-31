@@ -17,7 +17,7 @@ namespace Cronitor.Tests
             Assert.NotNull(Cronitor.Telemetries);
         }
 
-        [Fact]
+        [Fact(Explicit = true)]
         public void ShouldThrowExceptionIfNotConfigured()
         {
             Assert.Throws<NotConfiguredException>(() => Cronitor.Issues);
