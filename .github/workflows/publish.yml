@@ -38,3 +38,18 @@ jobs:
     - run: dotnet build --configuration Release Cronitor/Cronitor.csproj -p:Version=${{vars.VERSION}}.${{github.run_number}}
     - run: dotnet pack --configuration Release Cronitor/Cronitor.csproj --no-build -p:Version=${{vars.VERSION}}.${{github.run_number}} -p:PackageVersion=${{vars.VERSION}}.${{github.run_number}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:NuspecFile=Cronitor.nuspec
     - run: dotnet nuget push Cronitor/bin/Release/Cronitor.${{vars.VERSION}}.${{github.run_number}}.nupkg --api-key ${{secrets.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+  tag:
+    runs-on: ubuntu-latest
+    needs: publish
+
+    permissions:
+      repository-projects: write
+
+    steps:
+      - name: Tag branch
+        env:
+          VERSION: ${{vars.VERSION}}.${{github.run_number}}
+        run: |
+          git tag -f -a ${VERSION} -m "Release ${VERSION}."
+          git push -f origin ${VERSION}
