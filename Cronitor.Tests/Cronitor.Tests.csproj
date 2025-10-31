@@ -3,10 +3,11 @@
   <PropertyGroup>
     <!--
       Test all target frameworks from Cronitor/Cronitor.csproj
+        - net9.0 -> net9.0
         - net8.0 -> net8.0
         - net48 -> netstandard2.0
     -->
-    <TargetFrameworks>net8.0;net48</TargetFrameworks>
+    <TargetFrameworks>net9.0;net8.0;net48</TargetFrameworks>
     <IsPackable>false</IsPackable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
