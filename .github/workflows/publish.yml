@@ -50,5 +50,5 @@ jobs:
       - uses: actions/checkout@v5
       - name: Tag branch
         run: |
-          git tag -f -a "$v{{vars.VERSION}}.${{github.run_number}}" -m "Release v${{vars.VERSION}}.${{github.run_number}}"
+          git tag -f -a "v${{vars.VERSION}}.${{github.run_number}}" -m "Release v${{vars.VERSION}}.${{github.run_number}}"
           git push -f origin "v${{vars.VERSION}}.${{github.run_number}}"
