@@ -47,9 +47,8 @@ jobs:
       repository-projects: write
 
     steps:
+      - uses: actions/checkout@v5
       - name: Tag branch
-        env:
-          VERSION: ${{vars.VERSION}}.${{github.run_number}}
         run: |
-          git tag -f -a ${VERSION} -m "Release ${VERSION}."
-          git push -f origin ${VERSION}
+          git tag -f -a "$v{{vars.VERSION}}.${{github.run_number}}" -m "Release v${{vars.VERSION}}.${{github.run_number}}"
+          git push -f origin "v${{vars.VERSION}}.${{github.run_number}}"
