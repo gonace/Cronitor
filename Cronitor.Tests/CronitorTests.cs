@@ -4,6 +4,7 @@ using Xunit;
 
 namespace Cronitor.Tests
 {
+    [Collection("Cronitor Configuration Tests")]
     public class CronitorTests : BaseTest
     {
         [Fact]
@@ -16,8 +17,12 @@ namespace Cronitor.Tests
             Assert.NotNull(Cronitor.Notifications);
             Assert.NotNull(Cronitor.Telemetries);
         }
+    }
 
-        [Fact(Explicit = true)]
+    [Collection("Cronitor Unconfigured Tests")]
+    public class CronitorUnconfiguredTests : BaseTest
+    {
+        [Fact]
         public void ShouldThrowExceptionIfNotConfigured()
         {
             Assert.Throws<NotConfiguredException>(() => Cronitor.Issues);
