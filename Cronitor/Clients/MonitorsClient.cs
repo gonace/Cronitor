@@ -86,7 +86,7 @@ namespace Cronitor.Clients
         }
 
         public IEnumerable<Monitor> Create(CreateMonitorRequest request) =>
-            Task.Run(async () => await CreateAsync(request)).Result;
+            CreateAsync(request).GetAwaiter().GetResult();
 
         public async Task<IEnumerable<Monitor>> CreateAsync(CreateMonitorRequest request)
         {
@@ -96,7 +96,7 @@ namespace Cronitor.Clients
         }
 
         public IEnumerable<Monitor> Update(UpdateMonitorRequest request) =>
-            Task.Run(async () => await UpdateAsync(request)).Result;
+            UpdateAsync(request).GetAwaiter().GetResult();
 
         public async Task<IEnumerable<Monitor>> UpdateAsync(UpdateMonitorRequest request)
         {
