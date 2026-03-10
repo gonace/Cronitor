@@ -84,7 +84,7 @@ namespace Cronitor.Tests
         }
 
         [Fact]
-        public async Task CanBeThrownAndCaught()
+        public async Task CanBeThrownAndCaughtAsync()
         {
             const string message = "Test exception";
 
@@ -94,7 +94,7 @@ namespace Cronitor.Tests
         }
 
         [Fact]
-        public async Task CanBeCaughtAsException()
+        public async Task CanBeCaughtAsExceptionAsync()
         {
             const string message = "Test exception";
 
@@ -105,7 +105,7 @@ namespace Cronitor.Tests
         }
 
         [Fact]
-        public async Task WithStatusCode_CanBeThrownAndCaught()
+        public async Task WithStatusCode_CanBeThrownAndCaughtAsync()
         {
             const string message = "Test exception";
             const HttpStatusCode statusCode = HttpStatusCode.BadRequest;

@@ -12,7 +12,7 @@ namespace Cronitor.Tests.Requests
     {
         [Theory]
         [JsonData("CreateMonitorRequest.json")]
-        public async Task ShouldCreateMonitorRequest(string expected)
+        public async Task ShouldCreateMonitorRequestAsync(string expected)
         {
             var monitor = new Monitor("nightly-backup-job")
                 .With(x => x.Type, MonitorType.Job.ToString())
