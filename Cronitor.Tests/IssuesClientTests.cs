@@ -1,4 +1,4 @@
-﻿using Cronitor.Clients;
+using Cronitor.Clients;
 using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Responses;
@@ -7,6 +7,8 @@ using Cronitor.Tests.Helpers;
 using Moq;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -21,6 +23,46 @@ namespace Cronitor.Tests
         {
             _httpClient = new Mock<Internals.HttpClient>();
             _issuesClient = new IssuesClient(_httpClient.Object);
+        }
+
+        [Fact]
+        public void ShouldConstructWithNoParameters()
+        {
+            var client = new IssuesClient();
+
+            Assert.NotNull(client);
+        }
+
+        [Fact]
+        public void ShouldConstructWithApiKey()
+        {
+            var client = new IssuesClient(ApiKey);
+
+            Assert.NotNull(client);
+        }
+
+        [Fact]
+        public void ShouldConstructWithApiKeyAndJsonSerializerOptions()
+        {
+            var options = new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                NumberHandling = JsonNumberHandling.AllowReadingFromString
+            };
+
+            var client = new IssuesClient(ApiKey, options);
+
+            Assert.NotNull(client);
+        }
+
+        [Fact]
+        public void ShouldDisposeIssuesClient()
+        {
+            using (var client = new IssuesClient(ApiKey))
+            {
+                Assert.NotNull(client);
+            }
+            // Test passes if no exception is thrown during disposal
         }
 
         [Fact]

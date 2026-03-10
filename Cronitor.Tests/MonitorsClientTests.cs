@@ -1,4 +1,4 @@
-﻿using Cronitor.Clients;
+using Cronitor.Clients;
 using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Responses;
@@ -8,6 +8,8 @@ using Moq;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -22,6 +24,46 @@ namespace Cronitor.Tests
         {
             _httpClient = new Mock<Internals.HttpClient>();
             _monitorsClient = new MonitorsClient(_httpClient.Object);
+        }
+
+        [Fact]
+        public void ShouldConstructWithNoParameters()
+        {
+            var client = new MonitorsClient();
+
+            Assert.NotNull(client);
+        }
+
+        [Fact]
+        public void ShouldConstructWithApiKey()
+        {
+            var client = new MonitorsClient(ApiKey);
+
+            Assert.NotNull(client);
+        }
+
+        [Fact]
+        public void ShouldConstructWithApiKeyAndJsonSerializerOptions()
+        {
+            var options = new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                NumberHandling = JsonNumberHandling.AllowReadingFromString
+            };
+
+            var client = new MonitorsClient(ApiKey, options);
+
+            Assert.NotNull(client);
+        }
+
+        [Fact]
+        public void ShouldDisposeMonitorsClient()
+        {
+            using (var client = new MonitorsClient(ApiKey))
+            {
+                Assert.NotNull(client);
+            }
+            // Test passes if no exception is thrown during disposal
         }
 
         [Theory]
@@ -366,6 +408,69 @@ namespace Cronitor.Tests
             _httpClient.Verify(x => x.SendAsync<Dictionary<string, IEnumerable<Ping>>>(It.Is<ListPingsRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "monitors/:key/pings")), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task CreateAsyncShouldReturnNullWhenResponseIsNull()
+        {
+            _httpClient.Setup(x => x.SendAsync<CreateMonitorResponse>(It.IsAny<CreateMonitorRequest>())).Returns(Task.FromResult<CreateMonitorResponse>(null));
+
+            var monitor = Make.Job.Build();
+            var result = await _monitorsClient.CreateAsync(new CreateMonitorRequest(monitor));
+
+            Assert.Null(result);
+            _httpClient.Verify(x => x.SendAsync<CreateMonitorResponse>(It.IsAny<CreateMonitorRequest>()), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task AlertsAsyncShouldReturnNullWhenResponseIsNull()
+        {
+            _httpClient.Setup(x => x.SendAsync<Dictionary<string, IEnumerable<Alert>>>(It.IsAny<ListAlertsRequest>())).Returns(Task.FromResult<Dictionary<string, IEnumerable<Alert>>>(null));
+
+            var result = await _monitorsClient.AlertsAsync(MonitorKey);
+
+            Assert.Null(result);
+            _httpClient.Verify(x => x.SendAsync<Dictionary<string, IEnumerable<Alert>>>(It.IsAny<ListAlertsRequest>()), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task AlertsAsyncShouldReturnNullWhenDictionaryIsEmpty()
+        {
+            var response = new Dictionary<string, IEnumerable<Alert>>();
+            _httpClient.Setup(x => x.SendAsync<Dictionary<string, IEnumerable<Alert>>>(It.IsAny<ListAlertsRequest>())).Returns(Task.FromResult(response));
+
+            var result = await _monitorsClient.AlertsAsync(MonitorKey);
+
+            Assert.Null(result);
+            _httpClient.Verify(x => x.SendAsync<Dictionary<string, IEnumerable<Alert>>>(It.IsAny<ListAlertsRequest>()), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task PingsAsyncShouldReturnNullWhenResponseIsNull()
+        {
+            _httpClient.Setup(x => x.SendAsync<Dictionary<string, IEnumerable<Ping>>>(It.IsAny<ListPingsRequest>())).Returns(Task.FromResult<Dictionary<string, IEnumerable<Ping>>>(null));
+
+            var result = await _monitorsClient.PingsAsync(MonitorKey);
+
+            Assert.Null(result);
+            _httpClient.Verify(x => x.SendAsync<Dictionary<string, IEnumerable<Ping>>>(It.IsAny<ListPingsRequest>()), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task PingsAsyncShouldReturnNullWhenDictionaryIsEmpty()
+        {
+            var response = new Dictionary<string, IEnumerable<Ping>>();
+            _httpClient.Setup(x => x.SendAsync<Dictionary<string, IEnumerable<Ping>>>(It.IsAny<ListPingsRequest>())).Returns(Task.FromResult(response));
+
+            var result = await _monitorsClient.PingsAsync(MonitorKey);
+
+            Assert.Null(result);
+            _httpClient.Verify(x => x.SendAsync<Dictionary<string, IEnumerable<Ping>>>(It.IsAny<ListPingsRequest>()), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
     }

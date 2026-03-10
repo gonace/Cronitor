@@ -1,8 +1,10 @@
-﻿using Cronitor.Clients;
+using Cronitor.Clients;
 using Cronitor.Commands;
 using Cronitor.Internals;
 using Cronitor.Tests.Helpers;
 using Moq;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -17,6 +19,46 @@ namespace Cronitor.Tests
         {
             _httpClient = new Mock<HttpClient>();
             _telemetriesClient = new TelemetriesClient(ApiKey, _httpClient.Object);
+        }
+
+        [Fact]
+        public void ShouldConstructWithNoParameters()
+        {
+            var client = new TelemetriesClient();
+
+            Assert.NotNull(client);
+        }
+
+        [Fact]
+        public void ShouldConstructWithApiKey()
+        {
+            var client = new TelemetriesClient(ApiKey);
+
+            Assert.NotNull(client);
+        }
+
+        [Fact]
+        public void ShouldConstructWithApiKeyAndJsonSerializerOptions()
+        {
+            var options = new JsonSerializerOptions
+            {
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                NumberHandling = JsonNumberHandling.AllowReadingFromString
+            };
+
+            var client = new TelemetriesClient(ApiKey, options);
+
+            Assert.NotNull(client);
+        }
+
+        [Fact]
+        public void ShouldDisposeTelemetriesClient()
+        {
+            using (var client = new TelemetriesClient(ApiKey))
+            {
+                Assert.NotNull(client);
+            }
+            // Test passes if no exception is thrown during disposal
         }
 
         [Fact]
