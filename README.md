@@ -57,7 +57,7 @@ public class SomeClass
         var request = new CreateMonitorRequest(monitor);
         var response = await Cronitor.Monitors.CreateAsync(request);
 
-        return resposne;
+        return response;
     }
 }
 ```
@@ -104,7 +104,7 @@ public class SomeClass
         var request = new CreateMonitorRequest(monitor);
         var response = await _monitorsClient.CreateAsync(request);
 
-        return resposne;
+        return response;
     }
 }
 ```
@@ -154,7 +154,7 @@ public class SomeClass
         var request = new CreateMonitorRequest(monitor);
         var response = await _monitorsClient.CreateAsync(request);
 
-        return resposne;
+        return response;
     }
 }
 ```

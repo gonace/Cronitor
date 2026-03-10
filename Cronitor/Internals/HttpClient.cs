@@ -107,7 +107,7 @@ namespace Cronitor.Internals
         {
             var response = await request;
             if (response.IsSuccessStatusCode)
-                return JsonSerializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync());
+                return JsonSerializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync(), _serializerOptions);
 
             var details = JsonSerializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync(), _serializerOptions);
             throw new ApiException(details, response.StatusCode);
