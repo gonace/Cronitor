@@ -1,1 +1,1 @@
-{"key":"issue-001","name":"Database Outage","environment":"Production","severity":{"Severity":"outage"},"state":{"State":"unresolved"}}
+{"key":"issue-001","name":"Database Outage","environment":"Production","severity":{"Severity":"outage"},"state":{"State":"unresolved"},"created":"0001-01-01T00:00:00"}

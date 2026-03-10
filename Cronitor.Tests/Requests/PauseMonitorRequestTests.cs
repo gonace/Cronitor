@@ -1,4 +1,3 @@
-using System.Net.Http;
 using Cronitor.Requests;
 using Xunit;
 

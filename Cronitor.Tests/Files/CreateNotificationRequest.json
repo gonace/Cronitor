@@ -1,1 +1,1 @@
-{"key":"devops-alerts","name":"DevOps Alerts","notifications":{"emails":["dev@example.com"],"slack":["https://hooks.slack.com/test"]}}
+{"key":"devops-alerts","name":"DevOps Alerts","notifications":{"emails":["dev@example.com"],"slack":["https://hooks.slack.com/test"]},"created":"0001-01-01T00:00:00"}
