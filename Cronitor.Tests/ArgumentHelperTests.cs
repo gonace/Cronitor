@@ -15,13 +15,13 @@ namespace Cronitor.Tests
         [Fact]
         public void ThrowIfNullOrWhiteSpace_WithEmptyString_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => ArgumentHelper.ThrowIfNullOrWhiteSpace(""));
+            Assert.Throws<ArgumentNullException>(() => ArgumentHelper.ThrowIfNullOrWhiteSpace(""));
         }
 
         [Fact]
         public void ThrowIfNullOrWhiteSpace_WithWhitespace_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => ArgumentHelper.ThrowIfNullOrWhiteSpace("   "));
+            Assert.Throws<ArgumentNullException>(() => ArgumentHelper.ThrowIfNullOrWhiteSpace("   "));
         }
 
         [Fact]
@@ -35,13 +35,13 @@ namespace Cronitor.Tests
         [Fact]
         public void ThrowIfNullOrWhiteSpace_WithTab_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => ArgumentHelper.ThrowIfNullOrWhiteSpace("\t"));
+            Assert.Throws<ArgumentNullException>(() => ArgumentHelper.ThrowIfNullOrWhiteSpace("\t"));
         }
 
         [Fact]
         public void ThrowIfNullOrWhiteSpace_WithNewline_ThrowsArgumentException()
         {
-            Assert.Throws<ArgumentException>(() => ArgumentHelper.ThrowIfNullOrWhiteSpace("\n"));
+            Assert.Throws<ArgumentNullException>(() => ArgumentHelper.ThrowIfNullOrWhiteSpace("\n"));
         }
     }
 }

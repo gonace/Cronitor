@@ -1,23 +1,15 @@
 ﻿using System;
-using System.Runtime.CompilerServices;
 
 namespace Cronitor.Extensions
 {
     internal static class ArgumentHelper
     {
-#if NET8_0_OR_GREATER
-        internal static void ThrowIfNullOrWhiteSpace(string value, [CallerArgumentExpression(nameof(value))] string paramName = null)
+        internal static void ThrowIfNullOrWhiteSpace(string paramName)
         {
-            ArgumentException.ThrowIfNullOrWhiteSpace(value, paramName);
-        }
-#else
-        internal static void ThrowIfNullOrWhiteSpace(string value, string paramName = null)
-        {
-            if (string.IsNullOrWhiteSpace(value))
+            if (string.IsNullOrWhiteSpace(paramName))
             {
-                throw new ArgumentException("Value cannot be null or whitespace", paramName);
+                throw new ArgumentNullException(paramName);
             }
         }
-#endif
     }
 }
