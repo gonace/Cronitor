@@ -10,7 +10,7 @@ namespace Cronitor.Serialization
             var json = JsonSerializer.Serialize(obj, new JsonSerializerOptions
             {
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                WriteIndented = true
+                WriteIndented = false
             });
 
             return json;
