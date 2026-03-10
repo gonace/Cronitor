@@ -71,6 +71,8 @@ namespace Cronitor.Commands
 
         public Command WithApiKey(string apiKey)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(apiKey);
+
             ApiKey = apiKey;
 
             return this;
@@ -96,6 +98,8 @@ namespace Cronitor.Commands
 
         public Command WithEnvironment(string environment)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(environment);
+
             Environment = environment;
 
             return this;
@@ -103,6 +107,8 @@ namespace Cronitor.Commands
 
         public Command WithHost(string host)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(host);
+
             Host = host;
 
             return this;
@@ -110,15 +116,15 @@ namespace Cronitor.Commands
 
         public Command WithMessage(string message)
         {
-            Message = message.StartsWith("'") &&
-                      message.EndsWith("'") ?
-                message : $"'{message}'";
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(message);
 
             return this;
         }
 
         public Command WithMonitorKey(string monitorKey)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
+
             MonitorKey = monitorKey;
 
             return this;
@@ -126,6 +132,8 @@ namespace Cronitor.Commands
 
         public Command WithSeries(string series)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(series);
+
             Series = series;
 
             return this;
@@ -133,6 +141,8 @@ namespace Cronitor.Commands
 
         public Command WithStatus(string status)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(status);
+
             Status = status;
 
             return this;
@@ -145,10 +155,8 @@ namespace Cronitor.Commands
 
         public Uri ToUri()
         {
-            if (string.IsNullOrWhiteSpace(ApiKey))
-                throw new ArgumentException(nameof(ApiKey));
-            if (string.IsNullOrWhiteSpace(MonitorKey))
-                throw new ArgumentException(nameof(MonitorKey));
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(ApiKey);
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(MonitorKey);
 
             var dictionary = new Dictionary<string, string>
             {

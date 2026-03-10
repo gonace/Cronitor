@@ -7,6 +7,7 @@ using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Responses;
 using System.Threading.Tasks;
+using Cronitor.Extensions;
 
 namespace Cronitor.Clients
 {
@@ -62,6 +63,8 @@ namespace Cronitor.Clients
 
         public async Task<Issue> GetAsync(string key)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
+
             var request = new GetIssueRequest(key);
 
             return await SendAsync<Issue>(request);

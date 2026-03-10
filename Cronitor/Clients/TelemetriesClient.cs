@@ -4,6 +4,7 @@ using Cronitor.Commands;
 using Cronitor.Constants;
 using Cronitor.Internals;
 using System.Threading.Tasks;
+using Cronitor.Extensions;
 
 namespace Cronitor.Clients
 {
@@ -60,6 +61,8 @@ namespace Cronitor.Clients
 
         public async Task RunAsync(string monitorKey, string message = null, string environment = null)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
+
             var command = new RunCommand()
                 .WithApiKey(_apiKey)
                 .WithMonitorKey(monitorKey);
@@ -83,6 +86,8 @@ namespace Cronitor.Clients
 
         public async Task CompleteAsync(string monitorKey, string message = null, string environment = null)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
+
             var command = new CompleteCommand()
                 .WithApiKey(_apiKey)
                 .WithMonitorKey(monitorKey);
@@ -106,6 +111,8 @@ namespace Cronitor.Clients
 
         public async Task FailAsync(string monitorKey, string message = null, string environment = null)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
+
             var command = new FailCommand()
                 .WithApiKey(_apiKey)
                 .WithMonitorKey(monitorKey);
@@ -129,6 +136,8 @@ namespace Cronitor.Clients
 
         public async Task TickAsync(string monitorKey, string message = null, string environment = null)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
+
             var command = new TickCommand()
                 .WithApiKey(_apiKey)
                 .WithMonitorKey(monitorKey);

@@ -6,6 +6,7 @@ using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Responses;
 using System.Threading.Tasks;
+using Cronitor.Extensions;
 
 namespace Cronitor.Clients
 {
@@ -61,7 +62,9 @@ namespace Cronitor.Clients
 
         public async Task<Template> GetAsync(string name)
         {
-            var request = new GetNotificationRequest(name);
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
+
+            var request = new GetNotificationRequest(key);
 
             return await SendAsync<Template>(request);
         }
@@ -84,6 +87,8 @@ namespace Cronitor.Clients
 
         public async Task DeleteAsync(string key)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
+
             var request = new DeleteNotificationRequest(key);
 
             await SendAsync<Task>(request);

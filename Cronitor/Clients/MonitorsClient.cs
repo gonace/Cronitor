@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Cronitor.Extensions;
 
 namespace Cronitor.Clients
 {
@@ -77,6 +78,8 @@ namespace Cronitor.Clients
 
         public async Task<Monitor> GetAsync(string key)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
+
             var request = new GetMonitorRequest(key);
 
             return await SendAsync<Monitor>(request);
@@ -108,6 +111,8 @@ namespace Cronitor.Clients
 
         public async Task DeleteAsync(string key)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
+
             var request = new DeleteMonitorRequest(key);
 
             await SendAsync<Task>(request);
@@ -119,7 +124,9 @@ namespace Cronitor.Clients
 
         public async Task PauseAsync(string key, int? hours = null)
         {
-            var request = hours != null ? new PauseMonitorRequest(key, hours.Value) : new PauseMonitorRequest(key);
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
+
+            var request = new PauseMonitorRequest(key, hours);
 
             await SendAsync<Task>(request);
         }
@@ -130,6 +137,8 @@ namespace Cronitor.Clients
 
         public async Task UnpauseAsync(string key)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
+
             var request = new UnpauseMonitorRequest(key);
 
             await SendAsync<Task>(request);
@@ -140,6 +149,8 @@ namespace Cronitor.Clients
 
         public async Task<IEnumerable<Activity>> ActivitiesAsync(string key)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
+
             var request = new ListActivitiesRequest(key);
 
             return await SendAsync<IEnumerable<Activity>>(request);
