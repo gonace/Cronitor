@@ -59,7 +59,7 @@ namespace Cronitor.Clients
         }
 
         public Issue Get(string key) =>
-            Task.Run(async () => await GetAsync(key)).Result;
+            GetAsync(key).GetAwaiter().GetResult();
 
         public async Task<Issue> GetAsync(string key)
         {
@@ -71,7 +71,7 @@ namespace Cronitor.Clients
         }
 
         public Issue Create(CreateIssueRequest request) =>
-            Task.Run(async () => await CreateAsync(request)).Result;
+            CreateAsync(request).GetAwaiter().GetResult();
 
         public async Task<Issue> CreateAsync(CreateIssueRequest request)
         {
@@ -79,7 +79,7 @@ namespace Cronitor.Clients
         }
 
         public Issue Update(UpdateIssueRequest request) =>
-            Task.Run(async () => await UpdateAsync(request)).Result;
+            UpdateAsync(request).GetAwaiter().GetResult();
 
         public async Task<Issue> UpdateAsync(UpdateIssueRequest request)
         {
