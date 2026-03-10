@@ -113,6 +113,7 @@ namespace Cronitor.Commands
         {
             ArgumentHelper.ThrowIfNullOrWhiteSpace(message);
 
+            Message = $"'{message.Replace("'", "\\'")}'";
             return this;
         }
 
