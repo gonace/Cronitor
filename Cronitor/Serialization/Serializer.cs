@@ -1,4 +1,5 @@
-﻿using System.Text.Json;
+﻿using System.Text.Encodings.Web;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace Cronitor.Serialization
@@ -14,6 +15,7 @@ namespace Cronitor.Serialization
         private static readonly JsonSerializerOptions Options = new JsonSerializerOptions
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
             IgnoreReadOnlyProperties = true,
             NumberHandling = JsonNumberHandling.AllowReadingFromString,
             WriteIndented = false
