@@ -1,5 +1,4 @@
 ﻿using System.Text.Json;
-using System.Text.Json.Serialization;
 using Cronitor.Abstractions;
 using Cronitor.Constants;
 using Cronitor.Internals;
