@@ -171,6 +171,7 @@ namespace Cronitor.Tests
             var host = hostBuilder.Build();
 
             // Verify static Cronitor is configured
+            Assert.NotNull(host);
             Assert.NotNull(Cronitor.Issues);
             Assert.NotNull(Cronitor.Monitors);
             Assert.NotNull(Cronitor.Notifications);
