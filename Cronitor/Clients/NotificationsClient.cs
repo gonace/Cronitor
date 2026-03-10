@@ -60,7 +60,7 @@ namespace Cronitor.Clients
         public Template Get(string name) =>
             GetAsync(name).GetAwaiter().GetResult();
 
-        public async Task<Template> GetAsync(string name)
+        public async Task<Template> GetAsync(string key)
         {
             ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
 
