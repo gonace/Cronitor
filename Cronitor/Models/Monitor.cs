@@ -99,7 +99,7 @@ namespace Cronitor.Models
         /// After 10 alerts, Cronitor will mute alerting until the monitor recovers.
         /// </summary>
         [JsonPropertyName("realert_interval")]
-        public string AlertInterval { get; set; }
+        public string RealertInterval { get; set; }
         /// <summary>
         /// Schedule has different meanings depending on the monitor type.
         ///
