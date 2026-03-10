@@ -153,7 +153,7 @@ namespace Cronitor.Clients
             var request = new ListAlertsRequest(key);
             var response = await SendAsync<Dictionary<string, IEnumerable<Alert>>>(request);
 
-            return response.FirstOrDefault().Value;
+            return response?.FirstOrDefault().Value;
         }
 
         public IEnumerable<Ping> Pings(string key) =>
@@ -164,7 +164,7 @@ namespace Cronitor.Clients
             var request = new ListPingsRequest(key);
             var response = await SendAsync<Dictionary<string, IEnumerable<Ping>>>(request);
 
-            return response.FirstOrDefault().Value;
+            return response?.FirstOrDefault().Value;
         }
     }
 }
