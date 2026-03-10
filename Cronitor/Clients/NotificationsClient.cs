@@ -84,7 +84,7 @@ namespace Cronitor.Clients
 
             var request = new DeleteNotificationRequest(key);
 
-            await SendAsync<Task>(request);
+            await SendAsync(request);
         }
     }
 }

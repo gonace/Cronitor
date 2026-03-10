@@ -196,7 +196,7 @@ namespace Cronitor.Tests
 
             _notificationsClient.Delete(TemplateKey);
 
-            _httpClient.Verify(x => x.SendAsync<Task>(It.Is<DeleteNotificationRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync(It.Is<DeleteNotificationRequest>(c =>
                 c.Method == HttpMethod.Delete &&
                 c.Endpoint == "templates/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
@@ -209,7 +209,7 @@ namespace Cronitor.Tests
 
             await _notificationsClient.DeleteAsync(TemplateKey);
 
-            _httpClient.Verify(x => x.SendAsync<Task>(It.Is<DeleteNotificationRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync(It.Is<DeleteNotificationRequest>(c =>
                 c.Method == HttpMethod.Delete &&
                 c.Endpoint == "templates/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();

@@ -108,7 +108,7 @@ namespace Cronitor.Clients
 
             var request = new DeleteMonitorRequest(key);
 
-            await SendAsync<Task>(request);
+            await SendAsync(request);
         }
 
         public void Pause(string key, int? hours = null) =>
@@ -120,7 +120,7 @@ namespace Cronitor.Clients
 
             var request = new PauseMonitorRequest(key, hours);
 
-            await SendAsync<Task>(request);
+            await SendAsync(request);
         }
 
         public void Unpause(string key) =>
@@ -132,7 +132,7 @@ namespace Cronitor.Clients
 
             var request = new UnpauseMonitorRequest(key);
 
-            await SendAsync<Task>(request);
+            await SendAsync(request);
         }
 
         public IEnumerable<Activity> Activities(string key) =>
@@ -155,7 +155,7 @@ namespace Cronitor.Clients
             var request = new ListAlertsRequest(key);
             var response = await SendAsync<Dictionary<string, IEnumerable<Alert>>>(request);
 
-            return response.First().Value;
+            return response?.FirstOrDefault().Value;
         }
 
         public IEnumerable<Ping> Pings(string key) =>
@@ -166,7 +166,7 @@ namespace Cronitor.Clients
             var request = new ListPingsRequest(key);
             var response = await SendAsync<Dictionary<string, IEnumerable<Ping>>>(request);
 
-            return response.First().Value;
+            return response?.FirstOrDefault().Value;
         }
     }
 }

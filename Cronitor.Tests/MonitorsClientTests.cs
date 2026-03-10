@@ -194,11 +194,11 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteDeleteMethod()
         {
-            _httpClient.Setup(x => x.SendAsync<Task>(It.IsAny<DeleteMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
+            _httpClient.Setup(x => x.SendAsync(It.IsAny<DeleteMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
 
             _monitorsClient.Delete(MonitorKey);
 
-            _httpClient.Verify(x => x.SendAsync<Task>(It.Is<DeleteMonitorRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync(It.Is<DeleteMonitorRequest>(c =>
                 c.Method == HttpMethod.Delete &&
                 c.Endpoint == "monitors/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
@@ -207,11 +207,11 @@ namespace Cronitor.Tests
         [Fact]
         public async Task ShouldExecuteDeleteAsyncMethod()
         {
-            _httpClient.Setup(x => x.SendAsync<Task>(It.IsAny<DeleteMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
+            _httpClient.Setup(x => x.SendAsync(It.IsAny<DeleteMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
 
             await _monitorsClient.DeleteAsync(MonitorKey);
 
-            _httpClient.Verify(x => x.SendAsync<Task>(It.Is<DeleteMonitorRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync(It.Is<DeleteMonitorRequest>(c =>
                 c.Method == HttpMethod.Delete &&
                 c.Endpoint == "monitors/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
@@ -220,11 +220,11 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecutePauseMethod()
         {
-            _httpClient.Setup(x => x.SendAsync<Task>(It.IsAny<PauseMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
+            _httpClient.Setup(x => x.SendAsync(It.IsAny<PauseMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
 
             _monitorsClient.Pause(MonitorKey);
 
-            _httpClient.Verify(x => x.SendAsync<Task>(It.Is<PauseMonitorRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync(It.Is<PauseMonitorRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "monitors/:key/pause")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
@@ -233,11 +233,11 @@ namespace Cronitor.Tests
         [Fact]
         public async Task ShouldExecutePauseAsyncMethod()
         {
-            _httpClient.Setup(x => x.SendAsync<Task>(It.IsAny<PauseMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
+            _httpClient.Setup(x => x.SendAsync(It.IsAny<PauseMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
 
             await _monitorsClient.PauseAsync(MonitorKey);
 
-            _httpClient.Verify(x => x.SendAsync<Task>(It.Is<PauseMonitorRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync(It.Is<PauseMonitorRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "monitors/:key/pause")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
@@ -246,11 +246,11 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecutePauseMethodWithHours()
         {
-            _httpClient.Setup(x => x.SendAsync<Task>(It.IsAny<PauseMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
+            _httpClient.Setup(x => x.SendAsync(It.IsAny<PauseMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
 
             _monitorsClient.Pause(MonitorKey, 24);
 
-            _httpClient.Verify(x => x.SendAsync<Task>(It.Is<PauseMonitorRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync(It.Is<PauseMonitorRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "monitors/:key/pause/:duration")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
@@ -259,11 +259,11 @@ namespace Cronitor.Tests
         [Fact]
         public async Task ShouldExecutePauseAsyncMethodWithHours()
         {
-            _httpClient.Setup(x => x.SendAsync<Task>(It.IsAny<PauseMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
+            _httpClient.Setup(x => x.SendAsync(It.IsAny<PauseMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
 
             await _monitorsClient.PauseAsync(MonitorKey, 24);
 
-            _httpClient.Verify(x => x.SendAsync<Task>(It.Is<PauseMonitorRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync(It.Is<PauseMonitorRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "monitors/:key/pause/:duration")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
@@ -272,11 +272,11 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteUnpauseMethod()
         {
-            _httpClient.Setup(x => x.SendAsync<Task>(It.IsAny<UnpauseMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
+            _httpClient.Setup(x => x.SendAsync(It.IsAny<UnpauseMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
 
             _monitorsClient.Unpause(MonitorKey);
 
-            _httpClient.Verify(x => x.SendAsync<Task>(It.Is<UnpauseMonitorRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync(It.Is<UnpauseMonitorRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "monitors/:key/pause/:duration")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
@@ -285,11 +285,11 @@ namespace Cronitor.Tests
         [Fact]
         public async Task ShouldExecuteUnpauseAsyncMethod()
         {
-            _httpClient.Setup(x => x.SendAsync<Task>(It.IsAny<UnpauseMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
+            _httpClient.Setup(x => x.SendAsync(It.IsAny<UnpauseMonitorRequest>())).Returns(Task.FromResult(Task.CompletedTask));
 
             await _monitorsClient.UnpauseAsync(MonitorKey);
 
-            _httpClient.Verify(x => x.SendAsync<Task>(It.Is<UnpauseMonitorRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync(It.Is<UnpauseMonitorRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "monitors/:key/pause/:duration")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
