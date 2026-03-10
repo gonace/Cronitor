@@ -125,7 +125,7 @@ namespace Cronitor.Tests
             }
         }
 
-        [Fact(Skip = "Not implemented yet")]
+        [Fact]
         public void ShouldExecuteGetMethod()
         {
             var response = Make.Issue.Key(MonitorKey).Build();
@@ -135,13 +135,13 @@ namespace Cronitor.Tests
 
             Assert.NotNull(result);
             Assert.Equal(response.Key, result.Key);
-            _httpClient.Verify(x => x.SendAsync<GetIssueRequest>(It.Is<GetIssueRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<Issue>(It.Is<GetIssueRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "issues/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
-        [Fact(Skip = "Not implemented yet")]
+        [Fact]
         public async Task ShouldExecuteGetAsyncMethod()
         {
             var response = Make.Issue.Key(MonitorKey).Build();
@@ -151,8 +151,70 @@ namespace Cronitor.Tests
 
             Assert.NotNull(result);
             Assert.Equal(response.Key, result.Key);
-            _httpClient.Verify(x => x.SendAsync<GetIssueRequest>(It.Is<GetIssueRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<Issue>(It.Is<GetIssueRequest>(c =>
                 c.Method == HttpMethod.Get &&
+                c.Endpoint == "issues/:key")), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void ShouldExecuteCreateMethod()
+        {
+            var issue = Make.Issue.Build();
+            _httpClient.Setup(x => x.SendAsync<Issue>(It.IsAny<CreateIssueRequest>())).Returns(Task.FromResult(issue));
+
+            var result = _issuesClient.Create(new CreateIssueRequest(issue));
+
+            Assert.NotNull(result);
+            _httpClient.Verify(x => x.SendAsync<Issue>(It.Is<CreateIssueRequest>(c =>
+                c.Method == HttpMethod.Post &&
+                c.Endpoint == "issues")), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldExecuteCreateAsyncMethod()
+        {
+            var issue = Make.Issue.Build();
+            _httpClient.Setup(x => x.SendAsync<Issue>(It.IsAny<CreateIssueRequest>())).Returns(Task.FromResult(issue));
+
+            var result = await _issuesClient.CreateAsync(new CreateIssueRequest(issue));
+
+            Assert.NotNull(result);
+            _httpClient.Verify(x => x.SendAsync<Issue>(It.Is<CreateIssueRequest>(c =>
+                c.Method == HttpMethod.Post &&
+                c.Endpoint == "issues")), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public void ShouldExecuteUpdateMethod()
+        {
+            var issue = Make.Issue.Key(MonitorKey).Build();
+            _httpClient.Setup(x => x.SendAsync<Issue>(It.IsAny<UpdateIssueRequest>())).Returns(Task.FromResult(issue));
+
+            var result = _issuesClient.Update(new UpdateIssueRequest(MonitorKey, issue));
+
+            Assert.NotNull(result);
+            Assert.Equal(MonitorKey, result.Key);
+            _httpClient.Verify(x => x.SendAsync<Issue>(It.Is<UpdateIssueRequest>(c =>
+                c.Method == HttpMethod.Put &&
+                c.Endpoint == "issues/:key")), Times.Once);
+            _httpClient.VerifyNoOtherCalls();
+        }
+
+        [Fact]
+        public async Task ShouldExecuteUpdateAsyncMethod()
+        {
+            var issue = Make.Issue.Key(MonitorKey).Build();
+            _httpClient.Setup(x => x.SendAsync<Issue>(It.IsAny<UpdateIssueRequest>())).Returns(Task.FromResult(issue));
+
+            var result = await _issuesClient.UpdateAsync(new UpdateIssueRequest(MonitorKey, issue));
+
+            Assert.NotNull(result);
+            Assert.Equal(MonitorKey, result.Key);
+            _httpClient.Verify(x => x.SendAsync<Issue>(It.Is<UpdateIssueRequest>(c =>
+                c.Method == HttpMethod.Put &&
                 c.Endpoint == "issues/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }

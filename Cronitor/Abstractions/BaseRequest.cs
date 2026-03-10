@@ -21,7 +21,7 @@ namespace Cronitor.Abstractions
 
         public virtual Uri ToUri()
         {
-            return new Uri(Urls.DefaultApiUrl.ToString()).Combine(Endpoint);
+            return new Uri(Urls.DefaultApiUrl.ToString()).Combine(Endpoint).AddQueryString(this.ToQueryString());
         }
 
         public string ToUrl()
