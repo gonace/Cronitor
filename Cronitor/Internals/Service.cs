@@ -56,7 +56,7 @@ namespace Cronitor.Internals
         {
             get
             {
-                if (_notifications == null)
+                if (_telemetries == null)
                 {
                     throw new NotConfiguredException();
                 }
