@@ -25,18 +25,18 @@ namespace Cronitor.Abstractions
         }
 
 
-        public void Send(Command command) =>
+        protected void Send(Command command) =>
             SendAsync(command).GetAwaiter().GetResult();
 
-        public async Task SendAsync(Command command)
+        protected async Task SendAsync(Command command)
         {
             await _httpClient.SendAsync(command);
         }
 
-        public TResponse Send<TResponse>(BaseRequest request) =>
+        protected TResponse Send<TResponse>(BaseRequest request) =>
             SendAsync<TResponse>(request).GetAwaiter().GetResult();
 
-        public async Task<TResponse> SendAsync<TResponse>(BaseRequest request)
+        protected async Task<TResponse> SendAsync<TResponse>(BaseRequest request)
         {
             return await _httpClient.SendAsync<TResponse>(request);
         }
