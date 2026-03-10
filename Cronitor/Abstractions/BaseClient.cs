@@ -50,7 +50,9 @@ namespace Cronitor.Abstractions
 
         public void Dispose()
         {
+            _httpClient?.Dispose();
             _httpClient = null;
+            GC.SuppressFinalize(this);
         }
 
         private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
