@@ -41,6 +41,14 @@ namespace Cronitor.Abstractions
             return await _httpClient.SendAsync<TResponse>(request);
         }
 
+        protected void Send(BaseRequest request) =>
+            SendAsync(request).GetAwaiter().GetResult();
+
+        protected async Task SendAsync(BaseRequest request)
+        {
+            await _httpClient.SendAsync(request);
+        }
+
         public void Dispose()
         {
             _httpClient?.Dispose();
