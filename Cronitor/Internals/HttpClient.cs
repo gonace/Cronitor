@@ -7,9 +7,8 @@ using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Cronitor.Serialization;
 
 namespace Cronitor.Internals
 {
@@ -17,31 +16,23 @@ namespace Cronitor.Internals
     {
         private readonly string _apiKey;
         private readonly Uri _apiUri;
-        private readonly JsonSerializerOptions _serializerOptions;
         private readonly System.Net.Http.HttpClient _httpClient;
 
         internal HttpClient()
         {
-            _serializerOptions = new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                NumberHandling = JsonNumberHandling.AllowReadingFromString
-            };
             _httpClient = CreateHttpClient();
         }
 
-        internal HttpClient(Uri apiUri, JsonSerializerOptions serializerOptions)
+        internal HttpClient(Uri apiUri)
         {
             _apiUri = apiUri;
-            _serializerOptions = serializerOptions;
             _httpClient = CreateHttpClient();
         }
 
-        internal HttpClient(Uri apiUri, string apiKey, JsonSerializerOptions serializerOptions)
+        internal HttpClient(Uri apiUri, string apiKey)
         {
             _apiKey = apiKey;
             _apiUri = apiUri.AsHttps();
-            _serializerOptions = serializerOptions;
             _httpClient = CreateHttpClient();
         }
 
@@ -94,7 +85,7 @@ namespace Cronitor.Internals
             if (response.IsSuccessStatusCode)
                 return;
 
-            var details = JsonSerializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync(), _serializerOptions);
+            var details = Serializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync());
             throw new ApiException(details, response.StatusCode);
         }
 
@@ -102,9 +93,9 @@ namespace Cronitor.Internals
         {
             var response = await request;
             if (response.IsSuccessStatusCode)
-                return JsonSerializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync(), _serializerOptions);
+                return Serializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync());
 
-            var details = JsonSerializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync(), _serializerOptions);
+            var details = Serializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync());
             throw new ApiException(details, response.StatusCode);
         }
 

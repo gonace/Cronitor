@@ -1,8 +1,6 @@
 ﻿using Cronitor.Commands;
 using Cronitor.Internals;
 using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Cronitor.Abstractions
@@ -13,17 +11,12 @@ namespace Cronitor.Abstractions
 
         protected BaseClient(Uri apiUri)
         {
-            _httpClient = new HttpClient(apiUri, _jsonSerializerOptions);
+            _httpClient = new HttpClient(apiUri);
         }
 
         protected BaseClient(Uri apiUri, string apiKey)
         {
-            _httpClient = new HttpClient(apiUri, apiKey, _jsonSerializerOptions);
-        }
-
-        protected BaseClient(Uri apiUri, string apiKey, JsonSerializerOptions serializerOptions)
-        {
-            _httpClient = new HttpClient(apiUri, apiKey, serializerOptions);
+            _httpClient = new HttpClient(apiUri, apiKey);
         }
 
         internal BaseClient(HttpClient client)
@@ -54,11 +47,5 @@ namespace Cronitor.Abstractions
             _httpClient = null;
             GC.SuppressFinalize(this);
         }
-
-        private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
-        {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            NumberHandling = JsonNumberHandling.AllowReadingFromString
-        };
     }
 }

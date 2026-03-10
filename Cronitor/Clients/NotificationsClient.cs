@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using Cronitor.Abstractions;
+﻿using Cronitor.Abstractions;
 using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Models;
@@ -33,11 +32,6 @@ namespace Cronitor.Clients
 
         public NotificationsClient(string apiKey)
             : base(Urls.DefaultApiUrl, apiKey)
-        {
-        }
-
-        public NotificationsClient(string apiKey, JsonSerializerOptions jsonSerializerOptions)
-            : base(Urls.DefaultApiUrl, apiKey, jsonSerializerOptions)
         {
         }
 

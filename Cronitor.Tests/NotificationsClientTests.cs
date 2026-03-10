@@ -1,4 +1,4 @@
-using Cronitor.Clients;
+﻿using Cronitor.Clients;
 using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Responses;
@@ -7,8 +7,6 @@ using Cronitor.Tests.Helpers;
 using Moq;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -37,20 +35,6 @@ namespace Cronitor.Tests
         public void ShouldConstructWithApiKey()
         {
             var client = new NotificationsClient(ApiKey);
-
-            Assert.NotNull(client);
-        }
-
-        [Fact]
-        public void ShouldConstructWithApiKeyAndJsonSerializerOptions()
-        {
-            var options = new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                NumberHandling = JsonNumberHandling.AllowReadingFromString
-            };
-
-            var client = new NotificationsClient(ApiKey, options);
 
             Assert.NotNull(client);
         }

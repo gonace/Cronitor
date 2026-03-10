@@ -5,8 +5,6 @@ using Cronitor.Internals;
 using Cronitor.Tests.Helpers;
 using Moq;
 using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -17,7 +15,6 @@ namespace Cronitor.Tests
     {
         public TestClient(Uri apiUri) : base(apiUri) { }
         public TestClient(Uri apiUri, string apiKey) : base(apiUri, apiKey) { }
-        public TestClient(Uri apiUri, string apiKey, JsonSerializerOptions serializerOptions) : base(apiUri, apiKey, serializerOptions) { }
         internal TestClient(HttpClient client) : base(client) { }
     }
 
@@ -35,20 +32,6 @@ namespace Cronitor.Tests
         public void ShouldConstructWithUriAndApiKey()
         {
             var client = new TestClient(Urls.DefaultApiUrl, ApiKey);
-
-            Assert.NotNull(client);
-        }
-
-        [Fact]
-        public void ShouldConstructWithUriApiKeyAndSerializerOptions()
-        {
-            var options = new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                NumberHandling = JsonNumberHandling.AllowReadingFromString
-            };
-
-            var client = new TestClient(Urls.DefaultApiUrl, ApiKey, options);
 
             Assert.NotNull(client);
         }
