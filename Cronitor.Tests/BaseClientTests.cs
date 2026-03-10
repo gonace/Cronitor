@@ -16,6 +16,23 @@ namespace Cronitor.Tests
         public TestClient(Uri apiUri) : base(apiUri) { }
         public TestClient(Uri apiUri, string apiKey) : base(apiUri, apiKey) { }
         internal TestClient(HttpClient client) : base(client) { }
+
+
+        public void ExposedSend(Command command) =>
+            SendAsync(command).GetAwaiter().GetResult();
+
+        public async Task ExposedSendAsync(Command command)
+        {
+            await SendAsync(command);
+        }
+
+        public TResponse ExposedSend<TResponse>(BaseRequest request) =>
+            SendAsync<TResponse>(request).GetAwaiter().GetResult();
+
+        public async Task<TResponse> ExposedSendAsync<TResponse>(BaseRequest request)
+        {
+            return await SendAsync<TResponse>(request);
+        }
     }
 
     public class BaseClientTests : BaseTest
@@ -55,7 +72,7 @@ namespace Cronitor.Tests
             httpClient.Setup(x => x.SendAsync(It.IsAny<Command>())).Returns(Task.CompletedTask);
 
             var client = new TestClient(httpClient.Object);
-            await client.SendAsync(command);
+            await client.ExposedSendAsync(command);
 
             httpClient.Verify(x => x.SendAsync(It.Is<Command>(c => c == command)), Times.Once);
             httpClient.VerifyNoOtherCalls();
@@ -71,7 +88,7 @@ namespace Cronitor.Tests
             httpClient.Setup(x => x.SendAsync(It.IsAny<Command>())).Returns(Task.CompletedTask);
 
             var client = new TestClient(httpClient.Object);
-            client.Send(command);
+            client.ExposedSend(command);
 
             httpClient.Verify(x => x.SendAsync(It.Is<Command>(c => c == command)), Times.Once);
             httpClient.VerifyNoOtherCalls();
