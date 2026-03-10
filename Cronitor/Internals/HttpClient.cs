@@ -13,11 +13,12 @@ using System.Threading.Tasks;
 
 namespace Cronitor.Internals
 {
-    internal class HttpClient
+    internal class HttpClient : IDisposable
     {
         private readonly string _apiKey;
         private readonly Uri _apiUri;
         private readonly JsonSerializerOptions _serializerOptions;
+        private readonly System.Net.Http.HttpClient _httpClient;
 
         internal HttpClient()
         {
@@ -26,12 +27,14 @@ namespace Cronitor.Internals
                 DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
                 NumberHandling = JsonNumberHandling.AllowReadingFromString
             };
+            _httpClient = CreateHttpClient();
         }
 
         internal HttpClient(Uri apiUri, JsonSerializerOptions serializerOptions)
         {
             _apiUri = apiUri;
             _serializerOptions = serializerOptions;
+            _httpClient = CreateHttpClient();
         }
 
         internal HttpClient(Uri apiUri, string apiKey, JsonSerializerOptions serializerOptions)
@@ -39,57 +42,49 @@ namespace Cronitor.Internals
             _apiKey = apiKey;
             _apiUri = apiUri.AsHttps();
             _serializerOptions = serializerOptions;
+            _httpClient = CreateHttpClient();
         }
 
         //TODO: send to FallbackUrl
         public virtual async Task SendAsync(Command command)
         {
-            using (var httpClient = GetHttpClient())
+            var requestUri = command.ToUri();
+            var message = new HttpRequestMessage
             {
-                var requestUri = command.ToUri();
-                var message = new HttpRequestMessage
-                {
-                    Method = command.Method,
-                    RequestUri = requestUri
-                };
-                var task = httpClient.SendAsync(message);
+                Method = command.Method,
+                RequestUri = requestUri
+            };
+            var task = _httpClient.SendAsync(message);
 
-                await PerformRequestAsync(task);
-            }
+            await PerformRequestAsync(task);
         }
 
         public virtual async Task SendAsync(BaseRequest request)
         {
-            using (var httpClient = GetHttpClient())
+            var requestUri = request.ToUri();
+            var message = new HttpRequestMessage
             {
-                var requestUri = request.ToUri();
-                var message = new HttpRequestMessage
-                {
-                    Method = request.Method,
-                    RequestUri = requestUri,
-                    Content = request.Content
-                };
-                var task = httpClient.SendAsync(message);
+                Method = request.Method,
+                RequestUri = requestUri,
+                Content = request.Content
+            };
+            var task = _httpClient.SendAsync(message);
 
-                await PerformRequestAsync(task);
-            }
+            await PerformRequestAsync(task);
         }
 
         public virtual async Task<TReturn> SendAsync<TReturn>(BaseRequest request)
         {
-            using (var httpClient = GetHttpClient())
+            var requestUri = request.ToUri();
+            var message = new HttpRequestMessage
             {
-                var requestUri = request.ToUri();
-                var message = new HttpRequestMessage
-                {
-                    Method = request.Method,
-                    RequestUri = requestUri,
-                    Content = request.Content
-                };
-                var task = httpClient.SendAsync(message);
+                Method = request.Method,
+                RequestUri = requestUri,
+                Content = request.Content
+            };
+            var task = _httpClient.SendAsync(message);
 
-                return await PerformRequestAsync<TReturn>(task);
-            }
+            return await PerformRequestAsync<TReturn>(task);
         }
 
 
@@ -113,7 +108,7 @@ namespace Cronitor.Internals
             throw new ApiException(details, response.StatusCode);
         }
 
-        private System.Net.Http.HttpClient GetHttpClient()
+        private System.Net.Http.HttpClient CreateHttpClient()
         {
             var httpClient = new System.Net.Http.HttpClient
             {
@@ -125,6 +120,11 @@ namespace Cronitor.Internals
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_apiKey}:")));
 
             return httpClient;
+        }
+
+        public void Dispose()
+        {
+            _httpClient?.Dispose();
         }
     }
 }
