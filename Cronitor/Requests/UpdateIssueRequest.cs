@@ -18,7 +18,7 @@ namespace Cronitor.Requests
         public UpdateIssueRequest(string issueKey, Issue issue)
         {
             Key = issueKey;
-            Content = new StringContent(Serializer.Serialize(new { issue }), Encoding.UTF8, "application/json");
+            Content = new StringContent(Serializer.Serialize(issue), Encoding.UTF8, "application/json");
         }
 
         public override Uri ToUri()
