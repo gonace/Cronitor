@@ -39,7 +39,7 @@ namespace Cronitor.Clients
         }
 
         public ListIssueResponse List(int page = 1) =>
-            Task.Run(async () => await ListAsync(page)).Result;
+            ListAsync(page).GetAwaiter().GetResult();
 
         public async Task<ListIssueResponse> ListAsync(int page = 1)
         {
