@@ -5,7 +5,7 @@ namespace Cronitor.Tests.Builders
 {
     public class JobBuilder
     {
-        private readonly string _key = "Key";
+        private string _key = "Key";
         private readonly string _alertInterval = "6 hours";
         private readonly int? _failureTolerance = 2;
         private readonly int _graceSeconds = 900;
@@ -37,6 +37,12 @@ namespace Cronitor.Tests.Builders
                 Tags = _tags,
                 Timezone = _timeZone
             };
+        }
+
+        public JobBuilder Key(string key)
+        {
+            _key = key;
+            return this;
         }
 
         public JobBuilder Assertions(List<string> assertions)
