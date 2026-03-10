@@ -52,7 +52,7 @@ namespace Cronitor.Tests
         {
             var command = new Command(Urls.TelemetryBaseUrl, HttpMethod.Get, "foo/bar");
 
-            Assert.Throws<ArgumentException>(() => command.ToUrl());
+            Assert.Throws<ArgumentNullException>(() => command.ToUrl());
         }
     }
 }
