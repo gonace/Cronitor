@@ -1,0 +1,1 @@
+{"monitors":[{"key":"nightly-backup-job","assertions":["metric.duration < 15min"],"grace_seconds":0,"note":"note","notify":["default"],"platform":"linux","schedule":"0 0 * * *","tags":["nightly"],"timezone":"Europe/Stockholm","type":"job"}]}

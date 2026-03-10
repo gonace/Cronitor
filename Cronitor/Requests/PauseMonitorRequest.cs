@@ -16,20 +16,28 @@ namespace Cronitor.Requests
             Key = monitorKey;
         }
 
-        public PauseMonitorRequest(string monitorKey, int duration)
+        public PauseMonitorRequest(string monitorKey, int? duration)
         {
             Key = monitorKey;
             Duration = duration;
-            Endpoint = $"{Endpoint}/:duration";
+
+            if (duration.HasValue)
+            {
+                Endpoint = $"{Endpoint}/:duration";
+            }
         }
 
         public override Uri ToUri()
         {
             var dictionary = new Dictionary<string, string>
             {
-                { ":key", Key },
-                { ":duration", Duration.ToString() }
+                { ":key", Key }
             };
+
+            if (Duration.HasValue)
+            {
+                dictionary.Add(":duration", Duration.Value.ToString());
+            }
 
             return base.ToUri().Build(dictionary);
         }

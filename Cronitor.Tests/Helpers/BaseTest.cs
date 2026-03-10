@@ -1,8 +1,4 @@
-﻿using Cronitor.Constants;
-using Cronitor.Models.Monitors;
-using System.Collections.Generic;
-
-namespace Cronitor.Tests.Helpers
+﻿namespace Cronitor.Tests.Helpers
 {
     public class BaseTest
     {

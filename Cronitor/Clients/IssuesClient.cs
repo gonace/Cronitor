@@ -1,12 +1,11 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
-using Cronitor.Abstractions;
+﻿using Cronitor.Abstractions;
 using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Responses;
 using System.Threading.Tasks;
+using Cronitor.Extensions;
 
 namespace Cronitor.Clients
 {
@@ -34,18 +33,13 @@ namespace Cronitor.Clients
         {
         }
 
-        public IssuesClient(string apiKey, JsonSerializerOptions jsonSerializerOptions)
-            : base(Urls.DefaultApiUrl, apiKey, jsonSerializerOptions)
-        {
-        }
-
         internal IssuesClient(HttpClient client)
             : base(client)
         {
         }
 
         public ListIssueResponse List(int page = 1) =>
-            Task.Run(async () => await ListAsync(page)).Result;
+            ListAsync(page).GetAwaiter().GetResult();
 
         public async Task<ListIssueResponse> ListAsync(int page = 1)
         {
@@ -58,17 +52,19 @@ namespace Cronitor.Clients
         }
 
         public Issue Get(string key) =>
-            Task.Run(async () => await GetAsync(key)).Result;
+            GetAsync(key).GetAwaiter().GetResult();
 
         public async Task<Issue> GetAsync(string key)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
+
             var request = new GetIssueRequest(key);
 
             return await SendAsync<Issue>(request);
         }
 
         public Issue Create(CreateIssueRequest request) =>
-            Task.Run(async () => await CreateAsync(request)).Result;
+            CreateAsync(request).GetAwaiter().GetResult();
 
         public async Task<Issue> CreateAsync(CreateIssueRequest request)
         {
@@ -76,7 +72,7 @@ namespace Cronitor.Clients
         }
 
         public Issue Update(UpdateIssueRequest request) =>
-            Task.Run(async () => await UpdateAsync(request)).Result;
+            UpdateAsync(request).GetAwaiter().GetResult();
 
         public async Task<Issue> UpdateAsync(UpdateIssueRequest request)
         {

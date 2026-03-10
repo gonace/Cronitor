@@ -9,7 +9,6 @@ namespace Cronitor.Requests
     {
         public sealed override string Endpoint { get; set; } = "monitors/:key/pause/:duration";
         public string Key { get; set; }
-        public int Duration { get; set; } = 0;
 
         public UnpauseMonitorRequest(string monitorKey)
         {
@@ -21,7 +20,7 @@ namespace Cronitor.Requests
             var dictionary = new Dictionary<string, string>
             {
                 { ":key", Key },
-                { ":duration", Duration.ToString() }
+                { ":duration", "0" }
             };
 
             return base.ToUri().Build(dictionary);

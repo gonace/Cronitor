@@ -1,8 +1,6 @@
 ﻿using Cronitor.Commands;
 using Cronitor.Internals;
 using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Cronitor.Abstractions
@@ -13,17 +11,12 @@ namespace Cronitor.Abstractions
 
         protected BaseClient(Uri apiUri)
         {
-            _httpClient = new HttpClient(apiUri, _jsonSerializerOptions);
+            _httpClient = new HttpClient(apiUri);
         }
 
         protected BaseClient(Uri apiUri, string apiKey)
         {
-            _httpClient = new HttpClient(apiUri, apiKey, _jsonSerializerOptions);
-        }
-
-        protected BaseClient(Uri apiUri, string apiKey, JsonSerializerOptions serializerOptions)
-        {
-            _httpClient = new HttpClient(apiUri, apiKey, serializerOptions);
+            _httpClient = new HttpClient(apiUri, apiKey);
         }
 
         internal BaseClient(HttpClient client)
@@ -32,36 +25,35 @@ namespace Cronitor.Abstractions
         }
 
 
-        public void Send(Command command)
-        {
-            Task.Run(async () => await SendAsync(command))
-                .Wait();
-        }
+        protected void Send(Command command) =>
+            SendAsync(command).GetAwaiter().GetResult();
 
-        public async Task SendAsync(Command command)
+        protected async Task SendAsync(Command command)
         {
             await _httpClient.SendAsync(command);
         }
 
-        public TResponse Send<TResponse>(BaseRequest request)
-        {
-            return Task.Run(async () => await SendAsync<TResponse>(request)).Result;
-        }
+        protected TResponse Send<TResponse>(BaseRequest request) =>
+            SendAsync<TResponse>(request).GetAwaiter().GetResult();
 
-        public async Task<TResponse> SendAsync<TResponse>(BaseRequest request)
+        protected async Task<TResponse> SendAsync<TResponse>(BaseRequest request)
         {
             return await _httpClient.SendAsync<TResponse>(request);
         }
 
-        public void Dispose()
+        protected void Send(BaseRequest request) =>
+            SendAsync(request).GetAwaiter().GetResult();
+
+        protected async Task SendAsync(BaseRequest request)
         {
-            _httpClient = null;
+            await _httpClient.SendAsync(request);
         }
 
-        private readonly JsonSerializerOptions _jsonSerializerOptions = new JsonSerializerOptions
+        public void Dispose()
         {
-            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            NumberHandling = JsonNumberHandling.AllowReadingFromString
-        };
+            _httpClient?.Dispose();
+            _httpClient = null;
+            GC.SuppressFinalize(this);
+        }
     }
 }

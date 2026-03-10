@@ -1,9 +1,9 @@
-﻿using System.Text.Json;
-using Cronitor.Abstractions;
+﻿using Cronitor.Abstractions;
 using Cronitor.Commands;
 using Cronitor.Constants;
 using Cronitor.Internals;
 using System.Threading.Tasks;
+using Cronitor.Extensions;
 
 namespace Cronitor.Clients
 {
@@ -31,13 +31,7 @@ namespace Cronitor.Clients
         }
 
         public TelemetriesClient(string apiKey)
-            : base(Urls.DefaultApiUrl, apiKey)
-        {
-            _apiKey = apiKey;
-        }
-
-        public TelemetriesClient(string apiKey, JsonSerializerOptions jsonSerializerOptions)
-            : base(Urls.DefaultApiUrl, apiKey, jsonSerializerOptions)
+            : base(Urls.TelemetryBaseUrl, apiKey)
         {
             _apiKey = apiKey;
         }
@@ -55,11 +49,12 @@ namespace Cronitor.Clients
 
 
         public void Run(string monitorKey, string message = null, string environment = null) =>
-            Task.Run(async () => await RunAsync(monitorKey, message, environment))
-                .Wait();
+            RunAsync(monitorKey, message, environment).GetAwaiter().GetResult();
 
         public async Task RunAsync(string monitorKey, string message = null, string environment = null)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
+
             var command = new RunCommand()
                 .WithApiKey(_apiKey)
                 .WithMonitorKey(monitorKey);
@@ -78,11 +73,12 @@ namespace Cronitor.Clients
         }
 
         public void Complete(string monitorKey, string message = null, string environment = null) =>
-            Task.Run(async () => await CompleteAsync(monitorKey, message, environment))
-                .Wait();
+            CompleteAsync(monitorKey, message, environment).GetAwaiter().GetResult();
 
         public async Task CompleteAsync(string monitorKey, string message = null, string environment = null)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
+
             var command = new CompleteCommand()
                 .WithApiKey(_apiKey)
                 .WithMonitorKey(monitorKey);
@@ -101,11 +97,12 @@ namespace Cronitor.Clients
         }
 
         public void Fail(string monitorKey, string message = null, string environment = null) =>
-            Task.Run(async () => await FailAsync(monitorKey, message, environment))
-                .Wait();
+            FailAsync(monitorKey, message, environment).GetAwaiter().GetResult();
 
         public async Task FailAsync(string monitorKey, string message = null, string environment = null)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
+
             var command = new FailCommand()
                 .WithApiKey(_apiKey)
                 .WithMonitorKey(monitorKey);
@@ -124,11 +121,12 @@ namespace Cronitor.Clients
         }
 
         public void Tick(string monitorKey, string message = null, string environment = null) =>
-            Task.Run(async () => await TickAsync(monitorKey, message, environment))
-                .Wait();
+            TickAsync(monitorKey, message, environment).GetAwaiter().GetResult();
 
         public async Task TickAsync(string monitorKey, string message = null, string environment = null)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
+
             var command = new TickCommand()
                 .WithApiKey(_apiKey)
                 .WithMonitorKey(monitorKey);
@@ -147,8 +145,7 @@ namespace Cronitor.Clients
         }
 
         public void Ping(Command command) =>
-            Task.Run(async () => await PingAsync(command))
-                .Wait();
+            PingAsync(command).GetAwaiter().GetResult();
 
         public async Task PingAsync(Command command) =>
             await SendAsync(command);

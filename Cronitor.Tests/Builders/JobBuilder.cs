@@ -5,8 +5,8 @@ namespace Cronitor.Tests.Builders
 {
     public class JobBuilder
     {
-        private readonly string _key = "Key";
-        private readonly string _alertInterval = "6 hours";
+        private string _key = "Key";
+        private readonly string _realertInterval = "6 hours";
         private readonly int? _failureTolerance = 2;
         private readonly int _graceSeconds = 900;
         private readonly string _group = "Group";
@@ -24,7 +24,7 @@ namespace Cronitor.Tests.Builders
         {
             return new Job(_key)
             {
-                AlertInterval = _alertInterval,
+                RealertInterval = _realertInterval,
                 Assertions = _assertions,
                 FailureTolerance = _failureTolerance,
                 GraceSeconds = _graceSeconds,
@@ -37,6 +37,12 @@ namespace Cronitor.Tests.Builders
                 Tags = _tags,
                 Timezone = _timeZone
             };
+        }
+
+        public JobBuilder Key(string key)
+        {
+            _key = key;
+            return this;
         }
 
         public JobBuilder Assertions(List<string> assertions)

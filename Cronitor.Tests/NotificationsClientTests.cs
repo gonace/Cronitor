@@ -24,6 +24,32 @@ namespace Cronitor.Tests
         }
 
         [Fact]
+        public void ShouldConstructWithNoParameters()
+        {
+            var client = new NotificationsClient();
+
+            Assert.NotNull(client);
+        }
+
+        [Fact]
+        public void ShouldConstructWithApiKey()
+        {
+            var client = new NotificationsClient(ApiKey);
+
+            Assert.NotNull(client);
+        }
+
+        [Fact]
+        public void ShouldDisposeNotificationsClient()
+        {
+            using (var client = new NotificationsClient(ApiKey))
+            {
+                Assert.NotNull(client);
+            }
+            // Test passes if no exception is thrown during disposal
+        }
+
+        [Fact]
         public void ShouldExecuteListMethod()
         {
             var response = new ListNotificationResponse { Items = new List<Template> { Make.Template.Build() } };
@@ -170,7 +196,7 @@ namespace Cronitor.Tests
 
             _notificationsClient.Delete(TemplateKey);
 
-            _httpClient.Verify(x => x.SendAsync<Task>(It.Is<DeleteNotificationRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync(It.Is<DeleteNotificationRequest>(c =>
                 c.Method == HttpMethod.Delete &&
                 c.Endpoint == "templates/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
@@ -183,7 +209,7 @@ namespace Cronitor.Tests
 
             await _notificationsClient.DeleteAsync(TemplateKey);
 
-            _httpClient.Verify(x => x.SendAsync<Task>(It.Is<DeleteNotificationRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync(It.Is<DeleteNotificationRequest>(c =>
                 c.Method == HttpMethod.Delete &&
                 c.Endpoint == "templates/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();

@@ -11,22 +11,20 @@ namespace Cronitor.Abstractions
         public virtual HttpMethod Method { get; set; } = HttpMethod.Get;
         public abstract string Endpoint { get; set; }
 
-
-        public BaseRequest SetContent(HttpContent content)
-        {
-            Content = content;
-
-            return this;
-        }
-
         public virtual Uri ToUri()
         {
-            return new Uri(Urls.DefaultApiUrl.ToString()).Combine(Endpoint);
+            return new Uri(Urls.DefaultApiUrl.ToString()).Combine(Endpoint).AddQueryString(this.ToQueryString());
         }
 
         public string ToUrl()
         {
             return ToUri().ToString();
+        }
+
+        public BaseRequest SetContent(HttpContent content)
+        {
+            Content = content;
+            return this;
         }
     }
 }

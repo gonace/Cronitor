@@ -7,89 +7,77 @@ using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using Cronitor.Serialization;
 
 namespace Cronitor.Internals
 {
-    internal class HttpClient
+    internal class HttpClient : IDisposable
     {
+        private static readonly HttpClientHandler SharedHandler = new HttpClientHandler();
+        
         private readonly string _apiKey;
         private readonly Uri _apiUri;
-        private readonly JsonSerializerOptions _serializerOptions;
+        private readonly System.Net.Http.HttpClient _httpClient;
 
         internal HttpClient()
         {
-            _serializerOptions = new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                NumberHandling = JsonNumberHandling.AllowReadingFromString
-            };
+            _httpClient = CreateHttpClient();
         }
 
-        internal HttpClient(Uri apiUri, JsonSerializerOptions serializerOptions)
+        internal HttpClient(Uri apiUri)
         {
             _apiUri = apiUri;
-            _serializerOptions = serializerOptions;
+            _httpClient = CreateHttpClient();
         }
 
-        internal HttpClient(Uri apiUri, string apiKey, JsonSerializerOptions serializerOptions)
+        internal HttpClient(Uri apiUri, string apiKey)
         {
             _apiKey = apiKey;
             _apiUri = apiUri.AsHttps();
-            _serializerOptions = serializerOptions;
+            _httpClient = CreateHttpClient();
         }
 
         //TODO: send to FallbackUrl
         public virtual async Task SendAsync(Command command)
         {
-            using (var httpClient = GetHttpClient())
+            var requestUri = command.ToUri();
+            var message = new HttpRequestMessage
             {
-                var requestUri = command.ToUri();
-                var message = new HttpRequestMessage
-                {
-                    Method = command.Method,
-                    RequestUri = requestUri
-                };
-                var task = httpClient.SendAsync(message);
+                Method = command.Method,
+                RequestUri = requestUri
+            };
+            var task = _httpClient.SendAsync(message);
 
-                await PerformRequestAsync(task);
-            }
+            await PerformRequestAsync(task);
         }
 
         public virtual async Task SendAsync(BaseRequest request)
         {
-            using (var httpClient = GetHttpClient())
+            var requestUri = request.ToUri();
+            var message = new HttpRequestMessage
             {
-                var requestUri = request.ToUri();
-                var message = new HttpRequestMessage
-                {
-                    Method = request.Method,
-                    RequestUri = requestUri,
-                    Content = request.Content
-                };
-                var task = httpClient.SendAsync(message);
+                Method = request.Method,
+                RequestUri = requestUri,
+                Content = request.Content
+            };
+            var task = _httpClient.SendAsync(message);
 
-                await PerformRequestAsync(task);
-            }
+            await PerformRequestAsync(task);
         }
 
         public virtual async Task<TReturn> SendAsync<TReturn>(BaseRequest request)
         {
-            using (var httpClient = GetHttpClient())
+            var requestUri = request.ToUri();
+            var message = new HttpRequestMessage
             {
-                var requestUri = request.ToUri();
-                var message = new HttpRequestMessage
-                {
-                    Method = request.Method,
-                    RequestUri = requestUri,
-                    Content = request.Content
-                };
-                var task = httpClient.SendAsync(message);
+                Method = request.Method,
+                RequestUri = requestUri,
+                Content = request.Content
+            };
+            var task = _httpClient.SendAsync(message);
 
-                return await PerformRequestAsync<TReturn>(task);
-            }
+            return await PerformRequestAsync<TReturn>(task);
         }
 
 
@@ -99,7 +87,7 @@ namespace Cronitor.Internals
             if (response.IsSuccessStatusCode)
                 return;
 
-            var details = JsonSerializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync(), _serializerOptions);
+            var details = Serializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync());
             throw new ApiException(details, response.StatusCode);
         }
 
@@ -107,15 +95,15 @@ namespace Cronitor.Internals
         {
             var response = await request;
             if (response.IsSuccessStatusCode)
-                return JsonSerializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync());
+                return Serializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync());
 
-            var details = JsonSerializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync(), _serializerOptions);
+            var details = Serializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync());
             throw new ApiException(details, response.StatusCode);
         }
 
-        private System.Net.Http.HttpClient GetHttpClient()
+        private System.Net.Http.HttpClient CreateHttpClient()
         {
-            var httpClient = new System.Net.Http.HttpClient
+            var httpClient = new System.Net.Http.HttpClient(SharedHandler, disposeHandler: false)
             {
                 BaseAddress = _apiUri
             };
@@ -125,6 +113,11 @@ namespace Cronitor.Internals
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_apiKey}:")));
 
             return httpClient;
+        }
+
+        public void Dispose()
+        {
+            _httpClient?.Dispose();
         }
     }
 }
