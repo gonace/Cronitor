@@ -8,7 +8,7 @@ namespace Cronitor.Extensions
 {
     internal static class ObjectExtensions
     {
-        public static string ToQueryString(this object @object)
+        public static string ToQueryString<T>(this T @object)
         {
             var queryStringBuilder = new StringBuilder();
             var type = @object.GetType();

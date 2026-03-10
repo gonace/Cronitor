@@ -6,7 +6,7 @@ namespace Cronitor.Extensions
     {
         public static string ToQueryString(this BaseRequest request)
         {
-            return ObjectExtensions.ToQueryString(request);
+            return request.ToQueryString<BaseRequest>();
         }
     }
 }
