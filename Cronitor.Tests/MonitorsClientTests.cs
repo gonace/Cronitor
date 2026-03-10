@@ -226,7 +226,7 @@ namespace Cronitor.Tests
 
             _httpClient.Verify(x => x.SendAsync<Task>(It.Is<PauseMonitorRequest>(c =>
                 c.Method == HttpMethod.Get &&
-                c.Endpoint == "monitors/:key/pause/:hours")), Times.Once);
+                c.Endpoint == "monitors/:key/pause/:duration")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
@@ -239,7 +239,7 @@ namespace Cronitor.Tests
 
             _httpClient.Verify(x => x.SendAsync<Task>(It.Is<PauseMonitorRequest>(c =>
                 c.Method == HttpMethod.Get &&
-                c.Endpoint == "monitors/:key/pause/:hours")), Times.Once);
+                c.Endpoint == "monitors/:key/pause/:duration")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
@@ -252,7 +252,7 @@ namespace Cronitor.Tests
 
             _httpClient.Verify(x => x.SendAsync<Task>(It.Is<UnpauseMonitorRequest>(c =>
                 c.Method == HttpMethod.Get &&
-                c.Endpoint == "monitors/:key/pause/0")), Times.Once);
+                c.Endpoint == "monitors/:key/pause/:duration")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
@@ -265,7 +265,7 @@ namespace Cronitor.Tests
 
             _httpClient.Verify(x => x.SendAsync<Task>(It.Is<UnpauseMonitorRequest>(c =>
                 c.Method == HttpMethod.Get &&
-                c.Endpoint == "monitors/:key/pause/0")), Times.Once);
+                c.Endpoint == "monitors/:key/pause/:duration")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
