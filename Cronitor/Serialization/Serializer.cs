@@ -7,13 +7,16 @@ namespace Cronitor.Serialization
     {
         public static string Serialize(object obj)
         {
-            var json = JsonSerializer.Serialize(obj, new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-                WriteIndented = false
-            });
+            var json = JsonSerializer.Serialize(obj, Options);
 
             return json;
         }
+
+        private static readonly JsonSerializerOptions Options = new JsonSerializerOptions
+        {
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            WriteIndented = false,
+            IgnoreReadOnlyProperties = true
+        };
     }
 }
