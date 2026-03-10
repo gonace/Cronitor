@@ -5,18 +5,18 @@ namespace Cronitor.Serialization
 {
     public static class Serializer
     {
-        public static string Serialize(object obj)
-        {
-            var json = JsonSerializer.Serialize(obj, Options);
+        public static T Deserialize<T>(string json) => 
+            JsonSerializer.Deserialize<T>(json, Options);
 
-            return json;
-        }
+        public static string Serialize(object obj) =>
+            JsonSerializer.Serialize(obj, Options);
 
         private static readonly JsonSerializerOptions Options = new JsonSerializerOptions
         {
             DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
-            WriteIndented = false,
-            IgnoreReadOnlyProperties = true
+            IgnoreReadOnlyProperties = true,
+            NumberHandling = JsonNumberHandling.AllowReadingFromString,
+            WriteIndented = false
         };
     }
 }
