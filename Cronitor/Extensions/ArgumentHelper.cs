@@ -2,9 +2,9 @@
 
 namespace Cronitor.Extensions
 {
-    public static class ArgumentHelper
+    internal static class ArgumentHelper
     {
-        public static void ThrowIfNullOrWhiteSpace(string key)
+        internal static void ThrowIfNullOrWhiteSpace(string key)
         {
 #if NET8_0_OR_GREATER
             ArgumentException.ThrowIfNullOrWhiteSpace(key);
