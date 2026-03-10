@@ -71,22 +71,21 @@ namespace Cronitor.Commands
 
         public Command WithApiKey(string apiKey)
         {
-            ApiKey = apiKey;
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(apiKey);
 
+            ApiKey = apiKey;
             return this;
         }
 
         public Command WithContent(HttpContent content)
         {
             Content = content;
-
             return this;
         }
 
         public Command WithMetric(Metric metric, string value)
         {
             Metric = $"{metric}:{value}";
-
             return this;
         }
 
@@ -96,45 +95,49 @@ namespace Cronitor.Commands
 
         public Command WithEnvironment(string environment)
         {
-            Environment = environment;
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(environment);
 
+            Environment = environment;
             return this;
         }
 
         public Command WithHost(string host)
         {
-            Host = host;
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(host);
 
+            Host = host;
             return this;
         }
 
         public Command WithMessage(string message)
         {
-            Message = message.StartsWith("'") &&
-                      message.EndsWith("'") ?
-                message : $"'{message}'";
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(message);
 
+            Message = $"'{message.Replace("'", "\\'")}'";
             return this;
         }
 
         public Command WithMonitorKey(string monitorKey)
         {
-            MonitorKey = monitorKey;
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
 
+            MonitorKey = monitorKey;
             return this;
         }
 
         public Command WithSeries(string series)
         {
-            Series = series;
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(series);
 
+            Series = series;
             return this;
         }
 
         public Command WithStatus(string status)
         {
-            Status = status;
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(status);
 
+            Status = status;
             return this;
         }
 
@@ -145,10 +148,8 @@ namespace Cronitor.Commands
 
         public Uri ToUri()
         {
-            if (string.IsNullOrWhiteSpace(ApiKey))
-                throw new ArgumentException(nameof(ApiKey));
-            if (string.IsNullOrWhiteSpace(MonitorKey))
-                throw new ArgumentException(nameof(MonitorKey));
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(ApiKey);
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(MonitorKey);
 
             var dictionary = new Dictionary<string, string>
             {

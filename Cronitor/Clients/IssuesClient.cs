@@ -6,6 +6,7 @@ using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Responses;
 using System.Threading.Tasks;
+using Cronitor.Extensions;
 
 namespace Cronitor.Clients
 {
@@ -57,17 +58,19 @@ namespace Cronitor.Clients
         }
 
         public Issue Get(string key) =>
-            Task.Run(async () => await GetAsync(key)).Result;
+            GetAsync(key).GetAwaiter().GetResult();
 
         public async Task<Issue> GetAsync(string key)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
+
             var request = new GetIssueRequest(key);
 
             return await SendAsync<Issue>(request);
         }
 
         public Issue Create(CreateIssueRequest request) =>
-            Task.Run(async () => await CreateAsync(request)).Result;
+            CreateAsync(request).GetAwaiter().GetResult();
 
         public async Task<Issue> CreateAsync(CreateIssueRequest request)
         {
@@ -75,7 +78,7 @@ namespace Cronitor.Clients
         }
 
         public Issue Update(UpdateIssueRequest request) =>
-            Task.Run(async () => await UpdateAsync(request)).Result;
+            UpdateAsync(request).GetAwaiter().GetResult();
 
         public async Task<Issue> UpdateAsync(UpdateIssueRequest request)
         {

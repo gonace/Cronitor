@@ -6,6 +6,7 @@ using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Responses;
 using System.Threading.Tasks;
+using Cronitor.Extensions;
 
 namespace Cronitor.Clients
 {
@@ -46,7 +47,7 @@ namespace Cronitor.Clients
         }
 
         public ListNotificationResponse List() =>
-            Task.Run(async () => await ListAsync()).Result;
+            ListAsync().GetAwaiter().GetResult();
 
         public async Task<ListNotificationResponse> ListAsync()
         {
@@ -57,33 +58,36 @@ namespace Cronitor.Clients
         }
 
         public Template Get(string name) =>
-            Task.Run(async () => await GetAsync(name)).Result;
+            GetAsync(name).GetAwaiter().GetResult();
 
-        public async Task<Template> GetAsync(string name)
+        public async Task<Template> GetAsync(string key)
         {
-            var request = new GetNotificationRequest(name);
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
+
+            var request = new GetNotificationRequest(key);
 
             return await SendAsync<Template>(request);
         }
 
         public Template Create(CreateNotificationRequest request) =>
-            Task.Run(async () => await CreateAsync(request)).Result;
+            CreateAsync(request).GetAwaiter().GetResult();
 
         public async Task<Template> CreateAsync(CreateNotificationRequest request) =>
             await SendAsync<Template>(request);
 
         public Template Update(UpdateNotificationRequest request) =>
-            Task.Run(async () => await UpdateAsync(request)).Result;
+            UpdateAsync(request).GetAwaiter().GetResult();
 
         public async Task<Template> UpdateAsync(UpdateNotificationRequest request) =>
             await SendAsync<Template>(request);
 
         public void Delete(string key) =>
-            Task.Run(async () => await DeleteAsync(key))
-                .Wait();
+            DeleteAsync(key).GetAwaiter().GetResult();
 
         public async Task DeleteAsync(string key)
         {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
+
             var request = new DeleteNotificationRequest(key);
 
             await SendAsync<Task>(request);
