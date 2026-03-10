@@ -15,5 +15,16 @@ namespace Cronitor.Abstractions
         {
             return new Uri(Urls.DefaultApiUrl.ToString()).Combine(Endpoint).AddQueryString(this.ToQueryString());
         }
+
+        public string ToUrl()
+        {
+            return ToUri().ToString();
+        }
+
+        public BaseRequest SetContent(HttpContent content)
+        {
+            Content = content;
+            return this;
+        }
     }
 }
