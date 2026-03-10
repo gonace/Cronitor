@@ -74,21 +74,18 @@ namespace Cronitor.Commands
             ArgumentHelper.ThrowIfNullOrWhiteSpace(apiKey);
 
             ApiKey = apiKey;
-
             return this;
         }
 
         public Command WithContent(HttpContent content)
         {
             Content = content;
-
             return this;
         }
 
         public Command WithMetric(Metric metric, string value)
         {
             Metric = $"{metric}:{value}";
-
             return this;
         }
 
@@ -101,7 +98,6 @@ namespace Cronitor.Commands
             ArgumentHelper.ThrowIfNullOrWhiteSpace(environment);
 
             Environment = environment;
-
             return this;
         }
 
@@ -110,7 +106,6 @@ namespace Cronitor.Commands
             ArgumentHelper.ThrowIfNullOrWhiteSpace(host);
 
             Host = host;
-
             return this;
         }
 
@@ -126,7 +121,6 @@ namespace Cronitor.Commands
             ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
 
             MonitorKey = monitorKey;
-
             return this;
         }
 
@@ -135,7 +129,6 @@ namespace Cronitor.Commands
             ArgumentHelper.ThrowIfNullOrWhiteSpace(series);
 
             Series = series;
-
             return this;
         }
 
@@ -144,7 +137,6 @@ namespace Cronitor.Commands
             ArgumentHelper.ThrowIfNullOrWhiteSpace(status);
 
             Status = status;
-
             return this;
         }
 
