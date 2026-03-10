@@ -31,7 +31,7 @@ namespace Cronitor.Clients
         }
 
         public TelemetriesClient(string apiKey)
-            : base(Urls.DefaultApiUrl, apiKey)
+            : base(Urls.TelemetryBaseUrl, apiKey)
         {
             _apiKey = apiKey;
         }
