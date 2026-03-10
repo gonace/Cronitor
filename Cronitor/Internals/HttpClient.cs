@@ -14,6 +14,8 @@ namespace Cronitor.Internals
 {
     internal class HttpClient : IDisposable
     {
+        private static readonly HttpClientHandler SharedHandler = new HttpClientHandler();
+        
         private readonly string _apiKey;
         private readonly Uri _apiUri;
         private readonly System.Net.Http.HttpClient _httpClient;
@@ -101,7 +103,7 @@ namespace Cronitor.Internals
 
         private System.Net.Http.HttpClient CreateHttpClient()
         {
-            var httpClient = new System.Net.Http.HttpClient
+            var httpClient = new System.Net.Http.HttpClient(SharedHandler, disposeHandler: false)
             {
                 BaseAddress = _apiUri
             };
