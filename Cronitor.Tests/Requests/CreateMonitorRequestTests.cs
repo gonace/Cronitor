@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using Cronitor.Assertions;
 using Cronitor.Constants;
 using Cronitor.Models;
 using Cronitor.Requests;
@@ -19,7 +20,7 @@ namespace Cronitor.Tests.Requests
                 .With(x => x.Schedule, "0 0 * * *")
                 .With(x => x.Notify, new List<string> { "default" })
                 .With(x => x.Tags, new List<string> { "nightly" })
-                .With(x => x.Assertions, new List<string> { "metric.duration < 15min" })
+                .With(x => x.Assertions, new List<AssertionRule> { Assertion.Metric.Duration.LessThan("15min") })
                 .With(x => x.Timezone, "Europe/Stockholm")
                 .With(x => x.Note, "note")
                 .With(x => x.Platform, "linux")

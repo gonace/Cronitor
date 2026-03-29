@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Cronitor.Assertions;
 using Cronitor.Models.Monitors;
 
 namespace Cronitor.Tests.Builders
@@ -16,9 +17,33 @@ namespace Cronitor.Tests.Builders
         private readonly int? _scheduleTolerance = 1;
         private readonly string _timeZone = "Europe/Stockholm";
 
-        private List<string> _assertions = new List<string> { "metric.duration < 30s", "metric.error_count < 5" };
+        private List<AssertionRule> _assertions = new List<AssertionRule> { Assertion.Metric.Duration.LessThan("30s"), Assertion.Metric.ErrorCount.LessThan(5) };
         private List<string>  _notify = new List<string> { "developers" };
         private readonly List<string> _tags = new List<string> { "tag", "attribute" };
+
+        public JobBuilder Key(string key)
+        {
+            _key = key;
+            return this;
+        }
+
+        public JobBuilder Assertions(List<AssertionRule> assertions)
+        {
+            _assertions = assertions;
+            return this;
+        }
+
+        public JobBuilder Notify(List<string> notify)
+        {
+            _notify = notify;
+            return this;
+        }
+
+        public JobBuilder Schedule(string schedule)
+        {
+            _schedule = schedule;
+            return this;
+        }
 
         public Job Build()
         {
@@ -37,30 +62,6 @@ namespace Cronitor.Tests.Builders
                 Tags = _tags,
                 Timezone = _timeZone
             };
-        }
-
-        public JobBuilder Key(string key)
-        {
-            _key = key;
-            return this;
-        }
-
-        public JobBuilder Assertions(List<string> assertions)
-        {
-            _assertions = assertions;
-            return this;
-        }
-
-        public JobBuilder Notify(List<string> notify)
-        {
-            _notify = notify;
-            return this;
-        }
-
-        public JobBuilder Schedule(string schedule)
-        {
-            _schedule = schedule;
-            return this;
         }
     }
 }

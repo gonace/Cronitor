@@ -4,6 +4,7 @@ using Cronitor.Models.Monitors;
 using Cronitor.Tests.Helpers;
 using System.Collections.Generic;
 using System.Linq;
+using Cronitor.Assertions;
 using Xunit;
 
 namespace Cronitor.Tests
@@ -73,10 +74,10 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldCreateJobMonitor()
         {
-            var assertions = new List<string>
+            var assertions = new List<AssertionRule>
             {
-                "metric.duration < 30s",
-                "metric.error_count < 5"
+                Assertion.Metric.Duration.LessThan("30s"),
+                Assertion.Metric.ErrorCount.LessThan(5)
             };
             var notify = new List<string>
             {

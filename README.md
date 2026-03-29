@@ -159,12 +159,33 @@ public class SomeClass
 }
 ```
 
+## Assertions Language
+A fluent builder for Cronitor assertions is available via the `Assertion`. Instead of writing raw assertion strings, you can use the builder for type safety and discoverability:
+
+```c#
+using Cronitor.Constants;
+
+var monitor = new Job("my-job")
+{
+    Assertions = new[]
+    {
+        Assertion.Metric.Duration.LessThan("30s"),
+        Assertion.Metric.ErrorCount.LessThan(5),
+        Assertion.Metric.Count.GreaterThan(0),
+        Assertion.Response.Code.Equals(200),
+        Assertion.Response.Time.LessThan("2s"),
+        Assertion.Response.Body.Contains("healthy"),
+        Assertion.Response.Json("user.count").GreaterThan(10),
+        Assertion.Response.Header("X-Version").Equals("1.2.3"),
+    }
+};
+```
+
 ## Development
 ### Suggestions
 * Add support for Quartz.NET Jobs
 * Implement Timezone constant (if not too big of a hassle to maintain)
 * Implement cron expression-language (if found as needed?)
-* Implement Cronitor `assertions`-language (if found as needed?)
 
 ## Contributing
 Pull requests and features are happily considered! By participating in this project you agree to abide by the [Code of Conduct](http://contributor-covenant.org/version/2/0).
