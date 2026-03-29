@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 using Cronitor.Constants;
-using Cronitor.Constants.Scheduling;
+using Cronitor.Scheduling;
 using Cronitor.Models.Monitors;
 
 namespace Cronitor.Tests.Builders

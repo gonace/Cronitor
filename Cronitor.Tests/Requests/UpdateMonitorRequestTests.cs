@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Cronitor.Constants;
-using Cronitor.Constants.Scheduling;
+using Cronitor.Scheduling;
 using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Tests.Helpers;

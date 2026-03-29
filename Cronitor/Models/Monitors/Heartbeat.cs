@@ -1,5 +1,5 @@
 using System.Text.Json.Serialization;
-using Cronitor.Constants.Scheduling;
+using Cronitor.Scheduling;
 
 namespace Cronitor.Models.Monitors
 {

@@ -1,4 +1,4 @@
-namespace Cronitor.Constants.Scheduling
+namespace Cronitor.Scheduling
 {
     public static class Schedule
     {

@@ -1,5 +1,5 @@
 ﻿using Cronitor.Constants;
-using Cronitor.Constants.Scheduling;
+using Cronitor.Scheduling;
 using Cronitor.Models.Monitors;
 using Cronitor.Tests.Helpers;
 using System.Collections.Generic;

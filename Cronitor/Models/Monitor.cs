@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json.Serialization;
-using Cronitor.Constants.Scheduling;
+using Cronitor.Scheduling;
 
 namespace Cronitor.Models
 {
