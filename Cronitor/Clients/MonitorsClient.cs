@@ -17,6 +17,8 @@ namespace Cronitor.Clients
         Task<ListMonitorResponse> ListAsync(int page = 1);
         Monitor Get(string key);
         Task<Monitor> GetAsync(string key);
+        Monitor Clone(string key, string name = null);
+        Task<Monitor> CloneAsync(string key, string name = null);
         IEnumerable<Monitor> Create(CreateMonitorRequest request);
         Task<IEnumerable<Monitor>> CreateAsync(CreateMonitorRequest request);
         IEnumerable<Monitor> Update(UpdateMonitorRequest request);
@@ -87,6 +89,18 @@ namespace Cronitor.Clients
             var response = await SendAsync<CreateMonitorResponse>(request);
 
             return response?.Monitors;
+        }
+
+        public Monitor Clone(string key, string name = null) =>
+            CloneAsync(key, name).GetAwaiter().GetResult();
+
+        public async Task<Monitor> CloneAsync(string key, string name = null)
+        {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
+
+            var request = new CloneMonitorRequest(key, name);
+
+            return await SendAsync<Monitor>(request);
         }
 
         public IEnumerable<Monitor> Update(UpdateMonitorRequest request) =>
