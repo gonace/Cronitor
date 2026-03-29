@@ -8,7 +8,7 @@ namespace Cronitor.Scheduling
     {
         public override ScheduleExpression Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
         {
-            return new ScheduleExpression(reader.GetString());
+            return reader.GetString() is { } value ? new ScheduleExpression(value) : null;
         }
 
         public override void Write(Utf8JsonWriter writer, ScheduleExpression value, JsonSerializerOptions options)
