@@ -182,7 +182,7 @@ var monitor = new Job("my-job")
 ```
 
 ### Schedule / Cron Expressions
-A fluent builder for schedule expressions is available via the `Schedule` class in `Cronitor.Constants`. It supports both Cronitor interval expressions and standard cron expressions:
+A fluent builder for schedule expressions is available via the `Schedule`. It supports both Cronitor interval expressions and standard cron expressions:
 
 ```c#
 using Cronitor.Scheduling;
