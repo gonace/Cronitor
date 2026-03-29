@@ -1,4 +1,5 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
+using Cronitor.Scheduling;
 
 namespace Cronitor.Models.Monitors
 {
@@ -7,7 +8,7 @@ namespace Cronitor.Models.Monitors
         [JsonPropertyName("type")]
         public override string Type { get; set; } = "event";
 
-        public Heartbeat(string key, string schedule)
+        public Heartbeat(string key, ScheduleExpression schedule)
             : base(key)
         {
             Schedule = schedule;

@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Cronitor.Assertions;
+using Cronitor.Scheduling;
 
 namespace Cronitor.Models
 {
@@ -112,7 +113,7 @@ namespace Cronitor.Models
         /// An interval expression must be used. The range of accepted values is 30 seconds to 1 hour.e.g. ‘every 2 minutes’
         /// </summary>
         [JsonPropertyName("schedule")]
-        public string Schedule { get; set; }
+        public ScheduleExpression Schedule { get; set; }
         /// <summary>
         /// Number of missed scheduled executions to allow before sending an alert.
         /// </summary>

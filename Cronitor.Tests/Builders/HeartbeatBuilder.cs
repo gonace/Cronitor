@@ -1,11 +1,12 @@
-﻿using Cronitor.Models.Monitors;
+using Cronitor.Scheduling;
+using Cronitor.Models.Monitors;
 
 namespace Cronitor.Tests.Builders
 {
     public class HeartbeatBuilder
     {
         private readonly string _key = "Key";
-        private readonly string _schedule = "every 60 seconds";
+        private readonly ScheduleExpression _schedule = Schedule.Every(60).Seconds;
         private readonly string _timezone = "Europe/Stockholm";
 
         public Heartbeat Build()

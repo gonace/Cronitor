@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Cronitor.Assertions;
 using Cronitor.Models.Monitors;
+using Cronitor.Scheduling;
 
 namespace Cronitor.Tests.Builders
 {
@@ -13,7 +14,7 @@ namespace Cronitor.Tests.Builders
         private readonly string _group = "Group";
         private readonly string _note = "Note";
         private readonly string _platform = "Platform";
-        private string _schedule = "35 0 * * *";
+        private ScheduleExpression _schedule = Schedule.Cron.Daily(hour: 0, minute: 35);
         private readonly int? _scheduleTolerance = 1;
         private readonly string _timeZone = "Europe/Stockholm";
 
@@ -39,7 +40,7 @@ namespace Cronitor.Tests.Builders
             return this;
         }
 
-        public JobBuilder Schedule(string schedule)
+        public JobBuilder WithSchedule(ScheduleExpression schedule)
         {
             _schedule = schedule;
             return this;

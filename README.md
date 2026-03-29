@@ -181,11 +181,34 @@ var monitor = new Job("my-job")
 };
 ```
 
+### Schedule / Cron Expressions
+A fluent builder for schedule expressions is available via the `Schedule` class in `Cronitor.Constants`. It supports both Cronitor interval expressions and standard cron expressions:
+
+```c#
+using Cronitor.Scheduling;
+
+// Interval expressions
+Schedule.Every(60).Seconds              // "every 60 seconds"
+Schedule.Every(5).Minutes               // "every 5 minutes"
+
+// Cron shortcuts
+Schedule.Cron.Daily(hour: 3)            // "0 3 * * *"
+Schedule.Cron.Weekly(day: 1, hour: 8)   // "0 8 * * 1"
+Schedule.Cron.Monthly(day: 15)          // "0 0 15 * *"
+
+// Custom cron expressions
+Schedule.Cron.Create()
+    .MinuteEvery(15)
+    .HourRange(9, 17)
+    .DayOfWeekRange(1, 5)
+    .Build()                            // "*/15 9-17 * * 1-5"
+```
+
 ## Development
 ### Suggestions
 * Add support for Quartz.NET Jobs
 * Implement Timezone constant (if not too big of a hassle to maintain)
-* Implement cron expression-language (if found as needed?)
+
 
 ## Contributing
 Pull requests and features are happily considered! By participating in this project you agree to abide by the [Code of Conduct](http://contributor-covenant.org/version/2/0).

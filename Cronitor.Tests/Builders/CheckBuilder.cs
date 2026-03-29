@@ -1,5 +1,6 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using Cronitor.Constants;
+using Cronitor.Scheduling;
 using Cronitor.Models.Monitors;
 
 namespace Cronitor.Tests.Builders
@@ -7,7 +8,7 @@ namespace Cronitor.Tests.Builders
     public class CheckBuilder
     {
         private readonly string _key = "Key";
-        private readonly string _schedule = "every 60 seconds";
+        private readonly ScheduleExpression _schedule = Schedule.Every(60).Seconds;
         private readonly string _timezone = "Europe/Stockholm";
         private readonly string _url = "https://www.google.se";
 
