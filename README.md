@@ -170,7 +170,7 @@ public class SomeClass
 A fluent builder for schedule expressions is available via the `Schedule` class in `Cronitor.Constants`. It supports both Cronitor interval expressions and standard cron expressions:
 
 ```c#
-using Cronitor.Constants;
+using Cronitor.Constants.Scheduling;
 
 // Interval expressions
 Schedule.Every(60).Seconds              // "every 60 seconds"

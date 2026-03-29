@@ -1,5 +1,5 @@
 ﻿using Cronitor.Constants;
-using Cronitor.Models;
+using Cronitor.Constants.Scheduling;
 using Cronitor.Models.Monitors;
 using Cronitor.Tests.Helpers;
 using System.Collections.Generic;
@@ -27,7 +27,7 @@ namespace Cronitor.Tests
                 Region.Sydney,
                 Region.Virginia
             };
-            const string schedule = "every 60 seconds";
+            ScheduleExpression schedule = "every 60 seconds";
             const string timezone = "Europe/Stockholm";
             const string url = "https://www.google.se";
 
@@ -54,7 +54,7 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldCreateHeartbeatMonitor()
         {
-            const string schedule = "every 60 seconds";
+            ScheduleExpression schedule = "every 60 seconds";
             const string timezone = "Europe/Stockholm";
 
             var monitor = new Heartbeat(MonitorKey, schedule)
@@ -83,7 +83,7 @@ namespace Cronitor.Tests
                 "developers",
                 "administrators"
             };
-            const string schedule = "every 60 seconds";
+            ScheduleExpression schedule = "every 60 seconds";
             const string timezone = "Europe/Stockholm";
 
             var monitor = new Job(MonitorKey)
