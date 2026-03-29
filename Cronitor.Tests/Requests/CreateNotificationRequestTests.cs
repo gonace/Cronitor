@@ -14,7 +14,7 @@ namespace Cronitor.Tests.Requests
         [JsonData("CreateNotificationRequest.json")]
         public async Task ShouldCreateNotificationRequestFromTemplateAsync(string expected)
         {
-            var template = new Template
+            var template = new Notification
             {
                 Key = "devops-alerts",
                 Name = "DevOps Alerts",
@@ -37,16 +37,16 @@ namespace Cronitor.Tests.Requests
         [Fact]
         public void ShouldSetEndpoint()
         {
-            var template = new Template { Key = "test", Name = "Test" };
+            var template = new Notification { Key = "test", Name = "Test" };
             var request = new CreateNotificationRequest(template);
 
-            Assert.Equal("templates", request.Endpoint);
+            Assert.Equal("notifications", request.Endpoint);
         }
 
         [Fact]
         public void ShouldSetHttpMethodToPost()
         {
-            var template = new Template { Key = "test", Name = "Test" };
+            var template = new Notification { Key = "test", Name = "Test" };
             var request = new CreateNotificationRequest(template);
 
             Assert.Equal(HttpMethod.Post, request.Method);
@@ -55,12 +55,12 @@ namespace Cronitor.Tests.Requests
         [Fact]
         public void ShouldBuildUri()
         {
-            var template = new Template { Key = "test", Name = "Test" };
+            var template = new Notification { Key = "test", Name = "Test" };
             var request = new CreateNotificationRequest(template);
 
             var uri = request.ToUri();
 
-            Assert.Equal("https://cronitor.io/api/templates", uri.ToString());
+            Assert.Equal("https://cronitor.io/api/notifications", uri.ToString());
         }
     }
 }

@@ -5,9 +5,9 @@ using System.Text.Json.Serialization;
 
 namespace Cronitor.Responses
 {
-    public class ListNotificationResponse : BaseResponse<Template>
+    public class ListNotificationResponse : BaseResponse<Notification>
     {
         [JsonPropertyName("templates")]
-        public override IEnumerable<Template> Items { get; set; }
+        public override IEnumerable<Notification> Items { get; set; }
     }
 }

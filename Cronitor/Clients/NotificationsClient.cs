@@ -13,12 +13,12 @@ namespace Cronitor.Clients
     {
         ListNotificationResponse List();
         Task<ListNotificationResponse> ListAsync();
-        Template Get(string name);
-        Task<Template> GetAsync(string name);
-        Template Create(CreateNotificationRequest request);
-        Task<Template> CreateAsync(CreateNotificationRequest request);
-        Template Update(UpdateNotificationRequest request);
-        Task<Template> UpdateAsync(UpdateNotificationRequest request);
+        Notification Get(string name);
+        Task<Notification> GetAsync(string name);
+        Notification Create(CreateNotificationRequest request);
+        Task<Notification> CreateAsync(CreateNotificationRequest request);
+        Notification Update(UpdateNotificationRequest request);
+        Task<Notification> UpdateAsync(UpdateNotificationRequest request);
         void Delete(string key);
         Task DeleteAsync(string key);
     }
@@ -51,29 +51,29 @@ namespace Cronitor.Clients
             return response;
         }
 
-        public Template Get(string name) =>
+        public Notification Get(string name) =>
             GetAsync(name).GetAwaiter().GetResult();
 
-        public async Task<Template> GetAsync(string key)
+        public async Task<Notification> GetAsync(string key)
         {
             ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
 
             var request = new GetNotificationRequest(key);
 
-            return await SendAsync<Template>(request);
+            return await SendAsync<Notification>(request);
         }
 
-        public Template Create(CreateNotificationRequest request) =>
+        public Notification Create(CreateNotificationRequest request) =>
             CreateAsync(request).GetAwaiter().GetResult();
 
-        public async Task<Template> CreateAsync(CreateNotificationRequest request) =>
-            await SendAsync<Template>(request);
+        public async Task<Notification> CreateAsync(CreateNotificationRequest request) =>
+            await SendAsync<Notification>(request);
 
-        public Template Update(UpdateNotificationRequest request) =>
+        public Notification Update(UpdateNotificationRequest request) =>
             UpdateAsync(request).GetAwaiter().GetResult();
 
-        public async Task<Template> UpdateAsync(UpdateNotificationRequest request) =>
-            await SendAsync<Template>(request);
+        public async Task<Notification> UpdateAsync(UpdateNotificationRequest request) =>
+            await SendAsync<Notification>(request);
 
         public void Delete(string key) =>
             DeleteAsync(key).GetAwaiter().GetResult();

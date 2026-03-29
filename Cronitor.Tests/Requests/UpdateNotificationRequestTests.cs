@@ -14,7 +14,7 @@ namespace Cronitor.Tests.Requests
         [JsonData("UpdateNotificationRequest.json")]
         public async Task ShouldCreateUpdateNotificationRequestAsync(string expected)
         {
-            var template = new Template
+            var template = new Notification
             {
                 Key = "devops-alerts",
                 Name = "DevOps Alerts Updated",
@@ -36,16 +36,16 @@ namespace Cronitor.Tests.Requests
         [Fact]
         public void ShouldSetEndpoint()
         {
-            var template = new Template { Key = "test", Name = "Test" };
+            var template = new Notification { Key = "test", Name = "Test" };
             var request = new UpdateNotificationRequest("test", template);
 
-            Assert.Equal("templates/:key", request.Endpoint);
+            Assert.Equal("notifications/:key", request.Endpoint);
         }
 
         [Fact]
         public void ShouldSetHttpMethodToPut()
         {
-            var template = new Template { Key = "test", Name = "Test" };
+            var template = new Notification { Key = "test", Name = "Test" };
             var request = new UpdateNotificationRequest("test", template);
 
             Assert.Equal(HttpMethod.Put, request.Method);
@@ -54,7 +54,7 @@ namespace Cronitor.Tests.Requests
         [Fact]
         public void ShouldSetKey()
         {
-            var template = new Template { Key = "test", Name = "Test" };
+            var template = new Notification { Key = "test", Name = "Test" };
             var request = new UpdateNotificationRequest("test-key", template);
 
             Assert.Equal("test-key", request.Key);
@@ -63,12 +63,12 @@ namespace Cronitor.Tests.Requests
         [Fact]
         public void ShouldBuildUriWithKey()
         {
-            var template = new Template { Key = "test", Name = "Test" };
+            var template = new Notification { Key = "test", Name = "Test" };
             var request = new UpdateNotificationRequest("devops-alerts", template);
 
             var uri = request.ToUri();
 
-            Assert.Equal("https://cronitor.io/api/templates/devops-alerts", uri.ToString());
+            Assert.Equal("https://cronitor.io/api/notifications/devops-alerts", uri.ToString());
         }
     }
 }

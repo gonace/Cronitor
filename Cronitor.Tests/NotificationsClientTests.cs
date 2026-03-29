@@ -52,7 +52,7 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteListMethod()
         {
-            var response = new ListNotificationResponse { Items = new List<Template> { Make.Template.Build() } };
+            var response = new ListNotificationResponse { Items = new List<Notification> { Make.Template.Build() } };
             _httpClient.Setup(x => x.SendAsync<ListNotificationResponse>(It.IsAny<ListNotificationRequest>())).Returns(Task.FromResult(response));
 
             var result = _notificationsClient.List();
@@ -71,7 +71,7 @@ namespace Cronitor.Tests
         [Fact]
         public async Task ShouldExecuteListAsyncMethod()
         {
-            var response = new ListNotificationResponse { Items = new List<Template> { Make.Template.Build() } };
+            var response = new ListNotificationResponse { Items = new List<Notification> { Make.Template.Build() } };
             _httpClient.Setup(x => x.SendAsync<ListNotificationResponse>(It.IsAny<ListNotificationRequest>())).Returns(Task.FromResult(response));
 
             var result = await _notificationsClient.ListAsync();
@@ -91,12 +91,12 @@ namespace Cronitor.Tests
         public void ShouldExecuteGetMethod()
         {
             var response = Make.Template.Build();
-            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<GetNotificationRequest>())).Returns(Task.FromResult(response));
+            _httpClient.Setup(x => x.SendAsync<Notification>(It.IsAny<GetNotificationRequest>())).Returns(Task.FromResult(response));
 
             var result = _notificationsClient.Get(TemplateKey);
 
             Assert.NotNull(result);
-            _httpClient.Verify(x => x.SendAsync<Template>(It.Is<GetNotificationRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<Notification>(It.Is<GetNotificationRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "templates/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
@@ -106,12 +106,12 @@ namespace Cronitor.Tests
         public async Task ShouldExecuteGetAsyncMethod()
         {
             var response = Make.Template.Build();
-            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<GetNotificationRequest>())).Returns(Task.FromResult(response));
+            _httpClient.Setup(x => x.SendAsync<Notification>(It.IsAny<GetNotificationRequest>())).Returns(Task.FromResult(response));
 
             var result = await _notificationsClient.GetAsync(TemplateKey);
 
             Assert.NotNull(result);
-            _httpClient.Verify(x => x.SendAsync<Template>(It.Is<GetNotificationRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<Notification>(It.Is<GetNotificationRequest>(c =>
                 c.Method == HttpMethod.Get &&
                 c.Endpoint == "templates/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
@@ -126,14 +126,14 @@ namespace Cronitor.Tests
             };
             var request = new CreateNotificationRequest("Notification", TemplateKey, notifications);
             var response = Make.Template.Build();
-            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<CreateNotificationRequest>())).Returns(Task.FromResult(response));
+            _httpClient.Setup(x => x.SendAsync<Notification>(It.IsAny<CreateNotificationRequest>())).Returns(Task.FromResult(response));
 
             var result = _notificationsClient.Create(request);
 
             Assert.NotNull(result);
-            _httpClient.Verify(x => x.SendAsync<Template>(It.Is<CreateNotificationRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<Notification>(It.Is<CreateNotificationRequest>(c =>
                 c.Method == HttpMethod.Post &&
-                c.Endpoint == "templates")), Times.Once);
+                c.Endpoint == "notifications")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
@@ -146,14 +146,14 @@ namespace Cronitor.Tests
             };
             var request = new CreateNotificationRequest("Notification", TemplateKey, notifications);
             var response = Make.Template.Build();
-            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<CreateNotificationRequest>())).Returns(Task.FromResult(response));
+            _httpClient.Setup(x => x.SendAsync<Notification>(It.IsAny<CreateNotificationRequest>())).Returns(Task.FromResult(response));
 
             var result = await _notificationsClient.CreateAsync(request);
 
             Assert.NotNull(result);
-            _httpClient.Verify(x => x.SendAsync<Template>(It.Is<CreateNotificationRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<Notification>(It.Is<CreateNotificationRequest>(c =>
                 c.Method == HttpMethod.Post &&
-                c.Endpoint == "templates")), Times.Once);
+                c.Endpoint == "notifications")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
@@ -162,14 +162,14 @@ namespace Cronitor.Tests
         {
             var response = Make.Template.Build();
             var request = new UpdateNotificationRequest(TemplateKey, response);
-            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<UpdateNotificationRequest>())).Returns(Task.FromResult(response));
+            _httpClient.Setup(x => x.SendAsync<Notification>(It.IsAny<UpdateNotificationRequest>())).Returns(Task.FromResult(response));
 
             var result = _notificationsClient.Update(request);
 
             Assert.NotNull(result);
-            _httpClient.Verify(x => x.SendAsync<Template>(It.Is<UpdateNotificationRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<Notification>(It.Is<UpdateNotificationRequest>(c =>
                 c.Method == HttpMethod.Put &&
-                c.Endpoint == "templates/:key")), Times.Once);
+                c.Endpoint == "notifications/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
@@ -178,40 +178,40 @@ namespace Cronitor.Tests
         {
             var response = Make.Template.Build();
             var request = new UpdateNotificationRequest(TemplateKey, response);
-            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<UpdateNotificationRequest>())).Returns(Task.FromResult(response));
+            _httpClient.Setup(x => x.SendAsync<Notification>(It.IsAny<UpdateNotificationRequest>())).Returns(Task.FromResult(response));
 
             var result = await _notificationsClient.UpdateAsync(request);
 
             Assert.NotNull(result);
-            _httpClient.Verify(x => x.SendAsync<Template>(It.Is<UpdateNotificationRequest>(c =>
+            _httpClient.Verify(x => x.SendAsync<Notification>(It.Is<UpdateNotificationRequest>(c =>
                 c.Method == HttpMethod.Put &&
-                c.Endpoint == "templates/:key")), Times.Once);
+                c.Endpoint == "notifications/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
         [Fact]
         public void ShouldExecuteDeleteMethod()
         {
-            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<DeleteNotificationRequest>()));
+            _httpClient.Setup(x => x.SendAsync<Notification>(It.IsAny<DeleteNotificationRequest>()));
 
             _notificationsClient.Delete(TemplateKey);
 
             _httpClient.Verify(x => x.SendAsync(It.Is<DeleteNotificationRequest>(c =>
                 c.Method == HttpMethod.Delete &&
-                c.Endpoint == "templates/:key")), Times.Once);
+                c.Endpoint == "notifications/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
 
         [Fact]
         public async Task ShouldExecuteDeleteAsyncMethod()
         {
-            _httpClient.Setup(x => x.SendAsync<Template>(It.IsAny<DeleteNotificationRequest>()));
+            _httpClient.Setup(x => x.SendAsync<Notification>(It.IsAny<DeleteNotificationRequest>()));
 
             await _notificationsClient.DeleteAsync(TemplateKey);
 
             _httpClient.Verify(x => x.SendAsync(It.Is<DeleteNotificationRequest>(c =>
                 c.Method == HttpMethod.Delete &&
-                c.Endpoint == "templates/:key")), Times.Once);
+                c.Endpoint == "notifications/:key")), Times.Once);
             _httpClient.VerifyNoOtherCalls();
         }
     }

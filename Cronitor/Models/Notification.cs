@@ -4,7 +4,7 @@ using System.Text.Json.Serialization;
 
 namespace Cronitor.Models
 {
-    public class Template
+    public class Notification
     {
         /// <summary>
         /// The unique identifier for this list.

@@ -18,9 +18,9 @@ namespace Cronitor.Tests.Builders
 
         private readonly List<string> _monitors = new List<string>() { "Monitor1", "Monitor2", "Monitor3" };
 
-        public Template Build()
+        public Notification Build()
         {
-            return new Template
+            return new Notification
             {
                 Key = _key,
                 Name = _name,

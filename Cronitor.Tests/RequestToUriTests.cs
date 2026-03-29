@@ -1,3 +1,4 @@
+using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Tests.Helpers;
 using Xunit;
@@ -101,7 +102,7 @@ namespace Cronitor.Tests
         public void UpdateIssueRequest_ToUri_ShouldReplaceKeyPlaceholder()
         {
             const string issueKey = "issue-123";
-            var request = new UpdateIssueRequest(issueKey, new Models.Issue());
+            var request = new UpdateIssueRequest(issueKey, new Issue());
             var uri = request.ToUri();
 
             Assert.NotNull(uri);
@@ -125,17 +126,17 @@ namespace Cronitor.Tests
             var uri = request.ToUri();
 
             Assert.NotNull(uri);
-            Assert.Contains($"templates/{TemplateKey}", uri.ToString());
+            Assert.Contains($"notifications/{TemplateKey}", uri.ToString());
         }
 
         [Fact]
         public void UpdateNotificationRequest_ToUri_ShouldReplaceKeyPlaceholder()
         {
-            var request = new UpdateNotificationRequest(TemplateKey, new Models.Template());
+            var request = new UpdateNotificationRequest(TemplateKey, new Notification());
             var uri = request.ToUri();
 
             Assert.NotNull(uri);
-            Assert.Contains($"templates/{TemplateKey}", uri.ToString());
+            Assert.Contains($"notifications/{TemplateKey}", uri.ToString());
         }
 
         [Fact]

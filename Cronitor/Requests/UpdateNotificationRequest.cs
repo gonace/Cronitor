@@ -5,16 +5,17 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
+using Cronitor.Models;
 
 namespace Cronitor.Requests
 {
     public class UpdateNotificationRequest : BaseRequest
     {
-        public override string Endpoint { get; set; } = "templates/:key";
+        public override string Endpoint { get; set; } = "notifications/:key";
         public override HttpMethod Method => HttpMethod.Put;
         public string Key { get; set; }
 
-        public UpdateNotificationRequest(string key, Models.Template template)
+        public UpdateNotificationRequest(string key, Notification template)
         {
             Key = key;
             Content = new StringContent(Serializer.Serialize(template), Encoding.UTF8, "application/json");
