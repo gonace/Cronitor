@@ -19,6 +19,8 @@ namespace Cronitor.Clients
         Task<Issue> CreateAsync(CreateIssueRequest request);
         Issue Update(UpdateIssueRequest request);
         Task<Issue> UpdateAsync(UpdateIssueRequest request);
+        void Delete(string key);
+        Task DeleteAsync(string key);
     }
 
     public class IssuesClient : BaseClient<IssuesClient>, IIssuesClient
@@ -77,6 +79,18 @@ namespace Cronitor.Clients
         public async Task<Issue> UpdateAsync(UpdateIssueRequest request)
         {
             return await SendAsync<Issue>(request);
+        }
+
+        public void Delete(string key) =>
+            DeleteAsync(key).GetAwaiter().GetResult();
+
+        public async Task DeleteAsync(string key)
+        {
+            ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
+
+            var request = new DeleteIssueRequest(key);
+
+            await SendAsync(request);
         }
     }
 }
