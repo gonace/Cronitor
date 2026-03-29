@@ -121,6 +121,7 @@ namespace Cronitor.Tests
 
         private class AssertionContainer
         {
+            [System.Text.Json.Serialization.JsonPropertyName("assertions")]
             public List<AssertionRule> Assertions { get; set; }
         }
     }
