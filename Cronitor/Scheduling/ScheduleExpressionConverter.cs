@@ -10,7 +10,8 @@ namespace Cronitor.Scheduling
         public override ScheduleExpression Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
 #pragma warning restore CS-R1138
         {
-            return reader.GetString() is { } value ? new ScheduleExpression(value) : null;
+            var value = reader.GetString();
+            return value != null ? new ScheduleExpression(value) : null;
         }
 
         public override void Write(Utf8JsonWriter writer, ScheduleExpression value, JsonSerializerOptions options)

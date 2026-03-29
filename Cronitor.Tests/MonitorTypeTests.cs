@@ -1,4 +1,5 @@
 ﻿using Cronitor.Constants;
+using Cronitor.Models;
 using Cronitor.Scheduling;
 using Cronitor.Models.Monitors;
 using Cronitor.Tests.Helpers;
