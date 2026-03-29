@@ -1,3 +1,7 @@
+using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
 namespace Cronitor.Constants
 {
     public static class Assertion
@@ -34,16 +38,47 @@ namespace Cronitor.Constants
             _key = key;
         }
 
-        public new string Equals(object value) => Build("=", value);
-        public string LessThan(object value) => Build("<", value);
-        public string GreaterThan(object value) => Build(">", value);
-        public string Contains(object value) => Build("contains", value);
+        public new AssertionRule Equals(object value) => Build("=", value);
+        public AssertionRule LessThan(object value) => Build("<", value);
+        public AssertionRule GreaterThan(object value) => Build(">", value);
+        public AssertionRule Contains(object value) => Build("contains", value);
 
-        private string Build(string op, object value)
+        private AssertionRule Build(string op, object value)
         {
-            return _key != null
+            var assertion = _key != null
                 ? $"{_assertion} {_key} {op} {value}"
                 : $"{_assertion} {op} {value}";
+
+            return new AssertionRule(assertion);
+        }
+    }
+
+    [JsonConverter(typeof(AssertionRuleConverter))]
+    public class AssertionRule
+    {
+        public string Value { get; }
+
+        public AssertionRule(string value)
+        {
+            Value = value;
+        }
+
+        public override string ToString() => Value;
+
+        public static implicit operator string(AssertionRule rule) => rule?.Value;
+        public static implicit operator AssertionRule(string value) => new AssertionRule(value);
+    }
+
+    public class AssertionRuleConverter : JsonConverter<AssertionRule>
+    {
+        public override AssertionRule Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        {
+            return new AssertionRule(reader.GetString());
+        }
+
+        public override void Write(Utf8JsonWriter writer, AssertionRule value, JsonSerializerOptions options)
+        {
+            writer.WriteStringValue(value.Value);
         }
     }
 }

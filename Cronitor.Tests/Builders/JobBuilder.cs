@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Cronitor.Constants;
 using Cronitor.Models.Monitors;
 
 namespace Cronitor.Tests.Builders
@@ -16,7 +17,7 @@ namespace Cronitor.Tests.Builders
         private readonly int? _scheduleTolerance = 1;
         private readonly string _timeZone = "Europe/Stockholm";
 
-        private List<string> _assertions = new List<string> { "metric.duration < 30s", "metric.error_count < 5" };
+        private List<AssertionRule> _assertions = new List<AssertionRule> { Assertion.Metric.Duration.LessThan("30s"), Assertion.Metric.ErrorCount.LessThan(5) };
         private List<string>  _notify = new List<string> { "developers" };
         private readonly List<string> _tags = new List<string> { "tag", "attribute" };
 
@@ -45,7 +46,7 @@ namespace Cronitor.Tests.Builders
             return this;
         }
 
-        public JobBuilder Assertions(List<string> assertions)
+        public JobBuilder Assertions(List<AssertionRule> assertions)
         {
             _assertions = assertions;
             return this;
