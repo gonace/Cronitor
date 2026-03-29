@@ -8,7 +8,7 @@ namespace Cronitor.Tests.Builders
     public class CheckBuilder
     {
         private readonly string _key = "Key";
-        private readonly ScheduleExpression _schedule = new ScheduleExpression("every 60 seconds");
+        private readonly ScheduleExpression _schedule = Schedule.Every(60).Seconds;
         private readonly string _timezone = "Europe/Stockholm";
         private readonly string _url = "https://www.google.se";
 

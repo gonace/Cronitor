@@ -27,7 +27,7 @@ namespace Cronitor.Tests
                 Region.Sydney,
                 Region.Virginia
             };
-            ScheduleExpression schedule = "every 60 seconds";
+            var schedule = Schedule.Every(60).Seconds;
             const string timezone = "Europe/Stockholm";
             const string url = "https://www.google.se";
 
@@ -54,7 +54,7 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldCreateHeartbeatMonitor()
         {
-            ScheduleExpression schedule = "every 60 seconds";
+            var schedule = Schedule.Every(60).Seconds;
             const string timezone = "Europe/Stockholm";
 
             var monitor = new Heartbeat(MonitorKey, schedule)
@@ -83,7 +83,7 @@ namespace Cronitor.Tests
                 "developers",
                 "administrators"
             };
-            ScheduleExpression schedule = "every 60 seconds";
+            var schedule = Schedule.Every(60).Seconds;
             const string timezone = "Europe/Stockholm";
 
             var monitor = new Job(MonitorKey)

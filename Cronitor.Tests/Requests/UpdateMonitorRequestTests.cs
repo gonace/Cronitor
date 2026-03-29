@@ -18,7 +18,7 @@ namespace Cronitor.Tests.Requests
         {
             var monitor = new Monitor("nightly-backup-job")
                 .With(x => x.Type, MonitorType.Job.ToString())
-                .With(x => x.Schedule, new ScheduleExpression("0 0 * * *"))
+                .With(x => x.Schedule, Schedule.Cron.Daily())
                 .With(x => x.Notify, new List<string> { "default" })
                 .With(x => x.Tags, new List<string> { "nightly" })
                 .With(x => x.Assertions, new List<string> { "metric.duration < 15min" })
