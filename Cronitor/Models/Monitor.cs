@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json.Serialization;
+using Cronitor.Assertions;
 using Cronitor.Scheduling;
 
 namespace Cronitor.Models
@@ -36,7 +37,8 @@ namespace Cronitor.Models
         ///  "response.header X-App-Version = 1.2.3"
         /// </summary>
         [JsonPropertyName("assertions")]
-        public IEnumerable<string> Assertions { get; set; }
+        //public IEnumerable<string> Assertions { get; set; }
+        public IEnumerable<AssertionRule> Assertions { get; set; }
         /// <summary>
         /// job and event: number of telemetry events with state='fail' to allow before sending an alert.
         /// check: number of consecutive failed requests allow before sending an alert.

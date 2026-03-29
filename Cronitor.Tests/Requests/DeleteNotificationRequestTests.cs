@@ -11,7 +11,7 @@ namespace Cronitor.Tests.Requests
         {
             var request = new DeleteNotificationRequest("default");
 
-            Assert.Equal("templates/:key", request.Endpoint);
+            Assert.Equal("notifications/:key", request.Endpoint);
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace Cronitor.Tests.Requests
 
             var uri = request.ToUri();
 
-            Assert.Equal("https://cronitor.io/api/templates/devops-alerts", uri.ToString());
+            Assert.Equal("https://cronitor.io/api/notifications/devops-alerts", uri.ToString());
         }
     }
 }
