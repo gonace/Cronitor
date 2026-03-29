@@ -229,9 +229,9 @@ namespace Cronitor.Tests
         [Fact]
         public void SerializesAsJsonString()
         {
-            var expression = Schedule.Cron.Daily();
+            var container = new ScheduleContainer { Schedule = Schedule.Cron.Daily() };
 
-            var json = Serializer.Serialize(new { schedule = expression });
+            var json = Serializer.Serialize(container);
 
             Assert.Equal("{\"schedule\":\"0 0 * * *\"}", json);
         }
