@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Cronitor.Scheduling;
 using Xunit;
 
 namespace Cronitor.Tests
@@ -133,7 +134,7 @@ namespace Cronitor.Tests
             };
             var monitor = Make.Job
                 .Notify(notify)
-                .WithSchedule("every 60 seconds")
+                .Schedule(Schedule.Every(60).Seconds)
                 .Build();
             _httpClient.Setup(x => x.SendAsync<CreateMonitorResponse>(It.IsAny<CreateMonitorRequest>())).Returns(Task.FromResult(new CreateMonitorResponse { Monitors = new List<Monitor> { monitor } }));
 
