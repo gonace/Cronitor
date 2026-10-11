@@ -72,6 +72,16 @@ namespace Cronitor.Tests
             Assert.Equal("0 3 * * *", monitor.Schedule.Value);
         }
 
+        [Theory]
+        [JsonData("ListMonitors.json")]
+        public void ShouldReadTheBadges(string json)
+        {
+            var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
+
+            Assert.Equal("https://cronitor.io/badges/key/production/hash.svg", monitor.Badges.Simple);
+            Assert.Equal("https://cronitor.io/badges/key/production/hash/detailed.svg", monitor.Badges.Detailed);
+        }
+
         [Fact]
         public void ShouldSendASingleScheduleAsSchedules()
         {
@@ -129,6 +139,7 @@ namespace Cronitor.Tests
             Assert.DoesNotContain("\"attributes\":", body);
             Assert.DoesNotContain("\"group_name\":", body);
             Assert.DoesNotContain("\"latest_issue\":", body);
+            Assert.DoesNotContain("\"badges\":", body);
         }
     }
 }

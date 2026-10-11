@@ -176,6 +176,10 @@ namespace Cronitor.Models
         public IEnumerable<Event> LatestEvents { get; protected set; }
         [JsonInclude]
         [ResponseOnly]
+        [JsonPropertyName("badges")]
+        public MonitorBadges Badges { get; protected set; }
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("latest_issue")]
         public MonitorIssue LatestIssue { get; protected set; }
         [Obsolete("Cronitor's API sends latest_issue; use LatestIssue. Will be removed in the next major version (2027).")]
