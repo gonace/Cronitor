@@ -331,34 +331,51 @@ namespace Cronitor.Tests
             AssertRequest.Sent(handler, HttpMethod.Get, MonitorUri + "/activity");
         }
 
-        [Fact]
-        public void ShouldExecuteAlertsMethod()
+        [Theory]
+        [JsonData("ListMonitorAlerts.json")]
+        public void ShouldExecuteAlertsMethod(string json)
         {
-            var alerts = new List<Alert> { new Alert() };
-            var response = new Dictionary<string, IEnumerable<Alert>> { { MonitorKey, alerts } };
-            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
+            var handler = new FakeHttpMessageHandler(body: json);
             var monitorsClient = CreateClient(handler);
 
             var result = monitorsClient.Alerts(MonitorKey);
 
-            Assert.NotNull(result);
-            Assert.Single(result);
+            Assert.Equal(2, result.Count());
             AssertRequest.Sent(handler, HttpMethod.Get, MonitorUri + "/alerts");
         }
 
-        [Fact]
-        public async Task ShouldExecuteAlertsAsyncMethod()
+        [Theory]
+        [JsonData("ListMonitorAlerts.json")]
+        public async Task ShouldExecuteAlertsAsyncMethod(string json)
         {
-            var alerts = new List<Alert> { new Alert() };
-            var response = new Dictionary<string, IEnumerable<Alert>> { { MonitorKey, alerts } };
-            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
+            var handler = new FakeHttpMessageHandler(body: json);
             var monitorsClient = CreateClient(handler);
 
             var result = await monitorsClient.AlertsAsync(MonitorKey);
 
-            Assert.NotNull(result);
-            Assert.Single(result);
+            Assert.Equal(2, result.Count());
             AssertRequest.Sent(handler, HttpMethod.Get, MonitorUri + "/alerts");
+        }
+
+        [Theory]
+        [JsonData("ListMonitorAlerts.json")]
+        public void ShouldReadAlertsFromARealResponse(string json)
+        {
+            var handler = new FakeHttpMessageHandler(body: json);
+            var monitorsClient = CreateClient(handler);
+
+            var alert = monitorsClient.Alerts(MonitorKey).Last();
+
+            Assert.Equal("alert", alert.Type);
+            Assert.Equal("slack", alert.Channel);
+            Assert.Equal("#alerts", alert.Destination);
+            Assert.Equal("nightly-backup", alert.Monitor.Name);
+            Assert.Equal("abc123", alert.Monitor.Key);
+            Assert.Equal("3ebaf133531bc718", alert.Incident);
+            Assert.Null(alert.NotificationList);
+            Assert.True(alert.Delivered);
+            Assert.Equal(new DateTimeOffset(2026, 6, 15, 18, 54, 28, TimeSpan.Zero).AddTicks(8255160), alert.CreatedAt);
+            Assert.Equal("e9776de559f8d3f3595582f992515442", alert.GroupByKey);
         }
 
         [Fact]
@@ -457,14 +474,14 @@ namespace Cronitor.Tests
         }
 
         [Fact]
-        public async Task AlertsAsyncShouldReturnNullWhenDictionaryIsEmpty()
+        public async Task AlertsAsyncShouldReturnNoAlertsWhenThereAreNone()
         {
-            var handler = new FakeHttpMessageHandler(body: "{}");
+            var handler = new FakeHttpMessageHandler(body: "[]");
             var monitorsClient = CreateClient(handler);
 
             var result = await monitorsClient.AlertsAsync(MonitorKey);
 
-            Assert.Null(result);
+            Assert.Empty(result);
             AssertRequest.Sent(handler, HttpMethod.Get, MonitorUri + "/alerts");
         }
 

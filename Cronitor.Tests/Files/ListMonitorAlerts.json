@@ -1,0 +1,30 @@
+[
+  {
+    "type": "recovery",
+    "channel": "slack",
+    "destination": "#alerts",
+    "monitor": {
+      "name": "nightly-backup",
+      "key": "abc123"
+    },
+    "incident": "3ebaf133531bc718",
+    "notification_list": null,
+    "delivered": true,
+    "created": "2026-06-15T19:45:41.631744Z",
+    "group_by_key": "8f02ba01f17c41bbab703659c2b00d7d"
+  },
+  {
+    "type": "alert",
+    "channel": "slack",
+    "destination": "#alerts",
+    "monitor": {
+      "name": "nightly-backup",
+      "key": "abc123"
+    },
+    "incident": "3ebaf133531bc718",
+    "notification_list": null,
+    "delivered": true,
+    "created": "2026-06-15T18:54:28.825516Z",
+    "group_by_key": "e9776de559f8d3f3595582f992515442"
+  }
+]

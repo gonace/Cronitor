@@ -175,9 +175,8 @@ namespace Cronitor
         public async Task<IEnumerable<Alert>> AlertsAsync(string key)
         {
             var request = new ListAlertsRequest(key);
-            var response = await SendAsync<Dictionary<string, IEnumerable<Alert>>>(request);
 
-            return response?.FirstOrDefault().Value;
+            return await SendAsync<IEnumerable<Alert>>(request);
         }
 
         public IEnumerable<Ping> Pings(string key) =>
