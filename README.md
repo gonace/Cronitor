@@ -1,36 +1,40 @@
-﻿# Cronitor API Client
+# Cronitor API Client
 Cronitor is a service for heartbeat-style monitoring of anything that can send an HTTP request. It's particularly well suited for monitoring cron jobs, Jenkins jobs, or any other scheduled task.
 
 ![Nuget](https://img.shields.io/nuget/v/Cronitor)
 ![Nuget](https://img.shields.io/nuget/dt/Cronitor)
 
-## Supported APIs
-This .NET library provides a simple way of pinging a Cronitor monitor. For a better understanding of the API this library talks to, please see the documentation, links below.
-* [Activity API](https://cronitor.io/docs/activity-api)
-* [Issues API](https://cronitor.io/docs/issues-api)
-* [Monitor API](https://cronitor.io/docs/monitor-api)
-* [Notifications API](https://cronitor.io/docs/template-api)
-* [Telemetry API](https://cronitor.io/docs/telemetry-api)
+This .NET library has two parts:
+* **Telemetry**: report when your jobs run, complete or fail ([Telemetry API](https://cronitor.io/docs/telemetry-api)).
+* **Management**: create, read, update and delete monitors, issues and notifications ([Monitor API](https://cronitor.io/docs/monitor-api), [Issues API](https://cronitor.io/docs/issues-api), [Notifications API](https://cronitor.io/docs/template-api), [Activity API](https://cronitor.io/docs/activity-api)).
+
+> For the full documentation, please read our [wiki](https://github.com/gonace/Cronitor/wiki).
 
 ## Install
-You can download the cronitor client nuget.
-[https://www.nuget.org/packages/Cronitor](https://www.nuget.org/packages/Cronitor)
-
-## Usage
-> For the full documentation, please read our [wiki](https://github.com/gonace/Cronitor/wiki), [telemetry wiki](https://github.com/gonace/Cronitor/wiki/Telemetry)!
-
-### NET Generic Host
-> If you're using .NET HostBuilder and utilizing the default hosting and startup pattern (`Microsoft.Extensions.Hosting`).
->
-> The easiest way to use the client is to run `.UseCronitor()`, this will create a static instance (`Cronitor`) of the client that can be used throughout your application.
-
-#### Examples
-```c#
-await Host.CreateDefaultBuilder()
-    .UseCronitor("apiKey")
-    .Build()
-    .RunAsync();
 ```
+dotnet add package Cronitor
+```
+Or download it from [NuGet](https://www.nuget.org/packages/Cronitor).
+
+## Quick start
+```c#
+Cronitor.Configure("apiKey");
+
+await Cronitor.RunAsync("monitorKey");
+// ... do the work
+await Cronitor.CompleteAsync("monitorKey");
+```
+
+## Setup
+### Static
+Configure the static `Cronitor` class once, then use it anywhere in your application.
+
+Without a host:
+```c#
+Cronitor.Configure("apiKey");
+```
+
+With the .NET Generic Host (`Microsoft.Extensions.Hosting`):
 ```c#
 await Host.CreateDefaultBuilder()
     .UseCronitor((context) => context.Configuration.GetValue<string>("Cronitor:ApiKey"))
@@ -38,39 +42,8 @@ await Host.CreateDefaultBuilder()
     .RunAsync();
 ```
 
-And then you'll be able to use it like this:
-```c#
-public class SomeClass
-{
-    public Monitor Create()
-    {
-        var monitor = new Monitor();
-        var request = new CreateMonitorRequest(monitor);
-        var response = Cronitor.Monitors.Create(request);
-
-        return response;
-    }
-
-    public async Task<Monitor> CreateAsync()
-    {
-        var monitor = new Monitor();
-        var request = new CreateMonitorRequest(monitor);
-        var response = await Cronitor.Monitors.CreateAsync(request);
-
-        return response;
-    }
-}
-```
-
-If you much rather like to use each client (`IssuesClient`, `MonitorsClient`, `NotificationsClient` or `TelemetriesClient`) you can use each client on its own by running `.ConfigureCronitor()` instead, this will not configure the static client.
-
-#### Examples
-```c#
-await Host.CreateDefaultBuilder()
-    .ConfigureCronitor("apiKey")
-    .Build()
-    .RunAsync();
-```
+### Dependency injection
+`.ConfigureCronitor()` registers `ITelemetriesClient`, `IMonitorsClient`, `IIssuesClient` and `INotificationsClient` in the service container instead. It does not configure the static `Cronitor` class.
 ```c#
 await Host.CreateDefaultBuilder()
     .ConfigureCronitor((context) => context.Configuration.GetValue<string>("Cronitor:ApiKey"))
@@ -78,89 +51,10 @@ await Host.CreateDefaultBuilder()
     .RunAsync();
 ```
 
-And then you'll be able to use it like this:
-```c#
-public class SomeClass
-{
-    private readonly IMonitorsClient _monitorsClient;
+Both `.UseCronitor()` and `.ConfigureCronitor()` also accept the API key as a plain string.
 
-    public SomeClass(IMonitorsClient monitorsClient)
-    {
-        _monitorsClient = monitorsClient;
-    }
-
-    public Monitor Create()
-    {
-        var monitor = new Monitor();
-        var request = new CreateMonitorRequest(monitor);
-        var response = _monitorsClient.Create(request);
-
-        return response;
-    }
-
-    public async Task<Monitor> CreateAsync()
-    {
-        var monitor = new Monitor();
-        var request = new CreateMonitorRequest(monitor);
-        var response = await _monitorsClient.CreateAsync(request);
-
-        return response;
-    }
-}
-```
-
-### Simple
-#### Examples
-```c#
-using Cronitor.Models;
-using Cronitor.Requests;
-
-Cronitor.Configure("apiKey")
-
-var monitor = new Monitor();
-var request = new CreateMonitorRequest(monitor);
-var response = Cronitor.Monitors.Create(request);
-```
-
-### Manual
-If you only need access to one (or a few) clients you're able to configure each client individually.
-
-#### Examples
-```c#
-using Cronitor.Models;
-using Cronitor.Requests;
-
-public class SomeClass
-{
-    private readonly IMonitorsClient _monitorsClient;
-
-    public SomeClass()
-    {
-        _monitorsClient = new IMonitorsClient("apiKey");
-    }
-
-    public Monitor Create()
-    {
-        var monitor = new Monitor();
-        var request = new CreateMonitorRequest(monitor);
-        var response = _monitorsClient.Create(request);
-
-        return response;
-    }
-
-    public async Task<Monitor> CreateAsync()
-    {
-        var monitor = new Monitor();
-        var request = new CreateMonitorRequest(monitor);
-        var response = await _monitorsClient.CreateAsync(request);
-
-        return response;
-    }
-}
-```
-
-## Telemetries
-The [Telemetry API](https://cronitor.io/docs/telemetry-api) reports the state of a job to a monitor. Each event has a sync and an async (`…Async`) method:
+## Telemetry
+Telemetry events report the state of a job to a monitor. Each event has a sync and an async (`…Async`) method:
 
 | Method | Event |
 |---|---|
@@ -173,10 +67,7 @@ The [Telemetry API](https://cronitor.io/docs/telemetry-api) reports the state of
 All events except `Ping` take a monitor key and an optional `message` and `environment`.
 
 ### Static
-Once `Cronitor` is configured (through `.UseCronitor()` or `Cronitor.Configure()`), the events are available directly on `Cronitor`, as a shorthand for `Cronitor.Telemetries`:
 ```c#
-Cronitor.Configure("apiKey");
-
 try
 {
     await Cronitor.RunAsync("monitorKey");
@@ -191,7 +82,6 @@ catch (Exception ex)
 ```
 
 ### Dependency injection
-With `.ConfigureCronitor()`, inject `ITelemetriesClient` instead:
 ```c#
 public class SomeJob
 {
@@ -226,50 +116,27 @@ var command = new CompleteCommand()
 await Cronitor.PingAsync(command);
 ```
 
-## Assertions Language
-A fluent builder for Cronitor assertions is available via the `Assertion`. Instead of writing raw assertion strings, you can use the builder for type safety and discoverability:
-
+## Management
+Monitors, issues and notifications are managed through `Cronitor.Monitors`, `Cronitor.Issues` and `Cronitor.Notifications` (or the injected `IMonitorsClient`, `IIssuesClient` and `INotificationsClient`). For example, creating a job monitor:
 ```c#
-using Cronitor.Constants;
-
-var monitor = new Job("my-job")
-{
-    Assertions = new[]
-    {
-        Assertion.Metric.Duration.LessThan("30s"),
-        Assertion.Metric.ErrorCount.LessThan(5),
-        Assertion.Metric.Count.GreaterThan(0),
-        Assertion.Response.Code.Equals(200),
-        Assertion.Response.Time.LessThan("2s"),
-        Assertion.Response.Body.Contains("healthy"),
-        Assertion.Response.Json("user.count").GreaterThan(10),
-        Assertion.Response.Header("X-Version").Equals("1.2.3"),
-    }
-};
-```
-
-### Schedule / Cron Expressions
-A fluent builder for schedule expressions is available via the `Schedule`. It supports both Cronitor interval expressions and standard cron expressions:
-
-```c#
+using Cronitor.Assertions;
+using Cronitor.Models.Monitors;
+using Cronitor.Requests;
 using Cronitor.Scheduling;
 
-// Interval expressions
-Schedule.Every(60).Seconds              // "every 60 seconds"
-Schedule.Every(5).Minutes               // "every 5 minutes"
+var job = new Job("nightly-backup")
+{
+    Schedule = Schedule.Cron.Daily(hour: 3),
+    Assertions = new[]
+    {
+        Assertion.Metric.Duration.LessThan("30m"),
+    }
+};
 
-// Cron shortcuts
-Schedule.Cron.Daily(hour: 3)            // "0 3 * * *"
-Schedule.Cron.Weekly(day: 1, hour: 8)   // "0 8 * * 1"
-Schedule.Cron.Monthly(day: 15)          // "0 0 15 * *"
-
-// Custom cron expressions
-Schedule.Cron.Create()
-    .MinuteEvery(15)
-    .HourRange(9, 17)
-    .DayOfWeekRange(1, 5)
-    .Build()                            // "*/15 9-17 * * 1-5"
+var monitors = await Cronitor.Monitors.CreateAsync(new CreateMonitorRequest(job));
 ```
+
+`Assertion` and `Schedule` are fluent builders, so you don't have to write raw assertion or cron strings. See the [wiki](https://github.com/gonace/Cronitor/wiki) for all operations and options.
 
 ## Development
 ### Suggestions
