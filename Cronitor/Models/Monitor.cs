@@ -144,20 +144,6 @@ namespace Cronitor.Models
         [JsonPropertyName("type")]
         public virtual string Type { get; set; }
 
-        //TODO: Is these used? (documented here: https://cronitor.io/docs/monitor-api-v3)
-        ///// <summary>
-        ///// Where/how you wish to be contacted when a monitor's alerting is triggered. The following key/value pairs are all options,
-        ///// at least one of which must not be empty. Note: When extending notification template(s), passing an empty array will
-        ///// overload the templated notification settings for that key.
-        ///// </summary>
-        //[JsonProperty("notifications")]
-        //public dynamic Notifications { get; set; }
-        ///// <summary>
-        ///// when creating a monitor, you must specify the rules that will trigger alerts to be sent.
-        ///// </summary>
-        //[JsonProperty("rules")]
-        //public dynamic Rules { get; protected set; }
-
 
         #region Read Only Attributes
 
