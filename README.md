@@ -186,6 +186,9 @@ var monitors = await Cronitor.Monitors.CreateAsync(new CreateMonitorRequest(job)
 ## Quartz.NET
 `Quartz.Extensions.Cronitor` reports every Quartz.NET job to Cronitor. See its [README](Quartz.Extensions.Cronitor/README.md) for installation and setup.
 
+## Hangfire
+`Hangfire.Extensions.Cronitor` reports every Hangfire recurring job to Cronitor. See its [README](Hangfire.Extensions.Cronitor/README.md) for installation and setup.
+
 ## Development
 ### Suggestions
 * Implement Timezone constant (if not too big of a hassle to maintain)
