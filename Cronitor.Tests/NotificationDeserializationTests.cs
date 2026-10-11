@@ -23,6 +23,26 @@ namespace Cronitor.Tests
             Assert.Empty(notifications.DatadogOnCall);
         }
 
+        [Theory]
+        [JsonData("ListNotifications.json")]
+        public void ShouldReadNoMonitorDetailsForAnUnusedList(string json)
+        {
+            var notification = Serializer.Deserialize<ListNotificationResponse>(json).Items.Single();
+
+            Assert.Empty(notification.MonitorDetails);
+        }
+
+        [Fact]
+        public void ShouldReadTheMonitorsUsingTheList()
+        {
+            const string json = "{\"key\":\"default\",\"monitor_details\":[{\"key\":\"api-health\",\"name\":\"API Health Check\"}]}";
+
+            var monitor = Serializer.Deserialize<Notification>(json).MonitorDetails.Single();
+
+            Assert.Equal("api-health", monitor.Key);
+            Assert.Equal("API Health Check", monitor.Name);
+        }
+
         [Fact]
         public void ShouldSendTheNewerChannels()
         {

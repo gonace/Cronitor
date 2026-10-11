@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cronitor.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
@@ -22,6 +23,13 @@ namespace Cronitor.Models
         /// </summary>
         [JsonPropertyName("monitors")]
         public IEnumerable<string> Monitors { get; set; }
+        /// <summary>
+        /// The key and name of each monitor attached to this Notification List.
+        /// </summary>
+        [JsonInclude]
+        [ResponseOnly]
+        [JsonPropertyName("monitor_details")]
+        public IEnumerable<NotificationMonitor> MonitorDetails { get; private set; }
         /// <summary>
         /// Where/how you wish to be contacted when alerting is triggered.
         /// The following key/value pairs are all options, at least one of which must not be empty.
