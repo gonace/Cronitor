@@ -24,7 +24,7 @@ namespace Cronitor.Tests
             Assert.False(monitor.Running);
             Assert.False(monitor.Disabled);
             Assert.True(monitor.Initialized);
-            Assert.Equal(1732759200, monitor.ExpectedAt);
+            Assert.Equal(1_732_759_200, monitor.ExpectedAt);
             Assert.Equal(new DateTime(2023, 11, 27, 10, 45, 17, DateTimeKind.Utc), monitor.CreatedAt.ToUniversalTime());
         }
 
@@ -70,7 +70,7 @@ namespace Cronitor.Tests
             var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
 
             Assert.NotNull(monitor.LatestIssue);
-            Assert.Equal(1711850428, monitor.LatestIssue.Timestamp);
+            Assert.Equal(1_711_850_428, monitor.LatestIssue.Timestamp);
             Assert.Equal("resolved", monitor.LatestIssue.State);
         }
 
