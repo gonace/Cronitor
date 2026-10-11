@@ -38,6 +38,7 @@ jobs:
           git tag -f -a "v${{vars.VERSION}}.${{github.run_number}}" -m "Release v${{vars.VERSION}}.${{github.run_number}}"
           git push -f origin "v${{vars.VERSION}}.${{github.run_number}}"
 
+
   publish:
     runs-on: ubuntu-latest
     needs: tag
@@ -46,16 +47,84 @@ jobs:
       contents: read
       id-token: write
 
+    env:
+      NUGET_SOURCE: https://api.nuget.org/v3/index.json
+
     steps:
-    - uses: actions/checkout@v7
-    - uses: actions/setup-dotnet@v6
+    - name: Check out
+      uses: actions/checkout@v7
+
+    - name: Set up .NET
+      uses: actions/setup-dotnet@v6
       with:
         dotnet-version: 10.0.x
-    - run: dotnet restore
-    - run: dotnet build --configuration Release Cronitor/Cronitor.csproj -p:Version=${{vars.VERSION}}.${{github.run_number}}
-    - run: dotnet pack --configuration Release Cronitor/Cronitor.csproj --no-build -p:Version=${{vars.VERSION}}.${{github.run_number}} -p:PackageVersion=${{vars.VERSION}}.${{github.run_number}} -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:NuspecFile=Cronitor.nuspec
-    - uses: NuGet/login@v1
+
+    - name: Set package versions
+      env:
+        VERSION: ${{vars.VERSION}}
+        RUN: ${{github.run_number}}
+      run: |
+        echo "CRONITOR_VERSION=$VERSION.$RUN" >> "$GITHUB_ENV"
+        echo "QUARTZ_EXTENSIONS_VERSION=3.${VERSION%%.*}.$RUN" >> "$GITHUB_ENV"
+
+    - name: Restore
+      run: dotnet restore
+
+    # Build and pack every package first, so nothing is pushed unless all of them are ready.
+    - name: Build Cronitor
+      run: |
+        dotnet build Cronitor/Cronitor.csproj \
+          --configuration Release \
+          -p:CronitorVersion=$CRONITOR_VERSION
+
+    - name: Pack Cronitor
+      run: |
+        dotnet pack Cronitor/Cronitor.csproj \
+          --configuration Release \
+          --no-build \
+          -p:CronitorVersion=$CRONITOR_VERSION \
+          -p:NuspecFile=Cronitor.nuspec \
+          -p:IncludeSymbols=true \
+          -p:SymbolPackageFormat=snupkg
+
+    - name: Build Quartz.Extensions.Cronitor
+      run: |
+        dotnet build Quartz.Extensions.Cronitor/Quartz.Extensions.Cronitor.csproj \
+          --configuration Release \
+          -p:CronitorVersion=$CRONITOR_VERSION \
+          -p:QuartzExtensionsVersion=$QUARTZ_EXTENSIONS_VERSION
+
+    - name: Pack Quartz.Extensions.Cronitor
+      run: |
+        dotnet pack Quartz.Extensions.Cronitor/Quartz.Extensions.Cronitor.csproj \
+          --configuration Release \
+          --no-build \
+          -p:CronitorVersion=$CRONITOR_VERSION \
+          -p:QuartzExtensionsVersion=$QUARTZ_EXTENSIONS_VERSION \
+          -p:IncludeSymbols=true \
+          -p:SymbolPackageFormat=snupkg
+
+    # One short-lived key from nuget.org's trusted publishing, valid for an hour, pushes every package.
+    - name: Log in to NuGet
       id: login
+      uses: NuGet/login@v1
       with:
         user: ${{secrets.NUGET_USER}}
-    - run: dotnet nuget push Cronitor/bin/Release/Cronitor.${{vars.VERSION}}.${{github.run_number}}.nupkg --api-key ${{steps.login.outputs.NUGET_API_KEY}} --source https://api.nuget.org/v3/index.json --skip-duplicate
+
+    - name: Push Cronitor
+      env:
+        NUGET_API_KEY: ${{steps.login.outputs.NUGET_API_KEY}}
+      run: |
+        dotnet nuget push Cronitor/bin/Release/Cronitor.$CRONITOR_VERSION.nupkg \
+          --api-key "$NUGET_API_KEY" \
+          --source "$NUGET_SOURCE" \
+          --skip-duplicate
+
+    - name: Push Quartz.Extensions.Cronitor
+      env:
+        NUGET_API_KEY: ${{steps.login.outputs.NUGET_API_KEY}}
+      run: |
+        dotnet nuget push Quartz.Extensions.Cronitor/bin/Release/Quartz.Extensions.Cronitor.$QUARTZ_EXTENSIONS_VERSION.nupkg \
+          --api-key "$NUGET_API_KEY" \
+          --source "$NUGET_SOURCE" \
+          --skip-duplicate
