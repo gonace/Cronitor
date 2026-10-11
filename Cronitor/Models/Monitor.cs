@@ -150,8 +150,13 @@ namespace Cronitor.Models
 
         [JsonInclude]
         [ResponseOnly]
-        [JsonPropertyName("group_name")]
-        public string GroupName { get; protected set; }
+        [JsonPropertyName("attributes")]
+        public MonitorAttributes Attributes { get; protected set; }
+        /// <summary>
+        /// The display name of the monitor's group, e.g. "Database".
+        /// </summary>
+        [JsonIgnore]
+        public string GroupName => Attributes?.GroupName;
         [JsonInclude]
         [ResponseOnly]
         [JsonPropertyName("latest_event")]

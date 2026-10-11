@@ -39,6 +39,18 @@ namespace Cronitor.Tests
 
         [Theory]
         [JsonData("ListMonitors.json")]
+        public void ShouldReadTheGroupNameFromTheAttributes(string json)
+        {
+            var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
+
+            Assert.Equal("Restore", monitor.GroupName);
+            Assert.Equal("Restore", monitor.Attributes.GroupName);
+            Assert.Equal("key", monitor.Attributes.Key);
+            Assert.Equal("code", monitor.Attributes.Code);
+        }
+
+        [Theory]
+        [JsonData("ListMonitors.json")]
         public void ShouldNotSendTheReadOnlyAttributesBack(string json)
         {
             var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
@@ -50,6 +62,8 @@ namespace Cronitor.Tests
             Assert.DoesNotContain("\"created\":", body);
             Assert.DoesNotContain("\"latest_event\":", body);
             Assert.DoesNotContain("\"next_expected_at\":", body);
+            Assert.DoesNotContain("\"attributes\":", body);
+            Assert.DoesNotContain("\"group_name\":", body);
         }
     }
 }
