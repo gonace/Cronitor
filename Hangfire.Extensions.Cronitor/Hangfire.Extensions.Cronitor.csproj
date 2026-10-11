@@ -8,6 +8,18 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>Hangfire.Extensions.Cronitor</PackageId>
+    <Version Condition="'$(HangfireExtensionsVersion)' != ''">$(HangfireExtensionsVersion)</Version>
+    <Description>Reports every Hangfire recurring job to Cronitor: run when it starts, complete when it succeeds and fail when it throws.</Description>
+    <PackageTags>cronitor;hangfire;monitoring;cron;scheduler;jobs;recurring</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Hangfire.Core" Version="[1.8.25,2.0)" />
     <!-- Hangfire.Core allows Newtonsoft.Json 11.0.1, which has a known high severity vulnerability (GHSA-5crp-9r3c-p9vr). -->
