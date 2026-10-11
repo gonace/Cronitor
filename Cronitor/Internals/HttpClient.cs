@@ -46,7 +46,6 @@ namespace Cronitor.Internals
             _httpClient = CreateHttpClient(handler);
         }
 
-        //TODO: send to FallbackUrl
         public async Task SendAsync(Command command)
         {
             var requestUri = command.ToUri();
