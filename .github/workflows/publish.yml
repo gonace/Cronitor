@@ -89,7 +89,6 @@ jobs:
           --configuration Release \
           --no-build \
           -p:CronitorVersion=$CRONITOR_VERSION \
-          -p:NuspecFile=Cronitor.nuspec \
           -p:IncludeSymbols=true \
           -p:SymbolPackageFormat=snupkg
 
