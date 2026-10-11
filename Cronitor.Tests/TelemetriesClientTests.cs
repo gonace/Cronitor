@@ -21,14 +21,6 @@ namespace Cronitor.Tests
         }
 
         [Fact]
-        public void ShouldConstructWithNoParameters()
-        {
-            var client = new TelemetriesClient();
-
-            Assert.NotNull(client);
-        }
-
-        [Fact]
         public void ShouldConstructWithApiKey()
         {
             var client = new TelemetriesClient(ApiKey);

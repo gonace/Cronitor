@@ -20,17 +20,6 @@ namespace Cronitor.Internals
         private readonly Uri _apiUri;
         private readonly System.Net.Http.HttpClient _httpClient;
 
-        internal HttpClient()
-        {
-            _httpClient = CreateHttpClient(SharedHandler);
-        }
-
-        internal HttpClient(Uri apiUri)
-        {
-            _apiUri = apiUri;
-            _httpClient = CreateHttpClient(SharedHandler);
-        }
-
         internal HttpClient(Uri apiUri, string apiKey)
             : this(apiUri, apiKey, SharedHandler)
         {

@@ -16,14 +16,6 @@ namespace Cronitor.Tests
         private const string NotificationsUri = "https://cronitor.io/api/notifications";
 
         [Fact]
-        public void ShouldConstructWithNoParameters()
-        {
-            var client = new NotificationsClient();
-
-            Assert.NotNull(client);
-        }
-
-        [Fact]
         public void ShouldConstructWithApiKey()
         {
             var client = new NotificationsClient(ApiKey);

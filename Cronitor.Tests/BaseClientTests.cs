@@ -12,7 +12,6 @@ namespace Cronitor.Tests
     // Concrete implementation of BaseClient for testing
     internal class TestClient : BaseClient<TestClient>
     {
-        public TestClient(Uri apiUri) : base(apiUri) { }
         public TestClient(Uri apiUri, string apiKey) : base(apiUri, apiKey) { }
         internal TestClient(HttpClient client) : base(client) { }
 
@@ -36,14 +35,6 @@ namespace Cronitor.Tests
 
     public class BaseClientTests : BaseTest
     {
-        [Fact]
-        public void ShouldConstructWithUriOnly()
-        {
-            var client = new TestClient(Urls.DefaultApiUrl);
-
-            Assert.NotNull(client);
-        }
-
         [Fact]
         public void ShouldConstructWithUriAndApiKey()
         {

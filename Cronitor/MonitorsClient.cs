@@ -40,11 +40,6 @@ namespace Cronitor
 
     public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
     {
-        public MonitorsClient()
-            : base(Urls.DefaultApiUrl)
-        {
-        }
-
         public MonitorsClient(string apiKey)
             : base(Urls.DefaultApiUrl, apiKey)
         {

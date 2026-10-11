@@ -21,14 +21,6 @@ namespace Cronitor.Tests
         private const string MonitorUri = MonitorsUri + "/" + MonitorKey;
 
         [Fact]
-        public void ShouldConstructWithNoParameters()
-        {
-            var client = new MonitorsClient();
-
-            Assert.NotNull(client);
-        }
-
-        [Fact]
         public void ShouldConstructWithApiKey()
         {
             var client = new MonitorsClient(ApiKey);

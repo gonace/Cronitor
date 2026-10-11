@@ -9,11 +9,6 @@ namespace Cronitor.Abstractions
     {
         private HttpClient _httpClient;
 
-        protected BaseClient(Uri apiUri)
-        {
-            _httpClient = new HttpClient(apiUri);
-        }
-
         protected BaseClient(Uri apiUri, string apiKey)
         {
             _httpClient = new HttpClient(apiUri, apiKey);

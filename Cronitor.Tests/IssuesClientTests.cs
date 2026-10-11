@@ -17,14 +17,6 @@ namespace Cronitor.Tests
         private const string IssueUri = IssuesUri + "/" + MonitorKey;
 
         [Fact]
-        public void ShouldConstructWithNoParameters()
-        {
-            var client = new IssuesClient();
-
-            Assert.NotNull(client);
-        }
-
-        [Fact]
         public void ShouldConstructWithApiKey()
         {
             var client = new IssuesClient(ApiKey);

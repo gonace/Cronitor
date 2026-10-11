@@ -33,11 +33,6 @@ namespace Cronitor
     {
         private readonly string _apiKey;
 
-        public TelemetriesClient()
-            : base(HttpClient.ForTelemetry(null))
-        {
-        }
-
         public TelemetriesClient(string apiKey)
             : base(HttpClient.ForTelemetry(apiKey))
         {
@@ -48,11 +43,6 @@ namespace Cronitor
             : base(client)
         {
             _apiKey = apiKey;
-        }
-
-        internal TelemetriesClient(HttpClient client)
-            : base(client)
-        {
         }
 
 

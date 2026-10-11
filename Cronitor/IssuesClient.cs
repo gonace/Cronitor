@@ -25,11 +25,6 @@ namespace Cronitor
 
     public class IssuesClient : BaseClient<IssuesClient>, IIssuesClient
     {
-        public IssuesClient()
-            : base(Urls.DefaultApiUrl)
-        {
-        }
-
         public IssuesClient(string apiKey)
             : base(Urls.DefaultApiUrl, apiKey)
         {

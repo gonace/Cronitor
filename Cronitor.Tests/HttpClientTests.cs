@@ -15,14 +15,6 @@ namespace Cronitor.Tests
     public class HttpClientTests : BaseTest
     {
         [Fact]
-        public void ShouldConstructWithNoParameters()
-        {
-            var httpClient = new HttpClient();
-
-            Assert.NotNull(httpClient);
-        }
-
-        [Fact]
         public void ShouldConstructWithUriApiKey()
         {
             var httpClient = new HttpClient(Urls.DefaultApiUrl, ApiKey);
