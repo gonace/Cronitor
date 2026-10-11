@@ -1,8 +1,8 @@
-﻿using Cronitor.Clients;
-using Cronitor.Commands;
+using Cronitor.Clients;
+using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Tests.Helpers;
-using Moq;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -10,171 +10,110 @@ namespace Cronitor.Tests
 {
     public class TelemetriesClient_CompleteTests : BaseTest
     {
-        private readonly Mock<HttpClient> _httpClient;
+        private const string Message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+        private const string CompleteUri = "https://cronitor.link/p/" + ApiKey + "/" + MonitorKey + "/complete";
+
+        private readonly FakeHttpMessageHandler _handler;
         private readonly TelemetriesClient _telemetriesClient;
 
         public TelemetriesClient_CompleteTests()
         {
-            _httpClient = new Mock<HttpClient>();
-            _telemetriesClient = new TelemetriesClient(ApiKey, _httpClient.Object);
+            _handler = new FakeHttpMessageHandler();
+            _telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, _handler));
         }
 
         [Fact]
         public void ShouldExecuteCompleteMethod()
         {
-            var command = new CompleteCommand()
-                .WithApiKey(ApiKey)
-                .WithMonitorKey(MonitorKey);
-            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
-
             _telemetriesClient.Complete(MonitorKey);
 
-            _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
-                c.ApiKey == ApiKey &&
-                c.MonitorKey == MonitorKey &&
-                c.Endpoint == "complete")), Times.Once);
-            _httpClient.VerifyNoOtherCalls();
+            var request = Assert.Single(_handler.Requests);
+            Assert.Equal(CompleteUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+            Assert.Empty(QueryString.Parse(request.RequestUri));
         }
 
         [Fact]
         public async Task ShouldExecuteCompleteAsyncMethod()
         {
-            var command = new CompleteCommand()
-                .WithApiKey(ApiKey)
-                .WithMonitorKey(MonitorKey);
-            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
-
             await _telemetriesClient.CompleteAsync(MonitorKey);
 
-            _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
-                c.ApiKey == ApiKey &&
-                c.MonitorKey == MonitorKey &&
-                c.Endpoint == "complete")), Times.Once);
-            _httpClient.VerifyNoOtherCalls();
+            var request = Assert.Single(_handler.Requests);
+            Assert.Equal(CompleteUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+            Assert.Empty(QueryString.Parse(request.RequestUri));
         }
 
         [Fact]
         public void ShouldExecuteCompleteMethodWithMessage()
         {
-            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-            var command = new CompleteCommand()
-                .WithApiKey(ApiKey)
-                .WithMonitorKey(MonitorKey)
-                .WithMessage(message);
-            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+            _telemetriesClient.Complete(MonitorKey, Message);
 
-            _telemetriesClient.Complete(MonitorKey, message);
-
-            _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
-                c.ApiKey == ApiKey &&
-                c.MonitorKey == MonitorKey &&
-                c.Endpoint == "complete" &&
-                c.Message == $"'{message}'")), Times.Once);
-            _httpClient.VerifyNoOtherCalls();
+            var request = Assert.Single(_handler.Requests);
+            var query = QueryString.Parse(request.RequestUri);
+            Assert.Equal(CompleteUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+            Assert.Equal($"'{Message}'", query["message"]);
+            Assert.Single(query);
         }
 
         [Fact]
         public async Task ShouldExecuteCompleteAsyncMethodWithMessage()
         {
-            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-            var command = new CompleteCommand()
-                .WithApiKey(ApiKey)
-                .WithMonitorKey(MonitorKey)
-                .WithMessage(message);
+            await _telemetriesClient.CompleteAsync(MonitorKey, Message);
 
-            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
-
-            await _telemetriesClient.CompleteAsync(MonitorKey, message);
-
-            _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
-                c.ApiKey == ApiKey &&
-                c.MonitorKey == MonitorKey &&
-                c.Endpoint == "complete" &&
-                c.Message == $"'{message}'")), Times.Once);
-            _httpClient.VerifyNoOtherCalls();
+            var request = Assert.Single(_handler.Requests);
+            var query = QueryString.Parse(request.RequestUri);
+            Assert.Equal(CompleteUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+            Assert.Equal($"'{Message}'", query["message"]);
+            Assert.Single(query);
         }
 
         [Fact]
         public void ShouldExecuteCompleteMethodWithEnvironment()
         {
-            var command = new CompleteCommand()
-                .WithApiKey(ApiKey)
-                .WithMonitorKey(MonitorKey)
-                .WithEnvironment(Environment);
-            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
-
             _telemetriesClient.Complete(MonitorKey, environment: Environment);
 
-            _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
-                c.ApiKey == ApiKey &&
-                c.MonitorKey == MonitorKey &&
-                c.Endpoint == "complete" &&
-                c.Environment == Environment)), Times.Once);
-            _httpClient.VerifyNoOtherCalls();
+            var request = Assert.Single(_handler.Requests);
+            var query = QueryString.Parse(request.RequestUri);
+            Assert.Equal(CompleteUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+            Assert.Equal(Environment, query["env"]);
+            Assert.Single(query);
         }
 
         [Fact]
-        public async Task ShouldExecuteCompleteAsyncMethodWithException()
+        public async Task ShouldExecuteCompleteAsyncMethodWithEnvironment()
         {
-            var command = new CompleteCommand()
-                .WithApiKey(ApiKey)
-                .WithMonitorKey(MonitorKey)
-                .WithEnvironment(Environment);
-            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
-
             await _telemetriesClient.CompleteAsync(MonitorKey, environment: Environment);
 
-            _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
-                c.ApiKey == ApiKey &&
-                c.MonitorKey == MonitorKey &&
-                c.Endpoint == "complete" &&
-                c.Environment == Environment)), Times.Once);
-            _httpClient.VerifyNoOtherCalls();
+            var request = Assert.Single(_handler.Requests);
+            var query = QueryString.Parse(request.RequestUri);
+            Assert.Equal(CompleteUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+            Assert.Equal(Environment, query["env"]);
+            Assert.Single(query);
         }
 
         [Fact]
         public void ShouldExecuteCompleteMethodWithMessageAndEnvironment()
         {
-            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-            var command = new CompleteCommand()
-                .WithApiKey(ApiKey)
-                .WithMonitorKey(MonitorKey)
-                .WithMessage(message)
-                .WithEnvironment(Environment);
-            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
+            _telemetriesClient.Complete(MonitorKey, Message, Environment);
 
-            _telemetriesClient.Complete(MonitorKey, message, Environment);
-
-            _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
-                c.ApiKey == ApiKey &&
-                c.MonitorKey == MonitorKey &&
-                c.Endpoint == "complete" &&
-                c.Message == $"'{message}'" &&
-                c.Environment == Environment)), Times.Once);
-            _httpClient.VerifyNoOtherCalls();
+            var request = Assert.Single(_handler.Requests);
+            var query = QueryString.Parse(request.RequestUri);
+            Assert.Equal(CompleteUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+            Assert.Equal($"'{Message}'", query["message"]);
+            Assert.Equal(Environment, query["env"]);
+            Assert.Equal(2, query.Count);
         }
 
         [Fact]
         public async Task ShouldExecuteCompleteAsyncMethodWithMessageAndEnvironment()
         {
-            const string message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-            var command = new CompleteCommand()
-                .WithApiKey(ApiKey)
-                .WithMonitorKey(MonitorKey)
-                .WithMessage(message)
-                .WithEnvironment(Environment);
+            await _telemetriesClient.CompleteAsync(MonitorKey, Message, Environment);
 
-            _httpClient.Setup(x => x.SendAsync(command)).Returns(Task.CompletedTask);
-
-            await _telemetriesClient.CompleteAsync(MonitorKey, message, Environment);
-
-            _httpClient.Verify(x => x.SendAsync(It.Is<CompleteCommand>(c =>
-                c.ApiKey == ApiKey &&
-                c.MonitorKey == MonitorKey &&
-                c.Endpoint == "complete" &&
-                c.Message == $"'{message}'" &&
-                c.Environment == Environment)), Times.Once);
-            _httpClient.VerifyNoOtherCalls();
+            var request = Assert.Single(_handler.Requests);
+            var query = QueryString.Parse(request.RequestUri);
+            Assert.Equal(CompleteUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+            Assert.Equal($"'{Message}'", query["message"]);
+            Assert.Equal(Environment, query["env"]);
+            Assert.Equal(2, query.Count);
         }
     }
 }

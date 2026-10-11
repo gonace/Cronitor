@@ -1,7 +1,8 @@
 using Cronitor.Commands;
+using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Tests.Helpers;
-using Moq;
+using System;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -10,12 +11,11 @@ namespace Cronitor.Tests
     [Collection(StaticCronitorCollection.Name)]
     public class CronitorTests : BaseTest
     {
-        private readonly Mock<HttpClient> _httpClient;
+        private readonly FakeHttpMessageHandler _handler;
 
         public CronitorTests()
         {
-            _httpClient = new Mock<HttpClient>();
-            _httpClient.Setup(x => x.SendAsync(It.IsAny<Command>())).Returns(Task.CompletedTask);
+            _handler = new FakeHttpMessageHandler();
         }
 
         [Fact]
@@ -32,116 +32,118 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldExecuteRunMethod()
         {
-            Cronitor.Configure(ApiKey, _httpClient.Object);
+            ConfigureWithFakeHandler();
 
             Cronitor.Run(MonitorKey);
 
-            VerifySent<RunCommand>("run");
+            AssertSent("run");
         }
 
         [Fact]
         public async Task ShouldExecuteRunAsyncMethod()
         {
-            Cronitor.Configure(ApiKey, _httpClient.Object);
+            ConfigureWithFakeHandler();
 
             await Cronitor.RunAsync(MonitorKey);
 
-            VerifySent<RunCommand>("run");
+            AssertSent("run");
         }
 
         [Fact]
         public void ShouldExecuteCompleteMethod()
         {
-            Cronitor.Configure(ApiKey, _httpClient.Object);
+            ConfigureWithFakeHandler();
 
             Cronitor.Complete(MonitorKey);
 
-            VerifySent<CompleteCommand>("complete");
+            AssertSent("complete");
         }
 
         [Fact]
         public async Task ShouldExecuteCompleteAsyncMethod()
         {
-            Cronitor.Configure(ApiKey, _httpClient.Object);
+            ConfigureWithFakeHandler();
 
             await Cronitor.CompleteAsync(MonitorKey);
 
-            VerifySent<CompleteCommand>("complete");
+            AssertSent("complete");
         }
 
         [Fact]
         public void ShouldExecuteFailMethod()
         {
-            Cronitor.Configure(ApiKey, _httpClient.Object);
+            ConfigureWithFakeHandler();
 
             Cronitor.Fail(MonitorKey);
 
-            VerifySent<FailCommand>("fail");
+            AssertSent("fail");
         }
 
         [Fact]
         public async Task ShouldExecuteFailAsyncMethod()
         {
-            Cronitor.Configure(ApiKey, _httpClient.Object);
+            ConfigureWithFakeHandler();
 
             await Cronitor.FailAsync(MonitorKey);
 
-            VerifySent<FailCommand>("fail");
+            AssertSent("fail");
         }
 
         [Fact]
         public void ShouldExecuteTickMethod()
         {
-            Cronitor.Configure(ApiKey, _httpClient.Object);
+            ConfigureWithFakeHandler();
 
             Cronitor.Tick(MonitorKey);
 
-            VerifySent<TickCommand>("tick");
+            AssertSent("tick");
         }
 
         [Fact]
         public async Task ShouldExecuteTickAsyncMethod()
         {
-            Cronitor.Configure(ApiKey, _httpClient.Object);
+            ConfigureWithFakeHandler();
 
             await Cronitor.TickAsync(MonitorKey);
 
-            VerifySent<TickCommand>("tick");
+            AssertSent("tick");
         }
 
         [Fact]
         public void ShouldExecutePingMethod()
         {
-            Cronitor.Configure(ApiKey, _httpClient.Object);
+            ConfigureWithFakeHandler();
             var command = new CompleteCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey);
 
             Cronitor.Ping(command);
 
-            VerifySent<CompleteCommand>("complete");
+            AssertSent("complete");
         }
 
         [Fact]
         public async Task ShouldExecutePingAsyncMethod()
         {
-            Cronitor.Configure(ApiKey, _httpClient.Object);
+            ConfigureWithFakeHandler();
             var command = new CompleteCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey);
 
             await Cronitor.PingAsync(command);
 
-            VerifySent<CompleteCommand>("complete");
+            AssertSent("complete");
         }
 
-        private void VerifySent<TCommand>(string endpoint) where TCommand : Command
+        private void ConfigureWithFakeHandler()
         {
-            _httpClient.Verify(x => x.SendAsync(It.Is<TCommand>(c =>
-                c.ApiKey == ApiKey &&
-                c.MonitorKey == MonitorKey &&
-                c.Endpoint == endpoint)), Times.Once);
-            _httpClient.VerifyNoOtherCalls();
+            Cronitor.Configure(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, _handler));
+        }
+
+        private void AssertSent(string endpoint)
+        {
+            var request = Assert.Single(_handler.Requests);
+            Assert.Equal($"https://cronitor.link/p/{ApiKey}/{MonitorKey}/{endpoint}", request.RequestUri.GetLeftPart(UriPartial.Path));
         }
     }
 }
