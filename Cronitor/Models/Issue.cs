@@ -95,21 +95,24 @@ public class Issue
     [ResponseOnly]
     [JsonPropertyName("duration")]
     public int? Duration { get; private set; }
+    [JsonInclude]
     [ResponseOnly]
     [JsonPropertyName("created_by")]
-    public Author CreatedBy { get; set; }
+    public Author CreatedBy { get; internal set; }
     /// <summary>
     /// ISO 8601 formatted timestamp of when the issue was created.
     /// </summary>
+    [JsonInclude]
     [ResponseOnly]
     [JsonPropertyName("created")]
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; internal set; }
     /// <summary>
     /// ISO 8601 formatted timestamp of when the issue was created.
     /// </summary>
+    [JsonInclude]
     [ResponseOnly]
     [JsonPropertyName("updated")]
-    public DateTime? UpdatedAt { get; set; }
+    public DateTime? UpdatedAt { get; internal set; }
 
     #endregion
 }

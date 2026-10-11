@@ -21,9 +21,10 @@ public class Notification
     /// <summary>
     /// A list of monitors attached to this Notification List.
     /// </summary>
+    [JsonInclude]
     [ResponseOnly]
     [JsonPropertyName("monitors")]
-    public IEnumerable<string> Monitors { get; set; }
+    public IEnumerable<string> Monitors { get; internal set; }
     /// <summary>
     /// The key and name of each monitor attached to this Notification List.
     /// </summary>
@@ -49,15 +50,17 @@ public class Notification
     /// <summary>
     /// A plain text status description of this monitor
     /// </summary>
+    [JsonInclude]
     [ResponseOnly]
     [JsonPropertyName("status")]
-    public string Status { get; set; }
+    public string Status { get; internal set; }
 
     /// <summary>
     /// ISO formatted string of when the Notification
     /// List was created
     /// </summary>
+    [JsonInclude]
     [ResponseOnly]
     [JsonPropertyName("created")]
-    public DateTime CreatedAt { get; set; }
+    public DateTime CreatedAt { get; internal set; }
 }

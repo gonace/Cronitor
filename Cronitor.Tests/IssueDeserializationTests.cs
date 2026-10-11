@@ -60,6 +60,29 @@ public class IssueDeserializationTests
         Assert.Contains("\"updates\":[{\"message\":\"Looking into it.\",\"state\":\"investigating\"}]", json);
     }
 
+    [Theory]
+    [JsonData("ListIssues.json")]
+    public void Should_read_who_created_the_issue_and_when(string json)
+    {
+        var issue = Serializer.Deserialize<ListIssueResponse>(json).Items.Single();
+
+        Assert.Equal("Cronitor Alert", issue.CreatedBy.Name);
+        Assert.Equal(new DateTime(2026, 10, 10, 0, 40, 29, DateTimeKind.Utc), issue.CreatedAt, TimeSpan.FromSeconds(1));
+        Assert.Equal(new DateTime(2026, 10, 11, 0, 30, 44, DateTimeKind.Utc), issue.UpdatedAt.Value, TimeSpan.FromSeconds(1));
+    }
+
+    [Theory]
+    [JsonData("ListIssues.json")]
+    public void Should_read_the_key_and_creation_time_of_an_update(string json)
+    {
+        var opened = Serializer.Deserialize<ListIssueResponse>(json).Items.Single().Updates.First();
+
+        Assert.Equal("62eff086b0ee2448", opened.Key);
+        Assert.Null(opened.CreatedBy);
+        Assert.Equal(new DateTime(2026, 10, 10, 0, 40, 29, DateTimeKind.Utc), opened.CreatedAt, TimeSpan.FromSeconds(1));
+        Assert.Equal(new DateTime(2026, 10, 10, 0, 40, 29, DateTimeKind.Utc), opened.UpdatedAt.Value, TimeSpan.FromSeconds(1));
+    }
+
     [Fact]
     public void Should_read_the_severity()
     {

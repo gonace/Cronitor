@@ -1,6 +1,7 @@
 using Cronitor.Models;
 using Cronitor.Responses;
 using Cronitor.Tests.Helpers;
+using System;
 using System.Linq;
 using Xunit;
 
@@ -84,6 +85,17 @@ public class NotificationDeserializationTests
 
         Assert.DoesNotContain("\"monitors\"", sent);
         Assert.DoesNotContain("\"status\"", sent);
+    }
+
+    [Theory]
+    [JsonData("ListNotifications.json")]
+    public void Should_read_the_monitors_status_and_creation_time(string json)
+    {
+        var notification = Serializer.Deserialize<ListNotificationResponse>(json).Items.Single();
+
+        Assert.Empty(notification.Monitors);
+        Assert.Equal("0 recipients used by 0 monitors", notification.Status);
+        Assert.Equal(new DateTime(2018, 3, 7, 22, 9, 42, DateTimeKind.Utc), notification.CreatedAt);
     }
 
     [Fact]
