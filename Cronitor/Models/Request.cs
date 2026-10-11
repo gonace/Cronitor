@@ -38,6 +38,16 @@ namespace Cronitor.Models
         /// </summary>
         [JsonPropertyName("timeout_seconds")]
         public int TimeoutSeconds { get; set; } = 10;
+        /// <summary>
+        /// Whether redirects are followed. Cronitor's default applies when not set.
+        /// </summary>
+        [JsonPropertyName("follow_redirects")]
+        public bool? FollowRedirects { get; set; }
+        /// <summary>
+        /// Whether the SSL certificate is verified. Cronitor's default applies when not set.
+        /// </summary>
+        [JsonPropertyName("verify_ssl")]
+        public bool? VerifySsl { get; set; }
         [JsonInclude]
         [JsonPropertyName("regions")]
         public IEnumerable<string> Regions { get; protected set; }
