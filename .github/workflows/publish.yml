@@ -66,6 +66,7 @@ jobs:
       run: |
         echo "CRONITOR_VERSION=$VERSION.$RUN" >> "$GITHUB_ENV"
         echo "RELEASE_RUN=$RUN" >> "$GITHUB_ENV"
+        echo "HANGFIRE_EXTENSIONS_VERSION=1.${VERSION%%.*}.$RUN" >> "$GITHUB_ENV"
 
     # The extensions take their version from their project files; read it for the push steps.
     - name: Read extension versions
@@ -109,6 +110,23 @@ jobs:
           -p:IncludeSymbols=true \
           -p:SymbolPackageFormat=snupkg
 
+    - name: Build Hangfire.Extensions.Cronitor
+      run: |
+        dotnet build Hangfire.Extensions.Cronitor/Hangfire.Extensions.Cronitor.csproj \
+          --configuration Release \
+          -p:CronitorVersion=$CRONITOR_VERSION \
+          -p:HangfireExtensionsVersion=$HANGFIRE_EXTENSIONS_VERSION
+
+    - name: Pack Hangfire.Extensions.Cronitor
+      run: |
+        dotnet pack Hangfire.Extensions.Cronitor/Hangfire.Extensions.Cronitor.csproj \
+          --configuration Release \
+          --no-build \
+          -p:CronitorVersion=$CRONITOR_VERSION \
+          -p:HangfireExtensionsVersion=$HANGFIRE_EXTENSIONS_VERSION \
+          -p:IncludeSymbols=true \
+          -p:SymbolPackageFormat=snupkg
+
     # One short-lived key from nuget.org's trusted publishing, valid for an hour, pushes every package.
     - name: Log in to NuGet
       id: login
@@ -130,6 +148,15 @@ jobs:
         NUGET_API_KEY: ${{steps.login.outputs.NUGET_API_KEY}}
       run: |
         dotnet nuget push Quartz.Extensions.Cronitor/bin/Release/Quartz.Extensions.Cronitor.$QUARTZ_EXTENSIONS_VERSION.nupkg \
+          --api-key "$NUGET_API_KEY" \
+          --source "$NUGET_SOURCE" \
+          --skip-duplicate
+
+    - name: Push Hangfire.Extensions.Cronitor
+      env:
+        NUGET_API_KEY: ${{steps.login.outputs.NUGET_API_KEY}}
+      run: |
+        dotnet nuget push Hangfire.Extensions.Cronitor/bin/Release/Hangfire.Extensions.Cronitor.$HANGFIRE_EXTENSIONS_VERSION.nupkg \
           --api-key "$NUGET_API_KEY" \
           --source "$NUGET_SOURCE" \
           --skip-duplicate
