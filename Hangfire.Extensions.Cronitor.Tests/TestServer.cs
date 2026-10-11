@@ -66,7 +66,7 @@ public static class TestServer
 /// </summary>
 public static class TestJobs
 {
-    public static void Succeed()
+    public static void Succeed() // skipcq: CS-R1093 A job that succeeds by doing nothing.
     {
     }
 
