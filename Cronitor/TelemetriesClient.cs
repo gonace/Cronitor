@@ -1,6 +1,9 @@
 ﻿using Cronitor.Abstractions;
 using Cronitor.Commands;
 using Cronitor.Exceptions;
+using Cronitor.Internals;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Net.Http;
 using System.Text.Json;
@@ -41,17 +44,36 @@ namespace Cronitor
     public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClient
     {
         private readonly string _apiKey;
+        private readonly ILogger<TelemetriesClient> _logger;
 
         public TelemetriesClient(string apiKey)
-            : base(HttpClient.ForTelemetry(apiKey))
+            : this(apiKey, NullLoggerFactory.Instance)
         {
-            _apiKey = apiKey;
+        }
+
+        /// <summary>
+        /// Logs an error through <paramref name="loggerFactory"/> whenever a telemetry event cannot be delivered.
+        /// </summary>
+        public TelemetriesClient(string apiKey, ILoggerFactory loggerFactory)
+            : this(apiKey, HttpClient.ForTelemetry(apiKey), loggerFactory)
+        {
         }
 
         internal TelemetriesClient(string apiKey, HttpClient client)
+            : this(apiKey, client, NullLoggerFactory.Instance)
+        {
+        }
+
+        internal TelemetriesClient(string apiKey, HttpClient client, ILoggerFactory loggerFactory)
             : base(client)
         {
+            if (loggerFactory == null)
+            {
+                throw new ArgumentNullException(nameof(loggerFactory));
+            }
+
             _apiKey = apiKey;
+            _logger = loggerFactory.CreateLogger<TelemetriesClient>();
         }
 
 
@@ -163,6 +185,7 @@ namespace Cronitor
             }
             catch (Exception exception) when (IsDeliveryFailure(exception))
             {
+                _logger.TelemetryNotDelivered(exception, command.Endpoint, command.MonitorKey);
                 return false;
             }
         }

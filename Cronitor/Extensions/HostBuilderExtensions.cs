@@ -1,5 +1,7 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 
 namespace Cronitor.Extensions
@@ -15,7 +17,7 @@ namespace Cronitor.Extensions
                 services.AddTransient<IIssuesClient>((_) => new IssuesClient(apiKey));
                 services.AddTransient<IMonitorsClient>((_) => new MonitorsClient(apiKey));
                 services.AddTransient<INotificationsClient>((_) => new NotificationsClient(apiKey));
-                services.AddTransient<ITelemetriesClient>((_) => new TelemetriesClient(apiKey));
+                services.AddTransient<ITelemetriesClient>(provider => new TelemetriesClient(apiKey, LoggerFactory(provider)));
             });
 
             return builder;
@@ -31,7 +33,7 @@ namespace Cronitor.Extensions
                 services.AddTransient<IIssuesClient>((_) => new IssuesClient(apiKey));
                 services.AddTransient<IMonitorsClient>((_) => new MonitorsClient(apiKey));
                 services.AddTransient<INotificationsClient>((_) => new NotificationsClient(apiKey));
-                services.AddTransient<ITelemetriesClient>((_) => new TelemetriesClient(apiKey));
+                services.AddTransient<ITelemetriesClient>(provider => new TelemetriesClient(apiKey, LoggerFactory(provider)));
             });
 
             return builder;
@@ -64,6 +66,11 @@ namespace Cronitor.Extensions
             if (string.IsNullOrWhiteSpace(apiKey)) throw new ArgumentNullException(nameof(apiKey));
 
             Cronitor.Configure(apiKey);
+        }
+
+        private static ILoggerFactory LoggerFactory(IServiceProvider provider)
+        {
+            return provider.GetService<ILoggerFactory>() ?? NullLoggerFactory.Instance;
         }
     }
 }

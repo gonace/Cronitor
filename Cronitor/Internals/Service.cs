@@ -1,3 +1,5 @@
+using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging.Abstractions;
 using System;
 
 namespace Cronitor.Internals
@@ -8,7 +10,12 @@ namespace Cronitor.Internals
     internal sealed class Service : IDisposable
     {
         public Service(string key)
-            : this(new IssuesClient(key), new MonitorsClient(key), new NotificationsClient(key), new TelemetriesClient(key))
+            : this(key, NullLoggerFactory.Instance)
+        {
+        }
+
+        public Service(string key, ILoggerFactory loggerFactory)
+            : this(new IssuesClient(key), new MonitorsClient(key), new NotificationsClient(key), new TelemetriesClient(key, loggerFactory))
         {
         }
 
@@ -17,7 +24,13 @@ namespace Cronitor.Internals
         /// Intended for tests.
         /// </summary>
         internal Service(string key, HttpClient client)
-            : this(new IssuesClient(client), new MonitorsClient(client), new NotificationsClient(client), new TelemetriesClient(key, client))
+            : this(key, client, NullLoggerFactory.Instance)
+        {
+        }
+
+        /// <inheritdoc cref="Service(string, HttpClient)"/>
+        internal Service(string key, HttpClient client, ILoggerFactory loggerFactory)
+            : this(new IssuesClient(client), new MonitorsClient(client), new NotificationsClient(client), new TelemetriesClient(key, client, loggerFactory))
         {
         }
 

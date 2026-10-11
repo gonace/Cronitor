@@ -70,6 +70,8 @@ All events except `Ping` take a monitor key and an optional `message` and `envir
 
 Telemetry never breaks the job it monitors: transient failures are retried, and if an event still can't be delivered the method returns `false` instead of throwing.
 
+Events that can't be delivered are logged as errors through `ILogger`. With `.ConfigureCronitor()` this uses the host's logging automatically; otherwise pass an `ILoggerFactory` to `Cronitor.Configure("apiKey", loggerFactory)` or `new TelemetriesClient("apiKey", loggerFactory)`.
+
 ### Using block
 `Cronitor.Start()` (or `ITelemetriesClient.Start()`) reports the run and returns an `ITelemetryRun`. Call `Complete()` when the job succeeds; if the run is disposed without it (for example because an exception was thrown), it's reported as failed.
 ```c#

@@ -1,6 +1,7 @@
 using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Tests.Helpers;
+using System.Net;
 using Xunit;
 
 namespace Cronitor.Tests
@@ -28,6 +29,18 @@ namespace Cronitor.Tests
             service.Monitors.Delete(MonitorKey);
 
             Assert.Equal(2, handler.Requests.Count);
+        }
+
+        [Fact]
+        public void ShouldLogTelemetryThroughTheGivenLoggerFactory()
+        {
+            var loggerFactory = new FakeLoggerFactory();
+            var handler = new FakeHttpMessageHandler(HttpStatusCode.InternalServerError, "{\"detail\":\"Server error\"}");
+            var service = new Service(ApiKey, new HttpClient(Urls.DefaultApiUrl, ApiKey, handler), loggerFactory);
+
+            service.Telemetries.Run(MonitorKey);
+
+            Assert.Single(loggerFactory.Entries);
         }
 
         [Fact]

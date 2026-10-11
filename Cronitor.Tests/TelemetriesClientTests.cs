@@ -1,7 +1,9 @@
 using Cronitor.Commands;
 using Cronitor.Constants;
+using Cronitor.Exceptions;
 using Cronitor.Internals;
 using Cronitor.Tests.Helpers;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
 using System.Net;
@@ -87,6 +89,53 @@ namespace Cronitor.Tests
             var accepted = telemetriesClient.Fail(MonitorKey);
 
             Assert.False(accepted);
+        }
+
+        [Fact]
+        public void ShouldLogAnErrorWhenThePingCannotBeDelivered()
+        {
+            var loggerFactory = new FakeLoggerFactory();
+            var handler = new FakeHttpMessageHandler(HttpStatusCode.InternalServerError, "{\"detail\":\"Server error\"}");
+            var telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, handler), loggerFactory);
+
+            telemetriesClient.Run(MonitorKey);
+
+            var entry = Assert.Single(loggerFactory.Entries);
+            Assert.Equal(LogLevel.Error, entry.Level);
+            Assert.Equal(typeof(TelemetriesClient).FullName, entry.Category);
+            Assert.Equal($"Could not deliver run event for monitor {MonitorKey} to Cronitor", entry.Message);
+            Assert.IsType<ApiException>(entry.Exception);
+        }
+
+        [Fact]
+        public void ShouldNotLogTheApiKey()
+        {
+            var loggerFactory = new FakeLoggerFactory();
+            var network = new ScriptedHttpMessageHandler(ScriptedHttpMessageHandler.NetworkError());
+            var telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, network), loggerFactory);
+
+            telemetriesClient.Run(MonitorKey);
+
+            var entry = Assert.Single(loggerFactory.Entries);
+            Assert.DoesNotContain(ApiKey, entry.Message);
+            Assert.DoesNotContain(entry.Values, value => value.Value?.ToString().Contains(ApiKey) == true);
+        }
+
+        [Fact]
+        public void ShouldNotLogWhenThePingIsAccepted()
+        {
+            var loggerFactory = new FakeLoggerFactory();
+            var telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, _handler), loggerFactory);
+
+            telemetriesClient.Run(MonitorKey);
+
+            Assert.Empty(loggerFactory.Entries);
+        }
+
+        [Fact]
+        public void ShouldRequireALoggerFactory()
+        {
+            Assert.Throws<ArgumentNullException>(() => new TelemetriesClient(ApiKey, (ILoggerFactory)null));
         }
 
         [Fact]

@@ -1,6 +1,7 @@
 using Cronitor.Commands;
 using Cronitor.Exceptions;
 using Cronitor.Internals;
+using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 
 namespace Cronitor
@@ -16,6 +17,16 @@ namespace Cronitor
         public static void Configure(string key)
         {
             _service = new Service(key);
+        }
+
+        /// <summary>
+        /// Configures the instance, logging an error through <paramref name="loggerFactory"/>
+        /// whenever a telemetry event cannot be delivered.
+        /// Must be called before any other methods.
+        /// </summary>
+        public static void Configure(string key, ILoggerFactory loggerFactory)
+        {
+            _service = new Service(key, loggerFactory);
         }
 
         internal static void Configure(string key, HttpClient client)
