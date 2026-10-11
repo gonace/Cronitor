@@ -1,4 +1,5 @@
 using Cronitor.Extensions;
+using Cronitor.Internals;
 using Cronitor.Tests.Helpers;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -128,6 +129,26 @@ namespace Cronitor.Tests
             Assert.NotNull(Cronitor.Monitors);
             Assert.NotNull(Cronitor.Notifications);
             Assert.NotNull(Cronitor.Telemetries);
+        }
+
+        [Fact]
+        public void UseCronitor_WithApiKey_ShouldRegisterLoggingHostedService()
+        {
+            var hostBuilder = Host.CreateDefaultBuilder();
+
+            var host = hostBuilder.UseCronitor(ApiKey).Build();
+
+            Assert.Contains(host.Services.GetServices<IHostedService>(), service => service is CronitorLoggingHostedService);
+        }
+
+        [Fact]
+        public void UseCronitor_WithOptionsBuilder_ShouldRegisterLoggingHostedService()
+        {
+            var hostBuilder = Host.CreateDefaultBuilder();
+
+            var host = hostBuilder.UseCronitor(context => ApiKey).Build();
+
+            Assert.Contains(host.Services.GetServices<IHostedService>(), service => service is CronitorLoggingHostedService);
         }
 
         [Fact]

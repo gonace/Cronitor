@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Cronitor.Internals;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
@@ -44,6 +45,7 @@ namespace Cronitor.Extensions
             if (builder == null) throw new ArgumentNullException(nameof(builder));
 
             UseCronitor(apiKey);
+            builder.ConfigureServices((_, services) => AddLogging(services, apiKey));
 
             return builder;
         }
@@ -56,6 +58,7 @@ namespace Cronitor.Extensions
             {
                 var apiKey = optionsBuilder(context);
                 UseCronitor(apiKey);
+                AddLogging(services, apiKey);
             });
 
             return builder;
@@ -66,6 +69,17 @@ namespace Cronitor.Extensions
             if (string.IsNullOrWhiteSpace(apiKey)) throw new ArgumentNullException(nameof(apiKey));
 
             Cronitor.Configure(apiKey);
+        }
+
+        /// <summary>
+        /// Reconfigures the static Cronitor class with the host's logging when the host starts,
+        /// since its <see cref="ILoggerFactory"/> doesn't exist yet when UseCronitor runs.
+        /// </summary>
+        private static void AddLogging(IServiceCollection services, string apiKey)
+        {
+            services.AddHostedService(provider => new CronitorLoggingHostedService(
+                loggerFactory => Cronitor.Configure(apiKey, loggerFactory),
+                LoggerFactory(provider)));
         }
 
         private static ILoggerFactory LoggerFactory(IServiceProvider provider)
