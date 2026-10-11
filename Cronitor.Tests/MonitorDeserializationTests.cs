@@ -1,3 +1,4 @@
+using Cronitor.Models.Monitors;
 using Cronitor.Responses;
 using Cronitor.Tests.Helpers;
 using System;
@@ -58,6 +59,26 @@ namespace Cronitor.Tests
             Assert.NotNull(monitor.LatestIssue);
             Assert.Equal(1711850428, monitor.LatestIssue.Timestamp);
             Assert.Equal("resolved", monitor.LatestIssue.State);
+        }
+
+        [Fact]
+        public void ShouldSendPausedWhenCreatingAPausedMonitor()
+        {
+            var monitor = new Job("nightly-backup") { Paused = true };
+
+            var body = Serializer.Serialize(monitor);
+
+            Assert.Contains("\"paused\":true", body);
+        }
+
+        [Fact]
+        public void ShouldNotSendPausedWhenNotSet()
+        {
+            var monitor = new Job("nightly-backup");
+
+            var body = Serializer.Serialize(monitor);
+
+            Assert.DoesNotContain("\"paused\":", body);
         }
 
         [Theory]

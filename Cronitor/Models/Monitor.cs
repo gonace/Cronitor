@@ -199,12 +199,10 @@ namespace Cronitor.Models
         [JsonPropertyName("passing")]
         public bool? Passing { get; protected set; }
         /// <summary>
-        /// Whether sending alerts is currently paused.
+        /// Whether sending alerts is currently paused. Set it to create a monitor that starts paused.
         /// </summary>
-        [JsonInclude]
-        [ResponseOnly]
         [JsonPropertyName("paused")]
-        public bool? Paused { get; protected set; }
+        public bool? Paused { get; set; }
         /// <summary>
         /// Whether a job is running (only applicable for type: job).
         /// </summary>
