@@ -8,6 +8,17 @@
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <PackageId>Quartz.Extensions.Cronitor</PackageId>
+    <Description>Reports every Quartz.NET job to Cronitor: run when it starts, complete when it succeeds and fail when it throws.</Description>
+    <PackageTags>cronitor;quartz;quartz.net;monitoring;cron;scheduler;jobs</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
   <ItemGroup>
     <PackageReference Include="Quartz" Version="[3.22.4,4.0)" />
     <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="[3.22.4,4.0)" />
