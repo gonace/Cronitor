@@ -77,6 +77,38 @@ public class CronitorJobFilterTests
         Assert.Equal("Finish failed", entry.Exception.Message);
     }
 
+    [Fact]
+    public async Task Should_run_the_job_without_waiting_for_the_start_to_be_reported()
+    {
+        var startGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var telemetries = new FakeTelemetriesClient { StartGate = startGate.Task };
+
+        var storage = await RunRecurringJob("nightly-backup", () => TestJobs.Succeed(), new CronitorJobFilter(telemetries));
+        var sentWhileStartWasHeld = telemetries.Sent.ToArray();
+        startGate.SetResult(true);
+        await Task.WhenAny(telemetries.Finished, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
+
+        Assert.Equal(1, storage.GetMonitoringApi().SucceededListCount());
+        Assert.Empty(sentWhileStartWasHeld);
+        Assert.Equal(new[] { "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public async Task Should_finish_the_job_without_waiting_for_the_end_to_be_reported()
+    {
+        var finishGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var telemetries = new FakeTelemetriesClient { FinishGate = finishGate.Task };
+
+        var storage = await RunRecurringJob("nightly-backup", () => TestJobs.Succeed(), new CronitorJobFilter(telemetries));
+        var sentWhileEndWasHeld = telemetries.Sent.ToArray();
+        finishGate.SetResult(true);
+        await Task.WhenAny(telemetries.Finished, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
+
+        Assert.Equal(1, storage.GetMonitoringApi().SucceededListCount());
+        Assert.Equal(new[] { "run nightly-backup" }, sentWhileEndWasHeld);
+        Assert.Equal(new[] { "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
+    }
+
     private static Task<InMemoryStorage> RunRecurringJob(string recurringJobId, Expression<Action> job, CronitorJobFilter filter) =>
         TestServer.RunRecurringJob(recurringJobId, job, new JobFilterCollection { filter });
 }
