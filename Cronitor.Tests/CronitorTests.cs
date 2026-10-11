@@ -135,6 +135,26 @@ namespace Cronitor.Tests
             AssertSent("complete");
         }
 
+        [Fact]
+        public void ShouldExecuteStartMethod()
+        {
+            ConfigureWithFakeHandler();
+
+            Cronitor.Start(MonitorKey);
+
+            AssertSent("run");
+        }
+
+        [Fact]
+        public async Task ShouldExecuteStartAsyncMethod()
+        {
+            ConfigureWithFakeHandler();
+
+            await Cronitor.StartAsync(MonitorKey);
+
+            AssertSent("run");
+        }
+
         private void ConfigureWithFakeHandler()
         {
             Cronitor.Configure(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, _handler));

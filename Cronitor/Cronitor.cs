@@ -27,6 +27,17 @@ namespace Cronitor
         public static INotificationsClient Notifications => Service.Notifications;
         public static ITelemetriesClient Telemetries => Service.Telemetries;
 
+        /// <summary>
+        /// Starts a job run and reports it as running.
+        /// Call <see cref="TelemetryRun.Complete"/> when the job succeeds; disposing the run without it reports a failure.
+        /// </summary>
+        public static TelemetryRun Start(string monitorKey, string environment = null) =>
+            TelemetryRun.Start(Service.Telemetries, monitorKey, environment);
+
+        /// <inheritdoc cref="Start"/>
+        public static Task<TelemetryRun> StartAsync(string monitorKey, string environment = null) =>
+            TelemetryRun.StartAsync(Service.Telemetries, monitorKey, environment);
+
         public static void Run(string monitorKey, string message = null, string environment = null) =>
             Telemetries.Run(monitorKey, message, environment);
 

@@ -149,5 +149,11 @@ namespace Cronitor
 
         public async Task PingAsync(Command command) =>
             await SendAsync(command);
+
+        /// <summary>
+        /// Sends <paramref name="command"/> authenticated with this client's API key.
+        /// </summary>
+        internal Task PingWithApiKeyAsync(Command command) =>
+            PingAsync(command.WithApiKey(_apiKey));
     }
 }
