@@ -78,6 +78,15 @@ namespace Cronitor.Internals
             Telemetries = new TelemetriesClient(key);
         }
 
+        /// <summary>
+        /// Configures the telemetries client with the given <see cref="HttpClient"/>.
+        /// Intended for tests.
+        /// </summary>
+        internal void Configure(string key, HttpClient client)
+        {
+            Telemetries = new TelemetriesClient(key, client);
+        }
+
         public void Dispose()
         {
             Issues?.Dispose();

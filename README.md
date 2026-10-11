@@ -159,6 +159,73 @@ public class SomeClass
 }
 ```
 
+## Telemetries
+The [Telemetry API](https://cronitor.io/docs/telemetry-api) reports the state of a job to a monitor. Each event has a sync and an async (`…Async`) method:
+
+| Method | Event |
+|---|---|
+| `Run` | The job has started |
+| `Complete` | The job has finished successfully |
+| `Fail` | The job has failed |
+| `Tick` | A heartbeat, for monitors without a start/end |
+| `Ping` | Sends a custom `Command` |
+
+All events except `Ping` take a monitor key and an optional `message` and `environment`.
+
+### Static
+Once `Cronitor` is configured (through `.UseCronitor()` or `Cronitor.Configure()`), the events are available directly on `Cronitor`, as a shorthand for `Cronitor.Telemetries`:
+```c#
+Cronitor.Configure("apiKey");
+
+try
+{
+    await Cronitor.RunAsync("monitorKey");
+    // ... do the work
+    await Cronitor.CompleteAsync("monitorKey");
+}
+catch (Exception ex)
+{
+    await Cronitor.FailAsync("monitorKey", ex.Message, environment: "production");
+    throw;
+}
+```
+
+### Dependency injection
+With `.ConfigureCronitor()`, inject `ITelemetriesClient` instead:
+```c#
+public class SomeJob
+{
+    private readonly ITelemetriesClient _telemetriesClient;
+
+    public SomeJob(ITelemetriesClient telemetriesClient)
+    {
+        _telemetriesClient = telemetriesClient;
+    }
+
+    public async Task ExecuteAsync()
+    {
+        await _telemetriesClient.RunAsync("monitorKey");
+        // ... do the work
+        await _telemetriesClient.CompleteAsync("monitorKey");
+    }
+}
+```
+
+### Custom commands
+Use `Ping` when you need more than a message and environment, such as a metric, host or series:
+```c#
+using Cronitor.Commands;
+using Cronitor.Constants;
+
+var command = new CompleteCommand()
+    .WithApiKey("apiKey")
+    .WithMonitorKey("monitorKey")
+    .WithHost("worker-01")
+    .WithMetric(Metric.Count, 42);
+
+await Cronitor.PingAsync(command);
+```
+
 ## Assertions Language
 A fluent builder for Cronitor assertions is available via the `Assertion`. Instead of writing raw assertion strings, you can use the builder for type safety and discoverability:
 
