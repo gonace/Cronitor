@@ -48,6 +48,18 @@ namespace Cronitor.Tests
         }
 
         [Fact]
+        public void ShouldSendEveryMetric()
+        {
+            var command = new RunCommand()
+                .WithApiKey("apiKey")
+                .WithMonitorKey("monitorKey")
+                .WithMetric(Metric.Count, 100)
+                .WithMetric(Metric.Duration, 12.5);
+
+            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/run?metric=count:100&metric=duration:12.5", command.ToUrl());
+        }
+
+        [Fact]
         public void ShouldThrowExceptionWhenMissingRequiredFields()
         {
             var command = new Command(Urls.TelemetryBaseUrl, HttpMethod.Get, "foo/bar");

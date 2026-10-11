@@ -10,6 +10,8 @@ namespace Cronitor.Commands
 {
     public class Command
     {
+        private readonly List<string> _metrics = new List<string>();
+
         public HttpContent Content { get; set; }
         public HttpMethod Method { get; set; }
         public virtual string Endpoint { get; }
@@ -36,13 +38,14 @@ namespace Cronitor.Commands
         [QueryStringProperty("message")]
         public string Message { get; private set; }
         /// <summary>
-        /// Performance related metrics. Must be one of:
+        /// Performance related metrics, each as name:value. Built-in metrics are:
         ///   count:* - record counts of important events.
         ///   duration:* - the duration of the job/task being monitored.
         ///   error_count:* - the number of errors that occurred
+        /// Every metric is sent as its own metric parameter.
         /// </summary>
         [QueryStringProperty("metric")]
-        public string Metric { get; set; }
+        public IReadOnlyList<string> Metrics => _metrics.AsReadOnly();
         /// <summary>
         /// A unique user-supplied ID to collate related pings, i.e. matching state=run and
         /// state=complete|fail to one another. If a job is pinging very frequently
@@ -85,7 +88,7 @@ namespace Cronitor.Commands
 
         public Command WithMetric(Metric metric, string value)
         {
-            Metric = $"{metric}:{value}";
+            _metrics.Add($"{metric}:{value}");
             return this;
         }
 

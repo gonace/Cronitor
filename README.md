@@ -117,7 +117,7 @@ public class SomeJob
 ```
 
 ### Custom commands
-Use `Ping` when you need more than a message and environment, such as a metric, host or series:
+Use `Ping` when you need more than a message and environment, such as metrics, host or series:
 ```c#
 using Cronitor.Commands;
 using Cronitor.Constants;
@@ -126,7 +126,8 @@ var command = new CompleteCommand()
     .WithApiKey("apiKey")
     .WithMonitorKey("monitorKey")
     .WithHost("worker-01")
-    .WithMetric(Metric.Count, 42);
+    .WithMetric(Metric.Count, 42)
+    .WithMetric(Metric.Duration, 12.5);
 
 await Cronitor.PingAsync(command);
 ```

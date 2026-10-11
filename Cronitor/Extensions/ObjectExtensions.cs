@@ -1,7 +1,9 @@
-﻿using System;
+using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
-using System.Text;
+using System.Reflection;
 using Cronitor.Attributes;
 
 namespace Cronitor.Extensions
@@ -10,37 +12,41 @@ namespace Cronitor.Extensions
     {
         public static string ToQueryString<T>(this T @object)
         {
-            var queryStringBuilder = new StringBuilder();
-            var type = @object.GetType();
-
-            var props = type.GetProperties()
-                .Where(p => Attribute.IsDefined(p, typeof(QueryStringPropertyAttribute)) && (p.GetValue(@object, null) != null))
+            var pairs = @object.GetType().GetProperties()
+                .Where(p => Attribute.IsDefined(p, typeof(QueryStringPropertyAttribute)))
+                .SelectMany(p => ToQueryStringPairs(@object, p))
                 .ToList();
 
-            if (props.Any())
-                queryStringBuilder.Append('?');
+            return pairs.Any()
+                ? "?" + string.Join("&", pairs)
+                : string.Empty;
+        }
 
-            foreach (var prop in props)
+        /// <summary>
+        /// Returns one name=value pair per value; a collection repeats the name for every item.
+        /// </summary>
+        private static IEnumerable<string> ToQueryStringPairs(object @object, PropertyInfo property)
+        {
+            var value = property.GetValue(@object, null);
+            if (value == null)
             {
-                var name = prop.Name;
-                var value = prop.GetValue(@object, null);
-                var attribute = (QueryStringPropertyAttribute)Attribute.GetCustomAttribute(prop, typeof(QueryStringPropertyAttribute));
-
-                if (value != null)
-                {
-                    name = attribute?.PropertyName ?? name.ToLower(CultureInfo.CurrentCulture);
-                    value = attribute != null && attribute.Lower
-                        ? value.ToString()?.ToLower(CultureInfo.CurrentCulture)
-                        : value.ToString();
-
-                    // Check's if this is the last property, if so, don't add an '&'
-                    queryStringBuilder.Append(props.IndexOf(prop) != (props.Count - 1)
-                        ? $"{name}={value}&"
-                        : $"{name}={value}");
-                }
+                yield break;
             }
 
-            return queryStringBuilder.ToString();
+            var attribute = (QueryStringPropertyAttribute)Attribute.GetCustomAttribute(property, typeof(QueryStringPropertyAttribute));
+            var name = attribute.PropertyName ?? property.Name.ToLower(CultureInfo.CurrentCulture);
+            var items = value is IEnumerable collection && !(value is string)
+                ? collection.Cast<object>()
+                : new[] { value };
+
+            foreach (var item in items)
+            {
+                var text = attribute.Lower
+                    ? item.ToString()?.ToLower(CultureInfo.CurrentCulture)
+                    : item.ToString();
+
+                yield return $"{name}={text}";
+            }
         }
     }
 }

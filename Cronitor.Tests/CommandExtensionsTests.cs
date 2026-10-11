@@ -33,6 +33,36 @@ namespace Cronitor.Tests
             Assert.Equal(expected, actual);
         }
 
+        [Fact]
+        public void ShouldRepeatNameForEveryValueInACollection()
+        {
+            var uri = new Uri("https://www.cronitor.io");
+            var actual = new CollectionModel(uri, new[] { "a", "b" }).ToQueryString();
+
+            Assert.Equal("?tag=a&tag=b", actual);
+        }
+
+        [Fact]
+        public void ShouldLeaveOutAnEmptyCollection()
+        {
+            var uri = new Uri("https://www.cronitor.io");
+            var actual = new CollectionModel(uri, new string[0]).ToQueryString();
+
+            Assert.Equal(string.Empty, actual);
+        }
+
+        private class CollectionModel : Command
+        {
+            public CollectionModel(Uri uri, string[] tags)
+                : base(uri, HttpMethod.Get, "endpoint")
+            {
+                Tags = tags;
+            }
+
+            [QueryStringProperty("tag")]
+            public string[] Tags { get; }
+        }
+
         private class Model : Command
         {
             protected Model(Uri uri)
