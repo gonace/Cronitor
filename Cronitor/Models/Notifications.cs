@@ -13,12 +13,32 @@ namespace Cronitor.Models
     public class Notifications
     {
         /// <summary>
+        /// A list of Datadog On-Call integration labels.
+        /// </summary>
+        [JsonPropertyName("datadog-on-call")]
+        public IEnumerable<string> DatadogOnCall { get; set; }
+        /// <summary>
+        /// A list of Discord integration labels.
+        /// </summary>
+        [JsonPropertyName("discord")]
+        public IEnumerable<string> Discord { get; set; }
+        /// <summary>
         /// A list of emails to send alerts to.
         /// </summary>
         [JsonPropertyName("emails")]
         public IEnumerable<string> Emails { get; set; }
+        /// <summary>
+        /// A list of Google Chat integration labels.
+        /// </summary>
+        [JsonPropertyName("gchat")]
+        public IEnumerable<string> GoogleChat { get; set; }
         [JsonPropertyName("hipchat")]
         public IEnumerable<string> Hipchat { get; set; }
+        /// <summary>
+        /// A list of Lark integration labels.
+        /// </summary>
+        [JsonPropertyName("larksuite")]
+        public IEnumerable<string> Lark { get; set; }
         [JsonPropertyName("microsoft-teams")]
         public IEnumerable<string> MicrosoftTeams { get; set; }
         [JsonPropertyName("opsgenie")]
