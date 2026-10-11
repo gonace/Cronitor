@@ -4,6 +4,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json.Serialization;
 using Cronitor.Assertions;
+using Cronitor.Attributes;
 using Cronitor.Scheduling;
 
 namespace Cronitor.Models
@@ -147,51 +148,79 @@ namespace Cronitor.Models
 
         #region Read Only Attributes
 
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("group_name")]
         public string GroupName { get; protected set; }
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("latest_event")]
         public Event LatestEvent { get; private set; }
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("latest_events")]
         public IEnumerable<Event> LatestEvents { get; protected set; }
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("latest_incident")]
         public Incident LatestIncident { get; protected set; }
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("latest_invocations")]
         public dynamic LatestInvocations { get; protected set; }
         /// <summary>
         /// Whether the monitor is currently disabled.
         /// </summary>
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("disabled")]
         public bool? Disabled { get; protected set; }
         /// <summary>
         /// Whether the monitor has received a telemetry event.
         /// </summary>
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("initialized")]
         public bool? Initialized { get; protected set; }
         /// <summary>
         /// Whether the monitor is currently passing or failing.
         /// </summary>
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("passing")]
         public bool? Passing { get; protected set; }
         /// <summary>
         /// Whether sending alerts is currently paused.
         /// </summary>
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("paused")]
         public bool? Paused { get; protected set; }
         /// <summary>
         /// Whether a job is running (only applicable for type: job).
         /// </summary>
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("running")]
         public bool? Running { get; protected set; }
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("has_duration_history")]
         public bool? HasDurationHistory { get; protected set; }
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("request_interval_seconds")]
         public int? RequestIntervalSeconds { get; protected set; }
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("next_expected_at")]
         public long? ExpectedAt { get; protected set; }
 
         /// <summary>
         /// ISO 8601 formatted timestamp of when the monitor was created.
         /// </summary>
+        [JsonInclude]
+        [ResponseOnly]
         [JsonPropertyName("created")]
         public DateTime CreatedAt { get; protected set; }
 
