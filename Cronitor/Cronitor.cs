@@ -1,4 +1,5 @@
 using Cronitor.Commands;
+using Cronitor.Exceptions;
 using Cronitor.Internals;
 using System.Threading.Tasks;
 
@@ -6,7 +7,7 @@ namespace Cronitor
 {
     public static class Cronitor
     {
-        private static readonly Service Service = new Service();
+        private static Service _service;
 
         /// <summary>
         /// Configures the instance.
@@ -14,12 +15,12 @@ namespace Cronitor
         /// </summary>
         public static void Configure(string key)
         {
-            Service.Configure(key);
+            _service = new Service(key);
         }
 
         internal static void Configure(string key, HttpClient client)
         {
-            Service.Configure(key, client);
+            _service = new Service(key, client);
         }
 
         public static IssuesClient Issues => Service.Issues;
@@ -64,5 +65,7 @@ namespace Cronitor
 
         public static Task PingAsync(Command command) =>
             Telemetries.PingAsync(command);
+
+        private static Service Service => _service ?? throw new NotConfiguredException();
     }
 }
