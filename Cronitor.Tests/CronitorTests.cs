@@ -3,6 +3,7 @@ using Xunit;
 
 namespace Cronitor.Tests
 {
+    [Collection(StaticCronitorCollection.Name)]
     public class CronitorTests : BaseTest
     {
         [Fact]

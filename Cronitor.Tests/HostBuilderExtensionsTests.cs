@@ -9,6 +9,7 @@ using Host = Microsoft.Extensions.Hosting.Host;
 
 namespace Cronitor.Tests
 {
+    [Collection(StaticCronitorCollection.Name)]
     public class HostBuilderExtensionsTests : BaseTest
     {
         [Fact]
