@@ -20,9 +20,11 @@ Or download it from [NuGet](https://www.nuget.org/packages/Cronitor).
 ```c#
 Cronitor.Configure("apiKey");
 
-await Cronitor.RunAsync("monitorKey");
-// ... do the work
-await Cronitor.CompleteAsync("monitorKey");
+using (var run = await Cronitor.StartAsync("monitorKey"))
+{
+    // ... do the work
+    await run.CompleteAsync();
+}
 ```
 
 ## Setup
@@ -65,6 +67,17 @@ Telemetry events report the state of a job to a monitor. Each event has a sync a
 | `Ping` | Sends a custom `Command` |
 
 All events except `Ping` take a monitor key and an optional `message` and `environment`.
+
+### Using block
+`Cronitor.Start()` reports the run and returns a `TelemetryRun`. Call `Complete()` when the job succeeds; if the run is disposed without it (for example because an exception was thrown), it's reported as failed.
+```c#
+using (var run = await Cronitor.StartAsync("monitorKey", environment: "production"))
+{
+    // ... do the work
+    await run.CompleteAsync();
+}
+```
+Every run gets its own `series`, so overlapping runs of the same monitor are matched correctly. Use `run.Fail(message)` to report a failure with a reason.
 
 ### Static
 ```c#
