@@ -139,12 +139,12 @@ namespace Cronitor.Tests
 
         private Task<HttpResponseMessage> SendAsync(HttpMessageHandler network, double random = 0.5)
         {
-            var handler = new RetryingHttpMessageHandler(network, RecordDelay, () => random);
+            var handler = new RetryingHttpMessageHandler(network, RecordDelayAsync, () => random);
 
             return new System.Net.Http.HttpClient(handler).GetAsync(Url);
         }
 
-        private Task RecordDelay(TimeSpan delay, CancellationToken cancellationToken)
+        private Task RecordDelayAsync(TimeSpan delay, CancellationToken cancellationToken)
         {
             _delays.Add(delay);
             return Task.CompletedTask;
