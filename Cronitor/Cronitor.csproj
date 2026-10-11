@@ -10,7 +10,7 @@
   <PropertyGroup>
     <PackageId>Cronitor</PackageId>
     <Version Condition="'$(CronitorVersion)' != ''">$(CronitorVersion)</Version>
-    <Description>NET Client for Activity, Monitor, Notifications and Telemetry API...</Description>
+    <Description>.NET client for Cronitor: report when your jobs run, complete or fail, and manage monitors, issues and notifications.</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
