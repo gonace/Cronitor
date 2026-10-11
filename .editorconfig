@@ -8,5 +8,6 @@ trim_trailing_whitespace = true
 
 [*.cs]
 indent_size = 4
+insert_final_newline = true
 csharp_style_namespace_declarations = file_scoped:warning
 csharp_prefer_braces = true:warning
