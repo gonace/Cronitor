@@ -14,6 +14,7 @@ namespace Cronitor.Tests
     public class RetryingHttpMessageHandlerTests
     {
         private const string Url = "https://cronitor.link/p/apiKey/monitorKey/run";
+        private static readonly TimeSpan ShortAttemptTimeout = TimeSpan.FromMilliseconds(50);
 
         private readonly List<TimeSpan> _delays = new List<TimeSpan>();
 
@@ -130,6 +131,42 @@ namespace Cronitor.Tests
                 cancellation.Cancel();
                 return Task.Delay(delay, token);
             }, () => 0.5);
+
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+                new System.Net.Http.HttpClient(handler).GetAsync(Url, cancellation.Token));
+
+            Assert.Equal(1, network.Attempts);
+        }
+
+        [Fact]
+        public async Task ShouldRetryAnAttemptThatTimesOut()
+        {
+            var network = new ScriptedHttpMessageHandler(Hang(), Status(HttpStatusCode.OK));
+            var handler = new RetryingHttpMessageHandler(network, RecordDelayAsync, () => 0.5, ShortAttemptTimeout);
+
+            var response = await new System.Net.Http.HttpClient(handler).GetAsync(Url, TestContext.Current.CancellationToken);
+
+            Assert.Equal(HttpStatusCode.OK, response.StatusCode);
+            Assert.Equal(2, network.Attempts);
+        }
+
+        [Fact]
+        public async Task ShouldThrowTimeoutExceptionWhenEveryAttemptTimesOut()
+        {
+            var network = new ScriptedHttpMessageHandler(Hang());
+            var handler = new RetryingHttpMessageHandler(network, RecordDelayAsync, () => 0.5, ShortAttemptTimeout);
+
+            await Assert.ThrowsAsync<TimeoutException>(() => new System.Net.Http.HttpClient(handler).GetAsync(Url, TestContext.Current.CancellationToken));
+
+            Assert.Equal(4, network.Attempts);
+        }
+
+        [Fact]
+        public async Task ShouldNotRetryWhenTheCallerCancelsDuringAnAttempt()
+        {
+            var network = new ScriptedHttpMessageHandler(Hang());
+            var handler = new RetryingHttpMessageHandler(network, RecordDelayAsync, () => 0.5, TimeSpan.FromMinutes(1));
+            var cancellation = new CancellationTokenSource(ShortAttemptTimeout);
 
             await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
                 new System.Net.Http.HttpClient(handler).GetAsync(Url, cancellation.Token));

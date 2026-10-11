@@ -139,6 +139,19 @@ namespace Cronitor.Tests
         }
 
         [Fact]
+        public void ShouldReturnFalseWhenEveryAttemptTimesOut()
+        {
+            var network = new ScriptedHttpMessageHandler(ScriptedHttpMessageHandler.Hang());
+            var retrying = new RetryingHttpMessageHandler(network, (_, _) => Task.CompletedTask, () => 0.5, TimeSpan.FromMilliseconds(50));
+            var telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, retrying));
+
+            var accepted = telemetriesClient.Run(MonitorKey);
+
+            Assert.False(accepted);
+            Assert.Equal(4, network.Attempts);
+        }
+
+        [Fact]
         public void ShouldStillThrowForAMissingMonitorKey()
         {
             Assert.Throws<ArgumentNullException>(() => _telemetriesClient.Run(" "));

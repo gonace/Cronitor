@@ -15,6 +15,7 @@ namespace Cronitor.Internals
     internal class HttpClient : IDisposable
     {
         private static readonly HttpClientHandler SharedHandler = new HttpClientHandler();
+        private static readonly TimeSpan TelemetryTimeout = TimeSpan.FromSeconds(30);
         
         private readonly string _apiKey;
         private readonly Uri _apiUri;
@@ -37,7 +38,13 @@ namespace Cronitor.Internals
         }
 
         /// <summary>
-        /// Creates the client for telemetry pings, which retries transient failures.
+        /// The longest a request may take in total, including retries.
+        /// </summary>
+        internal TimeSpan Timeout => _httpClient.Timeout;
+
+        /// <summary>
+        /// Creates the client for telemetry pings, which retries transient failures
+        /// and gives up after 30s in total, as Microsoft.Extensions.Http.Resilience does.
         /// </summary>
         internal static HttpClient ForTelemetry(string apiKey) =>
             ForTelemetry(apiKey, SharedHandler);
@@ -46,8 +53,13 @@ namespace Cronitor.Internals
         /// Creates the client for telemetry pings, sending through <paramref name="network"/>.
         /// Intended for tests, to replace the network.
         /// </summary>
-        internal static HttpClient ForTelemetry(string apiKey, HttpMessageHandler network) =>
-            new HttpClient(Urls.TelemetryBaseUrl, apiKey, new RetryingHttpMessageHandler(network));
+        internal static HttpClient ForTelemetry(string apiKey, HttpMessageHandler network)
+        {
+            var client = new HttpClient(Urls.TelemetryBaseUrl, apiKey, new RetryingHttpMessageHandler(network));
+            client._httpClient.Timeout = TelemetryTimeout;
+
+            return client;
+        }
 
         public async Task SendAsync(Command command)
         {

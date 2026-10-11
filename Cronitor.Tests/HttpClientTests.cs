@@ -36,6 +36,14 @@ namespace Cronitor.Tests
         }
 
         [Fact]
+        public void ShouldLimitTelemetryRequestsToThirtySecondsInTotal()
+        {
+            var httpClient = HttpClient.ForTelemetry(ApiKey);
+
+            Assert.Equal(TimeSpan.FromSeconds(30), httpClient.Timeout);
+        }
+
+        [Fact]
         public async Task ShouldSendCommandToItsUri()
         {
             var handler = new FakeHttpMessageHandler();
