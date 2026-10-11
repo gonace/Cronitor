@@ -95,6 +95,14 @@ public class Issue
     [ResponseOnly]
     [JsonPropertyName("duration")]
     public int? Duration { get; private set; }
+    /// <summary>
+    /// The alerts Cronitor sent for this issue.
+    /// Only filled when listing issues with <c>WithAlertDetails</c>.
+    /// </summary>
+    [JsonInclude]
+    [ResponseOnly]
+    [JsonPropertyName("alerts")]
+    public IEnumerable<Alert> Alerts { get; internal set; }
     [JsonInclude]
     [ResponseOnly]
     [JsonPropertyName("created_by")]

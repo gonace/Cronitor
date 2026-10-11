@@ -83,6 +83,21 @@ public class IssueDeserializationTests
         Assert.Equal(new DateTime(2026, 10, 10, 0, 40, 29, DateTimeKind.Utc), opened.UpdatedAt.Value, TimeSpan.FromSeconds(1));
     }
 
+    [Theory]
+    [JsonData("ListIssuesWithDetails.json")]
+    public void Should_read_the_alerts_sent_for_the_issue(string json)
+    {
+        var issue = Serializer.Deserialize<ListIssueResponse>(json).Items.Single();
+
+        Assert.Equal(2, issue.Alerts.Count());
+        var alert = issue.Alerts.First();
+        Assert.Equal("alert", alert.Type);
+        Assert.Equal("slack", alert.Channel);
+        Assert.Equal("#alerts | laget.se", alert.Destination);
+        Assert.Equal("uipG2Q", alert.Monitor.Key);
+        Assert.True(alert.Delivered);
+    }
+
     [Fact]
     public void Should_read_the_severity()
     {
