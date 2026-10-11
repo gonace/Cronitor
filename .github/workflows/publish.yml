@@ -139,8 +139,7 @@ jobs:
       run: |
         dotnet nuget push Cronitor/bin/Release/Cronitor.$CRONITOR_VERSION.nupkg \
           --api-key "$NUGET_API_KEY" \
-          --source "$NUGET_SOURCE" \
-          --skip-duplicate
+          --source "$NUGET_SOURCE"
 
     - name: Push Quartz.Extensions.Cronitor
       env:
@@ -148,8 +147,7 @@ jobs:
       run: |
         dotnet nuget push Quartz.Extensions.Cronitor/bin/Release/Quartz.Extensions.Cronitor.$QUARTZ_EXTENSIONS_VERSION.nupkg \
           --api-key "$NUGET_API_KEY" \
-          --source "$NUGET_SOURCE" \
-          --skip-duplicate
+          --source "$NUGET_SOURCE"
 
     - name: Push Hangfire.Extensions.Cronitor
       env:
@@ -157,5 +155,4 @@ jobs:
       run: |
         dotnet nuget push Hangfire.Extensions.Cronitor/bin/Release/Hangfire.Extensions.Cronitor.$HANGFIRE_EXTENSIONS_VERSION.nupkg \
           --api-key "$NUGET_API_KEY" \
-          --source "$NUGET_SOURCE" \
-          --skip-duplicate
+          --source "$NUGET_SOURCE"
