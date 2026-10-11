@@ -59,7 +59,12 @@ namespace Cronitor.Internals
                 {
                     response = await SendAttemptAsync(request, cancellationToken).ConfigureAwait(false);
                 }
-                catch (Exception exception) when (IsTransient(exception) && retry < MaxRetries)
+                catch (HttpRequestException) when (retry < MaxRetries)
+                {
+                    await _delay(DelayBefore(retry), cancellationToken).ConfigureAwait(false);
+                    continue;
+                }
+                catch (TimeoutException) when (retry < MaxRetries)
                 {
                     await _delay(DelayBefore(retry), cancellationToken).ConfigureAwait(false);
                     continue;
@@ -93,11 +98,6 @@ namespace Cronitor.Internals
                     throw new TimeoutException($"The attempt did not complete within {_attemptTimeout}.", exception);
                 }
             }
-        }
-
-        private static bool IsTransient(Exception exception)
-        {
-            return exception is HttpRequestException || exception is TimeoutException;
         }
 
         private static bool IsTransient(HttpStatusCode statusCode)
