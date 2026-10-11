@@ -1,17 +1,15 @@
-﻿using Cronitor.Exceptions;
 using System;
 
 namespace Cronitor.Internals
 {
-    internal class Service : IDisposable
+    /// <summary>
+    /// The clients behind the static <see cref="Cronitor"/> class, all created from the same API key.
+    /// </summary>
+    internal sealed class Service : IDisposable
     {
-        public Service()
-        {
-        }
-
         public Service(string key)
+            : this(new IssuesClient(key), new MonitorsClient(key), new NotificationsClient(key), new TelemetriesClient(key))
         {
-            Configure(key);
         }
 
         /// <summary>
@@ -19,100 +17,29 @@ namespace Cronitor.Internals
         /// Intended for tests.
         /// </summary>
         internal Service(string key, HttpClient client)
+            : this(new IssuesClient(client), new MonitorsClient(client), new NotificationsClient(client), new TelemetriesClient(key, client))
         {
-            Issues = new IssuesClient(client);
-            Monitors = new MonitorsClient(client);
-            Notifications = new NotificationsClient(client);
-            Telemetries = new TelemetriesClient(key, client);
         }
 
-        private IssuesClient _issues;
-        public IssuesClient Issues
+        private Service(IssuesClient issues, MonitorsClient monitors, NotificationsClient notifications, TelemetriesClient telemetries)
         {
-            get
-            {
-                if (_issues == null)
-                {
-                    throw new NotConfiguredException();
-                }
-
-                return _issues;
-            }
-            private set => _issues = value;
+            Issues = issues;
+            Monitors = monitors;
+            Notifications = notifications;
+            Telemetries = telemetries;
         }
 
-        private MonitorsClient _monitors;
-        public MonitorsClient Monitors
-        {
-            get
-            {
-                if (_monitors == null)
-                {
-                    throw new NotConfiguredException();
-                }
-
-                return _monitors;
-            }
-            private set => _monitors = value;
-        }
-
-        private NotificationsClient _notifications;
-        public NotificationsClient Notifications
-        {
-            get
-            {
-                if (_notifications == null)
-                {
-                    throw new NotConfiguredException();
-                }
-
-                return _notifications;
-            }
-            private set => _notifications = value;
-        }
-
-        private TelemetriesClient _telemetries;
-        public TelemetriesClient Telemetries
-        {
-            get
-            {
-                if (_telemetries == null)
-                {
-                    throw new NotConfiguredException();
-                }
-
-                return _telemetries;
-            }
-            private set => _telemetries = value;
-        }
-
-        /// <summary>
-        /// Configures the instance.
-        /// Must be called before any other methods.
-        /// </summary>
-        public void Configure(string key)
-        {
-            Issues = new IssuesClient(key);
-            Monitors = new MonitorsClient(key);
-            Notifications = new NotificationsClient(key);
-            Telemetries = new TelemetriesClient(key);
-        }
-
-        /// <summary>
-        /// Configures the telemetries client with the given <see cref="HttpClient"/>.
-        /// Intended for tests.
-        /// </summary>
-        internal void Configure(string key, HttpClient client)
-        {
-            Telemetries = new TelemetriesClient(key, client);
-        }
+        public IssuesClient Issues { get; }
+        public MonitorsClient Monitors { get; }
+        public NotificationsClient Notifications { get; }
+        public TelemetriesClient Telemetries { get; }
 
         public void Dispose()
         {
-            Issues?.Dispose();
-            Monitors?.Dispose();
-            Notifications?.Dispose();
-            Telemetries?.Dispose();
+            Issues.Dispose();
+            Monitors.Dispose();
+            Notifications.Dispose();
+            Telemetries.Dispose();
         }
     }
 }
