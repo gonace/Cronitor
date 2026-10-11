@@ -1,4 +1,5 @@
-﻿using Cronitor.Exceptions;
+﻿using Cronitor.Constants;
+using Cronitor.Exceptions;
 using Cronitor.Internals;
 using Cronitor.Tests.Helpers;
 using Xunit;
@@ -28,6 +29,29 @@ namespace Cronitor.Tests
             Assert.NotNull(service.Monitors);
             Assert.NotNull(service.Notifications);
             Assert.NotNull(service.Telemetries);
+        }
+
+        [Fact]
+        public void ShouldCreateAllClients()
+        {
+            var service = new Service(ApiKey);
+
+            Assert.NotNull(service.Issues);
+            Assert.NotNull(service.Monitors);
+            Assert.NotNull(service.Notifications);
+            Assert.NotNull(service.Telemetries);
+        }
+
+        [Fact]
+        public void ShouldSendThroughTheGivenHttpClient()
+        {
+            var handler = new FakeHttpMessageHandler();
+            var service = new Service(ApiKey, new HttpClient(Urls.DefaultApiUrl, ApiKey, handler));
+
+            service.Telemetries.Run(MonitorKey);
+            service.Monitors.Delete(MonitorKey);
+
+            Assert.Equal(2, handler.Requests.Count);
         }
 
         [Fact]

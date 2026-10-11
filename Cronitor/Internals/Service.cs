@@ -5,6 +5,27 @@ namespace Cronitor.Internals
 {
     internal class Service : IDisposable
     {
+        public Service()
+        {
+        }
+
+        public Service(string key)
+        {
+            Configure(key);
+        }
+
+        /// <summary>
+        /// Sends every request through the given <see cref="HttpClient"/>.
+        /// Intended for tests.
+        /// </summary>
+        internal Service(string key, HttpClient client)
+        {
+            Issues = new IssuesClient(client);
+            Monitors = new MonitorsClient(client);
+            Notifications = new NotificationsClient(client);
+            Telemetries = new TelemetriesClient(key, client);
+        }
+
         private IssuesClient _issues;
         public IssuesClient Issues
         {
