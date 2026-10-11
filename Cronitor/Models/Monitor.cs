@@ -168,6 +168,7 @@ namespace Cronitor.Models
         [ResponseOnly]
         [JsonPropertyName("latest_issue")]
         public MonitorIssue LatestIssue { get; protected set; }
+        [Obsolete("Cronitor's API sends latest_issue; use LatestIssue. Will be removed in the next major version (2027).")]
         [JsonInclude]
         [ResponseOnly]
         [JsonPropertyName("latest_incident")]
@@ -211,10 +212,12 @@ namespace Cronitor.Models
         [ResponseOnly]
         [JsonPropertyName("running")]
         public bool? Running { get; protected set; }
+        [Obsolete("Not part of Cronitor's documented Monitor API. Will be removed in the next major version (2027).")]
         [JsonInclude]
         [ResponseOnly]
         [JsonPropertyName("has_duration_history")]
         public bool? HasDurationHistory { get; protected set; }
+        [Obsolete("Not part of Cronitor's documented Monitor API; set a check's frequency with Schedule. Will be removed in the next major version (2027).")]
         [JsonInclude]
         [ResponseOnly]
         [JsonPropertyName("request_interval_seconds")]
