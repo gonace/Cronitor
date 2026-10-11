@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path=".editorconfig" />
+    <File Path=".gitattributes" />
+    <File Path=".github/workflows/codeql-analysis.yml" />
+    <File Path=".github/workflows/publish.yml" />
+    <File Path=".github/workflows/tests.yml" />
+    <File Path=".gitignore" />
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="Cronitor.Tests/Cronitor.Tests.csproj" />
+  <Project Path="Cronitor/Cronitor.csproj" />
+</Solution>
