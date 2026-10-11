@@ -1,4 +1,4 @@
-﻿namespace Cronitor.Assertions;
+namespace Cronitor.Assertions;
 
 public static class Assertion
 {

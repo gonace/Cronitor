@@ -1,4 +1,4 @@
-﻿using Cronitor.Constants;
+using Cronitor.Constants;
 using Cronitor.Extensions;
 using System;
 using System.Net.Http;

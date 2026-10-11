@@ -1,4 +1,4 @@
-﻿using Cronitor.Models;
+using Cronitor.Models;
 using System;
 using System.Net;
 

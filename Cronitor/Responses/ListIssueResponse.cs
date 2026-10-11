@@ -1,4 +1,4 @@
-﻿using Cronitor.Abstractions;
+using Cronitor.Abstractions;
 using Cronitor.Models;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;

@@ -1,4 +1,4 @@
-﻿using Cronitor.Extensions;
+using Cronitor.Extensions;
 using System;
 using System.Collections.Generic;
 using Xunit;

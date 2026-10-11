@@ -1,4 +1,4 @@
-﻿using Cronitor.Extensions;
+using Cronitor.Extensions;
 using Xunit;
 
 namespace Cronitor.Tests;

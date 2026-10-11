@@ -1,4 +1,4 @@
-﻿using Cronitor.Abstractions;
+using Cronitor.Abstractions;
 using System.Net.Http;
 using System.Text;
 using Cronitor.Models;

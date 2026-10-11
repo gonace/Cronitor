@@ -1,4 +1,4 @@
-﻿using Cronitor.Abstractions;
+using Cronitor.Abstractions;
 
 namespace Cronitor.Extensions;
 

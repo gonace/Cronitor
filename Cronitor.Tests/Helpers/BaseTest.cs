@@ -1,4 +1,4 @@
-﻿namespace Cronitor.Tests.Helpers;
+namespace Cronitor.Tests.Helpers;
 
 public class BaseTest
 {

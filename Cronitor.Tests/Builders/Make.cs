@@ -1,4 +1,4 @@
-﻿namespace Cronitor.Tests.Builders;
+namespace Cronitor.Tests.Builders;
 
 public static class Make
 {

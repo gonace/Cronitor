@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using Cronitor.Models;
 
 namespace Cronitor.Tests.Builders;

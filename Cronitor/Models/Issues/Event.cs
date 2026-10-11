@@ -1,4 +1,4 @@
-﻿using Cronitor.Attributes;
+using Cronitor.Attributes;
 using Cronitor.Constants;
 using System;
 using System.Text.Json.Serialization;

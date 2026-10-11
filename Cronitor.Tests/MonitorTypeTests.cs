@@ -1,4 +1,4 @@
-﻿using Cronitor.Constants;
+using Cronitor.Constants;
 using Cronitor.Models;
 using Cronitor.Scheduling;
 using Cronitor.Models.Monitors;

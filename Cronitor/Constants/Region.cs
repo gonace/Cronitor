@@ -1,4 +1,4 @@
-﻿namespace Cronitor.Constants;
+namespace Cronitor.Constants;
 
 public class Region
 {

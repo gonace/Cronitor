@@ -1,4 +1,4 @@
-﻿using Cronitor.Commands;
+using Cronitor.Commands;
 
 namespace Cronitor.Extensions;
 

@@ -1,4 +1,4 @@
-﻿using Cronitor.Commands;
+using Cronitor.Commands;
 using Cronitor.Internals;
 using System;
 using System.Threading.Tasks;

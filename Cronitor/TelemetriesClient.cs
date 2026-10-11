@@ -1,4 +1,4 @@
-﻿using Cronitor.Abstractions;
+using Cronitor.Abstractions;
 using Cronitor.Commands;
 using Cronitor.Exceptions;
 using Cronitor.Internals;

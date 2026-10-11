@@ -1,4 +1,4 @@
-﻿
+
 using Cronitor.Models;
 
 namespace Cronitor.Tests.Builders;

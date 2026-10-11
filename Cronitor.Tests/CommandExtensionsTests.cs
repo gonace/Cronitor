@@ -1,4 +1,4 @@
-﻿using Cronitor.Attributes;
+using Cronitor.Attributes;
 using Cronitor.Commands;
 using Cronitor.Extensions;
 using Cronitor.Tests.Helpers;
