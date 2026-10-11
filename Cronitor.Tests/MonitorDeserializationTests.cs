@@ -51,6 +51,17 @@ namespace Cronitor.Tests
 
         [Theory]
         [JsonData("ListMonitors.json")]
+        public void ShouldReadTheLatestIssue(string json)
+        {
+            var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
+
+            Assert.NotNull(monitor.LatestIssue);
+            Assert.Equal(1711850428, monitor.LatestIssue.Timestamp);
+            Assert.Equal("resolved", monitor.LatestIssue.State);
+        }
+
+        [Theory]
+        [JsonData("ListMonitors.json")]
         public void ShouldNotSendTheReadOnlyAttributesBack(string json)
         {
             var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
@@ -64,6 +75,7 @@ namespace Cronitor.Tests
             Assert.DoesNotContain("\"next_expected_at\":", body);
             Assert.DoesNotContain("\"attributes\":", body);
             Assert.DoesNotContain("\"group_name\":", body);
+            Assert.DoesNotContain("\"latest_issue\":", body);
         }
     }
 }

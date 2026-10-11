@@ -38,7 +38,6 @@ namespace Cronitor.Models
         ///  "response.header X-App-Version = 1.2.3"
         /// </summary>
         [JsonPropertyName("assertions")]
-        //public IEnumerable<string> Assertions { get; set; }
         public IEnumerable<AssertionRule> Assertions { get; set; }
         /// <summary>
         /// job and event: number of telemetry events with state='fail' to allow before sending an alert.
@@ -165,6 +164,10 @@ namespace Cronitor.Models
         [ResponseOnly]
         [JsonPropertyName("latest_events")]
         public IEnumerable<Event> LatestEvents { get; protected set; }
+        [JsonInclude]
+        [ResponseOnly]
+        [JsonPropertyName("latest_issue")]
+        public MonitorIssue LatestIssue { get; protected set; }
         [JsonInclude]
         [ResponseOnly]
         [JsonPropertyName("latest_incident")]
