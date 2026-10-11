@@ -1,5 +1,6 @@
 using Hangfire.Common;
 using Hangfire.InMemory;
+using Hangfire.Server;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq.Expressions;
@@ -109,6 +110,39 @@ public class CronitorJobFilterTests
         Assert.Equal(new[] { "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
     }
 
+    [Fact]
+    public async Task Should_send_run_and_fail_when_another_filter_cancels_the_job()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var filters = new JobFilterCollection();
+        filters.Add(new CronitorJobFilter(telemetries), 0);
+        filters.Add(new CancellingFilter(), 1);
+        var storage = new InMemoryStorage();
+
+        using (TestServer.Start(storage, filters))
+        {
+            var recurringJobs = new RecurringJobManager(storage);
+            recurringJobs.AddOrUpdate("nightly-backup", () => TestJobs.Succeed(), Cron.Never());
+            recurringJobs.Trigger("nightly-backup");
+
+            await Task.WhenAny(telemetries.Finished, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
+        }
+
+        Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: The job was canceled before it ran" }, telemetries.Sent);
+    }
+
     private static Task<InMemoryStorage> RunRecurringJob(string recurringJobId, Expression<Action> job, CronitorJobFilter filter) =>
         TestServer.RunRecurringJob(recurringJobId, job, new JobFilterCollection { filter });
+
+    /// <summary>
+    /// Cancels every job before it runs, like a filter that decides a job should not run now.
+    /// </summary>
+    private sealed class CancellingFilter : IServerFilter
+    {
+        public void OnPerforming(PerformingContext context) => context.Canceled = true;
+
+        public void OnPerformed(PerformedContext context)
+        {
+        }
+    }
 }

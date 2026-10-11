@@ -62,9 +62,18 @@ public class CronitorJobFilter : IServerFilter
     }
 
     /// <summary>
-    /// Why the job did not succeed, or null if it did.
+    /// Why the job did not succeed, or null if it did. When another filter cancels the job, Hangfire still
+    /// calls this filter after it, without an exception, although the job never ran.
     /// </summary>
-    private static string FailureOf(PerformedContext context) => context.Exception?.GetBaseException().Message;
+    private static string FailureOf(PerformedContext context)
+    {
+        if (context.Exception != null)
+        {
+            return context.Exception.GetBaseException().Message;
+        }
+
+        return context.Canceled ? "The job was canceled before it ran" : null;
+    }
 
     /// <summary>
     /// Sends the run event. The returned task completes with the run, or with null if it could not be reported.
