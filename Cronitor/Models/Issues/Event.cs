@@ -1,4 +1,5 @@
-﻿using Cronitor.Constants;
+﻿using Cronitor.Attributes;
+using Cronitor.Constants;
 using System;
 using System.Text.Json.Serialization;
 
@@ -9,12 +10,14 @@ namespace Cronitor.Models.Issues
         /// <summary>
         /// The unique identifier for this event.
         /// </summary>
+        [ResponseOnly]
         [JsonPropertyName("key")]
         public string Key { get; set; }
         /// <summary>
         /// An ISO 8601 formatted timestamp of when the issue started,
         /// e.g. 2023-06-02T09:39:31Z
         /// </summary>
+        [ResponseOnly]
         [JsonPropertyName("timestamp")]
         public DateTime Timestamp { get; set; }
         [JsonPropertyName("message")]
@@ -25,16 +28,19 @@ namespace Cronitor.Models.Issues
         /// </summary>
         [JsonPropertyName("state")]
         public IssueState State { get; set; }
+        [ResponseOnly]
         [JsonPropertyName("created_by")]
         public Author CreatedBy { get; set; }
         /// <summary>
         /// ISO 8601 formatted timestamp of when the issue was created.
         /// </summary>
+        [ResponseOnly]
         [JsonPropertyName("created")]
         public DateTime CreatedAt { get; set; }
         /// <summary>
         /// ISO 8601 formatted timestamp of when the issue was created.
         /// </summary>
+        [ResponseOnly]
         [JsonPropertyName("updated")]
         public DateTime? UpdatedAt { get; set; }
     }

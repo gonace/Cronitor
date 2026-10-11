@@ -1,4 +1,5 @@
-﻿using Cronitor.Constants;
+﻿using Cronitor.Attributes;
+using Cronitor.Constants;
 using Cronitor.Models.Issues;
 using System;
 using System.Collections.Generic;
@@ -70,6 +71,12 @@ namespace Cronitor.Models
         /// </summary>
         [JsonPropertyName("affected_components")]
         public IEnumerable<string> AffectedComponents { get; set; }
+        /// <summary>
+        /// The updates posted to this issue, such as when it was opened and resolved.
+        /// When creating or updating an issue, only the message and state of each update are sent.
+        /// </summary>
+        [JsonPropertyName("updates")]
+        public IEnumerable<Issues.Event> Updates { get; set; }
 
 
         #region Read Only Attributes
