@@ -39,7 +39,7 @@ namespace Cronitor.Tests
             Assert.Equal("fail", command.Endpoint);
             Assert.Equal("fail", command.ToString());
             Assert.Equal(HttpMethod.Get, command.Method);
-            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/fail?env=Production&host=127.0.0.1&message='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'&metric=count:99.99&series=3de5db91-9c02-4e95-b8a9-9a2442702336", command.ToUrl());
+            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/fail?env=Production&host=127.0.0.1&message=Lorem ipsum dolor sit amet%2C consectetur adipiscing elit.&metric=count%3A99.99&series=3de5db91-9c02-4e95-b8a9-9a2442702336", command.ToUrl());
         }
     }
 }

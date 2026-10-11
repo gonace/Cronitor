@@ -23,7 +23,7 @@ namespace Cronitor.Extensions
         }
 
         /// <summary>
-        /// Returns one name=value pair per value; a collection repeats the name for every item.
+        /// Returns one name=value pair per value, with the value URL-encoded; a collection repeats the name for every item.
         /// </summary>
         private static IEnumerable<string> ToQueryStringPairs(object @object, PropertyInfo property)
         {
@@ -45,7 +45,7 @@ namespace Cronitor.Extensions
                     ? item.ToString()?.ToLower(CultureInfo.CurrentCulture)
                     : item.ToString();
 
-                yield return $"{name}={text}";
+                yield return $"{name}={Uri.EscapeDataString(text ?? string.Empty)}";
             }
         }
     }

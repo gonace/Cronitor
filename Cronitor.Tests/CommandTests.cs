@@ -44,7 +44,7 @@ namespace Cronitor.Tests
             Assert.Equal("custom", command.Endpoint);
             Assert.Equal("custom", command.ToString());
             Assert.Equivalent(new StringContent("custom"), command.Content);
-            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/custom?env=Production&host=127.0.0.1&message='Lorem ipsum dolor sit amet, consectetur adipiscing elit.'&metric=count:100&series=3de5db91-9c02-4e95-b8a9-9a2442702336&status_code=130", command.ToUrl());
+            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/custom?env=Production&host=127.0.0.1&message=Lorem ipsum dolor sit amet%2C consectetur adipiscing elit.&metric=count%3A100&series=3de5db91-9c02-4e95-b8a9-9a2442702336&status_code=130", command.ToUrl());
         }
 
         [Fact]
@@ -56,7 +56,7 @@ namespace Cronitor.Tests
                 .WithMetric(Metric.Count, 100)
                 .WithMetric(Metric.Duration, 12.5);
 
-            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/run?metric=count:100&metric=duration:12.5", command.ToUrl());
+            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/run?metric=count%3A100&metric=duration%3A12.5", command.ToUrl());
         }
 
         [Fact]

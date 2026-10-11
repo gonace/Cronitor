@@ -76,7 +76,7 @@ namespace Cronitor.Tests
             }
 
             Assert.Equal(new[] { "run", "fail" }, handler.Requests.Select(Endpoint));
-            Assert.Equal($"'{Message}'", QueryString.Parse(handler.Requests[1].RequestUri)["message"]);
+            Assert.Equal(Message, QueryString.Parse(handler.Requests[1].RequestUri)["message"]);
         }
 
         [Fact]

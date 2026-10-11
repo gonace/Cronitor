@@ -15,7 +15,7 @@ namespace Cronitor.Tests
         [UseCulture("en-US")]
         public void ShouldConvertObjectToQueryStringForCultureEnUs()
         {
-            const string expected = "?name=Jane Doe&age=18&wage=25400.99&isonsickleave=true&working=true&starts_at=6/1/2019 8:00:00 AM";
+            const string expected = "?name=Jane%20Doe&age=18&wage=25400.99&isonsickleave=true&working=true&starts_at=6%2F1%2F2019%208%3A00%3A00%20AM";
             var uri = new Uri("https://www.cronitor.io");
             var actual = new Model(uri, HttpMethod.Get, "endpoint").ToQueryString();
 
@@ -26,7 +26,7 @@ namespace Cronitor.Tests
         [UseCulture("sv-SE")]
         public void ShouldConvertObjectToQueryStringSvSe()
         {
-            const string expected = "?name=Jane Doe&age=18&wage=25400,99&isonsickleave=true&working=true&starts_at=2019-06-01 08:00:00";
+            const string expected = "?name=Jane%20Doe&age=18&wage=25400%2C99&isonsickleave=true&working=true&starts_at=2019-06-01%2008%3A00%3A00";
             var uri = new Uri("https://www.cronitor.io");
             var actual = new Model(uri, HttpMethod.Get, "endpoint").ToQueryString();
 

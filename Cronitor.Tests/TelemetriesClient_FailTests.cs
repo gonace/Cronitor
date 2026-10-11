@@ -49,7 +49,7 @@ namespace Cronitor.Tests
             var request = Assert.Single(_handler.Requests);
             var query = QueryString.Parse(request.RequestUri);
             Assert.Equal(FailUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal($"'{Message}'", query["message"]);
+            Assert.Equal(Message, query["message"]);
             Assert.Single(query);
         }
 
@@ -61,7 +61,7 @@ namespace Cronitor.Tests
             var request = Assert.Single(_handler.Requests);
             var query = QueryString.Parse(request.RequestUri);
             Assert.Equal(FailUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal($"'{Message}'", query["message"]);
+            Assert.Equal(Message, query["message"]);
             Assert.Single(query);
         }
 
@@ -97,7 +97,7 @@ namespace Cronitor.Tests
             var request = Assert.Single(_handler.Requests);
             var query = QueryString.Parse(request.RequestUri);
             Assert.Equal(FailUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal($"'{Message}'", query["message"]);
+            Assert.Equal(Message, query["message"]);
             Assert.Equal(Environment, query["env"]);
             Assert.Equal(2, query.Count);
         }
@@ -110,7 +110,7 @@ namespace Cronitor.Tests
             var request = Assert.Single(_handler.Requests);
             var query = QueryString.Parse(request.RequestUri);
             Assert.Equal(FailUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal($"'{Message}'", query["message"]);
+            Assert.Equal(Message, query["message"]);
             Assert.Equal(Environment, query["env"]);
             Assert.Equal(2, query.Count);
         }

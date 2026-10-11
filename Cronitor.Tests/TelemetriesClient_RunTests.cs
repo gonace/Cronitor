@@ -49,7 +49,7 @@ namespace Cronitor.Tests
             var request = Assert.Single(_handler.Requests);
             var query = QueryString.Parse(request.RequestUri);
             Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal($"'{Message}'", query["message"]);
+            Assert.Equal(Message, query["message"]);
             Assert.Single(query);
         }
 
@@ -61,7 +61,7 @@ namespace Cronitor.Tests
             var request = Assert.Single(_handler.Requests);
             var query = QueryString.Parse(request.RequestUri);
             Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal($"'{Message}'", query["message"]);
+            Assert.Equal(Message, query["message"]);
             Assert.Single(query);
         }
 
@@ -97,7 +97,7 @@ namespace Cronitor.Tests
             var request = Assert.Single(_handler.Requests);
             var query = QueryString.Parse(request.RequestUri);
             Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal($"'{Message}'", query["message"]);
+            Assert.Equal(Message, query["message"]);
             Assert.Equal(Environment, query["env"]);
             Assert.Equal(2, query.Count);
         }
@@ -110,9 +110,42 @@ namespace Cronitor.Tests
             var request = Assert.Single(_handler.Requests);
             var query = QueryString.Parse(request.RequestUri);
             Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal($"'{Message}'", query["message"]);
+            Assert.Equal(Message, query["message"]);
             Assert.Equal(Environment, query["env"]);
             Assert.Equal(2, query.Count);
+        }
+
+        [Theory]
+        [InlineData("a & b")]
+        [InlineData("50% done #3")]
+        [InlineData("it's ok")]
+        [InlineData("x=1+2")]
+        public void ShouldSendMessageUnchanged(string message)
+        {
+            _telemetriesClient.Run(MonitorKey, message);
+
+            var request = Assert.Single(_handler.Requests);
+            Assert.Equal(message, QueryString.Parse(request.RequestUri)["message"]);
+        }
+
+        [Fact]
+        public void ShouldSendEnvironmentUnchanged()
+        {
+            const string environment = "staging & qa";
+
+            _telemetriesClient.Run(MonitorKey, environment: environment);
+
+            var request = Assert.Single(_handler.Requests);
+            Assert.Equal(environment, QueryString.Parse(request.RequestUri)["env"]);
+        }
+
+        [Fact]
+        public void ShouldUrlEncodeQueryValues()
+        {
+            _telemetriesClient.Run(MonitorKey, "a & b");
+
+            var request = Assert.Single(_handler.Requests);
+            Assert.Equal($"{RunUri}?message=a%20%26%20b", request.RequestUri.AbsoluteUri);
         }
     }
 }
