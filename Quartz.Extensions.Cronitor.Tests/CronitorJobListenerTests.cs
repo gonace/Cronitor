@@ -32,14 +32,27 @@ public class CronitorJobListenerTests
         Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: Disk is full" }, telemetries.Sent);
     }
 
-    private static async Task RunJob<TJob>(string name, FakeTelemetriesClient telemetries) where TJob : IJob
+    [Fact]
+    public async Task Should_report_to_the_monitor_key_chosen_with_WithCronitorMonitorKey()
+    {
+        var telemetries = new FakeTelemetriesClient();
+
+        await RunJob(JobBuilder.Create<SucceedingJob>().WithIdentity("backup").WithCronitorMonitorKey("nightly-backup").Build(), telemetries);
+
+        Assert.Equal(new[] { "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
+    }
+
+    private static Task RunJob<TJob>(string name, FakeTelemetriesClient telemetries) where TJob : IJob =>
+        RunJob(JobBuilder.Create<TJob>().WithIdentity(name).Build(), telemetries);
+
+    private static async Task RunJob(IJobDetail job, FakeTelemetriesClient telemetries)
     {
         var properties = new NameValueCollection { ["quartz.scheduler.instanceName"] = Guid.NewGuid().ToString("N") };
         var scheduler = await new StdSchedulerFactory(properties).GetScheduler(TestContext.Current.CancellationToken);
         scheduler.ListenerManager.AddJobListener(new CronitorJobListener(telemetries));
         await scheduler.Start(TestContext.Current.CancellationToken);
 
-        await scheduler.ScheduleJob(JobBuilder.Create<TJob>().WithIdentity(name).Build(), TriggerBuilder.Create().StartNow().Build(), TestContext.Current.CancellationToken);
+        await scheduler.ScheduleJob(job, TriggerBuilder.Create().StartNow().Build(), TestContext.Current.CancellationToken);
         await Task.WhenAny(telemetries.Finished, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
 
         await scheduler.Shutdown(true, TestContext.Current.CancellationToken);

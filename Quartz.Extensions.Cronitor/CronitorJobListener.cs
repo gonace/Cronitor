@@ -7,7 +7,8 @@ namespace Quartz;
 
 /// <summary>
 /// Reports every job Quartz runs to Cronitor: run when the job starts, then complete when it
-/// succeeds or fail when it throws. The job's name is used as the monitor key.
+/// succeeds or fail when it throws. The job's name is used as the monitor key, unless the job
+/// chooses one with <see cref="CronitorJobBuilderExtensions.WithCronitorMonitorKey"/>.
 /// Telemetry never breaks a job: if Cronitor cannot be reached, the job still runs as normal.
 /// </summary>
 public class CronitorJobListener : IJobListener
@@ -25,8 +26,15 @@ public class CronitorJobListener : IJobListener
 
     public async Task JobToBeExecuted(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
-        var run = await _telemetries.StartAsync(context.JobDetail.Key.Name).ConfigureAwait(false);
+        var run = await _telemetries.StartAsync(MonitorKeyOf(context)).ConfigureAwait(false);
         context.Put(RunKey, run);
+    }
+
+    private static string MonitorKeyOf(IJobExecutionContext context)
+    {
+        return context.MergedJobDataMap.TryGetString(CronitorJobBuilderExtensions.MonitorKey, out var monitorKey) && !string.IsNullOrWhiteSpace(monitorKey)
+            ? monitorKey
+            : context.JobDetail.Key.Name;
     }
 
     public Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken cancellationToken = default) => Task.CompletedTask;
