@@ -7,7 +7,7 @@ namespace Cronitor.Tests.Requests;
 public class ListNotificationRequestTests
 {
     [Fact]
-    public void ShouldSetEndpoint()
+    public void Should_set_Endpoint()
     {
         var request = new ListNotificationRequest();
 
@@ -15,7 +15,7 @@ public class ListNotificationRequestTests
     }
 
     [Fact]
-    public void ShouldSetHttpMethodToGet()
+    public void Should_set_Method_to_Get()
     {
         var request = new ListNotificationRequest();
 
@@ -23,7 +23,7 @@ public class ListNotificationRequestTests
     }
 
     [Fact]
-    public void ShouldDefaultPageToOne()
+    public void Should_default_Page_to_one()
     {
         var request = new ListNotificationRequest();
 
@@ -31,7 +31,7 @@ public class ListNotificationRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUriWithDefaultPage()
+    public void Should_build_the_uri_with_the_default_page()
     {
         var request = new ListNotificationRequest();
 
@@ -41,7 +41,7 @@ public class ListNotificationRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUriWithCustomPage()
+    public void Should_build_the_uri_with_a_custom_page()
     {
         var request = new ListNotificationRequest { Page = 5 };
 

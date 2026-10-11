@@ -14,7 +14,7 @@ public class CommandExtensionsTests
 {
     [Fact]
     [UseCulture("en-US")]
-    public void ShouldConvertObjectToQueryStringForCultureEnUs()
+    public void Should_convert_an_object_to_a_query_string_in_the_en_US_culture()
     {
         const string expected = "?name=Jane%20Doe&age=18&wage=25400.99&isonsickleave=true&working=true&starts_at=6%2F1%2F2019%208%3A00%3A00%20AM";
         var uri = new Uri("https://www.cronitor.io");
@@ -25,7 +25,7 @@ public class CommandExtensionsTests
 
     [Fact]
     [UseCulture("sv-SE")]
-    public void ShouldConvertObjectToQueryStringSvSe()
+    public void Should_convert_an_object_to_a_query_string_in_the_sv_SE_culture()
     {
         const string expected = "?name=Jane%20Doe&age=18&wage=25400%2C99&isonsickleave=true&working=true&starts_at=2019-06-01%2008%3A00%3A00";
         var uri = new Uri("https://www.cronitor.io");
@@ -35,7 +35,7 @@ public class CommandExtensionsTests
     }
 
     [Fact]
-    public void ShouldRepeatNameForEveryValueInACollection()
+    public void Should_repeat_the_name_for_every_value_in_a_collection()
     {
         var uri = new Uri("https://www.cronitor.io");
         var actual = new CollectionModel(uri, new[] { "a", "b" }).ToQueryString();
@@ -44,7 +44,7 @@ public class CommandExtensionsTests
     }
 
     [Fact]
-    public void ShouldLeaveOutAnEmptyCollection()
+    public void Should_leave_out_an_empty_collection()
     {
         var uri = new Uri("https://www.cronitor.io");
         var actual = new CollectionModel(uri, Array.Empty<string>()).ToQueryString();

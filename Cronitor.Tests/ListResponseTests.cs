@@ -11,7 +11,7 @@ public class ListResponseTests
 {
     [Theory]
     [JsonData("ListMonitors.json")]
-    public void ShouldReadTheTotalOfMonitors(string json)
+    public void Should_read_the_total_of_monitors(string json)
     {
         var response = Serializer.Deserialize<ListMonitorResponse>(json);
 
@@ -20,7 +20,7 @@ public class ListResponseTests
 
     [Theory]
     [JsonData("ListIssues.json")]
-    public void ShouldReadTheTotalAndPageCountOfIssues(string json)
+    public void Should_read_the_total_and_page_count_of_issues(string json)
     {
         var response = Serializer.Deserialize<ListIssueResponse>(json);
 
@@ -31,7 +31,7 @@ public class ListResponseTests
 
     [Theory]
     [JsonData("ListNotifications.json")]
-    public void ShouldReadTheTotalOfNotifications(string json)
+    public void Should_read_the_total_of_notifications(string json)
     {
         var response = Serializer.Deserialize<ListNotificationResponse>(json);
 

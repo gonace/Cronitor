@@ -9,7 +9,7 @@ namespace Cronitor.Tests;
 public class CommandTests
 {
     [Fact]
-    public void ShouldCreateCustomCommand()
+    public void Should_create_a_custom_command()
     {
         var command = new Command(Urls.TelemetryBaseUrl, HttpMethod.Options, "custom")
             .WithApiKey("apiKey")
@@ -24,7 +24,7 @@ public class CommandTests
     }
 
     [Fact]
-    public void ShouldCreateCustomCommandWithExtendedProperties()
+    public void Should_create_a_custom_command_with_extended_properties()
     {
         var command = new Command(Urls.TelemetryBaseUrl, HttpMethod.Options, "custom")
         {
@@ -48,7 +48,7 @@ public class CommandTests
     }
 
     [Fact]
-    public void ShouldSendEveryMetric()
+    public void Should_send_every_metric()
     {
         var command = new RunCommand()
             .WithApiKey("apiKey")
@@ -60,7 +60,7 @@ public class CommandTests
     }
 
     [Fact]
-    public void ShouldThrowExceptionWhenMissingRequiredFields()
+    public void Should_throw_when_required_fields_are_missing()
     {
         var command = new Command(Urls.TelemetryBaseUrl, HttpMethod.Get, "foo/bar");
 

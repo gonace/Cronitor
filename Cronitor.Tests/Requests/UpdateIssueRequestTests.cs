@@ -12,7 +12,7 @@ public class UpdateIssueRequestTests
 {
     [Theory]
     [JsonData("UpdateIssueRequest.json")]
-    public async Task ShouldCreateUpdateIssueRequestAsync(string expected)
+    public async Task Should_create_an_UpdateIssueRequest(string expected)
     {
         var issue = new Issue
         {
@@ -33,7 +33,7 @@ public class UpdateIssueRequestTests
     }
 
     [Fact]
-    public void ShouldSetEndpoint()
+    public void Should_set_Endpoint()
     {
         var issue = new Issue { Key = "test" };
         var request = new UpdateIssueRequest("test", issue);
@@ -42,7 +42,7 @@ public class UpdateIssueRequestTests
     }
 
     [Fact]
-    public void ShouldSetHttpMethodToPut()
+    public void Should_set_Method_to_Put()
     {
         var issue = new Issue { Key = "test" };
         var request = new UpdateIssueRequest("test", issue);
@@ -51,7 +51,7 @@ public class UpdateIssueRequestTests
     }
 
     [Fact]
-    public void ShouldSetKey()
+    public void Should_set_Key()
     {
         var issue = new Issue { Key = "test" };
         var request = new UpdateIssueRequest("issue-001", issue);
@@ -60,7 +60,7 @@ public class UpdateIssueRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUriWithKey()
+    public void Should_build_the_uri_with_the_key()
     {
         var issue = new Issue { Key = "test" };
         var request = new UpdateIssueRequest("issue-001", issue);

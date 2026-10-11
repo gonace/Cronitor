@@ -8,7 +8,7 @@ namespace Cronitor.Tests;
 public class RequestToUriTests : BaseTest
 {
     [Fact]
-    public void PauseMonitorRequest_ToUri_ShouldReplaceKeyPlaceholder()
+    public void Should_replace_the_key_placeholder_in_the_PauseMonitorRequest_uri()
     {
         var request = new PauseMonitorRequest(MonitorKey);
         var uri = request.ToUri();
@@ -18,7 +18,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void PauseMonitorRequest_ToUri_WithDuration_ShouldIncludeDuration()
+    public void Should_include_the_duration_in_the_PauseMonitorRequest_uri()
     {
         var request = new PauseMonitorRequest(MonitorKey, 24);
         var uri = request.ToUri();
@@ -28,7 +28,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void UnpauseMonitorRequest_ToUri_ShouldIncludeDurationZero()
+    public void Should_include_a_duration_of_zero_in_the_UnpauseMonitorRequest_uri()
     {
         var request = new UnpauseMonitorRequest(MonitorKey);
         var uri = request.ToUri();
@@ -38,7 +38,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void GetMonitorRequest_ToUri_ShouldReplaceKeyPlaceholder()
+    public void Should_replace_the_key_placeholder_in_the_GetMonitorRequest_uri()
     {
         var request = new GetMonitorRequest(MonitorKey);
         var uri = request.ToUri();
@@ -48,7 +48,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void DeleteMonitorRequest_ToUri_ShouldReplaceKeyPlaceholder()
+    public void Should_replace_the_key_placeholder_in_the_DeleteMonitorRequest_uri()
     {
         var request = new DeleteMonitorRequest(MonitorKey);
         var uri = request.ToUri();
@@ -58,7 +58,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void ListActivitiesRequest_ToUri_ShouldReplaceKeyPlaceholder()
+    public void Should_replace_the_key_placeholder_in_the_ListActivitiesRequest_uri()
     {
         var request = new ListActivitiesRequest(MonitorKey);
         var uri = request.ToUri();
@@ -68,7 +68,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void ListAlertsRequest_ToUri_ShouldReplaceKeyPlaceholder()
+    public void Should_replace_the_key_placeholder_in_the_ListAlertsRequest_uri()
     {
         var request = new ListAlertsRequest(MonitorKey);
         var uri = request.ToUri();
@@ -78,7 +78,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void ListPingsRequest_ToUri_ShouldReplaceKeyPlaceholder()
+    public void Should_replace_the_key_placeholder_in_the_ListPingsRequest_uri()
     {
         var request = new ListPingsRequest(MonitorKey);
         var uri = request.ToUri();
@@ -88,7 +88,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void GetIssueRequest_ToUri_ShouldReplaceKeyPlaceholder()
+    public void Should_replace_the_key_placeholder_in_the_GetIssueRequest_uri()
     {
         const string issueKey = "issue-123";
         var request = new GetIssueRequest(issueKey);
@@ -99,7 +99,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void UpdateIssueRequest_ToUri_ShouldReplaceKeyPlaceholder()
+    public void Should_replace_the_key_placeholder_in_the_UpdateIssueRequest_uri()
     {
         const string issueKey = "issue-123";
         var request = new UpdateIssueRequest(issueKey, new Issue());
@@ -110,7 +110,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void GetNotificationRequest_ToUri_ShouldReplaceKeyPlaceholder()
+    public void Should_replace_the_key_placeholder_in_the_GetNotificationRequest_uri()
     {
         var request = new GetNotificationRequest(TemplateKey);
         var uri = request.ToUri();
@@ -120,7 +120,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void DeleteNotificationRequest_ToUri_ShouldReplaceKeyPlaceholder()
+    public void Should_replace_the_key_placeholder_in_the_DeleteNotificationRequest_uri()
     {
         var request = new DeleteNotificationRequest(TemplateKey);
         var uri = request.ToUri();
@@ -130,7 +130,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void UpdateNotificationRequest_ToUri_ShouldReplaceKeyPlaceholder()
+    public void Should_replace_the_key_placeholder_in_the_UpdateNotificationRequest_uri()
     {
         var request = new UpdateNotificationRequest(TemplateKey, new Notification());
         var uri = request.ToUri();
@@ -140,7 +140,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void ListMonitorRequest_ToUri_ShouldIncludePageInQueryString()
+    public void Should_include_the_page_in_the_ListMonitorRequest_query_string()
     {
         var request = new ListMonitorRequest { Page = 2 };
         var uri = request.ToUri();
@@ -151,7 +151,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void ListIssueRequest_ToUri_ShouldIncludePageInQueryString()
+    public void Should_include_the_page_in_the_ListIssueRequest_query_string()
     {
         var request = new ListIssueRequest { Page = 3 };
         var uri = request.ToUri();
@@ -162,7 +162,7 @@ public class RequestToUriTests : BaseTest
     }
 
     [Fact]
-    public void PauseMonitorRequest_ToUri_WithSpecialCharacters_ShouldEncodeCorrectly()
+    public void Should_encode_special_characters_in_the_PauseMonitorRequest_uri()
     {
         const string specialKey = "monitor-with-special-chars";
         var request = new PauseMonitorRequest(specialKey);

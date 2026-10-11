@@ -24,7 +24,7 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldConstructWithApiKey()
+    public void Should_construct_with_an_api_key()
     {
         var client = new TelemetriesClient(ApiKey);
 
@@ -32,7 +32,7 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldDisposeTelemetriesClient()
+    public void Should_dispose_the_TelemetriesClient()
     {
         using (var client = new TelemetriesClient(ApiKey))
         {
@@ -42,7 +42,7 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteWhenUtilizingUsingBlock()
+    public void Should_execute_in_a_using_block()
     {
         _telemetriesClient.Run(MonitorKey);
 
@@ -51,7 +51,7 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldReturnTrueWhenThePingIsAccepted()
+    public void Should_return_true_when_the_ping_is_accepted()
     {
         var accepted = _telemetriesClient.Run(MonitorKey);
 
@@ -59,7 +59,7 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldReturnFalseWhenCronitorRespondsWithAnError()
+    public async Task Should_return_false_when_Cronitor_responds_with_an_error()
     {
         var handler = new FakeHttpMessageHandler(HttpStatusCode.InternalServerError, "{\"detail\":\"Server error\"}");
         var telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, handler));
@@ -70,7 +70,7 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldReturnFalseWhenCronitorRespondsWithoutJson()
+    public async Task Should_return_false_when_Cronitor_responds_without_json()
     {
         var handler = new FakeHttpMessageHandler(HttpStatusCode.BadGateway, "<html>Bad Gateway</html>");
         var telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, handler));
@@ -81,7 +81,7 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldReturnFalseWhenCronitorCannotBeReached()
+    public void Should_return_false_when_Cronitor_cannot_be_reached()
     {
         var network = new ScriptedHttpMessageHandler(ScriptedHttpMessageHandler.NetworkError());
         var telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, network));
@@ -92,7 +92,7 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldLogAnErrorWhenThePingCannotBeDelivered()
+    public void Should_log_an_error_when_the_ping_cannot_be_delivered()
     {
         var loggerFactory = new FakeLoggerFactory();
         var handler = new FakeHttpMessageHandler(HttpStatusCode.InternalServerError, "{\"detail\":\"Server error\"}");
@@ -108,7 +108,7 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldNotLogTheApiKey()
+    public void Should_not_log_the_api_key()
     {
         var loggerFactory = new FakeLoggerFactory();
         var network = new ScriptedHttpMessageHandler(ScriptedHttpMessageHandler.NetworkError());
@@ -122,7 +122,7 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldNotLogWhenThePingIsAccepted()
+    public void Should_not_log_when_the_ping_is_accepted()
     {
         var loggerFactory = new FakeLoggerFactory();
         var telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, _handler), loggerFactory);
@@ -133,13 +133,13 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldRequireALoggerFactory()
+    public void Should_require_a_logger_factory()
     {
         Assert.Throws<ArgumentNullException>(() => new TelemetriesClient(ApiKey, (ILoggerFactory)null));
     }
 
     [Fact]
-    public void ShouldReturnFalseWhenEveryAttemptTimesOut()
+    public void Should_return_false_when_every_attempt_times_out()
     {
         var network = new ScriptedHttpMessageHandler(ScriptedHttpMessageHandler.Hang());
         var retrying = new RetryingHttpMessageHandler(network, (_, _) => Task.CompletedTask, () => 0.5, TimeSpan.FromMilliseconds(50));
@@ -152,13 +152,13 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldStillThrowForAMissingMonitorKey()
+    public void Should_still_throw_for_a_missing_monitor_key()
     {
         Assert.Throws<ArgumentNullException>(() => _telemetriesClient.Run(" "));
     }
 
     [Fact]
-    public void ShouldStillThrowForACommandWithoutMonitorKey()
+    public void Should_still_throw_for_a_command_without_a_monitor_key()
     {
         var command = new RunCommand().WithApiKey(ApiKey);
 
@@ -166,7 +166,7 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldRetryTelemetryPings()
+    public void Should_retry_telemetry_pings()
     {
         var network = new ScriptedHttpMessageHandler(
             ScriptedHttpMessageHandler.Status(HttpStatusCode.ServiceUnavailable),
@@ -179,7 +179,7 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteStartMethod()
+    public void Should_execute_Start()
     {
         ITelemetriesClient telemetriesClient = _telemetriesClient;
 
@@ -193,7 +193,7 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteStartAsyncMethod()
+    public async Task Should_execute_StartAsync()
     {
         ITelemetriesClient telemetriesClient = _telemetriesClient;
 

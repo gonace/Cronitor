@@ -13,7 +13,7 @@ namespace Cronitor.Tests;
 public class HostBuilderExtensionsTests : BaseTest
 {
     [Fact]
-    public void ConfigureCronitor_WithApiKey_ShouldRegisterAllServices()
+    public void Should_register_all_services_when_ConfigureCronitor_gets_an_api_key()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
 
@@ -34,7 +34,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void ConfigureCronitor_WithApiKey_ShouldRegisterServicesAsTransient()
+    public void Should_register_services_as_transient_when_ConfigureCronitor_gets_an_api_key()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
         hostBuilder.ConfigureCronitor(ApiKey);
@@ -49,7 +49,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void ConfigureCronitor_WithNullBuilder_ShouldThrowArgumentNullException()
+    public void Should_throw_ArgumentNullException_when_ConfigureCronitor_gets_a_null_builder()
     {
         IHostBuilder builder = null;
 
@@ -57,7 +57,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void ConfigureCronitor_WithOptionsBuilder_ShouldRegisterAllServices()
+    public void Should_register_all_services_when_ConfigureCronitor_gets_an_options_builder()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
 
@@ -78,7 +78,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void ConfigureCronitor_WithOptionsBuilder_ShouldInvokeContextFunction()
+    public void Should_invoke_the_context_function_when_ConfigureCronitor_gets_an_options_builder()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
         var functionCalled = false;
@@ -98,7 +98,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void ConfigureCronitor_WithOptionsBuilderAndNullBuilder_ShouldThrowArgumentNullException()
+    public void Should_throw_ArgumentNullException_when_ConfigureCronitor_gets_an_options_builder_and_a_null_builder()
     {
         IHostBuilder builder = null;
 
@@ -107,7 +107,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void UseCronitor_WithApiKey_ShouldReturnBuilder()
+    public void Should_return_the_builder_when_UseCronitor_gets_an_api_key()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
 
@@ -118,7 +118,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void UseCronitor_WithApiKey_ShouldConfigureStaticCronitor()
+    public void Should_configure_the_static_Cronitor_when_UseCronitor_gets_an_api_key()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
 
@@ -132,7 +132,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void UseCronitor_WithApiKey_ShouldRegisterLoggingHostedService()
+    public void Should_register_the_logging_hosted_service_when_UseCronitor_gets_an_api_key()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
 
@@ -142,7 +142,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void UseCronitor_WithOptionsBuilder_ShouldRegisterLoggingHostedService()
+    public void Should_register_the_logging_hosted_service_when_UseCronitor_gets_an_options_builder()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
 
@@ -152,7 +152,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void UseCronitor_WithNullBuilder_ShouldThrowArgumentNullException()
+    public void Should_throw_ArgumentNullException_when_UseCronitor_gets_a_null_builder()
     {
         IHostBuilder builder = null;
 
@@ -160,7 +160,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void UseCronitor_WithNullApiKey_ShouldThrowArgumentNullException()
+    public void Should_throw_ArgumentNullException_when_UseCronitor_gets_a_null_api_key()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
 
@@ -168,7 +168,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void UseCronitor_WithEmptyApiKey_ShouldThrowArgumentNullException()
+    public void Should_throw_ArgumentNullException_when_UseCronitor_gets_an_empty_api_key()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
 
@@ -176,7 +176,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void UseCronitor_WithWhitespaceApiKey_ShouldThrowArgumentNullException()
+    public void Should_throw_ArgumentNullException_when_UseCronitor_gets_a_whitespace_api_key()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
 
@@ -184,7 +184,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void UseCronitor_WithOptionsBuilder_ShouldConfigureStaticCronitor()
+    public void Should_configure_the_static_Cronitor_when_UseCronitor_gets_an_options_builder()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
 
@@ -200,7 +200,7 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void UseCronitor_WithOptionsBuilderAndNullBuilder_ShouldThrowArgumentNullException()
+    public void Should_throw_ArgumentNullException_when_UseCronitor_gets_an_options_builder_and_a_null_builder()
     {
         IHostBuilder builder = null;
 

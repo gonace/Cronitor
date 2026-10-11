@@ -9,7 +9,7 @@ namespace Cronitor.Tests;
 public class CronitorLoggingHostedServiceTests
 {
     [Fact]
-    public async Task StartAsyncShouldConfigureWithTheLoggerFactory()
+    public async Task Should_configure_with_the_logger_factory_in_StartAsync()
     {
         var loggerFactory = new FakeLoggerFactory();
         ILoggerFactory configuredWith = null;
@@ -21,7 +21,7 @@ public class CronitorLoggingHostedServiceTests
     }
 
     [Fact]
-    public async Task StopAsyncShouldNotConfigure()
+    public async Task Should_not_configure_in_StopAsync()
     {
         var configured = false;
         var service = new CronitorLoggingHostedService(_ => configured = true, new FakeLoggerFactory());

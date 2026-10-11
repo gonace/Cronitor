@@ -6,7 +6,7 @@ namespace Cronitor.Tests;
 public class StringExtensionsTests
 {
     [Fact]
-    public void ShouldAddQueryString()
+    public void Should_add_a_query_string()
     {
         const string expected = "https://www.google.se?host=127.0.0.1&message=Lorem ipsum&env=Production&series=3de5db91-9c02-4e95-b8a9-9a2442702336&metric=count%3A9.99";
 
@@ -18,7 +18,7 @@ public class StringExtensionsTests
     }
 
     [Fact]
-    public void ShouldEncodeBase64()
+    public void Should_encode_base64()
     {
         const string expected = "ODc2NmMzMGMzNzU1NDhlNzk1NWRhNTIxYzBiM2ZkMGU6";
         var actual = "8766c30c375548e7955da521c0b3fd0e:".Base64Encode();
@@ -27,7 +27,7 @@ public class StringExtensionsTests
     }
 
     [Fact]
-    public void ShouldDecodeBase64()
+    public void Should_decode_base64()
     {
         const string expected = "8766c30c375548e7955da521c0b3fd0e:";
         var actual = "ODc2NmMzMGMzNzU1NDhlNzk1NWRhNTIxYzBiM2ZkMGU6".Base64Decode();

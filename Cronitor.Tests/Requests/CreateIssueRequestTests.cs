@@ -12,7 +12,7 @@ public class CreateIssueRequestTests
 {
     [Theory]
     [JsonData("CreateIssueRequest.json")]
-    public async Task ShouldCreateIssueRequestAsync(string expected)
+    public async Task Should_create_a_CreateIssueRequest(string expected)
     {
         var issue = new Issue
         {
@@ -33,7 +33,7 @@ public class CreateIssueRequestTests
     }
 
     [Fact]
-    public void ShouldSetEndpoint()
+    public void Should_set_Endpoint()
     {
         var issue = new Issue { Key = "test" };
         var request = new CreateIssueRequest(issue);
@@ -42,7 +42,7 @@ public class CreateIssueRequestTests
     }
 
     [Fact]
-    public void ShouldSetHttpMethodToPost()
+    public void Should_set_Method_to_Post()
     {
         var issue = new Issue { Key = "test" };
         var request = new CreateIssueRequest(issue);
@@ -51,7 +51,7 @@ public class CreateIssueRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUri()
+    public void Should_build_the_uri()
     {
         var issue = new Issue { Key = "test" };
         var request = new CreateIssueRequest(issue);

@@ -19,7 +19,7 @@ public class CronitorTests : BaseTest
     }
 
     [Fact]
-    public void ShouldConfigureCronitor()
+    public void Should_configure_Cronitor()
     {
         Cronitor.Configure(ApiKey);
 
@@ -30,7 +30,7 @@ public class CronitorTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteRunMethod()
+    public void Should_execute_Run()
     {
         ConfigureWithFakeHandler();
 
@@ -40,7 +40,7 @@ public class CronitorTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteRunAsyncMethod()
+    public async Task Should_execute_RunAsync()
     {
         ConfigureWithFakeHandler();
 
@@ -50,7 +50,7 @@ public class CronitorTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteCompleteMethod()
+    public void Should_execute_Complete()
     {
         ConfigureWithFakeHandler();
 
@@ -60,7 +60,7 @@ public class CronitorTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteCompleteAsyncMethod()
+    public async Task Should_execute_CompleteAsync()
     {
         ConfigureWithFakeHandler();
 
@@ -70,7 +70,7 @@ public class CronitorTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteFailMethod()
+    public void Should_execute_Fail()
     {
         ConfigureWithFakeHandler();
 
@@ -80,7 +80,7 @@ public class CronitorTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteFailAsyncMethod()
+    public async Task Should_execute_FailAsync()
     {
         ConfigureWithFakeHandler();
 
@@ -90,7 +90,7 @@ public class CronitorTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteTickMethod()
+    public void Should_execute_Tick()
     {
         ConfigureWithFakeHandler();
 
@@ -100,7 +100,7 @@ public class CronitorTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteTickAsyncMethod()
+    public async Task Should_execute_TickAsync()
     {
         ConfigureWithFakeHandler();
 
@@ -110,7 +110,7 @@ public class CronitorTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecutePingMethod()
+    public void Should_execute_Ping()
     {
         ConfigureWithFakeHandler();
         var command = new CompleteCommand()
@@ -123,7 +123,7 @@ public class CronitorTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecutePingAsyncMethod()
+    public async Task Should_execute_PingAsync()
     {
         ConfigureWithFakeHandler();
         var command = new CompleteCommand()
@@ -136,7 +136,7 @@ public class CronitorTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteStartMethod()
+    public void Should_execute_Start()
     {
         ConfigureWithFakeHandler();
 
@@ -146,7 +146,7 @@ public class CronitorTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteStartAsyncMethod()
+    public async Task Should_execute_StartAsync()
     {
         ConfigureWithFakeHandler();
 

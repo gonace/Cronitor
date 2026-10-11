@@ -8,7 +8,7 @@ namespace Cronitor.Tests;
 public class FailCommandTests
 {
     [Fact]
-    public void ShouldCreateFailCommand()
+    public void Should_create_a_FailCommand()
     {
         var command = new FailCommand()
             .WithApiKey("apiKey")
@@ -23,7 +23,7 @@ public class FailCommandTests
     }
 
     [Fact]
-    public void ShouldCreateFailCommandWithExtendedProperties()
+    public void Should_create_a_FailCommand_with_extended_properties()
     {
         var command = new FailCommand()
             .WithApiKey("apiKey")

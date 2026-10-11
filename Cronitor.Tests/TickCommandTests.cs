@@ -8,7 +8,7 @@ namespace Cronitor.Tests;
 public class TickCommandTests
 {
     [Fact]
-    public void ShouldCreateTickCommand()
+    public void Should_create_a_TickCommand()
     {
         var command = new TickCommand()
             .WithApiKey("apiKey")
@@ -23,7 +23,7 @@ public class TickCommandTests
     }
 
     [Fact]
-    public void ShouldCreateTickCommandWithExtendedProperties()
+    public void Should_create_a_TickCommand_with_extended_properties()
     {
         var command = new TickCommand()
             .WithApiKey("apiKey")

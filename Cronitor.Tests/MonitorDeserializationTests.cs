@@ -15,7 +15,7 @@ public class MonitorDeserializationTests
 {
     [Theory]
     [JsonData("ListMonitors.json")]
-    public void ShouldReadTheReadOnlyAttributes(string json)
+    public void Should_read_the_read_only_attributes(string json)
     {
         var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
 
@@ -30,7 +30,7 @@ public class MonitorDeserializationTests
 
     [Theory]
     [JsonData("ListMonitors.json")]
-    public void ShouldReadTheLatestEvent(string json)
+    public void Should_read_the_latest_event(string json)
     {
         var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
 
@@ -41,7 +41,7 @@ public class MonitorDeserializationTests
 
     [Theory]
     [JsonData("ListMonitors.json")]
-    public void ShouldReadTheLatestEventDetails(string json)
+    public void Should_read_the_latest_event_details(string json)
     {
         var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
 
@@ -53,7 +53,7 @@ public class MonitorDeserializationTests
 
     [Theory]
     [JsonData("ListMonitors.json")]
-    public void ShouldReadTheGroupNameFromTheAttributes(string json)
+    public void Should_read_the_group_name_from_the_attributes(string json)
     {
         var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
 
@@ -65,7 +65,7 @@ public class MonitorDeserializationTests
 
     [Theory]
     [JsonData("ListMonitors.json")]
-    public void ShouldReadTheLatestIssue(string json)
+    public void Should_read_the_latest_issue(string json)
     {
         var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
 
@@ -76,7 +76,7 @@ public class MonitorDeserializationTests
 
     [Theory]
     [JsonData("ListMonitors.json")]
-    public void ShouldReadTheSchedules(string json)
+    public void Should_read_the_schedules(string json)
     {
         var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
 
@@ -86,7 +86,7 @@ public class MonitorDeserializationTests
 
     [Theory]
     [JsonData("ListMonitors.json")]
-    public void ShouldReadTheBadges(string json)
+    public void Should_read_the_badges(string json)
     {
         var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
 
@@ -95,7 +95,7 @@ public class MonitorDeserializationTests
     }
 
     [Fact]
-    public void ShouldSendASingleScheduleAsSchedules()
+    public void Should_send_a_single_schedule_as_schedules()
     {
         var monitor = new Job("nightly-backup") { Schedule = Schedule.Cron.Daily(hour: 3) };
 
@@ -106,7 +106,7 @@ public class MonitorDeserializationTests
     }
 
     [Fact]
-    public void ShouldSendEverySchedule()
+    public void Should_send_every_schedule()
     {
         var monitor = new Job("nightly-backup") { Schedules = new[] { Schedule.Cron.Daily(hour: 3), Schedule.Cron.Daily(hour: 15) } };
 
@@ -117,7 +117,7 @@ public class MonitorDeserializationTests
 
     [Theory]
     [JsonData("ListMonitors.json")]
-    public void ShouldReadTheEnvironmentsStatusPagesAndAlertThreshold(string json)
+    public void Should_read_the_environments_status_pages_and_alert_threshold(string json)
     {
         var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
 
@@ -127,7 +127,7 @@ public class MonitorDeserializationTests
     }
 
     [Fact]
-    public void ShouldReadTheMetricNames()
+    public void Should_read_the_metric_names()
     {
         const string json = "{\"type\":\"job\",\"key\":\"nightly-backup\",\"metric_names\":[\"rows_processed\",\"queue_depth\"]}";
 
@@ -137,7 +137,7 @@ public class MonitorDeserializationTests
     }
 
     [Fact]
-    public void ShouldSendTheEnvironmentsStatusPagesAndAlertThreshold()
+    public void Should_send_the_environments_status_pages_and_alert_threshold()
     {
         var monitor = new Job("nightly-backup")
         {
@@ -154,7 +154,7 @@ public class MonitorDeserializationTests
     }
 
     [Fact]
-    public void ShouldSendPausedWhenCreatingAPausedMonitor()
+    public void Should_send_paused_when_creating_a_paused_monitor()
     {
         var monitor = new Job("nightly-backup") { Paused = true };
 
@@ -164,7 +164,7 @@ public class MonitorDeserializationTests
     }
 
     [Fact]
-    public void ShouldNotSendPausedWhenNotSet()
+    public void Should_not_send_paused_when_not_set()
     {
         var monitor = new Job("nightly-backup");
 
@@ -175,7 +175,7 @@ public class MonitorDeserializationTests
 
     [Theory]
     [JsonData("ListMonitors.json")]
-    public void ShouldNotSendTheReadOnlyAttributesBack(string json)
+    public void Should_not_send_the_read_only_attributes_back(string json)
     {
         var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
 

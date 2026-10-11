@@ -22,7 +22,7 @@ public class TelemetriesClient_CompleteTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteCompleteMethod()
+    public void Should_execute_Complete()
     {
         _telemetriesClient.Complete(MonitorKey);
 
@@ -32,7 +32,7 @@ public class TelemetriesClient_CompleteTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteCompleteAsyncMethod()
+    public async Task Should_execute_CompleteAsync()
     {
         await _telemetriesClient.CompleteAsync(MonitorKey);
 
@@ -42,7 +42,7 @@ public class TelemetriesClient_CompleteTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteCompleteMethodWithMessage()
+    public void Should_execute_Complete_with_a_message()
     {
         _telemetriesClient.Complete(MonitorKey, Message);
 
@@ -54,7 +54,7 @@ public class TelemetriesClient_CompleteTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteCompleteAsyncMethodWithMessage()
+    public async Task Should_execute_CompleteAsync_with_a_message()
     {
         await _telemetriesClient.CompleteAsync(MonitorKey, Message);
 
@@ -66,7 +66,7 @@ public class TelemetriesClient_CompleteTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteCompleteMethodWithEnvironment()
+    public void Should_execute_Complete_with_an_environment()
     {
         _telemetriesClient.Complete(MonitorKey, environment: Environment);
 
@@ -78,7 +78,7 @@ public class TelemetriesClient_CompleteTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteCompleteAsyncMethodWithEnvironment()
+    public async Task Should_execute_CompleteAsync_with_an_environment()
     {
         await _telemetriesClient.CompleteAsync(MonitorKey, environment: Environment);
 
@@ -90,7 +90,7 @@ public class TelemetriesClient_CompleteTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteCompleteMethodWithMessageAndEnvironment()
+    public void Should_execute_Complete_with_a_message_and_an_environment()
     {
         _telemetriesClient.Complete(MonitorKey, Message, Environment);
 
@@ -103,7 +103,7 @@ public class TelemetriesClient_CompleteTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteCompleteAsyncMethodWithMessageAndEnvironment()
+    public async Task Should_execute_CompleteAsync_with_a_message_and_an_environment()
     {
         await _telemetriesClient.CompleteAsync(MonitorKey, Message, Environment);
 

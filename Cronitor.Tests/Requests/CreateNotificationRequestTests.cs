@@ -12,7 +12,7 @@ public class CreateNotificationRequestTests
 {
     [Theory]
     [JsonData("CreateNotificationRequest.json")]
-    public async Task ShouldCreateNotificationRequestFromTemplateAsync(string expected)
+    public async Task Should_create_a_CreateNotificationRequest_from_a_template(string expected)
     {
         var template = new Notification
         {
@@ -35,7 +35,7 @@ public class CreateNotificationRequestTests
     }
 
     [Fact]
-    public void ShouldSetEndpoint()
+    public void Should_set_Endpoint()
     {
         var template = new Notification { Key = "test", Name = "Test" };
         var request = new CreateNotificationRequest(template);
@@ -44,7 +44,7 @@ public class CreateNotificationRequestTests
     }
 
     [Fact]
-    public void ShouldSetHttpMethodToPost()
+    public void Should_set_Method_to_Post()
     {
         var template = new Notification { Key = "test", Name = "Test" };
         var request = new CreateNotificationRequest(template);
@@ -53,7 +53,7 @@ public class CreateNotificationRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUri()
+    public void Should_build_the_uri()
     {
         var template = new Notification { Key = "test", Name = "Test" };
         var request = new CreateNotificationRequest(template);

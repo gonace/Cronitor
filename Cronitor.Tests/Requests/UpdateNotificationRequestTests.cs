@@ -12,7 +12,7 @@ public class UpdateNotificationRequestTests
 {
     [Theory]
     [JsonData("UpdateNotificationRequest.json")]
-    public async Task ShouldCreateUpdateNotificationRequestAsync(string expected)
+    public async Task Should_create_an_UpdateNotificationRequest(string expected)
     {
         var template = new Notification
         {
@@ -34,7 +34,7 @@ public class UpdateNotificationRequestTests
     }
 
     [Fact]
-    public void ShouldSetEndpoint()
+    public void Should_set_Endpoint()
     {
         var template = new Notification { Key = "test", Name = "Test" };
         var request = new UpdateNotificationRequest("test", template);
@@ -43,7 +43,7 @@ public class UpdateNotificationRequestTests
     }
 
     [Fact]
-    public void ShouldSetHttpMethodToPut()
+    public void Should_set_Method_to_Put()
     {
         var template = new Notification { Key = "test", Name = "Test" };
         var request = new UpdateNotificationRequest("test", template);
@@ -52,7 +52,7 @@ public class UpdateNotificationRequestTests
     }
 
     [Fact]
-    public void ShouldSetKey()
+    public void Should_set_Key()
     {
         var template = new Notification { Key = "test", Name = "Test" };
         var request = new UpdateNotificationRequest("test-key", template);
@@ -61,7 +61,7 @@ public class UpdateNotificationRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUriWithKey()
+    public void Should_build_the_uri_with_the_key()
     {
         var template = new Notification { Key = "test", Name = "Test" };
         var request = new UpdateNotificationRequest("devops-alerts", template);

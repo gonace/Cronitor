@@ -22,7 +22,7 @@ public class HttpClientErrorHandlingTests : BaseTest
     }
 
     [Fact]
-    public void ApiException_ShouldBeThrown_ForBadRequest()
+    public void Should_throw_ApiException_for_BadRequest()
     {
         var apiError = new ApiError { Message = "Bad request error" };
         var json = JsonSerializer.Serialize(apiError);
@@ -35,7 +35,7 @@ public class HttpClientErrorHandlingTests : BaseTest
     }
 
     [Fact]
-    public void ApiException_ShouldBeThrown_ForUnauthorized()
+    public void Should_throw_ApiException_for_Unauthorized()
     {
         var apiError = new ApiError { Message = "Unauthorized access" };
         var json = JsonSerializer.Serialize(apiError);
@@ -47,7 +47,7 @@ public class HttpClientErrorHandlingTests : BaseTest
     }
 
     [Fact]
-    public void ApiException_ShouldBeThrown_ForNotFound()
+    public void Should_throw_ApiException_for_NotFound()
     {
         var apiError = new ApiError { Message = "Resource not found" };
         var json = JsonSerializer.Serialize(apiError);
@@ -59,7 +59,7 @@ public class HttpClientErrorHandlingTests : BaseTest
     }
 
     [Fact]
-    public void ApiException_ShouldBeThrown_ForInternalServerError()
+    public void Should_throw_ApiException_for_InternalServerError()
     {
         var apiError = new ApiError { Message = "Internal server error" };
         var json = JsonSerializer.Serialize(apiError);
@@ -71,7 +71,7 @@ public class HttpClientErrorHandlingTests : BaseTest
     }
 
     [Fact]
-    public void ApiError_ShouldDeserializeFromJson()
+    public void Should_deserialize_ApiError_from_json()
     {
         const string json = "{\"detail\":\"Test error message\"}";
 
@@ -82,7 +82,7 @@ public class HttpClientErrorHandlingTests : BaseTest
     }
 
     [Fact]
-    public void ApiError_ShouldHandleNullMessage()
+    public void Should_handle_a_null_message_in_ApiError()
     {
         const string json = "{}";
 
@@ -93,7 +93,7 @@ public class HttpClientErrorHandlingTests : BaseTest
     }
 
     [Fact]
-    public void HttpStatusCode_ShouldBeCorrectlyFormatted_InExceptionMessage()
+    public void Should_format_the_HttpStatusCode_in_the_exception_message()
     {
         var statusCodes = new[]
         {

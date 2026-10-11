@@ -18,7 +18,7 @@ public class IssuesClientTests : BaseTest
     private const string IssueUri = IssuesUri + "/" + MonitorKey;
 
     [Fact]
-    public void ShouldConstructWithApiKey()
+    public void Should_construct_with_an_api_key()
     {
         var client = new IssuesClient(ApiKey);
 
@@ -26,7 +26,7 @@ public class IssuesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldDisposeIssuesClient()
+    public void Should_dispose_the_IssuesClient()
     {
         using (var client = new IssuesClient(ApiKey))
         {
@@ -36,7 +36,7 @@ public class IssuesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteListMethod()
+    public void Should_execute_List()
     {
         var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
@@ -52,7 +52,7 @@ public class IssuesClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteListAsyncMethod()
+    public async Task Should_execute_ListAsync()
     {
         var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
@@ -68,7 +68,7 @@ public class IssuesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteListMethodInUsingBlock()
+    public void Should_execute_List_in_a_using_block()
     {
         var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
@@ -86,7 +86,7 @@ public class IssuesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteListMethodWithFilters()
+    public void Should_execute_List_with_filters()
     {
         var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
@@ -99,7 +99,7 @@ public class IssuesClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteListAsyncMethodWithFilters()
+    public async Task Should_execute_ListAsync_with_filters()
     {
         var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
@@ -112,7 +112,7 @@ public class IssuesClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ListAsyncShouldRequireARequest()
+    public async Task Should_require_a_request_in_ListAsync()
     {
         var issuesClient = CreateClient(new FakeHttpMessageHandler());
 
@@ -120,7 +120,7 @@ public class IssuesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteGetMethod()
+    public void Should_execute_Get()
     {
         var response = Make.Issue.Key(MonitorKey).Build();
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
@@ -134,7 +134,7 @@ public class IssuesClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteGetAsyncMethod()
+    public async Task Should_execute_GetAsync()
     {
         var response = Make.Issue.Key(MonitorKey).Build();
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
@@ -148,7 +148,7 @@ public class IssuesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteCreateMethod()
+    public void Should_execute_Create()
     {
         var issue = Make.Issue.Build();
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(issue));
@@ -161,7 +161,7 @@ public class IssuesClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteCreateAsyncMethod()
+    public async Task Should_execute_CreateAsync()
     {
         var issue = Make.Issue.Build();
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(issue));
@@ -174,7 +174,7 @@ public class IssuesClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteUpdateMethod()
+    public void Should_execute_Update()
     {
         var issue = Make.Issue.Key(MonitorKey).Build();
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(issue));
@@ -188,7 +188,7 @@ public class IssuesClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteUpdateAsyncMethod()
+    public async Task Should_execute_UpdateAsync()
     {
         var issue = Make.Issue.Key(MonitorKey).Build();
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(issue));

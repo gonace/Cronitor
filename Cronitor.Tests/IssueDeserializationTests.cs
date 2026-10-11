@@ -15,7 +15,7 @@ public class IssueDeserializationTests
 {
     [Theory]
     [JsonData("ListIssues.json")]
-    public void ShouldReadTheState(string json)
+    public void Should_read_the_state(string json)
     {
         var issue = Serializer.Deserialize<ListIssueResponse>(json).Items.Single();
 
@@ -25,7 +25,7 @@ public class IssueDeserializationTests
 
     [Theory]
     [JsonData("ListIssues.json")]
-    public void ShouldReadTheUpdateHistory(string json)
+    public void Should_read_the_update_history(string json)
     {
         var issue = Serializer.Deserialize<ListIssueResponse>(json).Items.Single();
 
@@ -38,7 +38,7 @@ public class IssueDeserializationTests
 
     [Theory]
     [JsonData("ListIssues.json")]
-    public void ShouldReadWhenTheIssueEndedAndHowLongItLasted(string json)
+    public void Should_read_when_the_issue_ended_and_how_long_it_lasted(string json)
     {
         var issue = Serializer.Deserialize<ListIssueResponse>(json).Items.Single();
 
@@ -47,7 +47,7 @@ public class IssueDeserializationTests
     }
 
     [Fact]
-    public void ShouldSendAnUpdateWithOnlyItsMessageAndState()
+    public void Should_send_an_update_with_only_its_message_and_state()
     {
         var issue = new Issue
         {
@@ -61,7 +61,7 @@ public class IssueDeserializationTests
     }
 
     [Fact]
-    public void ShouldReadTheSeverity()
+    public void Should_read_the_severity()
     {
         const string json = "{\"key\":\"4b31fca52902b210\",\"severity\":\"outage\",\"state\":\"unresolved\"}";
 
@@ -72,7 +72,7 @@ public class IssueDeserializationTests
 
     [Theory]
     [JsonData("ListIssues.json")]
-    public void ShouldNotSendWhatCronitorSets(string json)
+    public void Should_not_send_what_Cronitor_sets(string json)
     {
         var issue = Serializer.Deserialize<ListIssueResponse>(json).Items.Single();
 
@@ -84,7 +84,7 @@ public class IssueDeserializationTests
     }
 
     [Fact]
-    public void ShouldSendStateAndSeverityAsStrings()
+    public void Should_send_state_and_severity_as_strings()
     {
         var issue = new Issue { Name = "Missed Execution", State = IssueState.Unresolved, Severity = IssueSeverity.Outage };
 

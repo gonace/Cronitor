@@ -22,7 +22,7 @@ public class TelemetriesClient_PingTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecutePingMethod()
+    public void Should_execute_Ping()
     {
         var command = new CompleteCommand()
             .WithApiKey(ApiKey)
@@ -35,7 +35,7 @@ public class TelemetriesClient_PingTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecutePingAsyncMethod()
+    public async Task Should_execute_PingAsync()
     {
         var command = new CompleteCommand()
             .WithApiKey(ApiKey)

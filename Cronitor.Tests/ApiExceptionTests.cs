@@ -9,7 +9,7 @@ namespace Cronitor.Tests;
 public class ApiExceptionTests
 {
     [Fact]
-    public void Constructor_WithMessageOnly_ShouldSetMessage()
+    public void Should_set_Message_when_constructed_with_only_a_message()
     {
         const string message = "Test error message";
 
@@ -19,7 +19,7 @@ public class ApiExceptionTests
     }
 
     [Fact]
-    public void Constructor_WithMessageAndStatusCode_ShouldFormatMessage()
+    public void Should_format_Message_when_constructed_with_a_message_and_status_code()
     {
         const string message = "Test error";
         const HttpStatusCode statusCode = HttpStatusCode.BadRequest;
@@ -30,7 +30,7 @@ public class ApiExceptionTests
     }
 
     [Fact]
-    public void Constructor_WithMessageAndStatusCode_NotFound_ShouldFormatMessage()
+    public void Should_format_Message_when_constructed_with_a_message_and_NotFound()
     {
         const string message = "Resource not found";
         const HttpStatusCode statusCode = HttpStatusCode.NotFound;
@@ -41,7 +41,7 @@ public class ApiExceptionTests
     }
 
     [Fact]
-    public void Constructor_WithApiError_ShouldUseErrorMessage()
+    public void Should_use_the_ApiError_message_when_constructed_with_an_ApiError()
     {
         var apiError = new ApiError { Message = "API error message" };
 
@@ -51,7 +51,7 @@ public class ApiExceptionTests
     }
 
     [Fact]
-    public void Constructor_WithApiErrorAndStatusCode_ShouldFormatMessage()
+    public void Should_format_Message_when_constructed_with_an_ApiError_and_status_code()
     {
         var apiError = new ApiError { Message = "Invalid request" };
         const HttpStatusCode statusCode = HttpStatusCode.BadRequest;
@@ -62,7 +62,7 @@ public class ApiExceptionTests
     }
 
     [Fact]
-    public void Constructor_WithApiErrorAndStatusCode_Unauthorized_ShouldFormatMessage()
+    public void Should_format_Message_when_constructed_with_an_ApiError_and_Unauthorized()
     {
         var apiError = new ApiError { Message = "Unauthorized access" };
         const HttpStatusCode statusCode = HttpStatusCode.Unauthorized;
@@ -73,7 +73,7 @@ public class ApiExceptionTests
     }
 
     [Fact]
-    public void Constructor_WithApiErrorAndStatusCode_InternalServerError_ShouldFormatMessage()
+    public void Should_format_Message_when_constructed_with_an_ApiError_and_InternalServerError()
     {
         var apiError = new ApiError { Message = "Server error" };
         const HttpStatusCode statusCode = HttpStatusCode.InternalServerError;
@@ -84,7 +84,7 @@ public class ApiExceptionTests
     }
 
     [Fact]
-    public async Task CanBeThrownAndCaughtAsync()
+    public async Task Should_be_thrown_and_caught()
     {
         const string message = "Test exception";
 
@@ -94,7 +94,7 @@ public class ApiExceptionTests
     }
 
     [Fact]
-    public async Task CanBeCaughtAsExceptionAsync()
+    public async Task Should_be_caught_as_an_Exception()
     {
         const string message = "Test exception";
 
@@ -105,7 +105,7 @@ public class ApiExceptionTests
     }
 
     [Fact]
-    public async Task WithStatusCode_CanBeThrownAndCaughtAsync()
+    public async Task Should_be_thrown_and_caught_with_a_status_code()
     {
         const string message = "Test exception";
         const HttpStatusCode statusCode = HttpStatusCode.BadRequest;

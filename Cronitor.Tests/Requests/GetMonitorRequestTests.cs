@@ -7,7 +7,7 @@ namespace Cronitor.Tests.Requests;
 public class GetMonitorRequestTests
 {
     [Fact]
-    public void ShouldSetEndpoint()
+    public void Should_set_Endpoint()
     {
         var request = new GetMonitorRequest("abc123");
 
@@ -15,7 +15,7 @@ public class GetMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldSetHttpMethodToGet()
+    public void Should_set_Method_to_Get()
     {
         var request = new GetMonitorRequest("abc123");
 
@@ -23,7 +23,7 @@ public class GetMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldSetKey()
+    public void Should_set_Key()
     {
         var request = new GetMonitorRequest("abc123");
 
@@ -31,7 +31,7 @@ public class GetMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUriWithKey()
+    public void Should_build_the_uri_with_the_key()
     {
         var request = new GetMonitorRequest("abc123");
 

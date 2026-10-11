@@ -22,7 +22,7 @@ public class MonitorsClientTests : BaseTest
     private const string MonitorUri = MonitorsUri + "/" + MonitorKey;
 
     [Fact]
-    public void ShouldConstructWithApiKey()
+    public void Should_construct_with_an_api_key()
     {
         var client = new MonitorsClient(ApiKey);
 
@@ -30,7 +30,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldDisposeMonitorsClient()
+    public void Should_dispose_the_MonitorsClient()
     {
         using (var client = new MonitorsClient(ApiKey))
         {
@@ -41,7 +41,7 @@ public class MonitorsClientTests : BaseTest
 
     [Theory]
     [JsonData("ListMonitors.json")]
-    public void ShouldExecuteListMethod(string json)
+    public void Should_execute_List(string json)
     {
         var handler = new FakeHttpMessageHandler(body: json);
         var monitorsClient = CreateClient(handler);
@@ -57,7 +57,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteListAsyncMethod()
+    public async Task Should_execute_ListAsync()
     {
         var response = new ListMonitorResponse { Items = new List<Monitor> { Make.Check.Build(), Make.Heartbeat.Build(), Make.Job.Build() } };
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
@@ -74,7 +74,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteListMethodWithFilters()
+    public void Should_execute_List_with_filters()
     {
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(new ListMonitorResponse { Items = new List<Monitor> { Make.Job.Build() } }));
         var monitorsClient = CreateClient(handler);
@@ -86,7 +86,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteListAsyncMethodWithFilters()
+    public async Task Should_execute_ListAsync_with_filters()
     {
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(new ListMonitorResponse { Items = new List<Monitor> { Make.Job.Build() } }));
         var monitorsClient = CreateClient(handler);
@@ -98,7 +98,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldRequestApiVersion20251128()
+    public void Should_request_api_version_2025_11_28()
     {
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(new ListMonitorResponse { Items = new List<Monitor>() }));
         var monitorsClient = CreateClient(handler);
@@ -110,7 +110,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ListAsyncShouldRequireARequest()
+    public async Task Should_require_a_request_in_ListAsync()
     {
         var monitorsClient = CreateClient(new FakeHttpMessageHandler());
 
@@ -118,7 +118,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteGetMethod()
+    public void Should_execute_Get()
     {
         var response = new Monitor(MonitorKey);
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
@@ -132,7 +132,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteGetAsyncMethod()
+    public async Task Should_execute_GetAsync()
     {
         var response = new Monitor(MonitorKey);
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
@@ -146,7 +146,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteCreateMethod()
+    public void Should_execute_Create()
     {
         var notify = new List<string>
         {
@@ -169,7 +169,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteCreateAsyncMethod()
+    public async Task Should_execute_CreateAsync()
     {
         var monitor = Make.Job.Build();
         var response = new CreateMonitorResponse { Monitors = new List<Monitor> { monitor } };
@@ -184,7 +184,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteUpdateMethod()
+    public void Should_execute_Update()
     {
         var monitor = Make.Job.Key(MonitorKey).Build();
         var response = new UpdateMonitorResponse { Monitors = new List<Monitor> { monitor } };
@@ -200,7 +200,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteUpdateAsyncMethod()
+    public async Task Should_execute_UpdateAsync()
     {
         var monitor = Make.Job.Key(MonitorKey).Build();
         var response = new UpdateMonitorResponse { Monitors = new List<Monitor> { monitor } };
@@ -216,7 +216,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteDeleteMethod()
+    public void Should_execute_Delete()
     {
         var handler = new FakeHttpMessageHandler();
         var monitorsClient = CreateClient(handler);
@@ -227,7 +227,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteDeleteAsyncMethod()
+    public async Task Should_execute_DeleteAsync()
     {
         var handler = new FakeHttpMessageHandler();
         var monitorsClient = CreateClient(handler);
@@ -238,7 +238,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecutePauseMethod()
+    public void Should_execute_Pause()
     {
         var handler = new FakeHttpMessageHandler();
         var monitorsClient = CreateClient(handler);
@@ -249,7 +249,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecutePauseAsyncMethod()
+    public async Task Should_execute_PauseAsync()
     {
         var handler = new FakeHttpMessageHandler();
         var monitorsClient = CreateClient(handler);
@@ -260,7 +260,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecutePauseMethodWithHours()
+    public void Should_execute_Pause_with_hours()
     {
         var handler = new FakeHttpMessageHandler();
         var monitorsClient = CreateClient(handler);
@@ -271,7 +271,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecutePauseAsyncMethodWithHours()
+    public async Task Should_execute_PauseAsync_with_hours()
     {
         var handler = new FakeHttpMessageHandler();
         var monitorsClient = CreateClient(handler);
@@ -282,7 +282,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteUnpauseMethod()
+    public void Should_execute_Unpause()
     {
         var handler = new FakeHttpMessageHandler();
         var monitorsClient = CreateClient(handler);
@@ -293,7 +293,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteUnpauseAsyncMethod()
+    public async Task Should_execute_UnpauseAsync()
     {
         var handler = new FakeHttpMessageHandler();
         var monitorsClient = CreateClient(handler);
@@ -304,7 +304,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteActivitiesMethod()
+    public void Should_execute_Activities()
     {
         var activities = new List<Activity> { new Activity() };
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(activities));
@@ -318,7 +318,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteActivitiesAsyncMethod()
+    public async Task Should_execute_ActivitiesAsync()
     {
         var activities = new List<Activity> { new Activity() };
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(activities));
@@ -333,7 +333,7 @@ public class MonitorsClientTests : BaseTest
 
     [Theory]
     [JsonData("ListMonitorAlerts.json")]
-    public void ShouldExecuteAlertsMethod(string json)
+    public void Should_execute_Alerts(string json)
     {
         var handler = new FakeHttpMessageHandler(body: json);
         var monitorsClient = CreateClient(handler);
@@ -346,7 +346,7 @@ public class MonitorsClientTests : BaseTest
 
     [Theory]
     [JsonData("ListMonitorAlerts.json")]
-    public async Task ShouldExecuteAlertsAsyncMethod(string json)
+    public async Task Should_execute_AlertsAsync(string json)
     {
         var handler = new FakeHttpMessageHandler(body: json);
         var monitorsClient = CreateClient(handler);
@@ -359,7 +359,7 @@ public class MonitorsClientTests : BaseTest
 
     [Theory]
     [JsonData("ListMonitorAlerts.json")]
-    public void ShouldReadAlertsFromARealResponse(string json)
+    public void Should_read_alerts_from_a_real_response(string json)
     {
         var handler = new FakeHttpMessageHandler(body: json);
         var monitorsClient = CreateClient(handler);
@@ -379,7 +379,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecutePingsMethod()
+    public void Should_execute_Pings()
     {
         var pings = new List<Ping> { new Ping() };
         var response = new Dictionary<string, IEnumerable<Ping>> { { MonitorKey, pings } };
@@ -395,7 +395,7 @@ public class MonitorsClientTests : BaseTest
 
     [Theory]
     [JsonData("ListMonitorActivity.json")]
-    public void ShouldReadActivitiesFromARealResponse(string json)
+    public void Should_read_activities_from_a_real_response(string json)
     {
         var handler = new FakeHttpMessageHandler(body: json);
         var monitorsClient = CreateClient(handler);
@@ -415,7 +415,7 @@ public class MonitorsClientTests : BaseTest
 
     [Theory]
     [JsonData("ListMonitorPings.json")]
-    public void ShouldReadPingsFromARealResponse(string json)
+    public void Should_read_pings_from_a_real_response(string json)
     {
         var handler = new FakeHttpMessageHandler(body: json);
         var monitorsClient = CreateClient(handler);
@@ -434,7 +434,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecutePingsAsyncMethod()
+    public async Task Should_execute_PingsAsync()
     {
         var pings = new List<Ping> { new Ping() };
         var response = new Dictionary<string, IEnumerable<Ping>> { { MonitorKey, pings } };
@@ -449,7 +449,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task CreateAsyncShouldReturnNullWhenResponseIsNull()
+    public async Task Should_return_null_from_CreateAsync_when_the_response_is_null()
     {
         var handler = new FakeHttpMessageHandler(body: "null");
         var monitorsClient = CreateClient(handler);
@@ -462,7 +462,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task AlertsAsyncShouldReturnNullWhenResponseIsNull()
+    public async Task Should_return_null_from_AlertsAsync_when_the_response_is_null()
     {
         var handler = new FakeHttpMessageHandler(body: "null");
         var monitorsClient = CreateClient(handler);
@@ -474,7 +474,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task AlertsAsyncShouldReturnNoAlertsWhenThereAreNone()
+    public async Task Should_return_no_alerts_from_AlertsAsync_when_there_are_none()
     {
         var handler = new FakeHttpMessageHandler(body: "[]");
         var monitorsClient = CreateClient(handler);
@@ -486,7 +486,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task PingsAsyncShouldReturnNullWhenResponseIsNull()
+    public async Task Should_return_null_from_PingsAsync_when_the_response_is_null()
     {
         var handler = new FakeHttpMessageHandler(body: "null");
         var monitorsClient = CreateClient(handler);
@@ -498,7 +498,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task PingsAsyncShouldReturnNullWhenDictionaryIsEmpty()
+    public async Task Should_return_null_from_PingsAsync_when_the_dictionary_is_empty()
     {
         var handler = new FakeHttpMessageHandler(body: "{}");
         var monitorsClient = CreateClient(handler);
@@ -510,7 +510,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task GetAsyncShouldThrowApiExceptionWhenMonitorIsNotFound()
+    public async Task Should_throw_ApiException_from_GetAsync_when_the_monitor_is_not_found()
     {
         var handler = new FakeHttpMessageHandler(HttpStatusCode.NotFound, "{\"detail\":\"Monitor not found\"}");
         var monitorsClient = CreateClient(handler);
@@ -521,7 +521,7 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task DeleteAsyncShouldThrowApiExceptionWhenUnauthorized()
+    public async Task Should_throw_ApiException_from_DeleteAsync_when_unauthorized()
     {
         var handler = new FakeHttpMessageHandler(HttpStatusCode.Unauthorized, "{\"detail\":\"Invalid API key\"}");
         var monitorsClient = CreateClient(handler);

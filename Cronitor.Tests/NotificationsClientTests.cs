@@ -16,7 +16,7 @@ public class NotificationsClientTests : BaseTest
     private const string NotificationsUri = "https://cronitor.io/api/notifications";
 
     [Fact]
-    public void ShouldConstructWithApiKey()
+    public void Should_construct_with_an_api_key()
     {
         var client = new NotificationsClient(ApiKey);
 
@@ -24,7 +24,7 @@ public class NotificationsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldDisposeNotificationsClient()
+    public void Should_dispose_the_NotificationsClient()
     {
         using (var client = new NotificationsClient(ApiKey))
         {
@@ -34,7 +34,7 @@ public class NotificationsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteListMethod()
+    public void Should_execute_List()
     {
         var response = new ListNotificationResponse { Items = new List<Notification> { Make.Template.Build() } };
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
@@ -50,7 +50,7 @@ public class NotificationsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteListAsyncMethod()
+    public async Task Should_execute_ListAsync()
     {
         var response = new ListNotificationResponse { Items = new List<Notification> { Make.Template.Build() } };
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
@@ -66,7 +66,7 @@ public class NotificationsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteGetMethod()
+    public void Should_execute_Get()
     {
         var response = Make.Template.Build();
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
@@ -79,7 +79,7 @@ public class NotificationsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteGetAsyncMethod()
+    public async Task Should_execute_GetAsync()
     {
         var response = Make.Template.Build();
         var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
@@ -92,7 +92,7 @@ public class NotificationsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteCreateMethod()
+    public void Should_execute_Create()
     {
         var notifications = new Notifications
         {
@@ -109,7 +109,7 @@ public class NotificationsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteCreateAsyncMethod()
+    public async Task Should_execute_CreateAsync()
     {
         var notifications = new Notifications
         {
@@ -126,7 +126,7 @@ public class NotificationsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteUpdateMethod()
+    public void Should_execute_Update()
     {
         var response = Make.Template.Build();
         var request = new UpdateNotificationRequest(TemplateKey, response);
@@ -140,7 +140,7 @@ public class NotificationsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteUpdateAsyncMethod()
+    public async Task Should_execute_UpdateAsync()
     {
         var response = Make.Template.Build();
         var request = new UpdateNotificationRequest(TemplateKey, response);
@@ -154,7 +154,7 @@ public class NotificationsClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteDeleteMethod()
+    public void Should_execute_Delete()
     {
         var handler = new FakeHttpMessageHandler();
         var notificationsClient = CreateClient(handler);
@@ -165,7 +165,7 @@ public class NotificationsClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteDeleteAsyncMethod()
+    public async Task Should_execute_DeleteAsync()
     {
         var handler = new FakeHttpMessageHandler();
         var notificationsClient = CreateClient(handler);

@@ -36,7 +36,7 @@ internal class TestClient : BaseClient<TestClient>
 public class BaseClientTests : BaseTest
 {
     [Fact]
-    public void ShouldConstructWithUriAndApiKey()
+    public void Should_construct_with_a_uri_and_an_api_key()
     {
         var client = new TestClient(Urls.DefaultApiUrl, ApiKey);
 
@@ -44,7 +44,7 @@ public class BaseClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldConstructWithHttpClient()
+    public void Should_construct_with_an_HttpClient()
     {
         var httpClient = new HttpClient(Urls.TelemetryBaseUrl, ApiKey, new FakeHttpMessageHandler());
         var client = new TestClient(httpClient);
@@ -53,7 +53,7 @@ public class BaseClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldSendCommandAsync()
+    public async Task Should_send_a_command_with_SendAsync()
     {
         var handler = new FakeHttpMessageHandler();
         var command = new RunCommand()
@@ -68,7 +68,7 @@ public class BaseClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldSendCommandSync()
+    public void Should_send_a_command_with_Send()
     {
         var handler = new FakeHttpMessageHandler();
         var command = new RunCommand()
@@ -83,7 +83,7 @@ public class BaseClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldDisposeWithoutError()
+    public void Should_dispose_without_an_error()
     {
         var client = new TestClient(Urls.DefaultApiUrl, ApiKey);
 
@@ -93,7 +93,7 @@ public class BaseClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldDisposeUsingUsingStatement()
+    public void Should_dispose_in_a_using_statement()
     {
         using (var client = new TestClient(Urls.DefaultApiUrl, ApiKey))
         {

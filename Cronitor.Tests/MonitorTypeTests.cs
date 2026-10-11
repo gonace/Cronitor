@@ -13,7 +13,7 @@ namespace Cronitor.Tests;
 public class MonitorTypeTests : BaseTest
 {
     [Fact]
-    public void ShouldCreateCheckMonitor()
+    public void Should_create_a_check_monitor()
     {
         var regions = new List<Region>
         {
@@ -54,7 +54,7 @@ public class MonitorTypeTests : BaseTest
     }
 
     [Fact]
-    public void ShouldCreateHeartbeatMonitor()
+    public void Should_create_a_heartbeat_monitor()
     {
         var schedule = Schedule.Every(60).Seconds;
         const string timezone = "Europe/Stockholm";
@@ -73,7 +73,7 @@ public class MonitorTypeTests : BaseTest
     }
 
     [Fact]
-    public void ShouldCreateJobMonitor()
+    public void Should_create_a_job_monitor()
     {
         var assertions = new List<AssertionRule>
         {

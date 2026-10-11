@@ -10,7 +10,7 @@ public class CloneMonitorRequestTests
 {
     [Theory]
     [JsonData("CloneMonitorRequest.json")]
-    public async Task ShouldCreateCloneMonitorRequestAsync(string expected)
+    public async Task Should_create_a_CloneMonitorRequest(string expected)
     {
         var request = new CloneMonitorRequest("nightly-backup-job", "nightly-backup-job-clone");
 
@@ -23,7 +23,7 @@ public class CloneMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldSetEndpoint()
+    public void Should_set_Endpoint()
     {
         var request = new CloneMonitorRequest("test");
 
@@ -31,7 +31,7 @@ public class CloneMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldSetHttpMethodToPost()
+    public void Should_set_Method_to_Post()
     {
         var request = new CloneMonitorRequest("test");
 
@@ -39,7 +39,7 @@ public class CloneMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUri()
+    public void Should_build_the_uri()
     {
         var request = new CloneMonitorRequest("test");
 

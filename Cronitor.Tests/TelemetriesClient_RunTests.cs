@@ -22,7 +22,7 @@ public class TelemetriesClient_RunTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteRunMethod()
+    public void Should_execute_Run()
     {
         _telemetriesClient.Run(MonitorKey);
 
@@ -32,7 +32,7 @@ public class TelemetriesClient_RunTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteRunAsyncMethod()
+    public async Task Should_execute_RunAsync()
     {
         await _telemetriesClient.RunAsync(MonitorKey);
 
@@ -42,7 +42,7 @@ public class TelemetriesClient_RunTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteRunMethodWithMessage()
+    public void Should_execute_Run_with_a_message()
     {
         _telemetriesClient.Run(MonitorKey, Message);
 
@@ -54,7 +54,7 @@ public class TelemetriesClient_RunTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteRunAsyncMethodWithMessage()
+    public async Task Should_execute_RunAsync_with_a_message()
     {
         await _telemetriesClient.RunAsync(MonitorKey, Message);
 
@@ -66,7 +66,7 @@ public class TelemetriesClient_RunTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteRunMethodWithEnvironment()
+    public void Should_execute_Run_with_an_environment()
     {
         _telemetriesClient.Run(MonitorKey, environment: Environment);
 
@@ -78,7 +78,7 @@ public class TelemetriesClient_RunTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteRunAsyncMethodWithEnvironment()
+    public async Task Should_execute_RunAsync_with_an_environment()
     {
         await _telemetriesClient.RunAsync(MonitorKey, environment: Environment);
 
@@ -90,7 +90,7 @@ public class TelemetriesClient_RunTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteRunMethodWithMessageAndEnvironment()
+    public void Should_execute_Run_with_a_message_and_an_environment()
     {
         _telemetriesClient.Run(MonitorKey, Message, Environment);
 
@@ -103,7 +103,7 @@ public class TelemetriesClient_RunTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteRunAsyncMethodWithMessageAndEnvironment()
+    public async Task Should_execute_RunAsync_with_a_message_and_an_environment()
     {
         await _telemetriesClient.RunAsync(MonitorKey, Message, Environment);
 
@@ -120,7 +120,7 @@ public class TelemetriesClient_RunTests : BaseTest
     [InlineData("50% done #3")]
     [InlineData("it's ok")]
     [InlineData("x=1+2")]
-    public void ShouldSendMessageUnchanged(string message)
+    public void Should_send_the_message_unchanged(string message)
     {
         _telemetriesClient.Run(MonitorKey, message);
 
@@ -129,7 +129,7 @@ public class TelemetriesClient_RunTests : BaseTest
     }
 
     [Fact]
-    public void ShouldSendEnvironmentUnchanged()
+    public void Should_send_the_environment_unchanged()
     {
         const string environment = "staging & qa";
 
@@ -140,7 +140,7 @@ public class TelemetriesClient_RunTests : BaseTest
     }
 
     [Fact]
-    public void ShouldUrlEncodeQueryValues()
+    public void Should_url_encode_query_values()
     {
         _telemetriesClient.Run(MonitorKey, "a & b");
 

@@ -8,7 +8,7 @@ namespace Cronitor.Tests;
 public class AssertionTests
 {
     [Fact]
-    public void MetricDurationLessThan()
+    public void Should_build_Metric_Duration_LessThan()
     {
         var result = Assertion.Metric.Duration.LessThan("30s");
 
@@ -16,7 +16,7 @@ public class AssertionTests
     }
 
     [Fact]
-    public void MetricErrorCountLessThan()
+    public void Should_build_Metric_ErrorCount_LessThan()
     {
         var result = Assertion.Metric.ErrorCount.LessThan(5);
 
@@ -24,7 +24,7 @@ public class AssertionTests
     }
 
     [Fact]
-    public void MetricCountGreaterThan()
+    public void Should_build_Metric_Count_GreaterThan()
     {
         var result = Assertion.Metric.Count.GreaterThan(0);
 
@@ -32,7 +32,7 @@ public class AssertionTests
     }
 
     [Fact]
-    public void ResponseCodeEquals()
+    public void Should_build_Response_Code_Equals()
     {
         var result = Assertion.Response.Code.Equals(200);
 
@@ -40,7 +40,7 @@ public class AssertionTests
     }
 
     [Fact]
-    public void ResponseTimeLessThan()
+    public void Should_build_Response_Time_LessThan()
     {
         var result = Assertion.Response.Time.LessThan("2s");
 
@@ -48,7 +48,7 @@ public class AssertionTests
     }
 
     [Fact]
-    public void ResponseBodyContains()
+    public void Should_build_Response_Body_Contains()
     {
         var result = Assertion.Response.Body.Contains("healthy");
 
@@ -56,7 +56,7 @@ public class AssertionTests
     }
 
     [Fact]
-    public void ResponseJsonGreaterThan()
+    public void Should_build_Response_Json_GreaterThan()
     {
         var result = Assertion.Response.Json("user.count").GreaterThan(10);
 
@@ -64,7 +64,7 @@ public class AssertionTests
     }
 
     [Fact]
-    public void ResponseHeaderEquals()
+    public void Should_build_Response_Header_Equals()
     {
         var result = Assertion.Response.Header("X-Version").Equals("1.2.3");
 
@@ -72,7 +72,7 @@ public class AssertionTests
     }
 
     [Fact]
-    public void ToStringReturnsValue()
+    public void Should_return_the_value_from_ToString()
     {
         var rule = Assertion.Metric.Duration.LessThan("30s");
 
@@ -80,7 +80,7 @@ public class AssertionTests
     }
 
     [Fact]
-    public void ImplicitStringConversion()
+    public void Should_convert_implicitly_to_a_string()
     {
         string result = Assertion.Response.Code.Equals(200);
 
@@ -88,7 +88,7 @@ public class AssertionTests
     }
 
     [Fact]
-    public void ImplicitAssertionRuleFromString()
+    public void Should_convert_implicitly_from_a_string_to_an_AssertionRule()
     {
         AssertionRule rule = "metric.duration < 30s";
 
@@ -96,7 +96,7 @@ public class AssertionTests
     }
 
     [Fact]
-    public void SerializesAsJsonString()
+    public void Should_serialize_as_a_json_string()
     {
         var rules = new List<AssertionRule>
         {
@@ -109,7 +109,7 @@ public class AssertionTests
     }
 
     [Fact]
-    public void DeserializesFromJsonString()
+    public void Should_deserialize_from_a_json_string()
     {
         var json = "{\"assertions\":[\"metric.duration < 15min\"]}";
 

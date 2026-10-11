@@ -8,7 +8,7 @@ namespace Cronitor.Tests.Requests;
 public class ListIssueRequestTests
 {
     [Fact]
-    public void ShouldSetEndpoint()
+    public void Should_set_Endpoint()
     {
         var request = new ListIssueRequest();
 
@@ -16,7 +16,7 @@ public class ListIssueRequestTests
     }
 
     [Fact]
-    public void ShouldSetHttpMethodToGet()
+    public void Should_set_Method_to_Get()
     {
         var request = new ListIssueRequest();
 
@@ -24,7 +24,7 @@ public class ListIssueRequestTests
     }
 
     [Fact]
-    public void ShouldDefaultPageToOne()
+    public void Should_default_Page_to_one()
     {
         var request = new ListIssueRequest();
 
@@ -32,7 +32,7 @@ public class ListIssueRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUriWithDefaultPage()
+    public void Should_build_the_uri_with_the_default_page()
     {
         var request = new ListIssueRequest();
 
@@ -42,7 +42,7 @@ public class ListIssueRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUriWithCustomPage()
+    public void Should_build_the_uri_with_a_custom_page()
     {
         var request = new ListIssueRequest { Page = 2 };
 
@@ -52,7 +52,7 @@ public class ListIssueRequestTests
     }
 
     [Fact]
-    public void ShouldRepeatStateForEveryState()
+    public void Should_repeat_state_for_every_state()
     {
         var request = new ListIssueRequest { States = { IssueState.Unresolved, IssueState.Investigating } };
 
@@ -62,7 +62,7 @@ public class ListIssueRequestTests
     }
 
     [Fact]
-    public void ShouldRepeatSeverityForEverySeverity()
+    public void Should_repeat_severity_for_every_severity()
     {
         var request = new ListIssueRequest { Severities = { IssueSeverity.Outage, IssueSeverity.MinorOutage } };
 
@@ -72,7 +72,7 @@ public class ListIssueRequestTests
     }
 
     [Fact]
-    public void ShouldSendExpansionsInLowerCase()
+    public void Should_send_expansions_in_lower_case()
     {
         var request = new ListIssueRequest { WithMonitorDetails = true, WithAlertDetails = false };
 
@@ -82,7 +82,7 @@ public class ListIssueRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUriWithEveryFilter()
+    public void Should_build_the_uri_with_every_filter()
     {
         var request = new ListIssueRequest
         {
@@ -124,7 +124,7 @@ public class ListIssueRequestTests
     [InlineData("-started")]
     [InlineData("relevance")]
     [InlineData("-relevance")]
-    public void ShouldOrderByEveryDocumentedOrder(string order)
+    public void Should_order_by_every_documented_order(string order)
     {
         var orders = new[] { IssueOrder.StartedAscending, IssueOrder.StartedDescending, IssueOrder.RelevanceAscending, IssueOrder.RelevanceDescending };
 

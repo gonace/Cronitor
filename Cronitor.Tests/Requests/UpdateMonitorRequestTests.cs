@@ -15,7 +15,7 @@ public class UpdateMonitorRequestTests
 {
     [Theory]
     [JsonData("UpdateMonitorRequest.json")]
-    public async Task ShouldCreateUpdateMonitorRequestAsync(string expected)
+    public async Task Should_create_an_UpdateMonitorRequest(string expected)
     {
         var monitor = new Monitor("nightly-backup-job")
             .With(x => x.Type, MonitorType.Job.ToString())
@@ -37,7 +37,7 @@ public class UpdateMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldSetEndpoint()
+    public void Should_set_Endpoint()
     {
         var monitor = new Monitor("test");
         var request = new UpdateMonitorRequest(monitor);
@@ -46,7 +46,7 @@ public class UpdateMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldSetHttpMethodToPut()
+    public void Should_set_Method_to_Put()
     {
         var monitor = new Monitor("test");
         var request = new UpdateMonitorRequest(monitor);
@@ -55,7 +55,7 @@ public class UpdateMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUri()
+    public void Should_build_the_uri()
     {
         var monitor = new Monitor("test");
         var request = new UpdateMonitorRequest(monitor);

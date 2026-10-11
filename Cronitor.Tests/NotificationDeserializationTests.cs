@@ -13,7 +13,7 @@ public class NotificationDeserializationTests
 {
     [Theory]
     [JsonData("ListNotifications.json")]
-    public void ShouldReadTheNewerChannels(string json)
+    public void Should_read_the_newer_channels(string json)
     {
         var notifications = Serializer.Deserialize<ListNotificationResponse>(json).Items.Single().Notifications;
 
@@ -25,7 +25,7 @@ public class NotificationDeserializationTests
 
     [Theory]
     [JsonData("ListNotifications.json")]
-    public void ShouldReadNoMonitorDetailsForAnUnusedList(string json)
+    public void Should_read_no_monitor_details_for_an_unused_list(string json)
     {
         var notification = Serializer.Deserialize<ListNotificationResponse>(json).Items.Single();
 
@@ -33,7 +33,7 @@ public class NotificationDeserializationTests
     }
 
     [Fact]
-    public void ShouldReadTheMonitorsUsingTheList()
+    public void Should_read_the_monitors_using_the_list()
     {
         const string json = "{\"key\":\"default\",\"monitor_details\":[{\"key\":\"api-health\",\"name\":\"API Health Check\"}]}";
 
@@ -44,7 +44,7 @@ public class NotificationDeserializationTests
     }
 
     [Fact]
-    public void ShouldReadTheEnvironments()
+    public void Should_read_the_environments()
     {
         const string json = "{\"key\":\"default\",\"environments\":[{\"key\":\"production\"}]}";
 
@@ -54,7 +54,7 @@ public class NotificationDeserializationTests
     }
 
     [Fact]
-    public void ShouldSendTheEnvironmentsAsObjects()
+    public void Should_send_the_environments_as_objects()
     {
         var notification = new Notification { Name = "Default", Environments = new[] { new NotificationEnvironment { Key = "production" } } };
 
@@ -65,7 +65,7 @@ public class NotificationDeserializationTests
 
     [Theory]
     [JsonData("ListNotifications.json")]
-    public void ShouldNotSendWhenTheListWasCreated(string json)
+    public void Should_not_send_when_the_list_was_created(string json)
     {
         var notification = Serializer.Deserialize<ListNotificationResponse>(json).Items.Single();
 
@@ -76,7 +76,7 @@ public class NotificationDeserializationTests
 
     [Theory]
     [JsonData("ListNotifications.json")]
-    public void ShouldNotSendTheMonitorsOrStatusCronitorSets(string json)
+    public void Should_not_send_the_monitors_or_status_Cronitor_sets(string json)
     {
         var notification = Serializer.Deserialize<ListNotificationResponse>(json).Items.Single();
 
@@ -87,7 +87,7 @@ public class NotificationDeserializationTests
     }
 
     [Fact]
-    public void ShouldSendTheNewerChannels()
+    public void Should_send_the_newer_channels()
     {
         var notifications = new Notifications
         {

@@ -6,49 +6,49 @@ namespace Cronitor.Tests;
 public class IssueStateTests
 {
     [Fact]
-    public void ShouldHaveUnresolvedState()
+    public void Should_have_the_Unresolved_state()
     {
         Assert.NotNull(IssueState.Unresolved);
         Assert.Equal("unresolved", IssueState.Unresolved.State);
     }
 
     [Fact]
-    public void ShouldHaveInvestigatingState()
+    public void Should_have_the_Investigating_state()
     {
         Assert.NotNull(IssueState.Investigating);
         Assert.Equal("investigating", IssueState.Investigating.State);
     }
 
     [Fact]
-    public void ShouldHaveIdentifiedState()
+    public void Should_have_the_Identified_state()
     {
         Assert.NotNull(IssueState.Identified);
         Assert.Equal("identified", IssueState.Identified.State);
     }
 
     [Fact]
-    public void ShouldHaveMonitoringState()
+    public void Should_have_the_Monitoring_state()
     {
         Assert.NotNull(IssueState.Monitoring);
         Assert.Equal("monitoring", IssueState.Monitoring.State);
     }
 
     [Fact]
-    public void ShouldHaveResolvedState()
+    public void Should_have_the_Resolved_state()
     {
         Assert.NotNull(IssueState.Resolved);
         Assert.Equal("resolved", IssueState.Resolved.State);
     }
 
     [Fact]
-    public void ShouldHaveUpdateState()
+    public void Should_have_the_Update_state()
     {
         Assert.NotNull(IssueState.Update);
         Assert.Equal("update", IssueState.Update.State);
     }
 
     [Fact]
-    public void ToStringShouldReturnState()
+    public void Should_return_the_state_from_ToString()
     {
         var issueState = new IssueState("custom-state");
 
@@ -56,7 +56,7 @@ public class IssueStateTests
     }
 
     [Fact]
-    public void ToStringShouldReturnStateForStaticInstances()
+    public void Should_return_the_state_from_ToString_for_static_instances()
     {
         Assert.Equal("unresolved", IssueState.Unresolved.ToString());
         Assert.Equal("investigating", IssueState.Investigating.ToString());

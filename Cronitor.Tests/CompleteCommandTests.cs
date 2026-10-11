@@ -8,7 +8,7 @@ namespace Cronitor.Tests;
 public class CompleteCommandTests
 {
     [Fact]
-    public void ShouldCreateCompleteCommand()
+    public void Should_create_a_CompleteCommand()
     {
         var command = new CompleteCommand()
             .WithApiKey("apiKey")
@@ -23,7 +23,7 @@ public class CompleteCommandTests
     }
 
     [Fact]
-    public void ShouldCreateCompleteCommandWithExtendedProperties()
+    public void Should_create_a_CompleteCommand_with_extended_properties()
     {
         var command = new CompleteCommand()
             .WithApiKey("apiKey")

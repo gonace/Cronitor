@@ -8,7 +8,7 @@ namespace Cronitor.Tests;
 public class ScheduleTests
 {
     [Fact]
-    public void EveryMinute()
+    public void Should_build_Cron_EveryMinute()
     {
         var result = Schedule.Cron.EveryMinute();
 
@@ -16,7 +16,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void EveryHourAtZero()
+    public void Should_build_Cron_EveryHour_at_minute_zero()
     {
         var result = Schedule.Cron.EveryHour();
 
@@ -24,7 +24,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void EveryHourAtMinute()
+    public void Should_build_Cron_EveryHour_at_a_minute()
     {
         var result = Schedule.Cron.EveryHour(minute: 30);
 
@@ -32,7 +32,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void DailyAtMidnight()
+    public void Should_build_Cron_Daily_at_midnight()
     {
         var result = Schedule.Cron.Daily();
 
@@ -40,7 +40,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void DailyAtHour()
+    public void Should_build_Cron_Daily_at_an_hour()
     {
         var result = Schedule.Cron.Daily(hour: 3);
 
@@ -48,7 +48,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void DailyAtHourAndMinute()
+    public void Should_build_Cron_Daily_at_an_hour_and_minute()
     {
         var result = Schedule.Cron.Daily(hour: 0, minute: 35);
 
@@ -56,7 +56,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void WeeklyOnDay()
+    public void Should_build_Cron_Weekly_on_a_day()
     {
         var result = Schedule.Cron.Weekly(day: 1);
 
@@ -64,7 +64,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void WeeklyOnDayAtTime()
+    public void Should_build_Cron_Weekly_on_a_day_at_a_time()
     {
         var result = Schedule.Cron.Weekly(day: 1, hour: 8, minute: 30);
 
@@ -72,7 +72,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void MonthlyOnDay()
+    public void Should_build_Cron_Monthly_on_a_day()
     {
         var result = Schedule.Cron.Monthly(day: 15);
 
@@ -80,7 +80,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void MonthlyOnDayAtTime()
+    public void Should_build_Cron_Monthly_on_a_day_at_a_time()
     {
         var result = Schedule.Cron.Monthly(day: 1, hour: 6, minute: 15);
 
@@ -88,7 +88,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void YearlyOnDate()
+    public void Should_build_Cron_Yearly_on_a_date()
     {
         var result = Schedule.Cron.Yearly(month: 1, day: 1);
 
@@ -96,7 +96,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void YearlyOnDateAtTime()
+    public void Should_build_Cron_Yearly_on_a_date_at_a_time()
     {
         var result = Schedule.Cron.Yearly(month: 6, day: 15, hour: 12, minute: 30);
 
@@ -104,7 +104,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void RawExpression()
+    public void Should_build_a_raw_Cron_Expression()
     {
         var result = Schedule.Cron.Expression("0 0 * * *");
 
@@ -112,7 +112,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void EverySeconds()
+    public void Should_build_Every_Seconds()
     {
         var result = Schedule.Every(60).Seconds;
 
@@ -120,7 +120,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void EveryMinutes()
+    public void Should_build_Every_Minutes()
     {
         var result = Schedule.Every(5).Minutes;
 
@@ -128,7 +128,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void EveryHours()
+    public void Should_build_Every_Hours()
     {
         var result = Schedule.Every(2).Hours;
 
@@ -136,7 +136,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void EveryDays()
+    public void Should_build_Every_Days()
     {
         var result = Schedule.Every(1).Days;
 
@@ -144,7 +144,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void CustomCronBuilder()
+    public void Should_build_a_custom_cron_with_Create()
     {
         var result = Schedule.Cron.Create()
             .Minute(30)
@@ -158,7 +158,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void CustomCronBuilderDefaults()
+    public void Should_use_defaults_in_a_custom_cron()
     {
         var result = Schedule.Cron.Create()
             .Minute(0)
@@ -169,7 +169,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void CustomCronBuilderWithStep()
+    public void Should_build_a_custom_cron_with_a_step()
     {
         var result = Schedule.Cron.Create()
             .MinuteEvery(15)
@@ -179,7 +179,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void CustomCronBuilderWithRange()
+    public void Should_build_a_custom_cron_with_a_range()
     {
         var result = Schedule.Cron.Create()
             .Minute(0)
@@ -191,7 +191,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void CustomCronBuilderToString()
+    public void Should_convert_a_custom_cron_to_a_string()
     {
         var result = Schedule.Cron.Create()
             .Minute(0)
@@ -202,7 +202,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void ToStringReturnsValue()
+    public void Should_return_the_value_from_ToString()
     {
         var expression = Schedule.Cron.Daily(hour: 3);
 
@@ -210,7 +210,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void ImplicitStringConversion()
+    public void Should_convert_implicitly_to_a_string()
     {
         string result = Schedule.Every(5).Minutes;
 
@@ -218,7 +218,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void ImplicitScheduleExpressionFromString()
+    public void Should_convert_implicitly_from_a_string_to_a_ScheduleExpression()
     {
         ScheduleExpression expression = "0 0 * * *";
 
@@ -226,7 +226,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void SerializesAsJsonString()
+    public void Should_serialize_as_a_json_string()
     {
         var container = new ScheduleContainer { Schedule = Schedule.Cron.Daily() };
 
@@ -236,7 +236,7 @@ public class ScheduleTests
     }
 
     [Fact]
-    public void DeserializesFromJsonString()
+    public void Should_deserialize_from_a_json_string()
     {
         var json = "{\"schedule\":\"0 3 * * *\"}";
 

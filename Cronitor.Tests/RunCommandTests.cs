@@ -8,7 +8,7 @@ namespace Cronitor.Tests;
 public class RunCommandTests
 {
     [Fact]
-    public void ShouldCreateRunCommand()
+    public void Should_create_a_RunCommand()
     {
         var command = new RunCommand()
             .WithApiKey("apiKey")
@@ -23,7 +23,7 @@ public class RunCommandTests
     }
 
     [Fact]
-    public void ShouldCreateRunCommandWithExtendedProperties()
+    public void Should_create_a_RunCommand_with_extended_properties()
     {
         var command = new RunCommand()
             .WithApiKey("apiKey")

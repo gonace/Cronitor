@@ -8,7 +8,7 @@ namespace Cronitor.Tests;
 public class RequestSerializationTests
 {
     [Fact]
-    public void ShouldSendTheUrlAndRegionsOfACheck()
+    public void Should_send_the_url_and_regions_of_a_check()
     {
         var check = new Check("api-health", new Request("https://example.com/health", new[] { Region.California }));
 
@@ -19,7 +19,7 @@ public class RequestSerializationTests
     }
 
     [Fact]
-    public void ShouldSendFollowRedirectsAndVerifySslWhenSet()
+    public void Should_send_follow_redirects_and_verify_ssl_when_set()
     {
         var request = new Request("https://example.com/health", new[] { Region.California })
         {
@@ -34,7 +34,7 @@ public class RequestSerializationTests
     }
 
     [Fact]
-    public void ShouldNotSendFollowRedirectsAndVerifySslWhenNotSet()
+    public void Should_not_send_follow_redirects_and_verify_ssl_when_not_set()
     {
         var request = new Request("https://example.com/health", new[] { Region.California });
 
@@ -45,7 +45,7 @@ public class RequestSerializationTests
     }
 
     [Fact]
-    public void ShouldReadFollowRedirectsAndVerifySsl()
+    public void Should_read_follow_redirects_and_verify_ssl()
     {
         const string json = "{\"url\":\"https://example.com/health\",\"follow_redirects\":true,\"verify_ssl\":false}";
 
@@ -56,7 +56,7 @@ public class RequestSerializationTests
     }
 
     [Fact]
-    public void ShouldReadTheUrlAndRegionsOfACheck()
+    public void Should_read_the_url_and_regions_of_a_check()
     {
         const string json = "{\"type\":\"check\",\"key\":\"api-health\",\"request\":{\"url\":\"https://example.com/health\",\"regions\":[\"us-west-1\"]}}";
 

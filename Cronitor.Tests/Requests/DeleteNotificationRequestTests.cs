@@ -7,7 +7,7 @@ namespace Cronitor.Tests.Requests;
 public class DeleteNotificationRequestTests
 {
     [Fact]
-    public void ShouldSetEndpoint()
+    public void Should_set_Endpoint()
     {
         var request = new DeleteNotificationRequest("default");
 
@@ -15,7 +15,7 @@ public class DeleteNotificationRequestTests
     }
 
     [Fact]
-    public void ShouldSetHttpMethodToDelete()
+    public void Should_set_Method_to_Delete()
     {
         var request = new DeleteNotificationRequest("default");
 
@@ -23,7 +23,7 @@ public class DeleteNotificationRequestTests
     }
 
     [Fact]
-    public void ShouldSetKey()
+    public void Should_set_Key()
     {
         var request = new DeleteNotificationRequest("default");
 
@@ -31,7 +31,7 @@ public class DeleteNotificationRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUriWithKey()
+    public void Should_build_the_uri_with_the_key()
     {
         var request = new DeleteNotificationRequest("devops-alerts");
 

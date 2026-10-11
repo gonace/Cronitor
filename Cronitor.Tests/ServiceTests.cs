@@ -9,7 +9,7 @@ namespace Cronitor.Tests;
 public class ServiceTests : BaseTest
 {
     [Fact]
-    public void ShouldCreateAllClients()
+    public void Should_create_all_clients()
     {
         var service = new Service(ApiKey);
 
@@ -20,7 +20,7 @@ public class ServiceTests : BaseTest
     }
 
     [Fact]
-    public void ShouldSendThroughTheGivenHttpClient()
+    public void Should_send_through_the_given_HttpClient()
     {
         var handler = new FakeHttpMessageHandler();
         var service = new Service(ApiKey, new HttpClient(Urls.DefaultApiUrl, ApiKey, handler));
@@ -32,7 +32,7 @@ public class ServiceTests : BaseTest
     }
 
     [Fact]
-    public void ShouldLogTelemetryThroughTheGivenLoggerFactory()
+    public void Should_log_telemetry_through_the_given_logger_factory()
     {
         var loggerFactory = new FakeLoggerFactory();
         var handler = new FakeHttpMessageHandler(HttpStatusCode.InternalServerError, "{\"detail\":\"Server error\"}");
@@ -44,7 +44,7 @@ public class ServiceTests : BaseTest
     }
 
     [Fact]
-    public void ShouldDisposeAllClients()
+    public void Should_dispose_all_clients()
     {
         using (var service = new Service(ApiKey))
         {

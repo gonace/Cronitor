@@ -6,7 +6,7 @@ namespace Cronitor.Tests.Requests;
 public class PauseMonitorRequestTests
 {
     [Fact]
-    public void ShouldSetEndpoint()
+    public void Should_set_Endpoint()
     {
         var request = new PauseMonitorRequest("abc123");
 
@@ -14,7 +14,7 @@ public class PauseMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldSetEndpointWithDuration()
+    public void Should_set_Endpoint_with_a_duration()
     {
         var request = new PauseMonitorRequest("abc123", 60);
 
@@ -22,7 +22,7 @@ public class PauseMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldSetKey()
+    public void Should_set_Key()
     {
         var request = new PauseMonitorRequest("abc123");
 
@@ -30,7 +30,7 @@ public class PauseMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldSetDuration()
+    public void Should_set_the_duration()
     {
         var request = new PauseMonitorRequest("abc123", 60);
 
@@ -38,7 +38,7 @@ public class PauseMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldNotSetDurationWhenNotProvided()
+    public void Should_not_set_the_duration_when_not_given()
     {
         var request = new PauseMonitorRequest("abc123");
 
@@ -46,7 +46,7 @@ public class PauseMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUriWithoutDuration()
+    public void Should_build_the_uri_without_a_duration()
     {
         var request = new PauseMonitorRequest("abc123");
 
@@ -56,7 +56,7 @@ public class PauseMonitorRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUriWithDuration()
+    public void Should_build_the_uri_with_a_duration()
     {
         var request = new PauseMonitorRequest("abc123", 60);
 

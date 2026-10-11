@@ -15,7 +15,7 @@ internal class TestRequest : BaseRequest
 public class BaseRequestTests
 {
     [Fact]
-    public void SetContent_ShouldSetContentProperty()
+    public void Should_set_Content_with_SetContent()
     {
         var request = new TestRequest();
         var content = new StringContent("test content", Encoding.UTF8, "application/json");
@@ -27,7 +27,7 @@ public class BaseRequestTests
     }
 
     [Fact]
-    public void SetContent_ShouldReturnThis_ForFluentAPI()
+    public void Should_return_itself_from_SetContent()
     {
         var request = new TestRequest();
         var content = new StringContent("test content", Encoding.UTF8, "application/json");
@@ -39,7 +39,7 @@ public class BaseRequestTests
     }
 
     [Fact]
-    public void SetContent_CanBeChained()
+    public void Should_chain_SetContent()
     {
         var request = new TestRequest();
         var content = new StringContent("test content", Encoding.UTF8, "application/json");
@@ -51,7 +51,7 @@ public class BaseRequestTests
     }
 
     [Fact]
-    public void ToUri_ShouldCombineBaseUrlAndEndpoint()
+    public void Should_combine_the_base_url_and_endpoint_in_ToUri()
     {
         var request = new TestRequest();
 
@@ -63,7 +63,7 @@ public class BaseRequestTests
     }
 
     [Fact]
-    public void ToUrl_ShouldReturnStringUri()
+    public void Should_return_the_uri_as_a_string_from_ToUrl()
     {
         var request = new TestRequest();
 
@@ -76,7 +76,7 @@ public class BaseRequestTests
     }
 
     [Fact]
-    public void ToUrl_ShouldEqualToUriToString()
+    public void Should_return_the_same_from_ToUrl_as_from_ToUri()
     {
         var request = new TestRequest();
 
@@ -87,7 +87,7 @@ public class BaseRequestTests
     }
 
     [Fact]
-    public void Method_DefaultsToGet()
+    public void Should_default_Method_to_Get()
     {
         var request = new TestRequest();
 
@@ -95,7 +95,7 @@ public class BaseRequestTests
     }
 
     [Fact]
-    public void Method_CanBeSet()
+    public void Should_allow_setting_Method()
     {
         var request = new TestRequest
         {
@@ -106,7 +106,7 @@ public class BaseRequestTests
     }
 
     [Fact]
-    public void Endpoint_CanBeSet()
+    public void Should_allow_setting_Endpoint()
     {
         var request = new TestRequest
         {
@@ -117,7 +117,7 @@ public class BaseRequestTests
     }
 
     [Fact]
-    public void Content_DefaultsToNull()
+    public void Should_default_Content_to_null()
     {
         var request = new TestRequest();
 
@@ -125,7 +125,7 @@ public class BaseRequestTests
     }
 
     [Fact]
-    public void Content_CanBeSetDirectly()
+    public void Should_allow_setting_Content_directly()
     {
         var request = new TestRequest();
         var content = new StringContent("test", Encoding.UTF8, "application/json");

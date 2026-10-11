@@ -7,7 +7,7 @@ namespace Cronitor.Tests.Requests;
 public class GetIssueRequestTests
 {
     [Fact]
-    public void ShouldSetEndpoint()
+    public void Should_set_Endpoint()
     {
         var request = new GetIssueRequest("issue-001");
 
@@ -15,7 +15,7 @@ public class GetIssueRequestTests
     }
 
     [Fact]
-    public void ShouldSetHttpMethodToGet()
+    public void Should_set_Method_to_Get()
     {
         var request = new GetIssueRequest("issue-001");
 
@@ -23,7 +23,7 @@ public class GetIssueRequestTests
     }
 
     [Fact]
-    public void ShouldSetKey()
+    public void Should_set_Key()
     {
         var request = new GetIssueRequest("issue-001");
 
@@ -31,7 +31,7 @@ public class GetIssueRequestTests
     }
 
     [Fact]
-    public void ShouldBuildUriWithKey()
+    public void Should_build_the_uri_with_the_key()
     {
         var request = new GetIssueRequest("issue-001");
 

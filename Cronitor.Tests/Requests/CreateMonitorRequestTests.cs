@@ -14,7 +14,7 @@ public class CreateMonitorRequestTests
 {
     [Theory]
     [JsonData("CreateMonitorRequest.json")]
-    public async Task ShouldCreateMonitorRequestAsync(string expected)
+    public async Task Should_create_a_CreateMonitorRequest(string expected)
     {
         var monitor = new Monitor("nightly-backup-job")
             .With(x => x.Type, MonitorType.Job.ToString())

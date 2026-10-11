@@ -22,7 +22,7 @@ public class TelemetriesClient_TickTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteTickMethod()
+    public void Should_execute_Tick()
     {
         _telemetriesClient.Tick(MonitorKey);
 
@@ -32,7 +32,7 @@ public class TelemetriesClient_TickTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteTickAsyncMethod()
+    public async Task Should_execute_TickAsync()
     {
         await _telemetriesClient.TickAsync(MonitorKey);
 
@@ -42,7 +42,7 @@ public class TelemetriesClient_TickTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteTickMethodWithMessage()
+    public void Should_execute_Tick_with_a_message()
     {
         _telemetriesClient.Tick(MonitorKey, Message);
 
@@ -54,7 +54,7 @@ public class TelemetriesClient_TickTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteTickAsyncMethodWithMessage()
+    public async Task Should_execute_TickAsync_with_a_message()
     {
         await _telemetriesClient.TickAsync(MonitorKey, Message);
 
@@ -66,7 +66,7 @@ public class TelemetriesClient_TickTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteTickMethodWithEnvironment()
+    public void Should_execute_Tick_with_an_environment()
     {
         _telemetriesClient.Tick(MonitorKey, environment: Environment);
 
@@ -78,7 +78,7 @@ public class TelemetriesClient_TickTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteTickAsyncMethodWithEnvironment()
+    public async Task Should_execute_TickAsync_with_an_environment()
     {
         await _telemetriesClient.TickAsync(MonitorKey, environment: Environment);
 
@@ -90,7 +90,7 @@ public class TelemetriesClient_TickTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteTickMethodWithMessageAndEnvironment()
+    public void Should_execute_Tick_with_a_message_and_an_environment()
     {
         _telemetriesClient.Tick(MonitorKey, Message, Environment);
 
@@ -103,7 +103,7 @@ public class TelemetriesClient_TickTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteTickAsyncMethodWithMessageAndEnvironment()
+    public async Task Should_execute_TickAsync_with_a_message_and_an_environment()
     {
         await _telemetriesClient.TickAsync(MonitorKey, Message, Environment);
 

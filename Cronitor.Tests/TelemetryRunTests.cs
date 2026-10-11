@@ -14,7 +14,7 @@ public class TelemetryRunTests : BaseTest
     private const string Message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
 
     [Fact]
-    public void StartShouldSendRun()
+    public void Should_send_run_from_Start()
     {
         var handler = new FakeHttpMessageHandler();
 
@@ -26,7 +26,7 @@ public class TelemetryRunTests : BaseTest
     }
 
     [Fact]
-    public async Task StartAsyncShouldSendRun()
+    public async Task Should_send_run_from_StartAsync()
     {
         var handler = new FakeHttpMessageHandler();
 
@@ -38,7 +38,7 @@ public class TelemetryRunTests : BaseTest
     }
 
     [Fact]
-    public void CompleteShouldSendCompleteInTheSameSeries()
+    public void Should_send_complete_in_the_same_series_from_Complete()
     {
         var handler = new FakeHttpMessageHandler();
 
@@ -52,7 +52,7 @@ public class TelemetryRunTests : BaseTest
     }
 
     [Fact]
-    public async Task CompleteAsyncShouldSendCompleteInTheSameSeries()
+    public async Task Should_send_complete_in_the_same_series_from_CompleteAsync()
     {
         var handler = new FakeHttpMessageHandler();
 
@@ -66,7 +66,7 @@ public class TelemetryRunTests : BaseTest
     }
 
     [Fact]
-    public async Task FailAsyncShouldSendFailWithMessage()
+    public async Task Should_send_fail_with_a_message_from_FailAsync()
     {
         var handler = new FakeHttpMessageHandler();
 
@@ -80,7 +80,7 @@ public class TelemetryRunTests : BaseTest
     }
 
     [Fact]
-    public void DisposeShouldSendFailWhenNotCompleted()
+    public void Should_send_fail_from_Dispose_when_not_completed()
     {
         var handler = new FakeHttpMessageHandler();
 
@@ -93,7 +93,7 @@ public class TelemetryRunTests : BaseTest
     }
 
     [Fact]
-    public void CompleteShouldOnlyBeSentOnce()
+    public void Should_send_complete_only_once()
     {
         var handler = new FakeHttpMessageHandler();
 
@@ -108,7 +108,7 @@ public class TelemetryRunTests : BaseTest
     }
 
     [Fact]
-    public void ShouldSendEnvironmentWithEveryPing()
+    public void Should_send_the_environment_with_every_ping()
     {
         var handler = new FakeHttpMessageHandler();
 
@@ -122,7 +122,7 @@ public class TelemetryRunTests : BaseTest
     }
 
     [Fact]
-    public void ShouldUseANewSeriesForEveryRun()
+    public void Should_use_a_new_series_for_every_run()
     {
         var handler = new FakeHttpMessageHandler();
         var client = CreateClient(handler);
@@ -134,7 +134,7 @@ public class TelemetryRunTests : BaseTest
     }
 
     [Fact]
-    public void CompleteShouldReturnTrueWhenThePingIsAccepted()
+    public void Should_return_true_from_Complete_when_the_ping_is_accepted()
     {
         var handler = new FakeHttpMessageHandler();
         var run = TelemetryRun.Start(CreateClient(handler), MonitorKey);
@@ -143,7 +143,7 @@ public class TelemetryRunTests : BaseTest
     }
 
     [Fact]
-    public void CompleteShouldReturnFalseWhenAlreadyFinished()
+    public void Should_return_false_from_Complete_when_already_finished()
     {
         var handler = new FakeHttpMessageHandler();
         var run = TelemetryRun.Start(CreateClient(handler), MonitorKey);
@@ -153,7 +153,7 @@ public class TelemetryRunTests : BaseTest
     }
 
     [Fact]
-    public async Task StartAsyncShouldNotThrowWhenRunCannotBeSent()
+    public async Task Should_not_throw_from_StartAsync_when_run_cannot_be_sent()
     {
         var handler = new FakeHttpMessageHandler(HttpStatusCode.InternalServerError, "{\"detail\":\"Server error\"}");
 
@@ -166,7 +166,7 @@ public class TelemetryRunTests : BaseTest
     }
 
     [Fact]
-    public void DisposeShouldNotThrowWhenFailCannotBeSent()
+    public void Should_not_throw_from_Dispose_when_fail_cannot_be_sent()
     {
         var handler = new FakeHttpMessageHandler(HttpStatusCode.InternalServerError, "{\"detail\":\"Server error\"}");
         var run = new TelemetryRun(CreateClient(handler), MonitorKey, environment: null);

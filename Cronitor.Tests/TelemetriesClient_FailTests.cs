@@ -22,7 +22,7 @@ public class TelemetriesClient_FailTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteFailMethod()
+    public void Should_execute_Fail()
     {
         _telemetriesClient.Fail(MonitorKey);
 
@@ -32,7 +32,7 @@ public class TelemetriesClient_FailTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteFailAsyncMethod()
+    public async Task Should_execute_FailAsync()
     {
         await _telemetriesClient.FailAsync(MonitorKey);
 
@@ -42,7 +42,7 @@ public class TelemetriesClient_FailTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteFailMethodWithMessage()
+    public void Should_execute_Fail_with_a_message()
     {
         _telemetriesClient.Fail(MonitorKey, Message);
 
@@ -54,7 +54,7 @@ public class TelemetriesClient_FailTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteFailAsyncMethodWithMessage()
+    public async Task Should_execute_FailAsync_with_a_message()
     {
         await _telemetriesClient.FailAsync(MonitorKey, Message);
 
@@ -66,7 +66,7 @@ public class TelemetriesClient_FailTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteFailMethodWithEnvironment()
+    public void Should_execute_Fail_with_an_environment()
     {
         _telemetriesClient.Fail(MonitorKey, environment: Environment);
 
@@ -78,7 +78,7 @@ public class TelemetriesClient_FailTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteFailAsyncMethodWithEnvironment()
+    public async Task Should_execute_FailAsync_with_an_environment()
     {
         await _telemetriesClient.FailAsync(MonitorKey, environment: Environment);
 
@@ -90,7 +90,7 @@ public class TelemetriesClient_FailTests : BaseTest
     }
 
     [Fact]
-    public void ShouldExecuteFailMethodWithMessageAndEnvironment()
+    public void Should_execute_Fail_with_a_message_and_an_environment()
     {
         _telemetriesClient.Fail(MonitorKey, Message, Environment);
 
@@ -103,7 +103,7 @@ public class TelemetriesClient_FailTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldExecuteFailAsyncMethodWithMessageAndEnvironment()
+    public async Task Should_execute_FailAsync_with_a_message_and_an_environment()
     {
         await _telemetriesClient.FailAsync(MonitorKey, Message, Environment);
 

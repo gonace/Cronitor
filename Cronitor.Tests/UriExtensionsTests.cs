@@ -8,7 +8,7 @@ namespace Cronitor.Tests;
 public class UriExtensionsTests
 {
     [Fact]
-    public void ShouldBuildUri()
+    public void Should_build_the_uri()
     {
         var uri = new Uri("https://www.google.se/:foo/:bar");
         var dictionary = new Dictionary<string, string>
@@ -24,7 +24,7 @@ public class UriExtensionsTests
     }
 
     [Fact]
-    public void ShouldAddQueryString()
+    public void Should_add_a_query_string()
     {
         var uri = new Uri("https://www.google.se");
         const string qs = "?host=127.0.0.1&message=Lorem ipsum&env=Production&series=3de5db91-9c02-4e95-b8a9-9a2442702336&metric=count:9.99";
@@ -36,7 +36,7 @@ public class UriExtensionsTests
     }
 
     [Fact]
-    public void ShouldCombineUriWithEndpoint()
+    public void Should_combine_the_uri_with_an_endpoint()
     {
         var uri = new Uri("https://www.google.se/");
 
@@ -47,7 +47,7 @@ public class UriExtensionsTests
     }
 
     [Fact]
-    public void ShouldChangeSchemeToHttp()
+    public void Should_change_the_scheme_to_http()
     {
         var uri = new Uri("https://www.google.se/");
 
@@ -58,7 +58,7 @@ public class UriExtensionsTests
     }
 
     [Fact]
-    public void ShouldChangeSchemeToHttps()
+    public void Should_change_the_scheme_to_https()
     {
         var uri = new Uri("http://www.google.se/");
 

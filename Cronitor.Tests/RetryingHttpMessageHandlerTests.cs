@@ -19,7 +19,7 @@ public class RetryingHttpMessageHandlerTests
     private readonly List<TimeSpan> _delays = new List<TimeSpan>();
 
     [Fact]
-    public async Task ShouldNotRetryASuccessfulRequest()
+    public async Task Should_not_retry_a_successful_request()
     {
         var network = new ScriptedHttpMessageHandler(Status(HttpStatusCode.OK));
 
@@ -35,7 +35,7 @@ public class RetryingHttpMessageHandlerTests
     [InlineData(HttpStatusCode.ServiceUnavailable)]
     [InlineData(HttpStatusCode.RequestTimeout)]
     [InlineData((HttpStatusCode)429)]
-    public async Task ShouldRetryATransientStatusCode(HttpStatusCode statusCode)
+    public async Task Should_retry_a_transient_status_code(HttpStatusCode statusCode)
     {
         var network = new ScriptedHttpMessageHandler(Status(statusCode), Status(HttpStatusCode.OK));
 
@@ -49,7 +49,7 @@ public class RetryingHttpMessageHandlerTests
     [InlineData(HttpStatusCode.BadRequest)]
     [InlineData(HttpStatusCode.Unauthorized)]
     [InlineData(HttpStatusCode.NotFound)]
-    public async Task ShouldNotRetryAClientError(HttpStatusCode statusCode)
+    public async Task Should_not_retry_a_client_error(HttpStatusCode statusCode)
     {
         var network = new ScriptedHttpMessageHandler(Status(statusCode));
 
@@ -60,7 +60,7 @@ public class RetryingHttpMessageHandlerTests
     }
 
     [Fact]
-    public async Task ShouldRetryANetworkError()
+    public async Task Should_retry_a_network_error()
     {
         var network = new ScriptedHttpMessageHandler(NetworkError(), Status(HttpStatusCode.OK));
 
@@ -71,7 +71,7 @@ public class RetryingHttpMessageHandlerTests
     }
 
     [Fact]
-    public async Task ShouldReturnTheLastResponseAfterThreeRetries()
+    public async Task Should_return_the_last_response_after_three_retries()
     {
         var network = new ScriptedHttpMessageHandler(Status(HttpStatusCode.ServiceUnavailable));
 
@@ -82,7 +82,7 @@ public class RetryingHttpMessageHandlerTests
     }
 
     [Fact]
-    public async Task ShouldThrowTheNetworkErrorAfterThreeRetries()
+    public async Task Should_throw_the_network_error_after_three_retries()
     {
         var network = new ScriptedHttpMessageHandler(NetworkError());
 
@@ -92,7 +92,7 @@ public class RetryingHttpMessageHandlerTests
     }
 
     [Fact]
-    public async Task ShouldBackOffExponentially()
+    public async Task Should_back_off_exponentially()
     {
         var network = new ScriptedHttpMessageHandler(Status(HttpStatusCode.ServiceUnavailable));
 
@@ -102,7 +102,7 @@ public class RetryingHttpMessageHandlerTests
     }
 
     [Fact]
-    public async Task ShouldShortenTheDelayByAtMostAQuarter()
+    public async Task Should_shorten_the_delay_by_at_most_a_quarter()
     {
         var network = new ScriptedHttpMessageHandler(Status(HttpStatusCode.ServiceUnavailable), Status(HttpStatusCode.OK));
 
@@ -112,7 +112,7 @@ public class RetryingHttpMessageHandlerTests
     }
 
     [Fact]
-    public async Task ShouldLengthenTheDelayByAtMostAQuarter()
+    public async Task Should_lengthen_the_delay_by_at_most_a_quarter()
     {
         var network = new ScriptedHttpMessageHandler(Status(HttpStatusCode.ServiceUnavailable), Status(HttpStatusCode.OK));
 
@@ -122,7 +122,7 @@ public class RetryingHttpMessageHandlerTests
     }
 
     [Fact]
-    public async Task ShouldNotRetryWhenTheCallerCancels()
+    public async Task Should_not_retry_when_the_caller_cancels()
     {
         var network = new ScriptedHttpMessageHandler(Status(HttpStatusCode.ServiceUnavailable));
         var cancellation = new CancellationTokenSource();
@@ -139,7 +139,7 @@ public class RetryingHttpMessageHandlerTests
     }
 
     [Fact]
-    public async Task ShouldRetryAnAttemptThatTimesOut()
+    public async Task Should_retry_an_attempt_that_times_out()
     {
         var network = new ScriptedHttpMessageHandler(Hang(), Status(HttpStatusCode.OK));
         var handler = new RetryingHttpMessageHandler(network, RecordDelayAsync, () => 0.5, ShortAttemptTimeout);
@@ -151,7 +151,7 @@ public class RetryingHttpMessageHandlerTests
     }
 
     [Fact]
-    public async Task ShouldThrowTimeoutExceptionWhenEveryAttemptTimesOut()
+    public async Task Should_throw_TimeoutException_when_every_attempt_times_out()
     {
         var network = new ScriptedHttpMessageHandler(Hang());
         var handler = new RetryingHttpMessageHandler(network, RecordDelayAsync, () => 0.5, ShortAttemptTimeout);
@@ -162,7 +162,7 @@ public class RetryingHttpMessageHandlerTests
     }
 
     [Fact]
-    public async Task ShouldNotRetryWhenTheCallerCancelsDuringAnAttempt()
+    public async Task Should_not_retry_when_the_caller_cancels_during_an_attempt()
     {
         var network = new ScriptedHttpMessageHandler(Hang());
         var handler = new RetryingHttpMessageHandler(network, RecordDelayAsync, () => 0.5, TimeSpan.FromMinutes(1));

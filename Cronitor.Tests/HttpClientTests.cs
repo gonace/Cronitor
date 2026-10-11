@@ -15,7 +15,7 @@ namespace Cronitor.Tests;
 public class HttpClientTests : BaseTest
 {
     [Fact]
-    public void ShouldConstructWithUriApiKey()
+    public void Should_construct_with_a_uri_and_an_api_key()
     {
         var httpClient = new HttpClient(Urls.DefaultApiUrl, ApiKey);
 
@@ -23,7 +23,7 @@ public class HttpClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldConvertHttpToHttpsWhenConstructingWithApiKey()
+    public void Should_convert_http_to_https_when_constructed_with_an_api_key()
     {
         var httpUri = new Uri("http://cronitor.io/api/");
         var httpClient = new HttpClient(httpUri, ApiKey);
@@ -36,7 +36,7 @@ public class HttpClientTests : BaseTest
     }
 
     [Fact]
-    public void ShouldLimitTelemetryRequestsToThirtySecondsInTotal()
+    public void Should_limit_telemetry_requests_to_thirty_seconds_in_total()
     {
         var httpClient = HttpClient.ForTelemetry(ApiKey);
 
@@ -44,7 +44,7 @@ public class HttpClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldSendCommandToItsUri()
+    public async Task Should_send_a_command_to_its_uri()
     {
         var handler = new FakeHttpMessageHandler();
         var httpClient = new HttpClient(Urls.TelemetryBaseUrl, ApiKey, handler);
@@ -60,7 +60,7 @@ public class HttpClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldAuthenticateWithApiKey()
+    public async Task Should_authenticate_with_the_api_key()
     {
         var handler = new FakeHttpMessageHandler();
         var httpClient = new HttpClient(Urls.TelemetryBaseUrl, ApiKey, handler);
@@ -76,7 +76,7 @@ public class HttpClientTests : BaseTest
     }
 
     [Fact]
-    public async Task ShouldThrowApiExceptionWhenResponseIsNotSuccessful()
+    public async Task Should_throw_ApiException_when_the_response_is_not_successful()
     {
         var handler = new FakeHttpMessageHandler(HttpStatusCode.NotFound, "{\"detail\":\"Monitor not found\"}");
         var httpClient = new HttpClient(Urls.TelemetryBaseUrl, ApiKey, handler);
