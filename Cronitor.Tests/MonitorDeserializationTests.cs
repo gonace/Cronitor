@@ -41,6 +41,18 @@ namespace Cronitor.Tests
 
         [Theory]
         [JsonData("ListMonitors.json")]
+        public void ShouldReadTheLatestEventDetails(string json)
+        {
+            var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
+
+            Assert.Equal(49.243m, monitor.LatestEvent.Metrics["duration"]);
+            Assert.Equal("browser", monitor.LatestEvent.Client);
+            Assert.Null(monitor.LatestEvent.Host);
+            Assert.Equal("52.169.185.15", monitor.LatestEvent.Ip);
+        }
+
+        [Theory]
+        [JsonData("ListMonitors.json")]
         public void ShouldReadTheGroupNameFromTheAttributes(string json)
         {
             var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
