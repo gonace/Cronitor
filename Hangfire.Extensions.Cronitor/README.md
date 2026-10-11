@@ -51,6 +51,6 @@ RecurringJob.AddOrUpdate("nightly-backup", () => Backup.Run(), Cron.Daily(3));
 Jobs that are not recurring, such as those started with `BackgroundJob.Enqueue()`, are not reported.
 
 ## Errors
-Reporting never affects your jobs: if a report can't be sent, the job still runs and keeps its result, and the error is logged through the host's logging.
+Reporting never affects your jobs: reports are sent in the background, so a job never waits for Cronitor. If a report can't be sent, the job still runs and keeps its result, and the error is logged through the host's logging. When the application stops, it waits up to five seconds for reports that are still being sent, so the outcome of the last jobs isn't lost.
 
 For everything else about the Cronitor client, such as logging and the API key, see the [Cronitor README](https://github.com/gonace/Cronitor#readme).

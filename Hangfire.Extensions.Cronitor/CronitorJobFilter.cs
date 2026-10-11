@@ -3,6 +3,9 @@ using Hangfire.Server;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hangfire;
@@ -18,14 +21,20 @@ public class CronitorJobFilter : IServerFilter
 {
     private const string StartKey = "Cronitor.Start";
     private const string RecurringJobIdParameter = "RecurringJobId";
+    private static readonly TimeSpan ShutdownLimit = TimeSpan.FromSeconds(5);
 
     private readonly ITelemetriesClient _telemetries;
     private readonly ILogger<CronitorJobFilter> _logger;
+    private readonly ConcurrentDictionary<Task, bool> _pendingReports = new ConcurrentDictionary<Task, bool>();
 
     public CronitorJobFilter(ITelemetriesClient telemetries, ILogger<CronitorJobFilter> logger = null)
     {
         _telemetries = telemetries ?? throw new ArgumentNullException(nameof(telemetries));
         _logger = logger ?? NullLogger<CronitorJobFilter>.Instance;
+
+        // Hangfire has no shutdown event for filters. The process exits after the host has stopped Hangfire's
+        // workers, so reports still being sent then are the last ones, and are worth a short wait.
+        AppDomain.CurrentDomain.ProcessExit += (_, _) => WaitForPendingReports(ShutdownLimit);
     }
 
     public void OnPerforming(PerformingContext context)
@@ -52,13 +61,37 @@ public class CronitorJobFilter : IServerFilter
         {
             if (context.Items.TryGetValue(StartKey, out var value) && value is Task<ITelemetryRun> start)
             {
-                _ = ReportEnd(start, FailureOf(context), context.BackgroundJob.Id);
+                Track(ReportEnd(start, FailureOf(context), context.BackgroundJob.Id));
             }
         }
         catch (Exception exception)
         {
             _logger.EndNotReported(exception, context.BackgroundJob.Id);
         }
+    }
+
+    /// <summary>
+    /// Waits for the end reports still being sent, at most for the given time, so they are not lost when the
+    /// application stops.
+    /// </summary>
+    internal void WaitForPendingReports(TimeSpan limit)
+    {
+        var pending = _pendingReports.Keys.ToArray();
+        if (pending.Length == 0)
+        {
+            return;
+        }
+
+        if (!Task.WhenAll(pending).Wait(limit))
+        {
+            _logger.ReportsPendingAtShutdown(_pendingReports.Count);
+        }
+    }
+
+    private void Track(Task report)
+    {
+        _pendingReports.TryAdd(report, true);
+        report.ContinueWith(sent => _pendingReports.TryRemove(sent, out _), CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
     }
 
     /// <summary>

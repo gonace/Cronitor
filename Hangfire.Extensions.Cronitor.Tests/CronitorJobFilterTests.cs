@@ -3,6 +3,7 @@ using Hangfire.InMemory;
 using Hangfire.Server;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Diagnostics;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
@@ -129,6 +130,39 @@ public class CronitorJobFilterTests
         }
 
         Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: The job was canceled before it ran" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public async Task Should_send_pending_end_reports_when_the_application_stops()
+    {
+        var finishGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var telemetries = new FakeTelemetriesClient { FinishGate = finishGate.Task };
+        var filter = new CronitorJobFilter(telemetries);
+
+        await RunRecurringJob("nightly-backup", () => TestJobs.Succeed(), filter);
+        _ = Task.Delay(TimeSpan.FromMilliseconds(500), TestContext.Current.CancellationToken).ContinueWith(_ => finishGate.SetResult(true), TaskScheduler.Default);
+        filter.WaitForPendingReports(TimeSpan.FromSeconds(5));
+
+        Assert.Equal(new[] { "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public async Task Should_stop_waiting_for_pending_end_reports_after_the_limit_when_the_application_stops()
+    {
+        var finishGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var telemetries = new FakeTelemetriesClient { FinishGate = finishGate.Task };
+        var logger = new FakeLogger<CronitorJobFilter>();
+        var filter = new CronitorJobFilter(telemetries, logger);
+
+        await RunRecurringJob("nightly-backup", () => TestJobs.Succeed(), filter);
+        var stopwatch = Stopwatch.StartNew();
+        filter.WaitForPendingReports(TimeSpan.FromMilliseconds(200));
+        var waited = stopwatch.Elapsed;
+        finishGate.SetResult(true);
+
+        Assert.True(waited < TimeSpan.FromSeconds(5), "Kept waiting for the report beyond the limit.");
+        var entry = Assert.Single(logger.Entries);
+        Assert.Equal(LogLevel.Warning, entry.Level);
     }
 
     private static Task<InMemoryStorage> RunRecurringJob(string recurringJobId, Expression<Action> job, CronitorJobFilter filter) =>
