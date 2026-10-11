@@ -17,7 +17,7 @@ namespace Cronitor.Internals
         private const int MaxRetries = 3;
         private const double Jitter = 0.25;
         private static readonly TimeSpan BaseDelay = TimeSpan.FromSeconds(2);
-        private static readonly Random SharedRandom = new Random();
+        private static readonly Random SharedRandom = new Random(); // skipcq: CS-A1008 Only used for retry jitter, which is not security-sensitive.
 
         private readonly Func<TimeSpan, CancellationToken, Task> _delay;
         private readonly Func<double> _random;
