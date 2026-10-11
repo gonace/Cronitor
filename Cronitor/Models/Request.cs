@@ -10,6 +10,7 @@ namespace Cronitor.Models
         /// <summary>
         /// The URL of the resource to monitor.
         /// </summary>
+        [JsonInclude]
         [JsonPropertyName("url")]
         public string Url { get; protected set; }
         /// <summary>
@@ -37,6 +38,7 @@ namespace Cronitor.Models
         /// </summary>
         [JsonPropertyName("timeout_seconds")]
         public int TimeoutSeconds { get; set; } = 10;
+        [JsonInclude]
         [JsonPropertyName("regions")]
         public IEnumerable<string> Regions { get; protected set; }
 
