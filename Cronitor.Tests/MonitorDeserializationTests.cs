@@ -1,5 +1,6 @@
 using Cronitor.Models.Monitors;
 using Cronitor.Responses;
+using Cronitor.Scheduling;
 using Cronitor.Tests.Helpers;
 using System;
 using System.Linq;
@@ -59,6 +60,37 @@ namespace Cronitor.Tests
             Assert.NotNull(monitor.LatestIssue);
             Assert.Equal(1711850428, monitor.LatestIssue.Timestamp);
             Assert.Equal("resolved", monitor.LatestIssue.State);
+        }
+
+        [Theory]
+        [JsonData("ListMonitors.json")]
+        public void ShouldReadTheSchedules(string json)
+        {
+            var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
+
+            Assert.Equal(new[] { "0 3 * * *" }, monitor.Schedules.Select(s => s.Value));
+            Assert.Equal("0 3 * * *", monitor.Schedule.Value);
+        }
+
+        [Fact]
+        public void ShouldSendASingleScheduleAsSchedules()
+        {
+            var monitor = new Job("nightly-backup") { Schedule = Schedule.Cron.Daily(hour: 3) };
+
+            var body = Serializer.Serialize(monitor);
+
+            Assert.Contains("\"schedules\":[\"0 3 * * *\"]", body);
+            Assert.DoesNotContain("\"schedule\":", body);
+        }
+
+        [Fact]
+        public void ShouldSendEverySchedule()
+        {
+            var monitor = new Job("nightly-backup") { Schedules = new[] { Schedule.Cron.Daily(hour: 3), Schedule.Cron.Daily(hour: 15) } };
+
+            var body = Serializer.Serialize(monitor);
+
+            Assert.Contains("\"schedules\":[\"0 3 * * *\",\"0 15 * * *\"]", body);
         }
 
         [Fact]

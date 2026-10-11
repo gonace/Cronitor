@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 using System.Text.Json.Serialization;
@@ -112,8 +113,17 @@ namespace Cronitor.Models
         ///
         /// An interval expression must be used. The range of accepted values is 30 seconds to 1 hour.e.g. ‘every 2 minutes’
         /// </summary>
-        [JsonPropertyName("schedule")]
-        public ScheduleExpression Schedule { get; set; }
+        [JsonPropertyName("schedules")]
+        public IEnumerable<ScheduleExpression> Schedules { get; set; }
+        /// <summary>
+        /// A single schedule: reads the first of <see cref="Schedules"/>, and sets <see cref="Schedules"/> to just this one.
+        /// </summary>
+        [JsonIgnore]
+        public ScheduleExpression Schedule
+        {
+            get => Schedules?.FirstOrDefault();
+            set => Schedules = value == null ? null : new[] { value };
+        }
         /// <summary>
         /// Number of missed scheduled executions to allow before sending an alert.
         /// </summary>

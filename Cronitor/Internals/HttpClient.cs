@@ -16,6 +16,11 @@ namespace Cronitor.Internals
     {
         private static readonly HttpClientHandler SharedHandler = new HttpClientHandler();
         private static readonly TimeSpan TelemetryTimeout = TimeSpan.FromSeconds(30);
+
+        /// <summary>
+        /// The Cronitor API version the models are written for. Without it, Cronitor answers with 2020-10-01.
+        /// </summary>
+        private const string ApiVersion = "2025-11-28";
         
         private readonly string _apiKey;
         private readonly Uri _apiUri;
@@ -133,6 +138,7 @@ namespace Cronitor.Internals
             httpClient.DefaultRequestHeaders.Accept.Clear();
             httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
             httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_apiKey}:")));
+            httpClient.DefaultRequestHeaders.Add("Cronitor-Version", ApiVersion);
 
             return httpClient;
         }

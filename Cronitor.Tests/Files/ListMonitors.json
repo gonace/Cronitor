@@ -34,7 +34,10 @@
         "state": "resolved"
       },
       "latest_invocations": null,
-      "public_badge_url": "https://cronitor.io/badges/key/production/hash.svg",
+      "badges": {
+        "simple": "https://cronitor.io/badges/key/production/hash.svg",
+        "detailed": "https://cronitor.io/badges/key/production/hash/detailed.svg"
+      },
       "metadata": null,
       "name": "name",
       "next_expected_at": 1732759200,
@@ -48,7 +51,7 @@
       "realert_interval": "every 1 day",
       "request": null,
       "running": false,
-      "schedule": "0 3 * * *",
+      "schedules": [ "0 3 * * *" ],
       "schedule_tolerance": null,
       "tags": [
         "database"
@@ -65,5 +68,5 @@
   "page_size": 50,
   "page": "1",
   "total_monitor_count": 1,
-  "version": "2020-10-01"
+  "version": "2025-11-28"
 }

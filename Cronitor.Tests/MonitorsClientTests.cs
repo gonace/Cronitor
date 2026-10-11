@@ -98,6 +98,18 @@ namespace Cronitor.Tests
         }
 
         [Fact]
+        public void ShouldRequestApiVersion20251128()
+        {
+            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(new ListMonitorResponse { Items = new List<Monitor>() }));
+            var monitorsClient = CreateClient(handler);
+
+            monitorsClient.List();
+
+            var request = Assert.Single(handler.Requests);
+            Assert.Equal(new[] { "2025-11-28" }, request.Headers.GetValues("Cronitor-Version"));
+        }
+
+        [Fact]
         public async Task ListAsyncShouldRequireARequest()
         {
             var monitorsClient = CreateClient(new FakeHttpMessageHandler());
