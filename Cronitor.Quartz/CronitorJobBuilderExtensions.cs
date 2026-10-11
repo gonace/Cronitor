@@ -1,6 +1,7 @@
+using Quartz;
 using System;
 
-namespace Quartz;
+namespace Cronitor.Quartz;
 
 public static class CronitorJobBuilderExtensions
 {

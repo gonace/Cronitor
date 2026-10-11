@@ -1,13 +1,13 @@
-using Cronitor;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
+using Quartz;
 using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Quartz;
+namespace Cronitor.Quartz;
 
 /// <summary>
 /// Reports every job Quartz runs to Cronitor: run when the job starts, then complete when it

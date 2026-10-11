@@ -1,11 +1,10 @@
-using Cronitor;
 using Cronitor.Commands;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace Quartz.Extensions.Cronitor.Tests;
+namespace Cronitor.Quartz.Tests;
 
 /// <summary>
 /// Records the telemetry a job run sends, so tests can check it without any HTTP.

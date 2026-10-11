@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace Quartz.Extensions.Cronitor.Tests;
+namespace Cronitor.Quartz.Tests;
 
 /// <summary>
 /// Serializes tests that run Quartz schedulers, since Quartz 3 keeps its logging in global state

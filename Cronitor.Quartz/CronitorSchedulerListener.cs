@@ -1,9 +1,10 @@
+using Quartz;
 using Quartz.Listener;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Quartz;
+namespace Cronitor.Quartz;
 
 /// <summary>
 /// Waits, when the scheduler shuts down, for the reports a <see cref="CronitorJobListener"/> is still sending,

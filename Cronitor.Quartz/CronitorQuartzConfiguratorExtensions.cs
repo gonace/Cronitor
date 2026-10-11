@@ -1,10 +1,10 @@
-using Cronitor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Quartz;
 using System;
 using System.Runtime.CompilerServices;
 
-namespace Quartz;
+namespace Cronitor.Quartz;
 
 public static class CronitorQuartzConfiguratorExtensions
 {

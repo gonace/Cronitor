@@ -1,12 +1,12 @@
-using Cronitor;
 using Microsoft.Extensions.DependencyInjection;
+using Quartz;
 using Quartz.Logging;
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Quartz.Extensions.Cronitor.Tests;
+namespace Cronitor.Quartz.Tests;
 
 /// <summary>
 /// Registers the listener through Quartz's dependency injection, the way an application would.

@@ -1,7 +1,8 @@
 using Microsoft.Extensions.Logging;
+using Quartz;
 using System;
 
-namespace Quartz;
+namespace Cronitor.Quartz;
 
 /// <summary>
 /// The package's log messages, generated at compile time by the logging source generator.

@@ -1,11 +1,12 @@
 using Microsoft.Extensions.Logging;
+using Quartz;
 using Quartz.Impl;
 using System;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Quartz.Extensions.Cronitor.Tests;
+namespace Cronitor.Quartz.Tests;
 
 /// <summary>
 /// Runs jobs on a real Quartz scheduler and checks what the listener reports to Cronitor.

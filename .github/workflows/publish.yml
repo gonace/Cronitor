@@ -70,7 +70,7 @@ jobs:
     # The extensions take their version from their project files; read it for the push steps.
     - name: Read extension versions
       run: |
-        echo "QUARTZ_EXTENSIONS_VERSION=$(dotnet msbuild Quartz.Extensions.Cronitor/Quartz.Extensions.Cronitor.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN)" >> "$GITHUB_ENV"
+        echo "CRONITOR_QUARTZ_VERSION=$(dotnet msbuild Cronitor.Quartz/Cronitor.Quartz.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN)" >> "$GITHUB_ENV"
         echo "HANGFIRE_EXTENSIONS_VERSION=$(dotnet msbuild Hangfire.Extensions.Cronitor/Hangfire.Extensions.Cronitor.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN)" >> "$GITHUB_ENV"
 
     - name: Restore
@@ -92,16 +92,16 @@ jobs:
           -p:IncludeSymbols=true \
           -p:SymbolPackageFormat=snupkg
 
-    - name: Build Quartz.Extensions.Cronitor
+    - name: Build Cronitor.Quartz
       run: |
-        dotnet build Quartz.Extensions.Cronitor/Quartz.Extensions.Cronitor.csproj \
+        dotnet build Cronitor.Quartz/Cronitor.Quartz.csproj \
           --configuration Release \
           -p:CronitorVersion=$CRONITOR_VERSION \
           -p:ReleaseRun=$RELEASE_RUN
 
-    - name: Pack Quartz.Extensions.Cronitor
+    - name: Pack Cronitor.Quartz
       run: |
-        dotnet pack Quartz.Extensions.Cronitor/Quartz.Extensions.Cronitor.csproj \
+        dotnet pack Cronitor.Quartz/Cronitor.Quartz.csproj \
           --configuration Release \
           --no-build \
           -p:CronitorVersion=$CRONITOR_VERSION \
@@ -141,11 +141,11 @@ jobs:
           --api-key "$NUGET_API_KEY" \
           --source "$NUGET_SOURCE"
 
-    - name: Push Quartz.Extensions.Cronitor
+    - name: Push Cronitor.Quartz
       env:
         NUGET_API_KEY: ${{steps.login.outputs.NUGET_API_KEY}}
       run: |
-        dotnet nuget push Quartz.Extensions.Cronitor/bin/Release/Quartz.Extensions.Cronitor.$QUARTZ_EXTENSIONS_VERSION.nupkg \
+        dotnet nuget push Cronitor.Quartz/bin/Release/Cronitor.Quartz.$CRONITOR_QUARTZ_VERSION.nupkg \
           --api-key "$NUGET_API_KEY" \
           --source "$NUGET_SOURCE"
 

@@ -1,12 +1,12 @@
-# Quartz.Extensions.Cronitor
+# Cronitor.Quartz
 Reports every [Quartz.NET](https://www.quartz-scheduler.net) job to [Cronitor](https://cronitor.io): run when the job starts, complete when it succeeds, and fail, with the exception's message, when it throws.
 
-![Nuget](https://img.shields.io/nuget/v/Quartz.Extensions.Cronitor)
-![Nuget](https://img.shields.io/nuget/dt/Quartz.Extensions.Cronitor)
+![Nuget](https://img.shields.io/nuget/v/Cronitor.Quartz)
+![Nuget](https://img.shields.io/nuget/dt/Cronitor.Quartz)
 
 ## Install
 ```
-dotnet add package Quartz.Extensions.Cronitor
+dotnet add package Cronitor.Quartz
 ```
 The package's major version matches Quartz's: version 3 is for Quartz 3 (3.22.4 or later).
 
@@ -14,6 +14,7 @@ The package's major version matches Quartz's: version 3 is for Quartz 3 (3.22.4 
 Register Cronitor with `.ConfigureCronitor()`, then call `UseCronitor()` when adding Quartz:
 ```c#
 using Cronitor.Extensions;
+using Cronitor.Quartz;
 using Quartz;
 
 await Host.CreateDefaultBuilder()
