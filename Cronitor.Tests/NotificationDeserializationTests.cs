@@ -74,6 +74,18 @@ namespace Cronitor.Tests
             Assert.DoesNotContain("\"created\"", sent);
         }
 
+        [Theory]
+        [JsonData("ListNotifications.json")]
+        public void ShouldNotSendTheMonitorsOrStatusCronitorSets(string json)
+        {
+            var notification = Serializer.Deserialize<ListNotificationResponse>(json).Items.Single();
+
+            var sent = Serializer.Serialize(notification);
+
+            Assert.DoesNotContain("\"monitors\"", sent);
+            Assert.DoesNotContain("\"status\"", sent);
+        }
+
         [Fact]
         public void ShouldSendTheNewerChannels()
         {

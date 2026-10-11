@@ -21,6 +21,7 @@ namespace Cronitor.Models
         /// <summary>
         /// A list of monitors attached to this Notification List.
         /// </summary>
+        [ResponseOnly]
         [JsonPropertyName("monitors")]
         public IEnumerable<string> Monitors { get; set; }
         /// <summary>
@@ -48,6 +49,7 @@ namespace Cronitor.Models
         /// <summary>
         /// A plain text status description of this monitor
         /// </summary>
+        [ResponseOnly]
         [JsonPropertyName("status")]
         public string Status { get; set; }
 
