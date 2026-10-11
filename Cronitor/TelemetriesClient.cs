@@ -1,24 +1,33 @@
 ﻿using Cronitor.Abstractions;
 using Cronitor.Commands;
-using Cronitor.Constants;
-using Cronitor.Internals;
+using Cronitor.Exceptions;
+using System;
+using System.Net.Http;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Cronitor.Extensions;
+using HttpClient = Cronitor.Internals.HttpClient;
 
 namespace Cronitor
 {
+    /// <summary>
+    /// Sends telemetry events to Cronitor. Telemetry never breaks the job it monitors:
+    /// transient failures are retried, and if an event still cannot be delivered the
+    /// methods return <c>false</c> instead of throwing. Programming errors, such as a
+    /// missing monitor key, still throw.
+    /// </summary>
     public interface ITelemetriesClient
     {
-        void Run(string monitorKey, string message = null, string environment = null);
-        Task RunAsync(string monitorKey, string message = null, string environment = null);
-        void Complete(string monitorKey, string message = null, string environment = null);
-        Task CompleteAsync(string monitorKey, string message = null, string environment = null);
-        void Fail(string monitorKey, string message = null, string environment = null);
-        Task FailAsync(string monitorKey, string message = null, string environment = null);
-        void Tick(string monitorKey, string message = null, string environment = null);
-        Task TickAsync(string monitorKey, string message = null, string environment = null);
-        void Ping(Command command);
-        Task PingAsync(Command command);
+        bool Run(string monitorKey, string message = null, string environment = null);
+        Task<bool> RunAsync(string monitorKey, string message = null, string environment = null);
+        bool Complete(string monitorKey, string message = null, string environment = null);
+        Task<bool> CompleteAsync(string monitorKey, string message = null, string environment = null);
+        bool Fail(string monitorKey, string message = null, string environment = null);
+        Task<bool> FailAsync(string monitorKey, string message = null, string environment = null);
+        bool Tick(string monitorKey, string message = null, string environment = null);
+        Task<bool> TickAsync(string monitorKey, string message = null, string environment = null);
+        bool Ping(Command command);
+        Task<bool> PingAsync(Command command);
 
         /// <summary>
         /// Starts a job run and reports it as running.
@@ -46,10 +55,10 @@ namespace Cronitor
         }
 
 
-        public void Run(string monitorKey, string message = null, string environment = null) =>
+        public bool Run(string monitorKey, string message = null, string environment = null) =>
             RunAsync(monitorKey, message, environment).GetAwaiter().GetResult();
 
-        public async Task RunAsync(string monitorKey, string message = null, string environment = null)
+        public async Task<bool> RunAsync(string monitorKey, string message = null, string environment = null)
         {
             ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
 
@@ -67,13 +76,13 @@ namespace Cronitor
                 command.WithEnvironment(environment);
             }
 
-            await PingAsync(command);
+            return await PingAsync(command);
         }
 
-        public void Complete(string monitorKey, string message = null, string environment = null) =>
+        public bool Complete(string monitorKey, string message = null, string environment = null) =>
             CompleteAsync(monitorKey, message, environment).GetAwaiter().GetResult();
 
-        public async Task CompleteAsync(string monitorKey, string message = null, string environment = null)
+        public async Task<bool> CompleteAsync(string monitorKey, string message = null, string environment = null)
         {
             ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
 
@@ -91,13 +100,13 @@ namespace Cronitor
                 command.WithEnvironment(environment);
             }
 
-            await PingAsync(command);
+            return await PingAsync(command);
         }
 
-        public void Fail(string monitorKey, string message = null, string environment = null) =>
+        public bool Fail(string monitorKey, string message = null, string environment = null) =>
             FailAsync(monitorKey, message, environment).GetAwaiter().GetResult();
 
-        public async Task FailAsync(string monitorKey, string message = null, string environment = null)
+        public async Task<bool> FailAsync(string monitorKey, string message = null, string environment = null)
         {
             ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
 
@@ -115,13 +124,13 @@ namespace Cronitor
                 command.WithEnvironment(environment);
             }
 
-            await PingAsync(command);
+            return await PingAsync(command);
         }
 
-        public void Tick(string monitorKey, string message = null, string environment = null) =>
+        public bool Tick(string monitorKey, string message = null, string environment = null) =>
             TickAsync(monitorKey, message, environment).GetAwaiter().GetResult();
 
-        public async Task TickAsync(string monitorKey, string message = null, string environment = null)
+        public async Task<bool> TickAsync(string monitorKey, string message = null, string environment = null)
         {
             ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
 
@@ -139,14 +148,24 @@ namespace Cronitor
                 command.WithEnvironment(environment);
             }
 
-            await PingAsync(command);
+            return await PingAsync(command);
         }
 
-        public void Ping(Command command) =>
+        public bool Ping(Command command) =>
             PingAsync(command).GetAwaiter().GetResult();
 
-        public async Task PingAsync(Command command) =>
-            await SendAsync(command);
+        public async Task<bool> PingAsync(Command command)
+        {
+            try
+            {
+                await SendAsync(command);
+                return true;
+            }
+            catch (Exception exception) when (IsDeliveryFailure(exception))
+            {
+                return false;
+            }
+        }
 
         public ITelemetryRun Start(string monitorKey, string environment = null) =>
             TelemetryRun.Start(this, monitorKey, environment);
@@ -157,7 +176,19 @@ namespace Cronitor
         /// <summary>
         /// Sends <paramref name="command"/> authenticated with this client's API key.
         /// </summary>
-        internal Task PingWithApiKeyAsync(Command command) =>
+        internal Task<bool> PingWithApiKeyAsync(Command command) =>
             PingAsync(command.WithApiKey(_apiKey));
+
+        /// <summary>
+        /// Whether <paramref name="exception"/> means the ping could not be delivered to Cronitor,
+        /// as opposed to a programming error such as a missing monitor key.
+        /// </summary>
+        private static bool IsDeliveryFailure(Exception exception)
+        {
+            return exception is HttpRequestException
+                || exception is ApiException
+                || exception is TaskCanceledException
+                || exception is JsonException;
+        }
     }
 }

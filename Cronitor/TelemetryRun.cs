@@ -33,26 +33,30 @@ namespace Cronitor
             return run;
         }
 
-        public void Complete(string message = null) =>
+        public bool Complete(string message = null) =>
             CompleteAsync(message).GetAwaiter().GetResult();
 
-        public async Task CompleteAsync(string message = null)
+        public async Task<bool> CompleteAsync(string message = null)
         {
-            if (TryFinish())
+            if (!TryFinish())
             {
-                await SendAsync(new CompleteCommand(), message);
+                return false;
             }
+
+            return await SendAsync(new CompleteCommand(), message);
         }
 
-        public void Fail(string message = null) =>
+        public bool Fail(string message = null) =>
             FailAsync(message).GetAwaiter().GetResult();
 
-        public async Task FailAsync(string message = null)
+        public async Task<bool> FailAsync(string message = null)
         {
-            if (TryFinish())
+            if (!TryFinish())
             {
-                await SendAsync(new FailCommand(), message);
+                return false;
             }
+
+            return await SendAsync(new FailCommand(), message);
         }
 
         /// <summary>
@@ -82,7 +86,7 @@ namespace Cronitor
             return true;
         }
 
-        private Task SendAsync(Command command, string message)
+        private Task<bool> SendAsync(Command command, string message)
         {
             command.WithMonitorKey(_monitorKey).WithSeries(_series);
 

@@ -68,6 +68,8 @@ Telemetry events report the state of a job to a monitor. Each event has a sync a
 
 All events except `Ping` take a monitor key and an optional `message` and `environment`.
 
+Telemetry never breaks the job it monitors: transient failures are retried, and if an event still can't be delivered the method returns `false` instead of throwing.
+
 ### Using block
 `Cronitor.Start()` (or `ITelemetriesClient.Start()`) reports the run and returns an `ITelemetryRun`. Call `Complete()` when the job succeeds; if the run is disposed without it (for example because an exception was thrown), it's reported as failed.
 ```c#

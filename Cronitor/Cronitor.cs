@@ -36,34 +36,34 @@ namespace Cronitor
         public static Task<ITelemetryRun> StartAsync(string monitorKey, string environment = null) =>
             Telemetries.StartAsync(monitorKey, environment);
 
-        public static void Run(string monitorKey, string message = null, string environment = null) =>
+        public static bool Run(string monitorKey, string message = null, string environment = null) =>
             Telemetries.Run(monitorKey, message, environment);
 
-        public static Task RunAsync(string monitorKey, string message = null, string environment = null) =>
+        public static Task<bool> RunAsync(string monitorKey, string message = null, string environment = null) =>
             Telemetries.RunAsync(monitorKey, message, environment);
 
-        public static void Complete(string monitorKey, string message = null, string environment = null) =>
+        public static bool Complete(string monitorKey, string message = null, string environment = null) =>
             Telemetries.Complete(monitorKey, message, environment);
 
-        public static Task CompleteAsync(string monitorKey, string message = null, string environment = null) =>
+        public static Task<bool> CompleteAsync(string monitorKey, string message = null, string environment = null) =>
             Telemetries.CompleteAsync(monitorKey, message, environment);
 
-        public static void Fail(string monitorKey, string message = null, string environment = null) =>
+        public static bool Fail(string monitorKey, string message = null, string environment = null) =>
             Telemetries.Fail(monitorKey, message, environment);
 
-        public static Task FailAsync(string monitorKey, string message = null, string environment = null) =>
+        public static Task<bool> FailAsync(string monitorKey, string message = null, string environment = null) =>
             Telemetries.FailAsync(monitorKey, message, environment);
 
-        public static void Tick(string monitorKey, string message = null, string environment = null) =>
+        public static bool Tick(string monitorKey, string message = null, string environment = null) =>
             Telemetries.Tick(monitorKey, message, environment);
 
-        public static Task TickAsync(string monitorKey, string message = null, string environment = null) =>
+        public static Task<bool> TickAsync(string monitorKey, string message = null, string environment = null) =>
             Telemetries.TickAsync(monitorKey, message, environment);
 
-        public static void Ping(Command command) =>
+        public static bool Ping(Command command) =>
             Telemetries.Ping(command);
 
-        public static Task PingAsync(Command command) =>
+        public static Task<bool> PingAsync(Command command) =>
             Telemetries.PingAsync(command);
 
         private static Service Service => _service ?? throw new NotConfiguredException();

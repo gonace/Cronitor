@@ -134,6 +134,38 @@ namespace Cronitor.Tests
         }
 
         [Fact]
+        public void CompleteShouldReturnTrueWhenThePingIsAccepted()
+        {
+            var handler = new FakeHttpMessageHandler();
+            var run = TelemetryRun.Start(CreateClient(handler), MonitorKey);
+
+            Assert.True(run.Complete());
+        }
+
+        [Fact]
+        public void CompleteShouldReturnFalseWhenAlreadyFinished()
+        {
+            var handler = new FakeHttpMessageHandler();
+            var run = TelemetryRun.Start(CreateClient(handler), MonitorKey);
+            run.Fail();
+
+            Assert.False(run.Complete());
+        }
+
+        [Fact]
+        public async Task StartAsyncShouldNotThrowWhenRunCannotBeSent()
+        {
+            var handler = new FakeHttpMessageHandler(HttpStatusCode.InternalServerError, "{\"detail\":\"Server error\"}");
+
+            using (var run = await TelemetryRun.StartAsync(CreateClient(handler), MonitorKey))
+            {
+                Assert.False(await run.CompleteAsync());
+            }
+
+            Assert.Equal(new[] { "run", "complete" }, handler.Requests.Select(Endpoint));
+        }
+
+        [Fact]
         public void DisposeShouldNotThrowWhenFailCannotBeSent()
         {
             var handler = new FakeHttpMessageHandler(HttpStatusCode.InternalServerError, "{\"detail\":\"Server error\"}");

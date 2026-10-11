@@ -7,12 +7,14 @@ namespace Cronitor
     /// A single run of a job, reported to Cronitor as run → complete or fail.
     /// Disposing a run that was neither completed nor failed reports it as failed,
     /// so a forgotten <see cref="Complete"/> shows up instead of hiding failures.
+    /// Complete and Fail return <c>true</c> when the event was delivered, and <c>false</c>
+    /// when it could not be delivered or the run was already completed or failed.
     /// </summary>
     public interface ITelemetryRun : IDisposable
     {
-        void Complete(string message = null);
-        Task CompleteAsync(string message = null);
-        void Fail(string message = null);
-        Task FailAsync(string message = null);
+        bool Complete(string message = null);
+        Task<bool> CompleteAsync(string message = null);
+        bool Fail(string message = null);
+        Task<bool> FailAsync(string message = null);
     }
 }
