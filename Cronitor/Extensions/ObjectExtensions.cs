@@ -35,11 +35,8 @@ namespace Cronitor.Extensions
 
             var attribute = (QueryStringPropertyAttribute)Attribute.GetCustomAttribute(property, typeof(QueryStringPropertyAttribute));
             var name = attribute.PropertyName ?? property.Name.ToLower(CultureInfo.CurrentCulture);
-            var items = value is IEnumerable collection && !(value is string)
-                ? collection.Cast<object>()
-                : new[] { value };
 
-            foreach (var item in items)
+            foreach (var item in ToItems(value))
             {
                 var text = attribute.Lower
                     ? item.ToString()?.ToLower(CultureInfo.CurrentCulture)
@@ -47,6 +44,24 @@ namespace Cronitor.Extensions
 
                 yield return $"{name}={Uri.EscapeDataString(text ?? string.Empty)}";
             }
+        }
+
+        /// <summary>
+        /// A string is a single value even though it is enumerable; other collections give one item per element.
+        /// </summary>
+        private static IEnumerable<object> ToItems(object value)
+        {
+            if (value is string)
+            {
+                return new[] { value };
+            }
+
+            if (value is IEnumerable collection)
+            {
+                return collection.Cast<object>();
+            }
+
+            return new[] { value };
         }
     }
 }
