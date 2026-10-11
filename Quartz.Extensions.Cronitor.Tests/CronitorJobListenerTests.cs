@@ -73,6 +73,26 @@ public class CronitorJobListenerTests
     }
 
     [Fact]
+    public async Task Should_send_run_and_fail_when_the_job_is_interrupted()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        InterruptibleJob.Reset();
+        var properties = new NameValueCollection { ["quartz.scheduler.instanceName"] = Guid.NewGuid().ToString("N") };
+        var scheduler = await new StdSchedulerFactory(properties).GetScheduler(TestContext.Current.CancellationToken);
+        scheduler.ListenerManager.AddJobListener(new CronitorJobListener(telemetries));
+        await scheduler.Start(TestContext.Current.CancellationToken);
+
+        var job = JobBuilder.Create<InterruptibleJob>().WithIdentity("nightly-backup").Build();
+        await scheduler.ScheduleJob(job, TriggerBuilder.Create().StartNow().Build(), TestContext.Current.CancellationToken);
+        await Task.WhenAny(InterruptibleJob.Started, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
+        await scheduler.Interrupt(job.Key, TestContext.Current.CancellationToken);
+        await Task.WhenAny(telemetries.Finished, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
+        await scheduler.Shutdown(true, TestContext.Current.CancellationToken);
+
+        Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: The job was interrupted" }, telemetries.Sent);
+    }
+
+    [Fact]
     public async Task Should_run_the_job_without_waiting_for_the_start_to_be_reported()
     {
         var startGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -151,5 +171,20 @@ public class CronitorJobListenerTests
     private sealed class FailingJob : IJob
     {
         public Task Execute(IJobExecutionContext context) => throw new InvalidOperationException("Disk is full");
+    }
+
+    private sealed class InterruptibleJob : IJob
+    {
+        private static TaskCompletionSource<bool> _started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public static Task Started => _started.Task;
+
+        public static void Reset() => _started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public async Task Execute(IJobExecutionContext context)
+        {
+            _started.TrySetResult(true);
+            await Task.Delay(TimeSpan.FromSeconds(30), context.CancellationToken);
+        }
     }
 }

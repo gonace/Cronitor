@@ -52,7 +52,7 @@ public class CronitorJobListener : IJobListener
         {
             if (context.Get(StartKey) is Task<ITelemetryRun> start)
             {
-                _ = ReportEnd(start, jobException, context.JobDetail.Key);
+                _ = ReportEnd(start, FailureOf(context, jobException), context.JobDetail.Key);
             }
         }
         catch (Exception exception)
@@ -80,9 +80,23 @@ public class CronitorJobListener : IJobListener
     }
 
     /// <summary>
-    /// Sends complete or fail once the run event has been sent, so Cronitor always receives them in order.
+    /// Why the job did not succeed, or null if it did. Quartz passes no exception for a job it interrupted,
+    /// even when the job threw because of the interrupt, so an interrupt is checked separately.
     /// </summary>
-    private async Task ReportEnd(Task<ITelemetryRun> start, JobExecutionException jobException, JobKey jobKey)
+    private static string FailureOf(IJobExecutionContext context, JobExecutionException jobException)
+    {
+        if (jobException != null)
+        {
+            return jobException.GetBaseException().Message;
+        }
+
+        return context.CancellationToken.IsCancellationRequested ? "The job was interrupted" : null;
+    }
+
+    /// <summary>
+    /// Sends complete, or fail with the failure, once the run event has been sent, so Cronitor always receives them in order.
+    /// </summary>
+    private async Task ReportEnd(Task<ITelemetryRun> start, string failure, JobKey jobKey)
     {
         try
         {
@@ -93,13 +107,13 @@ public class CronitorJobListener : IJobListener
                     return;
                 }
 
-                if (jobException == null)
+                if (failure == null)
                 {
                     await run.CompleteAsync().ConfigureAwait(false);
                 }
                 else
                 {
-                    await run.FailAsync(jobException.GetBaseException().Message).ConfigureAwait(false);
+                    await run.FailAsync(failure).ConfigureAwait(false);
                 }
             }
         }
