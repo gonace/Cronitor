@@ -11,7 +11,7 @@ namespace Cronitor.Tests.Requests
         {
             var request = new ListNotificationRequest();
 
-            Assert.Equal("templates", request.Endpoint);
+            Assert.Equal("notifications", request.Endpoint);
         }
 
         [Fact]
@@ -37,7 +37,7 @@ namespace Cronitor.Tests.Requests
 
             var uri = request.ToUri();
 
-            Assert.Equal("https://cronitor.io/api/templates?page=1", uri.ToString());
+            Assert.Equal("https://cronitor.io/api/notifications?page=1", uri.ToString());
         }
 
         [Fact]
@@ -47,7 +47,7 @@ namespace Cronitor.Tests.Requests
 
             var uri = request.ToUri();
 
-            Assert.Equal("https://cronitor.io/api/templates?page=5", uri.ToString());
+            Assert.Equal("https://cronitor.io/api/notifications?page=5", uri.ToString());
         }
     }
 }

@@ -7,7 +7,7 @@ namespace Cronitor.Requests
 {
     public class GetNotificationRequest : BaseRequest
     {
-        public override string Endpoint { get; set; } = "templates/:key";
+        public override string Endpoint { get; set; } = "notifications/:key";
         public string Key { get; set; }
 
         public GetNotificationRequest(string key)

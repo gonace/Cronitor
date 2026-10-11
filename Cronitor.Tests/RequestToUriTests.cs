@@ -116,7 +116,7 @@ namespace Cronitor.Tests
             var uri = request.ToUri();
 
             Assert.NotNull(uri);
-            Assert.Contains($"templates/{TemplateKey}", uri.ToString());
+            Assert.Contains($"notifications/{TemplateKey}", uri.ToString());
         }
 
         [Fact]

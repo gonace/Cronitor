@@ -13,7 +13,6 @@ namespace Cronitor.Tests
 {
     public class NotificationsClientTests : BaseTest
     {
-        private const string TemplatesUri = "https://cronitor.io/api/templates";
         private const string NotificationsUri = "https://cronitor.io/api/notifications";
 
         [Fact]
@@ -55,7 +54,7 @@ namespace Cronitor.Tests
             Assert.NotEmpty(result.Items);
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
-            AssertRequest.Sent(handler, HttpMethod.Get, TemplatesUri + "?page=1");
+            AssertRequest.Sent(handler, HttpMethod.Get, NotificationsUri + "?page=1");
         }
 
         [Fact]
@@ -71,7 +70,7 @@ namespace Cronitor.Tests
             Assert.NotEmpty(result.Items);
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
-            AssertRequest.Sent(handler, HttpMethod.Get, TemplatesUri + "?page=1");
+            AssertRequest.Sent(handler, HttpMethod.Get, NotificationsUri + "?page=1");
         }
 
         [Fact]
@@ -84,7 +83,7 @@ namespace Cronitor.Tests
             var result = notificationsClient.Get(TemplateKey);
 
             Assert.NotNull(result);
-            AssertRequest.Sent(handler, HttpMethod.Get, TemplatesUri + "/" + TemplateKey);
+            AssertRequest.Sent(handler, HttpMethod.Get, NotificationsUri + "/" + TemplateKey);
         }
 
         [Fact]
@@ -97,7 +96,7 @@ namespace Cronitor.Tests
             var result = await notificationsClient.GetAsync(TemplateKey);
 
             Assert.NotNull(result);
-            AssertRequest.Sent(handler, HttpMethod.Get, TemplatesUri + "/" + TemplateKey);
+            AssertRequest.Sent(handler, HttpMethod.Get, NotificationsUri + "/" + TemplateKey);
         }
 
         [Fact]
