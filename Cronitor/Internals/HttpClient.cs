@@ -1,5 +1,6 @@
 ﻿using Cronitor.Abstractions;
 using Cronitor.Commands;
+using Cronitor.Constants;
 using Cronitor.Exceptions;
 using Cronitor.Extensions;
 using Cronitor.Models;
@@ -45,6 +46,19 @@ namespace Cronitor.Internals
             _apiUri = apiUri.AsHttps();
             _httpClient = CreateHttpClient(handler);
         }
+
+        /// <summary>
+        /// Creates the client for telemetry pings, which retries transient failures.
+        /// </summary>
+        internal static HttpClient ForTelemetry(string apiKey) =>
+            ForTelemetry(apiKey, SharedHandler);
+
+        /// <summary>
+        /// Creates the client for telemetry pings, sending through <paramref name="network"/>.
+        /// Intended for tests, to replace the network.
+        /// </summary>
+        internal static HttpClient ForTelemetry(string apiKey, HttpMessageHandler network) =>
+            new HttpClient(Urls.TelemetryBaseUrl, apiKey, new RetryingHttpMessageHandler(network));
 
         public async Task SendAsync(Command command)
         {

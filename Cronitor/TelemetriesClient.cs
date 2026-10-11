@@ -34,12 +34,12 @@ namespace Cronitor
         private readonly string _apiKey;
 
         public TelemetriesClient()
-            : base(Urls.TelemetryBaseUrl)
+            : base(HttpClient.ForTelemetry(null))
         {
         }
 
         public TelemetriesClient(string apiKey)
-            : base(Urls.TelemetryBaseUrl, apiKey)
+            : base(HttpClient.ForTelemetry(apiKey))
         {
             _apiKey = apiKey;
         }
