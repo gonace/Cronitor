@@ -1,6 +1,6 @@
 version = 1
 
-test_patterns = ["Cronitor.Tests/**"]
+test_patterns = ["*.Tests/**"]
 
 [[analyzers]]
 name = "csharp"
