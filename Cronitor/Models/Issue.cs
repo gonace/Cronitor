@@ -81,6 +81,20 @@ namespace Cronitor.Models
 
         #region Read Only Attributes
 
+        /// <summary>
+        /// When the issue ended, or null while it is still open.
+        /// </summary>
+        [JsonInclude]
+        [ResponseOnly]
+        [JsonPropertyName("ended")]
+        public DateTime? Ended { get; private set; }
+        /// <summary>
+        /// How long the issue lasted, in seconds, or null while it is still open.
+        /// </summary>
+        [JsonInclude]
+        [ResponseOnly]
+        [JsonPropertyName("duration")]
+        public int? Duration { get; private set; }
         [JsonPropertyName("created_by")]
         public Author CreatedBy { get; set; }
         /// <summary>

@@ -36,6 +36,16 @@ namespace Cronitor.Tests
             Assert.Equal(new DateTime(2026, 10, 10, 0, 40, 19, DateTimeKind.Utc), opened.Timestamp);
         }
 
+        [Theory]
+        [JsonData("ListIssues.json")]
+        public void ShouldReadWhenTheIssueEndedAndHowLongItLasted(string json)
+        {
+            var issue = Serializer.Deserialize<ListIssueResponse>(json).Items.Single();
+
+            Assert.Equal(new DateTime(2026, 10, 11, 0, 30, 34, DateTimeKind.Utc), issue.Ended);
+            Assert.Equal(85815, issue.Duration);
+        }
+
         [Fact]
         public void ShouldSendAnUpdateWithOnlyItsMessageAndState()
         {
