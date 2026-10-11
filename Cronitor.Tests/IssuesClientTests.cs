@@ -4,6 +4,7 @@ using Cronitor.Requests;
 using Cronitor.Responses;
 using Cronitor.Tests.Builders;
 using Cronitor.Tests.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -82,6 +83,40 @@ namespace Cronitor.Tests
                 Assert.Equal(50, result.PageSize);
                 AssertRequest.Sent(handler, HttpMethod.Get, IssuesUri + "?page=1");
             }
+        }
+
+        [Fact]
+        public void ShouldExecuteListMethodWithFilters()
+        {
+            var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
+            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
+            var issuesClient = CreateClient(handler);
+
+            var result = issuesClient.List(new ListIssueRequest { States = { IssueState.Unresolved }, Time = "24h" });
+
+            Assert.Single(result.Items);
+            AssertRequest.Sent(handler, HttpMethod.Get, IssuesUri + "?page=1&state=unresolved&time=24h");
+        }
+
+        [Fact]
+        public async Task ShouldExecuteListAsyncMethodWithFilters()
+        {
+            var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
+            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
+            var issuesClient = CreateClient(handler);
+
+            var result = await issuesClient.ListAsync(new ListIssueRequest { Jobs = { MonitorKey }, OrderBy = IssueOrder.StartedDescending });
+
+            Assert.Single(result.Items);
+            AssertRequest.Sent(handler, HttpMethod.Get, IssuesUri + $"?page=1&job={MonitorKey}&orderBy=-started");
+        }
+
+        [Fact]
+        public async Task ListAsyncShouldRequireARequest()
+        {
+            var issuesClient = CreateClient(new FakeHttpMessageHandler());
+
+            await Assert.ThrowsAsync<ArgumentNullException>(() => issuesClient.ListAsync((ListIssueRequest)null));
         }
 
         [Fact]

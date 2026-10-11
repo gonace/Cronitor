@@ -4,6 +4,7 @@ using Cronitor.Internals;
 using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Responses;
+using System;
 using System.Threading.Tasks;
 using Cronitor.Extensions;
 
@@ -13,6 +14,12 @@ namespace Cronitor
     {
         ListIssueResponse List(int page = 1);
         Task<ListIssueResponse> ListAsync(int page = 1);
+        /// <summary>
+        /// Lists issues matching the filters on <paramref name="request"/>.
+        /// </summary>
+        ListIssueResponse List(ListIssueRequest request);
+        /// <inheritdoc cref="List(ListIssueRequest)"/>
+        Task<ListIssueResponse> ListAsync(ListIssueRequest request);
         Issue Get(string key);
         Task<Issue> GetAsync(string key);
         Issue Create(CreateIssueRequest request);
@@ -38,12 +45,18 @@ namespace Cronitor
         public ListIssueResponse List(int page = 1) =>
             ListAsync(page).GetAwaiter().GetResult();
 
-        public async Task<ListIssueResponse> ListAsync(int page = 1)
+        public Task<ListIssueResponse> ListAsync(int page = 1) =>
+            ListAsync(new ListIssueRequest { Page = page });
+
+        public ListIssueResponse List(ListIssueRequest request) =>
+            ListAsync(request).GetAwaiter().GetResult();
+
+        public async Task<ListIssueResponse> ListAsync(ListIssueRequest request)
         {
-            var request = new ListIssueRequest
+            if (request == null)
             {
-                Page = page
-            };
+                throw new ArgumentNullException(nameof(request));
+            }
 
             return await SendAsync<ListIssueResponse>(request);
         }
