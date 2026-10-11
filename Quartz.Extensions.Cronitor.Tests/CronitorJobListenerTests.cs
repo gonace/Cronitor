@@ -131,6 +131,59 @@ public class CronitorJobListenerTests
     /// <summary>
     /// Whether the job run, listener included, finishes within the limit. A held report is released by the caller afterwards.
     /// </summary>
+    [Fact]
+    public async Task Should_send_pending_end_reports_before_the_scheduler_shuts_down()
+    {
+        var finishGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var telemetries = new FakeTelemetriesClient { FinishGate = finishGate.Task };
+        var listener = new CronitorJobListener(telemetries);
+        var scheduler = await StartAndRunJob(listener, new CronitorSchedulerListener(listener));
+
+        _ = Task.Delay(TimeSpan.FromMilliseconds(500), TestContext.Current.CancellationToken).ContinueWith(_ => finishGate.SetResult(true), TaskScheduler.Default);
+        await scheduler.Shutdown(true, TestContext.Current.CancellationToken);
+
+        Assert.Equal(new[] { "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public async Task Should_stop_waiting_for_pending_end_reports_after_the_shutdown_limit()
+    {
+        var finishGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var telemetries = new FakeTelemetriesClient { FinishGate = finishGate.Task };
+        var logger = new FakeLogger<CronitorJobListener>();
+        var listener = new CronitorJobListener(telemetries, logger);
+        var scheduler = await StartAndRunJob(listener, new CronitorSchedulerListener(listener, TimeSpan.FromMilliseconds(200)));
+
+        var shutdown = scheduler.Shutdown(true, TestContext.Current.CancellationToken);
+        var shutDownWithinLimit = await FinishesWithin(shutdown, TimeSpan.FromSeconds(5));
+        var sentAtShutdown = telemetries.Sent.ToArray();
+        finishGate.SetResult(true);
+        await shutdown;
+
+        Assert.True(shutDownWithinLimit, "Shutdown kept waiting for the report beyond the limit.");
+        Assert.Equal(new[] { "run nightly-backup" }, sentAtShutdown);
+        var entry = Assert.Single(logger.Entries);
+        Assert.Equal(LogLevel.Warning, entry.Level);
+    }
+
+    /// <summary>
+    /// Starts a scheduler with the given listeners, runs a succeeding job and waits until the job has run.
+    /// </summary>
+    private static async Task<IScheduler> StartAndRunJob(IJobListener jobListener, ISchedulerListener schedulerListener)
+    {
+        SucceedingJob.Reset();
+        var properties = new NameValueCollection { ["quartz.scheduler.instanceName"] = Guid.NewGuid().ToString("N") };
+        var scheduler = await new StdSchedulerFactory(properties).GetScheduler(TestContext.Current.CancellationToken);
+        scheduler.ListenerManager.AddJobListener(jobListener);
+        scheduler.ListenerManager.AddSchedulerListener(schedulerListener);
+        await scheduler.Start(TestContext.Current.CancellationToken);
+
+        await scheduler.ScheduleJob(JobBuilder.Create<SucceedingJob>().WithIdentity("nightly-backup").Build(), TriggerBuilder.Create().StartNow().Build(), TestContext.Current.CancellationToken);
+        await Task.WhenAny(SucceedingJob.Ran, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
+
+        return scheduler;
+    }
+
     private static async Task<bool> FinishesWithin(Task run, TimeSpan limit) =>
         await Task.WhenAny(run, Task.Delay(limit, TestContext.Current.CancellationToken)) == run;
 

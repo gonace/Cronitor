@@ -2,6 +2,8 @@ using Cronitor;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
+using System.Collections.Concurrent;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -21,6 +23,7 @@ public class CronitorJobListener : IJobListener
 
     private readonly ITelemetriesClient _telemetries;
     private readonly ILogger<CronitorJobListener> _logger;
+    private readonly ConcurrentDictionary<Task, bool> _pendingReports = new ConcurrentDictionary<Task, bool>();
 
     public CronitorJobListener(ITelemetriesClient telemetries, ILogger<CronitorJobListener> logger = null)
     {
@@ -52,7 +55,7 @@ public class CronitorJobListener : IJobListener
         {
             if (context.Get(StartKey) is Task<ITelemetryRun> start)
             {
-                _ = ReportEnd(start, FailureOf(context, jobException), context.JobDetail.Key);
+                Track(ReportEnd(start, FailureOf(context, jobException), context.JobDetail.Key));
             }
         }
         catch (Exception exception)
@@ -61,6 +64,31 @@ public class CronitorJobListener : IJobListener
         }
 
         return Task.CompletedTask;
+    }
+
+    /// <summary>
+    /// Waits for the end reports still being sent, at most for the given time, so they are not lost when the
+    /// application stops. <see cref="CronitorSchedulerListener"/> calls it when the scheduler shuts down.
+    /// </summary>
+    internal async Task WaitForPendingReports(TimeSpan limit, CancellationToken cancellationToken)
+    {
+        var pending = _pendingReports.Keys.ToArray();
+        if (pending.Length == 0)
+        {
+            return;
+        }
+
+        var sent = Task.WhenAll(pending);
+        if (await Task.WhenAny(sent, Task.Delay(limit, cancellationToken)).ConfigureAwait(false) != sent)
+        {
+            _logger.ReportsPendingAtShutdown(_pendingReports.Count);
+        }
+    }
+
+    private void Track(Task report)
+    {
+        _pendingReports.TryAdd(report, true);
+        report.ContinueWith(sent => _pendingReports.TryRemove(sent, out _), CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
     }
 
     /// <summary>

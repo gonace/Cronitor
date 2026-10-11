@@ -2,13 +2,15 @@ using Cronitor;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Runtime.CompilerServices;
 
 namespace Quartz;
 
 public static class CronitorQuartzConfiguratorExtensions
 {
     /// <summary>
-    /// Reports every job Quartz runs to Cronitor with a <see cref="CronitorJobListener"/>.
+    /// Reports every job Quartz runs to Cronitor with a <see cref="CronitorJobListener"/>, and waits for reports
+    /// still being sent when the scheduler shuts down with a <see cref="CronitorSchedulerListener"/>.
     /// Cronitor must be registered first with <c>ConfigureCronitor(apiKey)</c> on the host builder.
     /// </summary>
     public static IServiceCollectionQuartzConfigurator UseCronitor(this IServiceCollectionQuartzConfigurator quartz)
@@ -18,10 +20,18 @@ public static class CronitorQuartzConfiguratorExtensions
             throw new ArgumentNullException(nameof(quartz));
         }
 
-        quartz.AddJobListener(provider => new CronitorJobListener(TelemetriesClient(provider), provider.GetService<ILogger<CronitorJobListener>>()));
+        // Both listeners must share one job listener, since the scheduler listener waits for its reports.
+        var jobListeners = new ConditionalWeakTable<IServiceProvider, CronitorJobListener>();
+        CronitorJobListener JobListener(IServiceProvider provider) => jobListeners.GetValue(provider, CreateJobListener);
+
+        quartz.AddJobListener(JobListener);
+        quartz.AddSchedulerListener(provider => new CronitorSchedulerListener(JobListener(provider)));
 
         return quartz;
     }
+
+    private static CronitorJobListener CreateJobListener(IServiceProvider provider) =>
+        new CronitorJobListener(TelemetriesClient(provider), provider.GetService<ILogger<CronitorJobListener>>());
 
     private static ITelemetriesClient TelemetriesClient(IServiceProvider provider) =>
         provider.GetService<ITelemetriesClient>()

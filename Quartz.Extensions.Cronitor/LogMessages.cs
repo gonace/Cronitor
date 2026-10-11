@@ -19,4 +19,10 @@ internal static partial class LogMessages
         Level = LogLevel.Error,
         Message = "Could not report the end of job {JobKey} to Cronitor")]
     internal static partial void EndNotReported(this ILogger logger, Exception exception, JobKey jobKey);
+
+    [LoggerMessage(
+        EventId = 3,
+        Level = LogLevel.Warning,
+        Message = "Stopped waiting for {Count} job reports to Cronitor while the scheduler shut down")]
+    internal static partial void ReportsPendingAtShutdown(this ILogger logger, int count);
 }
