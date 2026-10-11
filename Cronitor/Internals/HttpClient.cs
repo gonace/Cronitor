@@ -22,20 +22,29 @@ namespace Cronitor.Internals
 
         internal HttpClient()
         {
-            _httpClient = CreateHttpClient();
+            _httpClient = CreateHttpClient(SharedHandler);
         }
 
         internal HttpClient(Uri apiUri)
         {
             _apiUri = apiUri;
-            _httpClient = CreateHttpClient();
+            _httpClient = CreateHttpClient(SharedHandler);
         }
 
         internal HttpClient(Uri apiUri, string apiKey)
+            : this(apiUri, apiKey, SharedHandler)
+        {
+        }
+
+        /// <summary>
+        /// Sends requests through the given <see cref="HttpMessageHandler"/>.
+        /// Intended for tests, to replace the network.
+        /// </summary>
+        internal HttpClient(Uri apiUri, string apiKey, HttpMessageHandler handler)
         {
             _apiKey = apiKey;
             _apiUri = apiUri.AsHttps();
-            _httpClient = CreateHttpClient();
+            _httpClient = CreateHttpClient(handler);
         }
 
         //TODO: send to FallbackUrl
@@ -101,9 +110,9 @@ namespace Cronitor.Internals
             throw new ApiException(details, response.StatusCode);
         }
 
-        private System.Net.Http.HttpClient CreateHttpClient()
+        private System.Net.Http.HttpClient CreateHttpClient(HttpMessageHandler handler)
         {
-            var httpClient = new System.Net.Http.HttpClient(SharedHandler, disposeHandler: false)
+            var httpClient = new System.Net.Http.HttpClient(handler, disposeHandler: false)
             {
                 BaseAddress = _apiUri
             };
