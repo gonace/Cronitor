@@ -70,6 +70,19 @@ namespace Cronitor.Tests
             Assert.Equal("outage", issue.Severity.ToString());
         }
 
+        [Theory]
+        [JsonData("ListIssues.json")]
+        public void ShouldNotSendWhatCronitorSets(string json)
+        {
+            var issue = Serializer.Deserialize<ListIssueResponse>(json).Items.Single();
+
+            var sent = Serializer.Serialize(issue);
+
+            Assert.DoesNotContain("\"created\"", sent);
+            Assert.DoesNotContain("\"updated\"", sent);
+            Assert.DoesNotContain("\"created_by\"", sent);
+        }
+
         [Fact]
         public void ShouldSendStateAndSeverityAsStrings()
         {

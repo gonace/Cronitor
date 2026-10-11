@@ -95,16 +95,19 @@ namespace Cronitor.Models
         [ResponseOnly]
         [JsonPropertyName("duration")]
         public int? Duration { get; private set; }
+        [ResponseOnly]
         [JsonPropertyName("created_by")]
         public Author CreatedBy { get; set; }
         /// <summary>
         /// ISO 8601 formatted timestamp of when the issue was created.
         /// </summary>
+        [ResponseOnly]
         [JsonPropertyName("created")]
         public DateTime CreatedAt { get; set; }
         /// <summary>
         /// ISO 8601 formatted timestamp of when the issue was created.
         /// </summary>
+        [ResponseOnly]
         [JsonPropertyName("updated")]
         public DateTime? UpdatedAt { get; set; }
 
