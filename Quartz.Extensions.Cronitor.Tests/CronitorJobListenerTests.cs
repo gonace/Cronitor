@@ -9,6 +9,7 @@ namespace Quartz.Extensions.Cronitor.Tests;
 /// <summary>
 /// Runs jobs on a real Quartz scheduler and checks what the listener reports to Cronitor.
 /// </summary>
+[Collection(StaticQuartzCollection.Name)]
 public class CronitorJobListenerTests
 {
     [Fact]
