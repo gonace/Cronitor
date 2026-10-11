@@ -1,5 +1,6 @@
 using Cronitor.Clients;
 using Cronitor.Constants;
+using Cronitor.Exceptions;
 using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Responses;
@@ -9,6 +10,7 @@ using Cronitor.Tests.Builders;
 using Cronitor.Tests.Helpers;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
@@ -413,6 +415,28 @@ namespace Cronitor.Tests
 
             Assert.Null(result);
             AssertRequest.Sent(handler, HttpMethod.Get, MonitorUri + "/pings");
+        }
+
+        [Fact]
+        public async Task GetAsyncShouldThrowApiExceptionWhenMonitorIsNotFound()
+        {
+            var handler = new FakeHttpMessageHandler(HttpStatusCode.NotFound, "{\"detail\":\"Monitor not found\"}");
+            var monitorsClient = CreateClient(handler);
+
+            var exception = await Assert.ThrowsAsync<ApiException>(() => monitorsClient.GetAsync(MonitorKey));
+
+            Assert.Equal("Monitor not found (NotFound)", exception.Message);
+        }
+
+        [Fact]
+        public async Task DeleteAsyncShouldThrowApiExceptionWhenUnauthorized()
+        {
+            var handler = new FakeHttpMessageHandler(HttpStatusCode.Unauthorized, "{\"detail\":\"Invalid API key\"}");
+            var monitorsClient = CreateClient(handler);
+
+            var exception = await Assert.ThrowsAsync<ApiException>(() => monitorsClient.DeleteAsync(MonitorKey));
+
+            Assert.Equal("Invalid API key (Unauthorized)", exception.Message);
         }
 
         private static MonitorsClient CreateClient(FakeHttpMessageHandler handler)
