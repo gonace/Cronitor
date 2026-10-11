@@ -376,6 +376,26 @@ namespace Cronitor.Tests
             AssertRequest.Sent(handler, HttpMethod.Get, MonitorUri + "/pings");
         }
 
+        [Theory]
+        [JsonData("ListMonitorPings.json")]
+        public void ShouldReadPingsFromARealResponse(string json)
+        {
+            var handler = new FakeHttpMessageHandler(body: json);
+            var monitorsClient = CreateClient(handler);
+
+            var pings = monitorsClient.Pings(MonitorKey).ToList();
+
+            Assert.Equal(2, pings.Count);
+            Assert.Equal("complete", pings[0].Event);
+            Assert.Equal(1791714304.604m, pings[0].Timestamp);
+            Assert.Equal(2.555m, pings[0].Duration);
+            Assert.Equal("worker-01", pings[0].Host);
+            Assert.Equal(42m, pings[0].Count);
+            Assert.Equal(1m, pings[0].ErrorCount);
+            Assert.Null(pings[1].Count);
+            Assert.Null(pings[1].ErrorCount);
+        }
+
         [Fact]
         public async Task ShouldExecutePingsAsyncMethod()
         {
