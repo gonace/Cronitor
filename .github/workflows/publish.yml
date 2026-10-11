@@ -65,7 +65,12 @@ jobs:
         RUN: ${{github.run_number}}
       run: |
         echo "CRONITOR_VERSION=$VERSION.$RUN" >> "$GITHUB_ENV"
-        echo "QUARTZ_EXTENSIONS_VERSION=3.${VERSION%%.*}.$RUN" >> "$GITHUB_ENV"
+        echo "RELEASE_RUN=$RUN" >> "$GITHUB_ENV"
+
+    # The extensions take their version from their project files; read it for the push steps.
+    - name: Read extension versions
+      run: |
+        echo "QUARTZ_EXTENSIONS_VERSION=$(dotnet msbuild Quartz.Extensions.Cronitor/Quartz.Extensions.Cronitor.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN)" >> "$GITHUB_ENV"
 
     - name: Restore
       run: dotnet restore
@@ -92,7 +97,7 @@ jobs:
         dotnet build Quartz.Extensions.Cronitor/Quartz.Extensions.Cronitor.csproj \
           --configuration Release \
           -p:CronitorVersion=$CRONITOR_VERSION \
-          -p:QuartzExtensionsVersion=$QUARTZ_EXTENSIONS_VERSION
+          -p:ReleaseRun=$RELEASE_RUN
 
     - name: Pack Quartz.Extensions.Cronitor
       run: |
@@ -100,7 +105,7 @@ jobs:
           --configuration Release \
           --no-build \
           -p:CronitorVersion=$CRONITOR_VERSION \
-          -p:QuartzExtensionsVersion=$QUARTZ_EXTENSIONS_VERSION \
+          -p:ReleaseRun=$RELEASE_RUN \
           -p:IncludeSymbols=true \
           -p:SymbolPackageFormat=snupkg
 

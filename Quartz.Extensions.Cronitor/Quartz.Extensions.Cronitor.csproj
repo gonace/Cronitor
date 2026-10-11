@@ -10,7 +10,8 @@
 
   <PropertyGroup>
     <PackageId>Quartz.Extensions.Cronitor</PackageId>
-    <Version Condition="'$(QuartzExtensionsVersion)' != ''">$(QuartzExtensionsVersion)</Version>
+    <!-- Major and minor follow the lowest Quartz version this package supports, see the Quartz references below. -->
+    <Version Condition="'$(ReleaseRun)' != ''">3.22.$(ReleaseRun)</Version>
     <Description>Reports every Quartz.NET job to Cronitor: run when it starts, complete when it succeeds and fail when it throws.</Description>
     <PackageTags>cronitor;quartz;quartz.net;monitoring;cron;scheduler;jobs</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
