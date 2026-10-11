@@ -1,0 +1,33 @@
+{
+  "templates": [
+    {
+      "key": "default",
+      "name": "Default",
+      "notifications": {
+        "phones": [],
+        "emails": [],
+        "webhook": [],
+        "webhooks": [],
+        "pagerduty": [],
+        "slack": [],
+        "hipchat": [],
+        "opsgenie": [],
+        "victorops": [],
+        "microsoft-teams": [],
+        "telegram": [],
+        "discord": [],
+        "gchat": [],
+        "larksuite": [],
+        "datadog-on-call": []
+      },
+      "monitors": [],
+      "monitor_details": [],
+      "status": "0 recipients used by 0 monitors",
+      "created": "2018-03-07T22:09:42Z",
+      "environments": []
+    }
+  ],
+  "page_size": 50,
+  "page": 1,
+  "total_template_count": 1
+}

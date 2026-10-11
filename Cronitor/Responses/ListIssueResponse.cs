@@ -9,5 +9,9 @@ namespace Cronitor.Responses
     {
         [JsonPropertyName("data")]
         public override IEnumerable<Issue> Items { get; set; }
+        [JsonPropertyName("total_count")]
+        public override int Total { get; set; }
+        [JsonPropertyName("page_count")]
+        public int PageCount { get; set; }
     }
 }

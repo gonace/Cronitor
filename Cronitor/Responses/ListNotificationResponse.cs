@@ -9,5 +9,7 @@ namespace Cronitor.Responses
     {
         [JsonPropertyName("templates")]
         public override IEnumerable<Notification> Items { get; set; }
+        [JsonPropertyName("total_template_count")]
+        public override int Total { get; set; }
     }
 }
