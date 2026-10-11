@@ -65,7 +65,7 @@ namespace Cronitor
             {
                 Fail();
             }
-            catch (Exception)
+            catch (Exception) // skipcq: CS-R1008 Dispose must never throw; it would mask the job's own exception.
             {
                 // Telemetry must not mask the job's own outcome.
             }
