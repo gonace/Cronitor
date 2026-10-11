@@ -1,2 +1,5 @@
 # Use file-scoped namespaces
 f17eb4b7ade0cfd3855f3ada69632ca3c78ba811
+
+# Remove byte order marks from all files
+4c0e31179bc2515f0520ce25901b5a0212c8e82a
