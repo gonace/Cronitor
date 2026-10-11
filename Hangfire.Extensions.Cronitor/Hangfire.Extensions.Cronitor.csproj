@@ -10,7 +10,8 @@
 
   <PropertyGroup>
     <PackageId>Hangfire.Extensions.Cronitor</PackageId>
-    <Version Condition="'$(HangfireExtensionsVersion)' != ''">$(HangfireExtensionsVersion)</Version>
+    <!-- Major and minor follow the lowest Hangfire version this package supports, see the Hangfire.Core reference below. -->
+    <Version Condition="'$(ReleaseRun)' != ''">1.8.$(ReleaseRun)</Version>
     <Description>Reports every Hangfire recurring job to Cronitor: run when it starts, complete when it succeeds and fail when it throws.</Description>
     <PackageTags>cronitor;hangfire;monitoring;cron;scheduler;jobs;recurring</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>

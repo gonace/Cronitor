@@ -66,12 +66,12 @@ jobs:
       run: |
         echo "CRONITOR_VERSION=$VERSION.$RUN" >> "$GITHUB_ENV"
         echo "RELEASE_RUN=$RUN" >> "$GITHUB_ENV"
-        echo "HANGFIRE_EXTENSIONS_VERSION=1.${VERSION%%.*}.$RUN" >> "$GITHUB_ENV"
 
     # The extensions take their version from their project files; read it for the push steps.
     - name: Read extension versions
       run: |
         echo "QUARTZ_EXTENSIONS_VERSION=$(dotnet msbuild Quartz.Extensions.Cronitor/Quartz.Extensions.Cronitor.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN)" >> "$GITHUB_ENV"
+        echo "HANGFIRE_EXTENSIONS_VERSION=$(dotnet msbuild Hangfire.Extensions.Cronitor/Hangfire.Extensions.Cronitor.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN)" >> "$GITHUB_ENV"
 
     - name: Restore
       run: dotnet restore
@@ -115,7 +115,7 @@ jobs:
         dotnet build Hangfire.Extensions.Cronitor/Hangfire.Extensions.Cronitor.csproj \
           --configuration Release \
           -p:CronitorVersion=$CRONITOR_VERSION \
-          -p:HangfireExtensionsVersion=$HANGFIRE_EXTENSIONS_VERSION
+          -p:ReleaseRun=$RELEASE_RUN
 
     - name: Pack Hangfire.Extensions.Cronitor
       run: |
@@ -123,7 +123,7 @@ jobs:
           --configuration Release \
           --no-build \
           -p:CronitorVersion=$CRONITOR_VERSION \
-          -p:HangfireExtensionsVersion=$HANGFIRE_EXTENSIONS_VERSION \
+          -p:ReleaseRun=$RELEASE_RUN \
           -p:IncludeSymbols=true \
           -p:SymbolPackageFormat=snupkg
 
