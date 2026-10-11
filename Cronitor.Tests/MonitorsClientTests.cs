@@ -6,6 +6,7 @@ using Cronitor.Responses;
 using Cronitor.Scheduling;
 using Cronitor.Tests.Builders;
 using Cronitor.Tests.Helpers;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -70,6 +71,38 @@ namespace Cronitor.Tests
             Assert.Equal(1, result.Page);
             Assert.Equal(50, result.PageSize);
             AssertRequest.Sent(handler, HttpMethod.Get, MonitorsUri + "?page=1");
+        }
+
+        [Fact]
+        public void ShouldExecuteListMethodWithFilters()
+        {
+            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(new ListMonitorResponse { Items = new List<Monitor> { Make.Job.Build() } }));
+            var monitorsClient = CreateClient(handler);
+
+            var result = monitorsClient.List(new ListMonitorRequest { Types = { MonitorType.Job }, States = { MonitorState.Failing } });
+
+            Assert.Single(result.Items);
+            AssertRequest.Sent(handler, HttpMethod.Get, MonitorsUri + "?page=1&type=job&state=failing");
+        }
+
+        [Fact]
+        public async Task ShouldExecuteListAsyncMethodWithFilters()
+        {
+            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(new ListMonitorResponse { Items = new List<Monitor> { Make.Job.Build() } }));
+            var monitorsClient = CreateClient(handler);
+
+            var result = await monitorsClient.ListAsync(new ListMonitorRequest { Environment = "production", Sort = MonitorSort.CreatedDescending });
+
+            Assert.Single(result.Items);
+            AssertRequest.Sent(handler, HttpMethod.Get, MonitorsUri + "?page=1&env=production&sort=-created");
+        }
+
+        [Fact]
+        public async Task ListAsyncShouldRequireARequest()
+        {
+            var monitorsClient = CreateClient(new FakeHttpMessageHandler());
+
+            await Assert.ThrowsAsync<ArgumentNullException>(() => monitorsClient.ListAsync((ListMonitorRequest)null));
         }
 
         [Fact]

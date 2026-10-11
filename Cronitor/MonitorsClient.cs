@@ -4,6 +4,7 @@ using Cronitor.Internals;
 using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Responses;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -15,6 +16,12 @@ namespace Cronitor
     {
         ListMonitorResponse List(int page = 1);
         Task<ListMonitorResponse> ListAsync(int page = 1);
+        /// <summary>
+        /// Lists monitors matching the filters on <paramref name="request"/>.
+        /// </summary>
+        ListMonitorResponse List(ListMonitorRequest request);
+        /// <inheritdoc cref="List(ListMonitorRequest)"/>
+        Task<ListMonitorResponse> ListAsync(ListMonitorRequest request);
         Monitor Get(string key);
         Task<Monitor> GetAsync(string key);
         Monitor Clone(string key, string name = null);
@@ -54,12 +61,18 @@ namespace Cronitor
         public ListMonitorResponse List(int page = 1) =>
             ListAsync(page).GetAwaiter().GetResult();
 
-        public async Task<ListMonitorResponse> ListAsync(int page = 1)
+        public Task<ListMonitorResponse> ListAsync(int page = 1) =>
+            ListAsync(new ListMonitorRequest { Page = page });
+
+        public ListMonitorResponse List(ListMonitorRequest request) =>
+            ListAsync(request).GetAwaiter().GetResult();
+
+        public async Task<ListMonitorResponse> ListAsync(ListMonitorRequest request)
         {
-            var request = new ListMonitorRequest
+            if (request == null)
             {
-                Page = page
-            };
+                throw new ArgumentNullException(nameof(request));
+            }
 
             return await SendAsync<ListMonitorResponse>(request);
         }
