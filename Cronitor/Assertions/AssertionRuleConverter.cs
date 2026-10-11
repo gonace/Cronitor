@@ -6,7 +6,7 @@ namespace Cronitor.Assertions
 {
     public class AssertionRuleConverter : JsonConverter<AssertionRule>
     {
-        public override AssertionRule Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override AssertionRule Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) // skipcq: CS-R1138 Signature is defined by JsonConverter<T>.
         {
             return new AssertionRule(reader.GetString());
         }

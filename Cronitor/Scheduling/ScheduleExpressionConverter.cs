@@ -6,7 +6,7 @@ namespace Cronitor.Scheduling
 {
     public class ScheduleExpressionConverter : JsonConverter<ScheduleExpression>
     {
-        public override ScheduleExpression Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options)
+        public override ScheduleExpression Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) // skipcq: CS-R1138 Signature is defined by JsonConverter<T>.
         {
             var value = reader.GetString();
             return value != null ? new ScheduleExpression(value) : null;
