@@ -3,6 +3,7 @@ using Cronitor.Commands;
 using Cronitor.Extensions;
 using Cronitor.Tests.Helpers;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Net.Http;
 using Xunit;
@@ -46,21 +47,21 @@ namespace Cronitor.Tests
         public void ShouldLeaveOutAnEmptyCollection()
         {
             var uri = new Uri("https://www.cronitor.io");
-            var actual = new CollectionModel(uri, new string[0]).ToQueryString();
+            var actual = new CollectionModel(uri, Array.Empty<string>()).ToQueryString();
 
             Assert.Equal(string.Empty, actual);
         }
 
         private class CollectionModel : Command
         {
-            public CollectionModel(Uri uri, string[] tags)
+            public CollectionModel(Uri uri, IReadOnlyList<string> tags)
                 : base(uri, HttpMethod.Get, "endpoint")
             {
                 Tags = tags;
             }
 
             [QueryStringProperty("tag")]
-            public string[] Tags { get; }
+            public IReadOnlyList<string> Tags { get; }
         }
 
         private class Model : Command
