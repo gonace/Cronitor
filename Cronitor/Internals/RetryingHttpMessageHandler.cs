@@ -65,9 +65,9 @@ namespace Cronitor.Internals
 
         private static bool IsTransient(HttpStatusCode statusCode)
         {
-            return (int)statusCode >= 500
+            return statusCode >= HttpStatusCode.InternalServerError
                 || statusCode == HttpStatusCode.RequestTimeout
-                || (int)statusCode == 429;
+                || statusCode == (HttpStatusCode)429; // TooManyRequests, not available on netstandard2.0
         }
 
         private TimeSpan DelayBefore(int retry)
