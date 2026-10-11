@@ -1,5 +1,8 @@
-﻿namespace Cronitor.Constants
+﻿using System.Text.Json.Serialization;
+
+namespace Cronitor.Constants
 {
+    [JsonConverter(typeof(IssueSeverityConverter))]
     public class IssueSeverity
     {
         public static readonly IssueSeverity MissingData = new IssueSeverity("missing_data");

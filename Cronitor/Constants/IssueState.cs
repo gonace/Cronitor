@@ -1,5 +1,8 @@
-﻿namespace Cronitor.Constants
+﻿using System.Text.Json.Serialization;
+
+namespace Cronitor.Constants
 {
+    [JsonConverter(typeof(IssueStateConverter))]
     public class IssueState
     {
         public static readonly IssueState Unresolved = new IssueState("unresolved");

@@ -1,0 +1,49 @@
+{
+  "page": 1,
+  "page_count": 32,
+  "page_size": 2,
+  "total_count": 64,
+  "data": [
+    {
+      "key": "4b31fca52902b210",
+      "name": "Missed Execution",
+      "severity": null,
+      "state": "resolved",
+      "updates": [
+        {
+          "key": "62eff086b0ee2448",
+          "timestamp": "2026-10-10T00:40:19Z",
+          "message": "Issue opened on monitor failure.",
+          "state": "unresolved",
+          "created": "2026-10-10T00:40:29.708556Z",
+          "updated": "2026-10-10T00:40:29.708564Z",
+          "created_by": null
+        },
+        {
+          "key": "514bf39cec4eecd2",
+          "timestamp": "2026-10-11T00:30:34Z",
+          "message": "Issue resolved on monitor recovery.",
+          "state": "resolved",
+          "created": "2026-10-11T00:30:44.650552Z",
+          "updated": "2026-10-11T00:30:44.650561Z",
+          "created_by": null
+        }
+      ],
+      "started": "2026-10-10T00:40:19Z",
+      "ended": "2026-10-11T00:30:34Z",
+      "duration": 85815,
+      "statuspages": [],
+      "affected_components": [],
+      "monitors": null,
+      "alerts": null,
+      "environment": "production",
+      "created_by": {
+        "kind": "generic",
+        "name": "Cronitor Alert"
+      },
+      "assigned_to": null,
+      "created": "2026-10-10T00:40:29.700312Z",
+      "updated": "2026-10-11T00:30:44.656544Z"
+    }
+  ]
+}
