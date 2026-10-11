@@ -3,9 +3,6 @@ using Hangfire.Server;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
-using System.Collections.Concurrent;
-using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 
 namespace Hangfire;
@@ -14,27 +11,30 @@ namespace Hangfire;
 /// Reports every recurring job Hangfire runs to Cronitor: run when the job starts, then complete when it
 /// succeeds or fail when it throws. The recurring job's ID is used as the monitor key; other jobs are not reported.
 /// Reporting never affects the job: Hangfire runs filters on the job's worker, skips a job when a filter throws
-/// before it, and marks a successful job as failed when a filter throws after it. So reports are sent in the
-/// background, without the worker waiting for Cronitor, and every failure is logged instead of thrown.
+/// before it, and marks a successful job as failed when a filter throws after it. So the run is reported in the
+/// background, the end is reported before the worker moves on but waiting at most five seconds, and every
+/// failure is logged instead of thrown. Since the end is reported as part of the job, Hangfire's own shutdown,
+/// which waits for running jobs, also covers the last reports.
 /// </summary>
 public class CronitorJobFilter : IServerFilter
 {
     private const string StartKey = "Cronitor.Start";
     private const string RecurringJobIdParameter = "RecurringJobId";
-    private static readonly TimeSpan ShutdownLimit = TimeSpan.FromSeconds(5);
 
     private readonly ITelemetriesClient _telemetries;
     private readonly ILogger<CronitorJobFilter> _logger;
-    private readonly ConcurrentDictionary<Task, bool> _pendingReports = new ConcurrentDictionary<Task, bool>();
+    private readonly TimeSpan _endReportLimit;
 
     public CronitorJobFilter(ITelemetriesClient telemetries, ILogger<CronitorJobFilter> logger = null)
+        : this(telemetries, logger, TimeSpan.FromSeconds(5))
+    {
+    }
+
+    internal CronitorJobFilter(ITelemetriesClient telemetries, ILogger<CronitorJobFilter> logger, TimeSpan endReportLimit)
     {
         _telemetries = telemetries ?? throw new ArgumentNullException(nameof(telemetries));
         _logger = logger ?? NullLogger<CronitorJobFilter>.Instance;
-
-        // Hangfire has no shutdown event for filters. The process exits after the host has stopped Hangfire's
-        // workers, so reports still being sent then are the last ones, and are worth a short wait.
-        AppDomain.CurrentDomain.ProcessExit += (_, _) => WaitForPendingReports(ShutdownLimit);
+        _endReportLimit = endReportLimit;
     }
 
     public void OnPerforming(PerformingContext context)
@@ -59,39 +59,16 @@ public class CronitorJobFilter : IServerFilter
     {
         try
         {
-            if (context.Items.TryGetValue(StartKey, out var value) && value is Task<ITelemetryRun> start)
+            if (context.Items.TryGetValue(StartKey, out var value) && value is Task<ITelemetryRun> start
+                && !ReportEnd(start, FailureOf(context), context.BackgroundJob.Id).Wait(_endReportLimit))
             {
-                Track(ReportEnd(start, FailureOf(context), context.BackgroundJob.Id));
+                _logger.EndReportStillPending(context.BackgroundJob.Id);
             }
         }
         catch (Exception exception)
         {
             _logger.EndNotReported(exception, context.BackgroundJob.Id);
         }
-    }
-
-    /// <summary>
-    /// Waits for the end reports still being sent, at most for the given time, so they are not lost when the
-    /// application stops.
-    /// </summary>
-    internal void WaitForPendingReports(TimeSpan limit)
-    {
-        var pending = _pendingReports.Keys.ToArray();
-        if (pending.Length == 0)
-        {
-            return;
-        }
-
-        if (!Task.WhenAll(pending).Wait(limit))
-        {
-            _logger.ReportsPendingAtShutdown(_pendingReports.Count);
-        }
-    }
-
-    private void Track(Task report)
-    {
-        _pendingReports.TryAdd(report, true);
-        report.ContinueWith(sent => _pendingReports.TryRemove(sent, out _), CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
     }
 
     /// <summary>

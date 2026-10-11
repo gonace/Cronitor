@@ -23,6 +23,6 @@ internal static partial class LogMessages
     [LoggerMessage(
         EventId = 3,
         Level = LogLevel.Warning,
-        Message = "Stopped waiting for {Count} job reports to Cronitor while the application stopped")]
-    internal static partial void ReportsPendingAtShutdown(this ILogger logger, int count);
+        Message = "Stopped waiting for the end of job {JobId} to be reported to Cronitor; the report continues in the background")]
+    internal static partial void EndReportStillPending(this ILogger logger, string jobId);
 }
