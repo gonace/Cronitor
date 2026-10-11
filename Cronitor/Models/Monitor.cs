@@ -89,6 +89,21 @@ namespace Cronitor.Models
         [JsonPropertyName("notify")]
         public IEnumerable<string> Notify { get; set; }
         /// <summary>
+        /// Keys of the environments the monitor belongs to, e.g. "production".
+        /// </summary>
+        [JsonPropertyName("environments")]
+        public IEnumerable<string> Environments { get; set; }
+        /// <summary>
+        /// Keys of the status pages that show this monitor's status.
+        /// </summary>
+        [JsonPropertyName("statuspages")]
+        public IEnumerable<string> StatusPages { get; set; }
+        /// <summary>
+        /// How many alerts are sent in a row before alerting pauses until the monitor recovers (1–1000).
+        /// </summary>
+        [JsonPropertyName("consecutive_alert_threshold")]
+        public int? ConsecutiveAlertThreshold { get; set; }
+        /// <summary>
         /// The platform attribute is used in conjunction with the type attribute to tell Cronitor about where and how a monitor is being run beyond.
         /// </summary>
         [JsonPropertyName("platform")]
@@ -178,6 +193,13 @@ namespace Cronitor.Models
         [ResponseOnly]
         [JsonPropertyName("badges")]
         public MonitorBadges Badges { get; protected set; }
+        /// <summary>
+        /// Names of custom metrics seen in the last 7 days. Only returned when getting a single monitor.
+        /// </summary>
+        [JsonInclude]
+        [ResponseOnly]
+        [JsonPropertyName("metric_names")]
+        public IEnumerable<string> MetricNames { get; protected set; }
         [JsonInclude]
         [ResponseOnly]
         [JsonPropertyName("latest_issue")]

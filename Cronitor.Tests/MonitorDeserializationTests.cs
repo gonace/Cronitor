@@ -115,6 +115,44 @@ namespace Cronitor.Tests
             Assert.Contains("\"schedules\":[\"0 3 * * *\",\"0 15 * * *\"]", body);
         }
 
+        [Theory]
+        [JsonData("ListMonitors.json")]
+        public void ShouldReadTheEnvironmentsStatusPagesAndAlertThreshold(string json)
+        {
+            var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
+
+            Assert.Equal(new[] { "production" }, monitor.Environments);
+            Assert.Empty(monitor.StatusPages);
+            Assert.Equal(10, monitor.ConsecutiveAlertThreshold);
+        }
+
+        [Fact]
+        public void ShouldReadTheMetricNames()
+        {
+            const string json = "{\"type\":\"job\",\"key\":\"nightly-backup\",\"metric_names\":[\"rows_processed\",\"queue_depth\"]}";
+
+            var monitor = Serializer.Deserialize<Job>(json);
+
+            Assert.Equal(new[] { "rows_processed", "queue_depth" }, monitor.MetricNames);
+        }
+
+        [Fact]
+        public void ShouldSendTheEnvironmentsStatusPagesAndAlertThreshold()
+        {
+            var monitor = new Job("nightly-backup")
+            {
+                Environments = new[] { "production" },
+                StatusPages = new[] { "public" },
+                ConsecutiveAlertThreshold = 5,
+            };
+
+            var body = Serializer.Serialize(monitor);
+
+            Assert.Contains("\"environments\":[\"production\"]", body);
+            Assert.Contains("\"statuspages\":[\"public\"]", body);
+            Assert.Contains("\"consecutive_alert_threshold\":5", body);
+        }
+
         [Fact]
         public void ShouldSendPausedWhenCreatingAPausedMonitor()
         {
@@ -152,6 +190,7 @@ namespace Cronitor.Tests
             Assert.DoesNotContain("\"group_name\":", body);
             Assert.DoesNotContain("\"latest_issue\":", body);
             Assert.DoesNotContain("\"badges\":", body);
+            Assert.DoesNotContain("\"metric_names\":", body);
         }
     }
 }
