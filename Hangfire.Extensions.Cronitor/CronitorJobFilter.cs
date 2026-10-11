@@ -12,9 +12,9 @@ namespace Hangfire;
 /// succeeds or fail when it throws. The recurring job's ID is used as the monitor key; other jobs are not reported.
 /// Reporting never affects the job: Hangfire runs filters on the job's worker, skips a job when a filter throws
 /// before it, and marks a successful job as failed when a filter throws after it. So the run is reported in the
-/// background, the end is reported before the worker moves on but waiting at most five seconds, and every
-/// failure is logged instead of thrown. Since the end is reported as part of the job, Hangfire's own shutdown,
-/// which waits for running jobs, also covers the last reports.
+/// background, the worker waits at most five seconds for the end to be reported, and every failure is logged
+/// instead of thrown. If the end report takes longer, the worker moves on and the report continues in the
+/// background, so a report still pending when the application stops can be lost.
 /// </summary>
 public class CronitorJobFilter : IServerFilter
 {

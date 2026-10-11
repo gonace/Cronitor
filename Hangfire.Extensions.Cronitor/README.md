@@ -51,6 +51,6 @@ RecurringJob.AddOrUpdate("nightly-backup", () => Backup.Run(), Cron.Daily(3));
 Jobs that are not recurring, such as those started with `BackgroundJob.Enqueue()`, are not reported.
 
 ## Errors
-Reporting never affects your jobs: the start of a job is reported in the background, and its end is reported before the worker moves on, waiting at most five seconds for Cronitor. If a report can't be sent, the job still runs and keeps its result, and the error is logged through the host's logging. Because the end is reported as part of the job, Hangfire's own shutdown, which waits for running jobs, also covers the last reports.
+Reporting never affects your jobs: the start of a job is reported in the background, and the worker waits at most five seconds for its end to be reported. If Cronitor is slower than that, the worker moves on and the report continues in the background, so a report still pending when the application stops can be lost. If a report can't be sent, the job still runs and keeps its result, and the error is logged through the host's logging.
 
 For everything else about the Cronitor client, such as logging and the API key, see the [Cronitor README](https://github.com/gonace/Cronitor#readme).
