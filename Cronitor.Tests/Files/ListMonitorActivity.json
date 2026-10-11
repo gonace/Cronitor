@@ -1,0 +1,32 @@
+[
+  {
+    "monitor_name": "nightly-backup",
+    "monitor_code": "abc123",
+    "description": "ping",
+    "stamp": "1791718744.454000",
+    "created": "Sun, 11 Oct 2026, 13:39:04 CEST",
+    "from": "",
+    "host": "worker-01",
+    "message": "",
+    "status": null,
+    "duration": 2.018,
+    "event": "complete",
+    "count": 42,
+    "error_count": 1
+  },
+  {
+    "monitor_name": "nightly-backup",
+    "monitor_code": "abc123",
+    "description": "ping",
+    "stamp": "1791718742.436000",
+    "created": "Sun, 11 Oct 2026, 13:39:02 CEST",
+    "from": "",
+    "host": "",
+    "message": "",
+    "status": null,
+    "duration": null,
+    "event": "run",
+    "count": null,
+    "error_count": null
+  }
+]

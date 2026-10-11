@@ -377,6 +377,26 @@ namespace Cronitor.Tests
         }
 
         [Theory]
+        [JsonData("ListMonitorActivity.json")]
+        public void ShouldReadActivitiesFromARealResponse(string json)
+        {
+            var handler = new FakeHttpMessageHandler(body: json);
+            var monitorsClient = CreateClient(handler);
+
+            var activities = monitorsClient.Activities(MonitorKey).ToList();
+
+            Assert.Equal(2, activities.Count);
+            Assert.Equal("complete", activities[0].Event);
+            Assert.Equal(1791718744.454m, activities[0].Timestamp);
+            Assert.Equal(2.018m, activities[0].Duration);
+            Assert.Equal("worker-01", activities[0].Host);
+            Assert.Equal(42m, activities[0].Count);
+            Assert.Equal(1m, activities[0].ErrorCount);
+            Assert.Null(activities[1].Count);
+            Assert.Null(activities[1].ErrorCount);
+        }
+
+        [Theory]
         [JsonData("ListMonitorPings.json")]
         public void ShouldReadPingsFromARealResponse(string json)
         {
