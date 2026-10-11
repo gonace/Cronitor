@@ -3,7 +3,6 @@ using Cronitor.Commands;
 using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Tests.Helpers;
-using Moq;
 using System;
 using System.Threading.Tasks;
 using Xunit;
@@ -56,8 +55,8 @@ namespace Cronitor.Tests
         [Fact]
         public void ShouldConstructWithHttpClient()
         {
-            var httpClient = new Mock<HttpClient>();
-            var client = new TestClient(httpClient.Object);
+            var httpClient = new HttpClient(Urls.TelemetryBaseUrl, ApiKey, new FakeHttpMessageHandler());
+            var client = new TestClient(httpClient);
 
             Assert.NotNull(client);
         }
@@ -65,33 +64,31 @@ namespace Cronitor.Tests
         [Fact]
         public async Task ShouldSendCommandAsync()
         {
-            var httpClient = new Mock<HttpClient>();
+            var handler = new FakeHttpMessageHandler();
             var command = new RunCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey);
-            httpClient.Setup(x => x.SendAsync(It.IsAny<Command>())).Returns(Task.CompletedTask);
+            var client = new TestClient(new HttpClient(Urls.TelemetryBaseUrl, ApiKey, handler));
 
-            var client = new TestClient(httpClient.Object);
             await client.ExposedSendAsync(command);
 
-            httpClient.Verify(x => x.SendAsync(It.Is<Command>(c => c == command)), Times.Once);
-            httpClient.VerifyNoOtherCalls();
+            var request = Assert.Single(handler.Requests);
+            Assert.Equal(command.ToUri(), request.RequestUri);
         }
 
         [Fact]
         public void ShouldSendCommandSync()
         {
-            var httpClient = new Mock<HttpClient>();
+            var handler = new FakeHttpMessageHandler();
             var command = new RunCommand()
                 .WithApiKey(ApiKey)
                 .WithMonitorKey(MonitorKey);
-            httpClient.Setup(x => x.SendAsync(It.IsAny<Command>())).Returns(Task.CompletedTask);
+            var client = new TestClient(new HttpClient(Urls.TelemetryBaseUrl, ApiKey, handler));
 
-            var client = new TestClient(httpClient.Object);
             client.ExposedSend(command);
 
-            httpClient.Verify(x => x.SendAsync(It.Is<Command>(c => c == command)), Times.Once);
-            httpClient.VerifyNoOtherCalls();
+            var request = Assert.Single(handler.Requests);
+            Assert.Equal(command.ToUri(), request.RequestUri);
         }
 
         [Fact]
