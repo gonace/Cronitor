@@ -1,4 +1,4 @@
- using Cronitor.Constants;
+using Cronitor.Constants;
 using Xunit;
 
 namespace Cronitor.Tests;

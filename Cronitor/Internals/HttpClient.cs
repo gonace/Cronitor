@@ -21,7 +21,7 @@ internal class HttpClient : IDisposable
     /// The Cronitor API version the models are written for. Without it, Cronitor answers with 2020-10-01.
     /// </summary>
     private const string ApiVersion = "2025-11-28";
-    
+
     private readonly string _apiKey;
     private readonly Uri _apiUri;
     private readonly System.Net.Http.HttpClient _httpClient;

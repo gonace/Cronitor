@@ -19,7 +19,7 @@ public class JobBuilder
     private readonly string _timeZone = "Europe/Stockholm";
 
     private List<AssertionRule> _assertions = new List<AssertionRule> { Assertion.Metric.Duration.LessThan("30s"), Assertion.Metric.ErrorCount.LessThan(5) };
-    private List<string>  _notify = new List<string> { "developers" };
+    private List<string> _notify = new List<string> { "developers" };
     private readonly List<string> _tags = new List<string> { "tag", "attribute" };
 
     public JobBuilder Key(string key)
@@ -57,7 +57,7 @@ public class JobBuilder
             Group = _group,
             Note = _note,
             Notify = _notify,
-            Platform =  _platform,
+            Platform = _platform,
             Schedule = _schedule,
             ScheduleTolerance = _scheduleTolerance,
             Tags = _tags,
