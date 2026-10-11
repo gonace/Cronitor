@@ -96,6 +96,14 @@ public class Issue
     [JsonPropertyName("duration")]
     public int? Duration { get; private set; }
     /// <summary>
+    /// The monitors affected by this issue.
+    /// Only filled when listing issues with <c>WithMonitorDetails</c>.
+    /// </summary>
+    [JsonInclude]
+    [ResponseOnly]
+    [JsonPropertyName("monitors")]
+    public IEnumerable<IssueMonitor> Monitors { get; internal set; }
+    /// <summary>
     /// The alerts Cronitor sent for this issue.
     /// Only filled when listing issues with <c>WithAlertDetails</c>.
     /// </summary>

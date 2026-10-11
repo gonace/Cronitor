@@ -98,6 +98,23 @@ public class IssueDeserializationTests
         Assert.True(alert.Delivered);
     }
 
+    [Theory]
+    [JsonData("ListIssuesWithDetails.json")]
+    public void Should_read_the_monitors_affected_by_the_issue(string json)
+    {
+        var issue = Serializer.Deserialize<ListIssueResponse>(json).Items.Single();
+
+        var monitor = Assert.Single(issue.Monitors);
+        Assert.Equal("uipG2Q", monitor.Key);
+        Assert.Equal("cron-server-import_competitions", monitor.Name);
+        Assert.Equal("job", monitor.Type);
+        Assert.True(monitor.Passing);
+        Assert.False(monitor.Paused);
+        Assert.True(monitor.Active);
+        Assert.Equal("crontab", monitor.Group.Key);
+        Assert.Equal("Crontab", monitor.Group.Name);
+    }
+
     [Fact]
     public void Should_read_the_severity()
     {
