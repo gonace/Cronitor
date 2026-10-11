@@ -72,6 +72,48 @@ public class CronitorJobListenerTests
         Assert.Equal("Finish failed", entry.Exception.Message);
     }
 
+    [Fact]
+    public async Task Should_run_the_job_without_waiting_for_the_start_to_be_reported()
+    {
+        var startGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var telemetries = new FakeTelemetriesClient { StartGate = startGate.Task };
+        SucceedingJob.Reset();
+
+        var run = RunJob(JobBuilder.Create<SucceedingJob>().WithIdentity("nightly-backup").Build(), new CronitorJobListener(telemetries), SucceedingJob.Ran);
+        var finishedWhileStartWasHeld = await FinishesWithin(run, TimeSpan.FromSeconds(5));
+        var sentWhileStartWasHeld = telemetries.Sent.ToArray();
+        startGate.SetResult(true);
+        await run;
+        await Task.WhenAny(telemetries.Finished, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
+
+        Assert.True(finishedWhileStartWasHeld, "The listener made the job wait for the start report.");
+        Assert.Empty(sentWhileStartWasHeld);
+        Assert.Equal(new[] { "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public async Task Should_finish_the_job_without_waiting_for_the_end_to_be_reported()
+    {
+        var finishGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var telemetries = new FakeTelemetriesClient { FinishGate = finishGate.Task };
+        SucceedingJob.Reset();
+
+        var run = RunJob(JobBuilder.Create<SucceedingJob>().WithIdentity("nightly-backup").Build(), new CronitorJobListener(telemetries), SucceedingJob.Ran);
+        var finishedWhileEndWasHeld = await FinishesWithin(run, TimeSpan.FromSeconds(5));
+        finishGate.SetResult(true);
+        await run;
+        await Task.WhenAny(telemetries.Finished, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
+
+        Assert.True(finishedWhileEndWasHeld, "The listener made the job wait for the end report.");
+        Assert.Equal(new[] { "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
+    }
+
+    /// <summary>
+    /// Whether the job run, listener included, finishes within the limit. A held report is released by the caller afterwards.
+    /// </summary>
+    private static async Task<bool> FinishesWithin(Task run, TimeSpan limit) =>
+        await Task.WhenAny(run, Task.Delay(limit, TestContext.Current.CancellationToken)) == run;
+
     private static Task RunJob<TJob>(string name, FakeTelemetriesClient telemetries) where TJob : IJob =>
         RunJob(JobBuilder.Create<TJob>().WithIdentity(name).Build(), telemetries);
 

@@ -11,12 +11,13 @@ namespace Quartz;
 /// Reports every job Quartz runs to Cronitor: run when the job starts, then complete when it
 /// succeeds or fail when it throws. The job's name is used as the monitor key, unless the job
 /// chooses one with <see cref="CronitorJobBuilderExtensions.WithCronitorMonitorKey"/>.
-/// Reporting never affects the job: Quartz skips a job when a listener throws before it,
-/// so every failure here is logged instead of thrown.
+/// Reporting never affects the job: Quartz waits for a listener before and after every job, and
+/// skips a job when a listener throws before it. So reports are sent in the background, without
+/// the job waiting for Cronitor, and every failure is logged instead of thrown.
 /// </summary>
 public class CronitorJobListener : IJobListener
 {
-    private const string RunKey = "Cronitor.Run";
+    private const string StartKey = "Cronitor.Start";
 
     private readonly ITelemetriesClient _telemetries;
     private readonly ILogger<CronitorJobListener> _logger;
@@ -29,50 +30,82 @@ public class CronitorJobListener : IJobListener
 
     public string Name => "Cronitor";
 
-    public async Task JobToBeExecuted(IJobExecutionContext context, CancellationToken cancellationToken = default)
+    public Task JobToBeExecuted(IJobExecutionContext context, CancellationToken cancellationToken = default)
     {
         try
         {
-            var run = await _telemetries.StartAsync(MonitorKeyOf(context)).ConfigureAwait(false);
-            context.Put(RunKey, run);
+            context.Put(StartKey, ReportStart(context));
         }
         catch (Exception exception)
         {
             _logger.StartNotReported(exception, context.JobDetail.Key);
         }
+
+        return Task.CompletedTask;
     }
 
     public Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken cancellationToken = default) => Task.CompletedTask;
 
-    public async Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken cancellationToken = default)
+    public Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken cancellationToken = default)
     {
         try
         {
-            await ReportEnd(context, jobException).ConfigureAwait(false);
+            if (context.Get(StartKey) is Task<ITelemetryRun> start)
+            {
+                _ = ReportEnd(start, jobException, context.JobDetail.Key);
+            }
         }
         catch (Exception exception)
         {
             _logger.EndNotReported(exception, context.JobDetail.Key);
         }
+
+        return Task.CompletedTask;
     }
 
-    private static async Task ReportEnd(IJobExecutionContext context, JobExecutionException jobException)
+    /// <summary>
+    /// Sends the run event. The returned task completes with the run, or with null if it could not be reported.
+    /// </summary>
+    private async Task<ITelemetryRun> ReportStart(IJobExecutionContext context)
     {
-        if (context.Get(RunKey) is not ITelemetryRun run)
+        try
         {
-            return;
+            return await _telemetries.StartAsync(MonitorKeyOf(context)).ConfigureAwait(false);
         }
-
-        using (run)
+        catch (Exception exception)
         {
-            if (jobException == null)
+            _logger.StartNotReported(exception, context.JobDetail.Key);
+            return null;
+        }
+    }
+
+    /// <summary>
+    /// Sends complete or fail once the run event has been sent, so Cronitor always receives them in order.
+    /// </summary>
+    private async Task ReportEnd(Task<ITelemetryRun> start, JobExecutionException jobException, JobKey jobKey)
+    {
+        try
+        {
+            using (var run = await start.ConfigureAwait(false))
             {
-                await run.CompleteAsync().ConfigureAwait(false);
+                if (run == null)
+                {
+                    return;
+                }
+
+                if (jobException == null)
+                {
+                    await run.CompleteAsync().ConfigureAwait(false);
+                }
+                else
+                {
+                    await run.FailAsync(jobException.GetBaseException().Message).ConfigureAwait(false);
+                }
             }
-            else
-            {
-                await run.FailAsync(jobException.GetBaseException().Message).ConfigureAwait(false);
-            }
+        }
+        catch (Exception exception)
+        {
+            _logger.EndNotReported(exception, jobKey);
         }
     }
 

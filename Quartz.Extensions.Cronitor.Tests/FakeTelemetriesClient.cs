@@ -31,6 +31,16 @@ public class FakeTelemetriesClient : ITelemetriesClient
     /// </summary>
     public bool ThrowOnFinish { get; set; }
 
+    /// <summary>
+    /// Holds every start report until this task completes, like a slow Cronitor would.
+    /// </summary>
+    public Task StartGate { get; set; } = Task.CompletedTask;
+
+    /// <summary>
+    /// Holds every complete or fail report until this task completes, like a slow Cronitor would.
+    /// </summary>
+    public Task FinishGate { get; set; } = Task.CompletedTask;
+
     public ITelemetryRun Start(string monitorKey, string environment = null)
     {
         if (ThrowOnStart)
@@ -42,7 +52,11 @@ public class FakeTelemetriesClient : ITelemetriesClient
         return new FakeRun(this, monitorKey);
     }
 
-    public Task<ITelemetryRun> StartAsync(string monitorKey, string environment = null) => Task.FromResult(Start(monitorKey, environment));
+    public async Task<ITelemetryRun> StartAsync(string monitorKey, string environment = null)
+    {
+        await StartGate;
+        return Start(monitorKey, environment);
+    }
 
     public bool Run(string monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
     public Task<bool> RunAsync(string monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
@@ -83,7 +97,11 @@ public class FakeTelemetriesClient : ITelemetriesClient
             return true;
         }
 
-        public Task<bool> CompleteAsync(string message = null) => Task.FromResult(Complete(message));
+        public async Task<bool> CompleteAsync(string message = null)
+        {
+            await _client.FinishGate;
+            return Complete(message);
+        }
 
         public bool Fail(string message = null)
         {
@@ -91,7 +109,11 @@ public class FakeTelemetriesClient : ITelemetriesClient
             return true;
         }
 
-        public Task<bool> FailAsync(string message = null) => Task.FromResult(Fail(message));
+        public async Task<bool> FailAsync(string message = null)
+        {
+            await _client.FinishGate;
+            return Fail(message);
+        }
 
         public void Dispose()
         {
