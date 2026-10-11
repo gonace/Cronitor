@@ -48,7 +48,7 @@ namespace Cronitor.Internals
         }
 
         //TODO: send to FallbackUrl
-        public virtual async Task SendAsync(Command command)
+        public async Task SendAsync(Command command)
         {
             var requestUri = command.ToUri();
             var message = new HttpRequestMessage
@@ -61,7 +61,7 @@ namespace Cronitor.Internals
             await PerformRequestAsync(task);
         }
 
-        public virtual async Task SendAsync(BaseRequest request)
+        public async Task SendAsync(BaseRequest request)
         {
             var requestUri = request.ToUri();
             var message = new HttpRequestMessage
@@ -75,7 +75,7 @@ namespace Cronitor.Internals
             await PerformRequestAsync(task);
         }
 
-        public virtual async Task<TReturn> SendAsync<TReturn>(BaseRequest request)
+        public async Task<TReturn> SendAsync<TReturn>(BaseRequest request)
         {
             var requestUri = request.ToUri();
             var message = new HttpRequestMessage
