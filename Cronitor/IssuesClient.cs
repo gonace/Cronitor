@@ -7,7 +7,7 @@ using Cronitor.Responses;
 using System.Threading.Tasks;
 using Cronitor.Extensions;
 
-namespace Cronitor.Clients
+namespace Cronitor
 {
     public interface IIssuesClient
     {

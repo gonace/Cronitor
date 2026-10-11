@@ -1,4 +1,3 @@
-using Cronitor.Clients;
 using Cronitor.Commands;
 using Cronitor.Internals;
 using System.Threading.Tasks;

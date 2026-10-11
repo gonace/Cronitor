@@ -1,4 +1,3 @@
-using Cronitor.Clients;
 using Cronitor.Extensions;
 using Cronitor.Tests.Helpers;
 using Microsoft.Extensions.DependencyInjection;

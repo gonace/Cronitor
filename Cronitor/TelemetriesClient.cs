@@ -5,7 +5,7 @@ using Cronitor.Internals;
 using System.Threading.Tasks;
 using Cronitor.Extensions;
 
-namespace Cronitor.Clients
+namespace Cronitor
 {
     public interface ITelemetriesClient
     {

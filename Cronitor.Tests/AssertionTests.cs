@@ -1,7 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Cronitor.Assertions;
-using Cronitor.Serialization;
 using Xunit;
 
 namespace Cronitor.Tests

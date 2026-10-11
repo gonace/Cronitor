@@ -1,4 +1,3 @@
-using Cronitor.Clients;
 using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Tests.Helpers;

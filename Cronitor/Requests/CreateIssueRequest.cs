@@ -1,6 +1,5 @@
 ﻿using Cronitor.Abstractions;
 using Cronitor.Models;
-using Cronitor.Serialization;
 using System.Net.Http;
 using System.Text;
 

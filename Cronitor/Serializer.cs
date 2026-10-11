@@ -2,7 +2,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Cronitor.Serialization
+namespace Cronitor
 {
     public static class Serializer
     {

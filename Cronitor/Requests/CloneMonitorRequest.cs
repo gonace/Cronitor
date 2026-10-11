@@ -2,7 +2,6 @@
 using System.Text;
 using System.Text.Json.Serialization;
 using Cronitor.Abstractions;
-using Cronitor.Serialization;
 
 namespace Cronitor.Requests
 {

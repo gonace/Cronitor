@@ -1,5 +1,4 @@
-﻿using Cronitor.Clients;
-using Cronitor.Exceptions;
+﻿using Cronitor.Exceptions;
 using System;
 
 namespace Cronitor.Internals

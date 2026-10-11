@@ -1,9 +1,7 @@
-using Cronitor.Clients;
 using Cronitor.Constants;
 using Cronitor.Models;
 using Cronitor.Requests;
 using Cronitor.Responses;
-using Cronitor.Serialization;
 using Cronitor.Tests.Builders;
 using Cronitor.Tests.Helpers;
 using System.Collections.Generic;

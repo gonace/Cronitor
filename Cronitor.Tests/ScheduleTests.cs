@@ -1,5 +1,4 @@
 using Cronitor.Scheduling;
-using Cronitor.Serialization;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Xunit;

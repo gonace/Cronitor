@@ -9,7 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Cronitor.Extensions;
 
-namespace Cronitor.Clients
+namespace Cronitor
 {
     public interface IMonitorsClient
     {
