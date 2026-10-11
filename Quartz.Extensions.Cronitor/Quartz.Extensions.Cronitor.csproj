@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>net10.0;net9.0;net8.0;netstandard2.0</TargetFrameworks>
+    <RootNamespace>Quartz</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Quartz.Extensions.Cronitor</PackageId>
+    <!-- Major and minor follow the lowest Quartz version this package supports, see the Quartz references below. -->
+    <Version Condition="'$(ReleaseRun)' != ''">3.22.$(ReleaseRun)</Version>
+    <Description>Reports every Quartz.NET job to Cronitor: run when it starts, complete when it succeeds and fail when it throws.</Description>
+    <PackageTags>cronitor;quartz;quartz.net;monitoring;cron;scheduler;jobs</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Quartz.Extensions.Cronitor.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Quartz" Version="[3.22.4,4.0)" />
+    <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="[3.22.4,4.0)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cronitor\Cronitor.csproj" />
+  </ItemGroup>
+
+</Project>

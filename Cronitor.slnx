@@ -9,4 +9,8 @@
   </Folder>
   <Project Path="Cronitor.Tests/Cronitor.Tests.csproj" />
   <Project Path="Cronitor/Cronitor.csproj" />
+  <Project Path="Hangfire.Extensions.Cronitor.Tests/Hangfire.Extensions.Cronitor.Tests.csproj" />
+  <Project Path="Hangfire.Extensions.Cronitor/Hangfire.Extensions.Cronitor.csproj" />
+  <Project Path="Quartz.Extensions.Cronitor.Tests/Quartz.Extensions.Cronitor.Tests.csproj" />
+  <Project Path="Quartz.Extensions.Cronitor/Quartz.Extensions.Cronitor.csproj" />
 </Solution>
