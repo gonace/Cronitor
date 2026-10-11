@@ -63,6 +63,17 @@ namespace Cronitor.Tests
             Assert.Contains("\"environments\":[{\"key\":\"production\"}]", json);
         }
 
+        [Theory]
+        [JsonData("ListNotifications.json")]
+        public void ShouldNotSendWhenTheListWasCreated(string json)
+        {
+            var notification = Serializer.Deserialize<ListNotificationResponse>(json).Items.Single();
+
+            var sent = Serializer.Serialize(notification);
+
+            Assert.DoesNotContain("\"created\"", sent);
+        }
+
         [Fact]
         public void ShouldSendTheNewerChannels()
         {

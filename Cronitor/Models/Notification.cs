@@ -55,6 +55,7 @@ namespace Cronitor.Models
         /// ISO formatted string of when the Notification
         /// List was created
         /// </summary>
+        [ResponseOnly]
         [JsonPropertyName("created")]
         public DateTime CreatedAt { get; set; }
     }
