@@ -21,8 +21,23 @@ public class FakeTelemetriesClient : ITelemetriesClient
     /// </summary>
     public Task Finished => _finished.Task;
 
+    /// <summary>
+    /// Makes starting a run throw, like a bug would.
+    /// </summary>
+    public bool ThrowOnStart { get; set; }
+
+    /// <summary>
+    /// Makes completing or failing a run throw, like a bug would.
+    /// </summary>
+    public bool ThrowOnFinish { get; set; }
+
     public ITelemetryRun Start(string monitorKey, string environment = null)
     {
+        if (ThrowOnStart)
+        {
+            throw new InvalidOperationException("Start failed");
+        }
+
         Sent.Enqueue($"run {monitorKey}");
         return new FakeRun(this, monitorKey);
     }
@@ -42,6 +57,11 @@ public class FakeTelemetriesClient : ITelemetriesClient
 
     private void Finish(string sent)
     {
+        if (ThrowOnFinish)
+        {
+            throw new InvalidOperationException("Finish failed");
+        }
+
         Sent.Enqueue(sent);
         _finished.TrySetResult(true);
     }

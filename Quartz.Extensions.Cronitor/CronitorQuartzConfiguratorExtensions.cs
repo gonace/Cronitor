@@ -1,5 +1,6 @@
 using Cronitor;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using System;
 
 namespace Quartz;
@@ -17,7 +18,7 @@ public static class CronitorQuartzConfiguratorExtensions
             throw new ArgumentNullException(nameof(quartz));
         }
 
-        quartz.AddJobListener(provider => new CronitorJobListener(TelemetriesClient(provider)));
+        quartz.AddJobListener(provider => new CronitorJobListener(TelemetriesClient(provider), provider.GetService<ILogger<CronitorJobListener>>()));
 
         return quartz;
     }
