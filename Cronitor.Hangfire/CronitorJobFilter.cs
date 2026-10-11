@@ -1,11 +1,11 @@
-using Cronitor;
+using Hangfire;
 using Hangfire.Server;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
 using System.Threading.Tasks;
 
-namespace Hangfire;
+namespace Cronitor.Hangfire;
 
 /// <summary>
 /// Reports every recurring job Hangfire runs to Cronitor: run when the job starts, then complete when it

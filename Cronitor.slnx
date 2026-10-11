@@ -7,10 +7,10 @@
     <File Path=".gitignore" />
     <File Path="README.md" />
   </Folder>
+  <Project Path="Cronitor.Hangfire.Tests/Cronitor.Hangfire.Tests.csproj" />
+  <Project Path="Cronitor.Hangfire/Cronitor.Hangfire.csproj" />
   <Project Path="Cronitor.Quartz.Tests/Cronitor.Quartz.Tests.csproj" />
   <Project Path="Cronitor.Quartz/Cronitor.Quartz.csproj" />
   <Project Path="Cronitor.Tests/Cronitor.Tests.csproj" />
   <Project Path="Cronitor/Cronitor.csproj" />
-  <Project Path="Hangfire.Extensions.Cronitor.Tests/Hangfire.Extensions.Cronitor.Tests.csproj" />
-  <Project Path="Hangfire.Extensions.Cronitor/Hangfire.Extensions.Cronitor.csproj" />
 </Solution>

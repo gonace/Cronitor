@@ -1,12 +1,12 @@
-# Hangfire.Extensions.Cronitor
+# Cronitor.Hangfire
 Reports every [Hangfire](https://www.hangfire.io) recurring job to [Cronitor](https://cronitor.io): run when the job starts, complete when it succeeds, and fail, with the exception's message, when it throws.
 
-![Nuget](https://img.shields.io/nuget/v/Hangfire.Extensions.Cronitor)
-![Nuget](https://img.shields.io/nuget/dt/Hangfire.Extensions.Cronitor)
+![Nuget](https://img.shields.io/nuget/v/Cronitor.Hangfire)
+![Nuget](https://img.shields.io/nuget/dt/Cronitor.Hangfire)
 
 ## Install
 ```
-dotnet add package Hangfire.Extensions.Cronitor
+dotnet add package Cronitor.Hangfire
 ```
 The package's major version matches Hangfire's: version 1 is for Hangfire 1 (1.8.25 or later).
 
@@ -15,6 +15,7 @@ The package's major version matches Hangfire's: version 1 is for Hangfire 1 (1.8
 Register Cronitor with `.ConfigureCronitor()`, then call `UseCronitor(provider)` when adding Hangfire:
 ```c#
 using Cronitor.Extensions;
+using Cronitor.Hangfire;
 using Hangfire;
 
 await Host.CreateDefaultBuilder()
@@ -34,6 +35,7 @@ await Host.CreateDefaultBuilder()
 ### Without dependency injection
 Configure the static `Cronitor` class first, then call `UseCronitor()`:
 ```c#
+using Cronitor.Hangfire;
 using Hangfire;
 
 Cronitor.Cronitor.Configure("apiKey");

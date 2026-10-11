@@ -1,4 +1,4 @@
-using Cronitor;
+using Hangfire;
 using Hangfire.Common;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -6,7 +6,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Hangfire.Extensions.Cronitor.Tests;
+namespace Cronitor.Hangfire.Tests;
 
 /// <summary>
 /// Registers the filter through Hangfire's global configuration, the way an application would.

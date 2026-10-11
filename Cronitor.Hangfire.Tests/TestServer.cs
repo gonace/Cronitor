@@ -1,3 +1,4 @@
+using Hangfire;
 using Hangfire.Common;
 using Hangfire.InMemory;
 using System;
@@ -6,7 +7,7 @@ using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Hangfire.Extensions.Cronitor.Tests;
+namespace Cronitor.Hangfire.Tests;
 
 /// <summary>
 /// Runs jobs on a real Hangfire server with in-memory storage.

@@ -187,7 +187,7 @@ var monitors = await Cronitor.Monitors.CreateAsync(new CreateMonitorRequest(job)
 `Cronitor.Quartz` reports every Quartz.NET job to Cronitor. See its [README](Cronitor.Quartz/README.md) for installation and setup.
 
 ## Hangfire
-`Hangfire.Extensions.Cronitor` reports every Hangfire recurring job to Cronitor. See its [README](Hangfire.Extensions.Cronitor/README.md) for installation and setup.
+`Cronitor.Hangfire` reports every Hangfire recurring job to Cronitor. See its [README](Cronitor.Hangfire/README.md) for installation and setup.
 
 ## Development
 ### Suggestions

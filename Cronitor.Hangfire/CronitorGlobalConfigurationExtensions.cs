@@ -1,8 +1,8 @@
-using Cronitor;
+using Hangfire;
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Hangfire;
+namespace Cronitor.Hangfire;
 
 public static class CronitorGlobalConfigurationExtensions
 {

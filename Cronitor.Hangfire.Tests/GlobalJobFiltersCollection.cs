@@ -1,6 +1,6 @@
 using Xunit;
 
-namespace Hangfire.Extensions.Cronitor.Tests;
+namespace Cronitor.Hangfire.Tests;
 
 /// <summary>
 /// Serializes tests that register filters through Hangfire's global configuration, since they share its global filter list.

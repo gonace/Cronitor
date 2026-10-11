@@ -1,7 +1,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 
-namespace Hangfire;
+namespace Cronitor.Hangfire;
 
 /// <summary>
 /// The package's log messages, generated at compile time by the logging source generator.

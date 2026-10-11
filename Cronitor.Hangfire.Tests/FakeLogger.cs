@@ -2,7 +2,7 @@ using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Concurrent;
 
-namespace Hangfire.Extensions.Cronitor.Tests;
+namespace Cronitor.Hangfire.Tests;
 
 /// <summary>
 /// Records every log entry, so tests can assert on them.

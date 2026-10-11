@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Hangfire.Extensions.Cronitor\Hangfire.Extensions.Cronitor.csproj" />
+    <ProjectReference Include="..\Cronitor.Hangfire\Cronitor.Hangfire.csproj" />
   </ItemGroup>
 
 </Project>
