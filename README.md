@@ -70,7 +70,7 @@ All events except `Ping` take a monitor key and an optional `message` and `envir
 
 Telemetry never breaks the job it monitors: transient failures are retried, and if an event still can't be delivered the method returns `false` instead of throwing.
 
-Events that can't be delivered are logged as errors through `ILogger`. With `.ConfigureCronitor()` this uses the host's logging automatically; otherwise pass an `ILoggerFactory` to `Cronitor.Configure("apiKey", loggerFactory)` or `new TelemetriesClient("apiKey", loggerFactory)`.
+Events that can't be delivered are logged as errors, see [Logging](#logging).
 
 ### Using block
 `Cronitor.Start()` (or `ITelemetriesClient.Start()`) reports the run and returns an `ITelemetryRun`. Call `Complete()` when the job succeeds; if the run is disposed without it (for example because an exception was thrown), it's reported as failed.
@@ -135,6 +135,31 @@ var command = new CompleteCommand()
 
 await Cronitor.PingAsync(command);
 ```
+
+### Logging
+Events that can't be delivered, even after retries, are logged as errors through `ILogger` (`Microsoft.Extensions.Logging`). With the console logger, an entry starts like this, followed by the exception:
+```
+fail: Cronitor.TelemetriesClient[1]
+      Could not deliver run event for monitor nightly-backup to Cronitor
+```
+
+With the .NET Generic Host, both `.ConfigureCronitor()` and `.UseCronitor()` use the host's logging automatically, so there is nothing to set up. For `.UseCronitor()`, logging applies from when the host starts:
+```c#
+await Host.CreateDefaultBuilder()
+    .UseCronitor("apiKey")
+    .Build()
+    .RunAsync();
+```
+
+Without a host, pass an `ILoggerFactory`, either to the static `Cronitor` class or to a client:
+```c#
+using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
+
+Cronitor.Configure("apiKey", loggerFactory);
+// or
+var telemetriesClient = new TelemetriesClient("apiKey", loggerFactory);
+```
+`AddConsole()` comes from the `Microsoft.Extensions.Logging.Console` package; any logging provider works. Without an `ILoggerFactory`, nothing is logged.
 
 ## Management
 Monitors, issues and notifications are managed through `Cronitor.Monitors`, `Cronitor.Issues` and `Cronitor.Notifications` (or the injected `IMonitorsClient`, `IIssuesClient` and `INotificationsClient`). For example, creating a job monitor:
