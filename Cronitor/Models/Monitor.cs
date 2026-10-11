@@ -288,7 +288,10 @@ public class Monitor
         {
             var property = memberSelectorExpression.Member as PropertyInfo;
 
-            if (property == null) return this;
+            if (property == null)
+            {
+                return this;
+            }
 
             property.SetValue(this, value, null);
         }

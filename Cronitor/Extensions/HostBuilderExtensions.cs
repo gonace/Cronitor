@@ -11,7 +11,10 @@ public static class HostBuilderExtensions
 {
     public static IHostBuilder ConfigureCronitor(this IHostBuilder builder, string apiKey)
     {
-        if (builder == null) throw new ArgumentNullException(nameof(builder));
+        if (builder == null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
 
         builder.ConfigureServices((context, services) =>
         {
@@ -26,7 +29,10 @@ public static class HostBuilderExtensions
 
     public static IHostBuilder ConfigureCronitor(this IHostBuilder builder, Func<HostBuilderContext, string> optionsBuilder)
     {
-        if (builder == null) throw new ArgumentNullException(nameof(builder));
+        if (builder == null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
 
         builder.ConfigureServices((context, services) =>
         {
@@ -42,7 +48,10 @@ public static class HostBuilderExtensions
 
     public static IHostBuilder UseCronitor(this IHostBuilder builder, string apiKey)
     {
-        if (builder == null) throw new ArgumentNullException(nameof(builder));
+        if (builder == null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
 
         UseCronitor(apiKey);
         builder.ConfigureServices((_, services) => AddLogging(services, apiKey));
@@ -52,7 +61,10 @@ public static class HostBuilderExtensions
 
     public static IHostBuilder UseCronitor(this IHostBuilder builder, Func<HostBuilderContext, string> optionsBuilder)
     {
-        if (builder == null) throw new ArgumentNullException(nameof(builder));
+        if (builder == null)
+        {
+            throw new ArgumentNullException(nameof(builder));
+        }
 
         builder.ConfigureServices((context, services) =>
         {
@@ -66,7 +78,10 @@ public static class HostBuilderExtensions
 
     private static void UseCronitor(string apiKey)
     {
-        if (string.IsNullOrWhiteSpace(apiKey)) throw new ArgumentNullException(nameof(apiKey));
+        if (string.IsNullOrWhiteSpace(apiKey))
+        {
+            throw new ArgumentNullException(nameof(apiKey));
+        }
 
         Cronitor.Configure(apiKey);
     }

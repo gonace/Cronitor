@@ -112,7 +112,9 @@ internal class HttpClient : IDisposable
     {
         var response = await request;
         if (response.IsSuccessStatusCode)
+        {
             return;
+        }
 
         var details = Serializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync());
         throw new ApiException(details, response.StatusCode);
@@ -122,7 +124,9 @@ internal class HttpClient : IDisposable
     {
         var response = await request;
         if (response.IsSuccessStatusCode)
+        {
             return Serializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync());
+        }
 
         var details = Serializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync());
         throw new ApiException(details, response.StatusCode);
