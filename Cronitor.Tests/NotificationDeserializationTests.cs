@@ -44,6 +44,26 @@ namespace Cronitor.Tests
         }
 
         [Fact]
+        public void ShouldReadTheEnvironments()
+        {
+            const string json = "{\"key\":\"default\",\"environments\":[{\"key\":\"production\"}]}";
+
+            var environment = Serializer.Deserialize<Notification>(json).Environments.Single();
+
+            Assert.Equal("production", environment.Key);
+        }
+
+        [Fact]
+        public void ShouldSendTheEnvironmentsAsObjects()
+        {
+            var notification = new Notification { Name = "Default", Environments = new[] { new NotificationEnvironment { Key = "production" } } };
+
+            var json = Serializer.Serialize(notification);
+
+            Assert.Contains("\"environments\":[{\"key\":\"production\"}]", json);
+        }
+
+        [Fact]
         public void ShouldSendTheNewerChannels()
         {
             var notifications = new Notifications

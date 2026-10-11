@@ -40,6 +40,12 @@ namespace Cronitor.Models
         [JsonPropertyName("notifications")]
         public Notifications Notifications { get; set; }
         /// <summary>
+        /// The environments this Notification List is limited to.
+        /// Leave empty to alert in every environment.
+        /// </summary>
+        [JsonPropertyName("environments")]
+        public IEnumerable<NotificationEnvironment> Environments { get; set; }
+        /// <summary>
         /// A plain text status description of this monitor
         /// </summary>
         [JsonPropertyName("status")]
