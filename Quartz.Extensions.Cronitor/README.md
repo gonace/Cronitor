@@ -41,4 +41,9 @@ A job reports to the monitor with the same key as the job's name. Use `.WithCron
 ## Errors
 Reporting never affects your jobs: reports are sent in the background, so a job never waits for Cronitor. If a report can't be sent, the job still runs, and the error is logged through the host's logging. When the scheduler shuts down, it waits up to five seconds for reports that are still being sent, so the outcome of the last jobs isn't lost.
 
+Jobs that are still running when the application stops are only reported if Quartz waits for them to finish. Quartz doesn't by default; to make it wait, set `WaitForJobsToComplete`:
+```c#
+services.AddQuartzHostedService(options => options.WaitForJobsToComplete = true);
+```
+
 For everything else about the Cronitor client, such as logging and the API key, see the [Cronitor README](https://github.com/gonace/Cronitor#readme).
