@@ -2,6 +2,8 @@ using Cronitor.Constants;
 using Cronitor.Internals;
 using Cronitor.Tests.Helpers;
 using System;
+using System.Linq;
+using System.Threading.Tasks;
 using Xunit;
 
 namespace Cronitor.Tests
@@ -50,6 +52,32 @@ namespace Cronitor.Tests
 
             var request = Assert.Single(_handler.Requests);
             Assert.Equal($"https://cronitor.link/p/{ApiKey}/{MonitorKey}/run", request.RequestUri.GetLeftPart(UriPartial.Path));
+        }
+
+        [Fact]
+        public void ShouldExecuteStartMethod()
+        {
+            ITelemetriesClient telemetriesClient = _telemetriesClient;
+
+            using (var run = telemetriesClient.Start(MonitorKey, Environment))
+            {
+                run.Complete();
+            }
+
+            Assert.Equal(new[] { "run", "complete" }, _handler.Requests.Select(r => r.RequestUri.Segments.Last()));
+            Assert.All(_handler.Requests, r => Assert.Equal(Environment, QueryString.Parse(r.RequestUri)["env"]));
+        }
+
+        [Fact]
+        public async Task ShouldExecuteStartAsyncMethod()
+        {
+            ITelemetriesClient telemetriesClient = _telemetriesClient;
+
+            using (await telemetriesClient.StartAsync(MonitorKey))
+            {
+            }
+
+            Assert.Equal(new[] { "run", "fail" }, _handler.Requests.Select(r => r.RequestUri.Segments.Last()));
         }
     }
 }

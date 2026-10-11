@@ -69,7 +69,7 @@ Telemetry events report the state of a job to a monitor. Each event has a sync a
 All events except `Ping` take a monitor key and an optional `message` and `environment`.
 
 ### Using block
-`Cronitor.Start()` reports the run and returns a `TelemetryRun`. Call `Complete()` when the job succeeds; if the run is disposed without it (for example because an exception was thrown), it's reported as failed.
+`Cronitor.Start()` (or `ITelemetriesClient.Start()`) reports the run and returns an `ITelemetryRun`. Call `Complete()` when the job succeeds; if the run is disposed without it (for example because an exception was thrown), it's reported as failed.
 ```c#
 using (var run = await Cronitor.StartAsync("monitorKey", environment: "production"))
 {
@@ -107,9 +107,11 @@ public class SomeJob
 
     public async Task ExecuteAsync()
     {
-        await _telemetriesClient.RunAsync("monitorKey");
-        // ... do the work
-        await _telemetriesClient.CompleteAsync("monitorKey");
+        using (var run = await _telemetriesClient.StartAsync("monitorKey"))
+        {
+            // ... do the work
+            await run.CompleteAsync();
+        }
     }
 }
 ```

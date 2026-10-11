@@ -19,6 +19,14 @@ namespace Cronitor
         Task TickAsync(string monitorKey, string message = null, string environment = null);
         void Ping(Command command);
         Task PingAsync(Command command);
+
+        /// <summary>
+        /// Starts a job run and reports it as running.
+        /// Call <see cref="ITelemetryRun.Complete"/> when the job succeeds; disposing the run without it reports a failure.
+        /// </summary>
+        ITelemetryRun Start(string monitorKey, string environment = null);
+        /// <inheritdoc cref="Start"/>
+        Task<ITelemetryRun> StartAsync(string monitorKey, string environment = null);
     }
 
     public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClient
@@ -149,6 +157,12 @@ namespace Cronitor
 
         public async Task PingAsync(Command command) =>
             await SendAsync(command);
+
+        public ITelemetryRun Start(string monitorKey, string environment = null) =>
+            TelemetryRun.Start(this, monitorKey, environment);
+
+        public async Task<ITelemetryRun> StartAsync(string monitorKey, string environment = null) =>
+            await TelemetryRun.StartAsync(this, monitorKey, environment);
 
         /// <summary>
         /// Sends <paramref name="command"/> authenticated with this client's API key.
