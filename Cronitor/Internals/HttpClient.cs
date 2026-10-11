@@ -10,142 +10,141 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Cronitor.Internals
+namespace Cronitor.Internals;
+
+internal class HttpClient : IDisposable
 {
-    internal class HttpClient : IDisposable
+    private static readonly HttpClientHandler SharedHandler = new HttpClientHandler();
+    private static readonly TimeSpan TelemetryTimeout = TimeSpan.FromSeconds(30);
+
+    /// <summary>
+    /// The Cronitor API version the models are written for. Without it, Cronitor answers with 2020-10-01.
+    /// </summary>
+    private const string ApiVersion = "2025-11-28";
+    
+    private readonly string _apiKey;
+    private readonly Uri _apiUri;
+    private readonly System.Net.Http.HttpClient _httpClient;
+
+    internal HttpClient(Uri apiUri, string apiKey)
+        : this(apiUri, apiKey, SharedHandler)
     {
-        private static readonly HttpClientHandler SharedHandler = new HttpClientHandler();
-        private static readonly TimeSpan TelemetryTimeout = TimeSpan.FromSeconds(30);
+    }
 
-        /// <summary>
-        /// The Cronitor API version the models are written for. Without it, Cronitor answers with 2020-10-01.
-        /// </summary>
-        private const string ApiVersion = "2025-11-28";
-        
-        private readonly string _apiKey;
-        private readonly Uri _apiUri;
-        private readonly System.Net.Http.HttpClient _httpClient;
+    /// <summary>
+    /// Sends requests through the given <see cref="HttpMessageHandler"/>.
+    /// Intended for tests, to replace the network.
+    /// </summary>
+    internal HttpClient(Uri apiUri, string apiKey, HttpMessageHandler handler)
+    {
+        _apiKey = apiKey;
+        _apiUri = apiUri.AsHttps();
+        _httpClient = CreateHttpClient(handler);
+    }
 
-        internal HttpClient(Uri apiUri, string apiKey)
-            : this(apiUri, apiKey, SharedHandler)
+    /// <summary>
+    /// The longest a request may take in total, including retries.
+    /// </summary>
+    internal TimeSpan Timeout => _httpClient.Timeout;
+
+    /// <summary>
+    /// Creates the client for telemetry pings, which retries transient failures
+    /// and gives up after 30s in total, as Microsoft.Extensions.Http.Resilience does.
+    /// </summary>
+    internal static HttpClient ForTelemetry(string apiKey) =>
+        ForTelemetry(apiKey, SharedHandler);
+
+    /// <summary>
+    /// Creates the client for telemetry pings, sending through <paramref name="network"/>.
+    /// Intended for tests, to replace the network.
+    /// </summary>
+    internal static HttpClient ForTelemetry(string apiKey, HttpMessageHandler network)
+    {
+        var client = new HttpClient(Urls.TelemetryBaseUrl, apiKey, new RetryingHttpMessageHandler(network));
+        client._httpClient.Timeout = TelemetryTimeout;
+
+        return client;
+    }
+
+    public async Task SendAsync(Command command)
+    {
+        var requestUri = command.ToUri();
+        var message = new HttpRequestMessage
         {
-        }
+            Method = command.Method,
+            RequestUri = requestUri
+        };
+        var task = _httpClient.SendAsync(message);
 
-        /// <summary>
-        /// Sends requests through the given <see cref="HttpMessageHandler"/>.
-        /// Intended for tests, to replace the network.
-        /// </summary>
-        internal HttpClient(Uri apiUri, string apiKey, HttpMessageHandler handler)
+        await PerformRequestAsync(task);
+    }
+
+    public async Task SendAsync(BaseRequest request)
+    {
+        var requestUri = request.ToUri();
+        var message = new HttpRequestMessage
         {
-            _apiKey = apiKey;
-            _apiUri = apiUri.AsHttps();
-            _httpClient = CreateHttpClient(handler);
-        }
+            Method = request.Method,
+            RequestUri = requestUri,
+            Content = request.Content
+        };
+        var task = _httpClient.SendAsync(message);
 
-        /// <summary>
-        /// The longest a request may take in total, including retries.
-        /// </summary>
-        internal TimeSpan Timeout => _httpClient.Timeout;
+        await PerformRequestAsync(task);
+    }
 
-        /// <summary>
-        /// Creates the client for telemetry pings, which retries transient failures
-        /// and gives up after 30s in total, as Microsoft.Extensions.Http.Resilience does.
-        /// </summary>
-        internal static HttpClient ForTelemetry(string apiKey) =>
-            ForTelemetry(apiKey, SharedHandler);
-
-        /// <summary>
-        /// Creates the client for telemetry pings, sending through <paramref name="network"/>.
-        /// Intended for tests, to replace the network.
-        /// </summary>
-        internal static HttpClient ForTelemetry(string apiKey, HttpMessageHandler network)
+    public async Task<TReturn> SendAsync<TReturn>(BaseRequest request)
+    {
+        var requestUri = request.ToUri();
+        var message = new HttpRequestMessage
         {
-            var client = new HttpClient(Urls.TelemetryBaseUrl, apiKey, new RetryingHttpMessageHandler(network));
-            client._httpClient.Timeout = TelemetryTimeout;
+            Method = request.Method,
+            RequestUri = requestUri,
+            Content = request.Content
+        };
+        var task = _httpClient.SendAsync(message);
 
-            return client;
-        }
+        return await PerformRequestAsync<TReturn>(task);
+    }
 
-        public async Task SendAsync(Command command)
+
+    private async Task PerformRequestAsync(Task<HttpResponseMessage> request)
+    {
+        var response = await request;
+        if (response.IsSuccessStatusCode)
+            return;
+
+        var details = Serializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync());
+        throw new ApiException(details, response.StatusCode);
+    }
+
+    private async Task<TReturn> PerformRequestAsync<TReturn>(Task<HttpResponseMessage> request)
+    {
+        var response = await request;
+        if (response.IsSuccessStatusCode)
+            return Serializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync());
+
+        var details = Serializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync());
+        throw new ApiException(details, response.StatusCode);
+    }
+
+    private System.Net.Http.HttpClient CreateHttpClient(HttpMessageHandler handler)
+    {
+        var httpClient = new System.Net.Http.HttpClient(handler, disposeHandler: false)
         {
-            var requestUri = command.ToUri();
-            var message = new HttpRequestMessage
-            {
-                Method = command.Method,
-                RequestUri = requestUri
-            };
-            var task = _httpClient.SendAsync(message);
+            BaseAddress = _apiUri
+        };
 
-            await PerformRequestAsync(task);
-        }
+        httpClient.DefaultRequestHeaders.Accept.Clear();
+        httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_apiKey}:")));
+        httpClient.DefaultRequestHeaders.Add("Cronitor-Version", ApiVersion);
 
-        public async Task SendAsync(BaseRequest request)
-        {
-            var requestUri = request.ToUri();
-            var message = new HttpRequestMessage
-            {
-                Method = request.Method,
-                RequestUri = requestUri,
-                Content = request.Content
-            };
-            var task = _httpClient.SendAsync(message);
+        return httpClient;
+    }
 
-            await PerformRequestAsync(task);
-        }
-
-        public async Task<TReturn> SendAsync<TReturn>(BaseRequest request)
-        {
-            var requestUri = request.ToUri();
-            var message = new HttpRequestMessage
-            {
-                Method = request.Method,
-                RequestUri = requestUri,
-                Content = request.Content
-            };
-            var task = _httpClient.SendAsync(message);
-
-            return await PerformRequestAsync<TReturn>(task);
-        }
-
-
-        private async Task PerformRequestAsync(Task<HttpResponseMessage> request)
-        {
-            var response = await request;
-            if (response.IsSuccessStatusCode)
-                return;
-
-            var details = Serializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync());
-            throw new ApiException(details, response.StatusCode);
-        }
-
-        private async Task<TReturn> PerformRequestAsync<TReturn>(Task<HttpResponseMessage> request)
-        {
-            var response = await request;
-            if (response.IsSuccessStatusCode)
-                return Serializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync());
-
-            var details = Serializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync());
-            throw new ApiException(details, response.StatusCode);
-        }
-
-        private System.Net.Http.HttpClient CreateHttpClient(HttpMessageHandler handler)
-        {
-            var httpClient = new System.Net.Http.HttpClient(handler, disposeHandler: false)
-            {
-                BaseAddress = _apiUri
-            };
-
-            httpClient.DefaultRequestHeaders.Accept.Clear();
-            httpClient.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.UTF8.GetBytes($"{_apiKey}:")));
-            httpClient.DefaultRequestHeaders.Add("Cronitor-Version", ApiVersion);
-
-            return httpClient;
-        }
-
-        public void Dispose()
-        {
-            _httpClient?.Dispose();
-        }
+    public void Dispose()
+    {
+        _httpClient?.Dispose();
     }
 }

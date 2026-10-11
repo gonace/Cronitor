@@ -1,12 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Cronitor.Models.Issues
+namespace Cronitor.Models.Issues;
+
+public class Author
 {
-    public class Author
-    {
-        [JsonPropertyName("kind")]
-        public string Kind { get; set; }
-        [JsonPropertyName("name")]
-        public string Name { get; set; }
-    }
+    [JsonPropertyName("kind")]
+    public string Kind { get; set; }
+    [JsonPropertyName("name")]
+    public string Name { get; set; }
 }

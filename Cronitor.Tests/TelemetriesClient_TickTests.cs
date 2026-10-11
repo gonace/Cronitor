@@ -5,114 +5,113 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cronitor.Tests
+namespace Cronitor.Tests;
+
+public class TelemetriesClient_TickTests : BaseTest
 {
-    public class TelemetriesClient_TickTests : BaseTest
+    private const string Message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+    private const string TickUri = "https://cronitor.link/p/" + ApiKey + "/" + MonitorKey + "/tick";
+
+    private readonly FakeHttpMessageHandler _handler;
+    private readonly TelemetriesClient _telemetriesClient;
+
+    public TelemetriesClient_TickTests()
     {
-        private const string Message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-        private const string TickUri = "https://cronitor.link/p/" + ApiKey + "/" + MonitorKey + "/tick";
+        _handler = new FakeHttpMessageHandler();
+        _telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, _handler));
+    }
 
-        private readonly FakeHttpMessageHandler _handler;
-        private readonly TelemetriesClient _telemetriesClient;
+    [Fact]
+    public void ShouldExecuteTickMethod()
+    {
+        _telemetriesClient.Tick(MonitorKey);
 
-        public TelemetriesClient_TickTests()
-        {
-            _handler = new FakeHttpMessageHandler();
-            _telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, _handler));
-        }
+        var request = Assert.Single(_handler.Requests);
+        Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Empty(QueryString.Parse(request.RequestUri));
+    }
 
-        [Fact]
-        public void ShouldExecuteTickMethod()
-        {
-            _telemetriesClient.Tick(MonitorKey);
+    [Fact]
+    public async Task ShouldExecuteTickAsyncMethod()
+    {
+        await _telemetriesClient.TickAsync(MonitorKey);
 
-            var request = Assert.Single(_handler.Requests);
-            Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Empty(QueryString.Parse(request.RequestUri));
-        }
+        var request = Assert.Single(_handler.Requests);
+        Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Empty(QueryString.Parse(request.RequestUri));
+    }
 
-        [Fact]
-        public async Task ShouldExecuteTickAsyncMethod()
-        {
-            await _telemetriesClient.TickAsync(MonitorKey);
+    [Fact]
+    public void ShouldExecuteTickMethodWithMessage()
+    {
+        _telemetriesClient.Tick(MonitorKey, Message);
 
-            var request = Assert.Single(_handler.Requests);
-            Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Empty(QueryString.Parse(request.RequestUri));
-        }
+        var request = Assert.Single(_handler.Requests);
+        var query = QueryString.Parse(request.RequestUri);
+        Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Equal(Message, query["message"]);
+        Assert.Single(query);
+    }
 
-        [Fact]
-        public void ShouldExecuteTickMethodWithMessage()
-        {
-            _telemetriesClient.Tick(MonitorKey, Message);
+    [Fact]
+    public async Task ShouldExecuteTickAsyncMethodWithMessage()
+    {
+        await _telemetriesClient.TickAsync(MonitorKey, Message);
 
-            var request = Assert.Single(_handler.Requests);
-            var query = QueryString.Parse(request.RequestUri);
-            Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal(Message, query["message"]);
-            Assert.Single(query);
-        }
+        var request = Assert.Single(_handler.Requests);
+        var query = QueryString.Parse(request.RequestUri);
+        Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Equal(Message, query["message"]);
+        Assert.Single(query);
+    }
 
-        [Fact]
-        public async Task ShouldExecuteTickAsyncMethodWithMessage()
-        {
-            await _telemetriesClient.TickAsync(MonitorKey, Message);
+    [Fact]
+    public void ShouldExecuteTickMethodWithEnvironment()
+    {
+        _telemetriesClient.Tick(MonitorKey, environment: Environment);
 
-            var request = Assert.Single(_handler.Requests);
-            var query = QueryString.Parse(request.RequestUri);
-            Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal(Message, query["message"]);
-            Assert.Single(query);
-        }
+        var request = Assert.Single(_handler.Requests);
+        var query = QueryString.Parse(request.RequestUri);
+        Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Equal(Environment, query["env"]);
+        Assert.Single(query);
+    }
 
-        [Fact]
-        public void ShouldExecuteTickMethodWithEnvironment()
-        {
-            _telemetriesClient.Tick(MonitorKey, environment: Environment);
+    [Fact]
+    public async Task ShouldExecuteTickAsyncMethodWithEnvironment()
+    {
+        await _telemetriesClient.TickAsync(MonitorKey, environment: Environment);
 
-            var request = Assert.Single(_handler.Requests);
-            var query = QueryString.Parse(request.RequestUri);
-            Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal(Environment, query["env"]);
-            Assert.Single(query);
-        }
+        var request = Assert.Single(_handler.Requests);
+        var query = QueryString.Parse(request.RequestUri);
+        Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Equal(Environment, query["env"]);
+        Assert.Single(query);
+    }
 
-        [Fact]
-        public async Task ShouldExecuteTickAsyncMethodWithEnvironment()
-        {
-            await _telemetriesClient.TickAsync(MonitorKey, environment: Environment);
+    [Fact]
+    public void ShouldExecuteTickMethodWithMessageAndEnvironment()
+    {
+        _telemetriesClient.Tick(MonitorKey, Message, Environment);
 
-            var request = Assert.Single(_handler.Requests);
-            var query = QueryString.Parse(request.RequestUri);
-            Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal(Environment, query["env"]);
-            Assert.Single(query);
-        }
+        var request = Assert.Single(_handler.Requests);
+        var query = QueryString.Parse(request.RequestUri);
+        Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Equal(Message, query["message"]);
+        Assert.Equal(Environment, query["env"]);
+        Assert.Equal(2, query.Count);
+    }
 
-        [Fact]
-        public void ShouldExecuteTickMethodWithMessageAndEnvironment()
-        {
-            _telemetriesClient.Tick(MonitorKey, Message, Environment);
+    [Fact]
+    public async Task ShouldExecuteTickAsyncMethodWithMessageAndEnvironment()
+    {
+        await _telemetriesClient.TickAsync(MonitorKey, Message, Environment);
 
-            var request = Assert.Single(_handler.Requests);
-            var query = QueryString.Parse(request.RequestUri);
-            Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal(Message, query["message"]);
-            Assert.Equal(Environment, query["env"]);
-            Assert.Equal(2, query.Count);
-        }
-
-        [Fact]
-        public async Task ShouldExecuteTickAsyncMethodWithMessageAndEnvironment()
-        {
-            await _telemetriesClient.TickAsync(MonitorKey, Message, Environment);
-
-            var request = Assert.Single(_handler.Requests);
-            var query = QueryString.Parse(request.RequestUri);
-            Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal(Message, query["message"]);
-            Assert.Equal(Environment, query["env"]);
-            Assert.Equal(2, query.Count);
-        }
+        var request = Assert.Single(_handler.Requests);
+        var query = QueryString.Parse(request.RequestUri);
+        Assert.Equal(TickUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Equal(Message, query["message"]);
+        Assert.Equal(Environment, query["env"]);
+        Assert.Equal(2, query.Count);
     }
 }

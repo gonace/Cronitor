@@ -3,26 +3,25 @@ using Cronitor.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace Cronitor.Requests
+namespace Cronitor.Requests;
+
+public class GetIssueRequest : BaseRequest
 {
-    public class GetIssueRequest : BaseRequest
+    public override string Endpoint { get; set; } = "issues/:key";
+    public string Key { get; set; }
+
+    public GetIssueRequest(string issueKey)
     {
-        public override string Endpoint { get; set; } = "issues/:key";
-        public string Key { get; set; }
+        Key = issueKey;
+    }
 
-        public GetIssueRequest(string issueKey)
+    public override Uri ToUri()
+    {
+        var dictionary = new Dictionary<string, string>
         {
-            Key = issueKey;
-        }
+            { ":key", Key }
+        };
 
-        public override Uri ToUri()
-        {
-            var dictionary = new Dictionary<string, string>
-            {
-                { ":key", Key }
-            };
-
-            return base.ToUri().Build(dictionary);
-        }
+        return base.ToUri().Build(dictionary);
     }
 }

@@ -2,18 +2,17 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace Cronitor.Assertions
-{
-    public class AssertionRuleConverter : JsonConverter<AssertionRule>
-    {
-        public override AssertionRule Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) // skipcq: CS-R1138 Signature is defined by JsonConverter<T>.
-        {
-            return new AssertionRule(reader.GetString());
-        }
+namespace Cronitor.Assertions;
 
-        public override void Write(Utf8JsonWriter writer, AssertionRule value, JsonSerializerOptions options)
-        {
-            writer.WriteStringValue(value.Value);
-        }
+public class AssertionRuleConverter : JsonConverter<AssertionRule>
+{
+    public override AssertionRule Read(ref Utf8JsonReader reader, Type typeToConvert, JsonSerializerOptions options) // skipcq: CS-R1138 Signature is defined by JsonConverter<T>.
+    {
+        return new AssertionRule(reader.GetString());
+    }
+
+    public override void Write(Utf8JsonWriter writer, AssertionRule value, JsonSerializerOptions options)
+    {
+        writer.WriteStringValue(value.Value);
     }
 }

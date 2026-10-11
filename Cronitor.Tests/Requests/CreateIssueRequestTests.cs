@@ -6,59 +6,58 @@ using Cronitor.Requests;
 using Cronitor.Tests.Helpers;
 using Xunit;
 
-namespace Cronitor.Tests.Requests
+namespace Cronitor.Tests.Requests;
+
+public class CreateIssueRequestTests
 {
-    public class CreateIssueRequestTests
+    [Theory]
+    [JsonData("CreateIssueRequest.json")]
+    public async Task ShouldCreateIssueRequestAsync(string expected)
     {
-        [Theory]
-        [JsonData("CreateIssueRequest.json")]
-        public async Task ShouldCreateIssueRequestAsync(string expected)
+        var issue = new Issue
         {
-            var issue = new Issue
-            {
-                Key = "issue-001",
-                Name = "Database Outage",
-                Environment = "Production",
-                Severity = IssueSeverity.Outage,
-                State = IssueState.Unresolved
-            };
-            var request = new CreateIssueRequest(issue);
+            Key = "issue-001",
+            Name = "Database Outage",
+            Environment = "Production",
+            Severity = IssueSeverity.Outage,
+            State = IssueState.Unresolved
+        };
+        var request = new CreateIssueRequest(issue);
 
 #if NET8_0_OR_GREATER
-            var actual = await request.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+        var actual = await request.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 #else
-            var actual = await request.Content.ReadAsStringAsync();
+        var actual = await request.Content.ReadAsStringAsync();
 #endif
-            Assert.Equal(expected, actual);
-        }
+        Assert.Equal(expected, actual);
+    }
 
-        [Fact]
-        public void ShouldSetEndpoint()
-        {
-            var issue = new Issue { Key = "test" };
-            var request = new CreateIssueRequest(issue);
+    [Fact]
+    public void ShouldSetEndpoint()
+    {
+        var issue = new Issue { Key = "test" };
+        var request = new CreateIssueRequest(issue);
 
-            Assert.Equal("issues", request.Endpoint);
-        }
+        Assert.Equal("issues", request.Endpoint);
+    }
 
-        [Fact]
-        public void ShouldSetHttpMethodToPost()
-        {
-            var issue = new Issue { Key = "test" };
-            var request = new CreateIssueRequest(issue);
+    [Fact]
+    public void ShouldSetHttpMethodToPost()
+    {
+        var issue = new Issue { Key = "test" };
+        var request = new CreateIssueRequest(issue);
 
-            Assert.Equal(HttpMethod.Post, request.Method);
-        }
+        Assert.Equal(HttpMethod.Post, request.Method);
+    }
 
-        [Fact]
-        public void ShouldBuildUri()
-        {
-            var issue = new Issue { Key = "test" };
-            var request = new CreateIssueRequest(issue);
+    [Fact]
+    public void ShouldBuildUri()
+    {
+        var issue = new Issue { Key = "test" };
+        var request = new CreateIssueRequest(issue);
 
-            var uri = request.ToUri();
+        var uri = request.ToUri();
 
-            Assert.Equal("https://cronitor.io/api/issues", uri.ToString());
-        }
+        Assert.Equal("https://cronitor.io/api/issues", uri.ToString());
     }
 }

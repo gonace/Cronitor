@@ -2,33 +2,32 @@
 using System.Collections.Generic;
 using Cronitor.Models;
 
-namespace Cronitor.Tests.Builders
+namespace Cronitor.Tests.Builders;
+
+public class TemplateBuilder
 {
-    public class TemplateBuilder
+    private readonly string _key = "Key";
+    private readonly string _name = "Name";
+    private readonly DateTime _createddAt = DateTime.UtcNow;
+    private readonly string _status = "0 recipients used by 5 monitors";
+
+    private readonly Notifications _notifications = new Notifications
     {
-        private readonly string _key = "Key";
-        private readonly string _name = "Name";
-        private readonly DateTime _createddAt = DateTime.UtcNow;
-        private readonly string _status = "0 recipients used by 5 monitors";
+        Emails = new List<string> { "jane.doe@domain.tld", "john.doe@domain.tld" }
+    };
 
-        private readonly Notifications _notifications = new Notifications
+    private readonly List<string> _monitors = new List<string>() { "Monitor1", "Monitor2", "Monitor3" };
+
+    public Notification Build()
+    {
+        return new Notification
         {
-            Emails = new List<string> { "jane.doe@domain.tld", "john.doe@domain.tld" }
+            Key = _key,
+            Name = _name,
+            Monitors = _monitors,
+            CreatedAt = _createddAt,
+            Notifications = _notifications,
+            Status = _status
         };
-
-        private readonly List<string> _monitors = new List<string>() { "Monitor1", "Monitor2", "Monitor3" };
-
-        public Notification Build()
-        {
-            return new Notification
-            {
-                Key = _key,
-                Name = _name,
-                Monitors = _monitors,
-                CreatedAt = _createddAt,
-                Notifications = _notifications,
-                Status = _status
-            };
-        }
     }
 }

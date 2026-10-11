@@ -8,3 +8,4 @@ trim_trailing_whitespace = true
 
 [*.cs]
 indent_size = 4
+csharp_style_namespace_declarations = file_scoped:warning

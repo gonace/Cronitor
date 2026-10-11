@@ -4,67 +4,66 @@ using System;
 using System.Net.Http;
 using Xunit;
 
-namespace Cronitor.Tests
+namespace Cronitor.Tests;
+
+public class CommandTests
 {
-    public class CommandTests
+    [Fact]
+    public void ShouldCreateCustomCommand()
     {
-        [Fact]
-        public void ShouldCreateCustomCommand()
+        var command = new Command(Urls.TelemetryBaseUrl, HttpMethod.Options, "custom")
+            .WithApiKey("apiKey")
+            .WithMonitorKey("monitorKey");
+
+        Assert.Equal("apiKey", command.ApiKey);
+        Assert.Equal("monitorKey", command.MonitorKey);
+        Assert.Equal("custom", command.Endpoint);
+        Assert.Equal("custom", command.ToString());
+        Assert.Equal(HttpMethod.Options, command.Method);
+        Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/custom", command.ToUrl());
+    }
+
+    [Fact]
+    public void ShouldCreateCustomCommandWithExtendedProperties()
+    {
+        var command = new Command(Urls.TelemetryBaseUrl, HttpMethod.Options, "custom")
         {
-            var command = new Command(Urls.TelemetryBaseUrl, HttpMethod.Options, "custom")
-                .WithApiKey("apiKey")
-                .WithMonitorKey("monitorKey");
-
-            Assert.Equal("apiKey", command.ApiKey);
-            Assert.Equal("monitorKey", command.MonitorKey);
-            Assert.Equal("custom", command.Endpoint);
-            Assert.Equal("custom", command.ToString());
-            Assert.Equal(HttpMethod.Options, command.Method);
-            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/custom", command.ToUrl());
+            Environment = "Production",
+            Host = "127.0.0.1",
+            Series = "3de5db91-9c02-4e95-b8a9-9a2442702336"
         }
+            .WithApiKey("apiKey")
+            .WithContent(new StringContent("custom"))
+            .WithMonitorKey("monitorKey")
+            .WithMessage("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
+            .WithMetric(Metric.Count, 100)
+            .WithStatus("130");
 
-        [Fact]
-        public void ShouldCreateCustomCommandWithExtendedProperties()
-        {
-            var command = new Command(Urls.TelemetryBaseUrl, HttpMethod.Options, "custom")
-            {
-                Environment = "Production",
-                Host = "127.0.0.1",
-                Series = "3de5db91-9c02-4e95-b8a9-9a2442702336"
-            }
-                .WithApiKey("apiKey")
-                .WithContent(new StringContent("custom"))
-                .WithMonitorKey("monitorKey")
-                .WithMessage("Lorem ipsum dolor sit amet, consectetur adipiscing elit.")
-                .WithMetric(Metric.Count, 100)
-                .WithStatus("130");
+        Assert.Equal("apiKey", command.ApiKey);
+        Assert.Equal("monitorKey", command.MonitorKey);
+        Assert.Equal("custom", command.Endpoint);
+        Assert.Equal("custom", command.ToString());
+        Assert.Equivalent(new StringContent("custom"), command.Content);
+        Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/custom?env=Production&host=127.0.0.1&message=Lorem ipsum dolor sit amet%2C consectetur adipiscing elit.&metric=count%3A100&series=3de5db91-9c02-4e95-b8a9-9a2442702336&status_code=130", command.ToUrl());
+    }
 
-            Assert.Equal("apiKey", command.ApiKey);
-            Assert.Equal("monitorKey", command.MonitorKey);
-            Assert.Equal("custom", command.Endpoint);
-            Assert.Equal("custom", command.ToString());
-            Assert.Equivalent(new StringContent("custom"), command.Content);
-            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/custom?env=Production&host=127.0.0.1&message=Lorem ipsum dolor sit amet%2C consectetur adipiscing elit.&metric=count%3A100&series=3de5db91-9c02-4e95-b8a9-9a2442702336&status_code=130", command.ToUrl());
-        }
+    [Fact]
+    public void ShouldSendEveryMetric()
+    {
+        var command = new RunCommand()
+            .WithApiKey("apiKey")
+            .WithMonitorKey("monitorKey")
+            .WithMetric(Metric.Count, 100)
+            .WithMetric(Metric.Duration, 12.5);
 
-        [Fact]
-        public void ShouldSendEveryMetric()
-        {
-            var command = new RunCommand()
-                .WithApiKey("apiKey")
-                .WithMonitorKey("monitorKey")
-                .WithMetric(Metric.Count, 100)
-                .WithMetric(Metric.Duration, 12.5);
+        Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/run?metric=count%3A100&metric=duration%3A12.5", command.ToUrl());
+    }
 
-            Assert.Equal("https://cronitor.link/p/apiKey/monitorKey/run?metric=count%3A100&metric=duration%3A12.5", command.ToUrl());
-        }
+    [Fact]
+    public void ShouldThrowExceptionWhenMissingRequiredFields()
+    {
+        var command = new Command(Urls.TelemetryBaseUrl, HttpMethod.Get, "foo/bar");
 
-        [Fact]
-        public void ShouldThrowExceptionWhenMissingRequiredFields()
-        {
-            var command = new Command(Urls.TelemetryBaseUrl, HttpMethod.Get, "foo/bar");
-
-            Assert.Throws<ArgumentNullException>(() => command.ToUrl());
-        }
+        Assert.Throws<ArgumentNullException>(() => command.ToUrl());
     }
 }

@@ -4,31 +4,30 @@ using Microsoft.Extensions.Logging;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cronitor.Tests
+namespace Cronitor.Tests;
+
+public class CronitorLoggingHostedServiceTests
 {
-    public class CronitorLoggingHostedServiceTests
+    [Fact]
+    public async Task StartAsyncShouldConfigureWithTheLoggerFactory()
     {
-        [Fact]
-        public async Task StartAsyncShouldConfigureWithTheLoggerFactory()
-        {
-            var loggerFactory = new FakeLoggerFactory();
-            ILoggerFactory configuredWith = null;
-            var service = new CronitorLoggingHostedService(factory => configuredWith = factory, loggerFactory);
+        var loggerFactory = new FakeLoggerFactory();
+        ILoggerFactory configuredWith = null;
+        var service = new CronitorLoggingHostedService(factory => configuredWith = factory, loggerFactory);
 
-            await service.StartAsync(TestContext.Current.CancellationToken);
+        await service.StartAsync(TestContext.Current.CancellationToken);
 
-            Assert.Same(loggerFactory, configuredWith);
-        }
+        Assert.Same(loggerFactory, configuredWith);
+    }
 
-        [Fact]
-        public async Task StopAsyncShouldNotConfigure()
-        {
-            var configured = false;
-            var service = new CronitorLoggingHostedService(_ => configured = true, new FakeLoggerFactory());
+    [Fact]
+    public async Task StopAsyncShouldNotConfigure()
+    {
+        var configured = false;
+        var service = new CronitorLoggingHostedService(_ => configured = true, new FakeLoggerFactory());
 
-            await service.StopAsync(TestContext.Current.CancellationToken);
+        await service.StopAsync(TestContext.Current.CancellationToken);
 
-            Assert.False(configured);
-        }
+        Assert.False(configured);
     }
 }

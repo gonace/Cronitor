@@ -5,147 +5,146 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cronitor.Tests
+namespace Cronitor.Tests;
+
+public class TelemetriesClient_RunTests : BaseTest
 {
-    public class TelemetriesClient_RunTests : BaseTest
+    private const string Message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+    private const string RunUri = "https://cronitor.link/p/" + ApiKey + "/" + MonitorKey + "/run";
+
+    private readonly FakeHttpMessageHandler _handler;
+    private readonly TelemetriesClient _telemetriesClient;
+
+    public TelemetriesClient_RunTests()
     {
-        private const string Message = "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
-        private const string RunUri = "https://cronitor.link/p/" + ApiKey + "/" + MonitorKey + "/run";
+        _handler = new FakeHttpMessageHandler();
+        _telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, _handler));
+    }
 
-        private readonly FakeHttpMessageHandler _handler;
-        private readonly TelemetriesClient _telemetriesClient;
+    [Fact]
+    public void ShouldExecuteRunMethod()
+    {
+        _telemetriesClient.Run(MonitorKey);
 
-        public TelemetriesClient_RunTests()
-        {
-            _handler = new FakeHttpMessageHandler();
-            _telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, _handler));
-        }
+        var request = Assert.Single(_handler.Requests);
+        Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Empty(QueryString.Parse(request.RequestUri));
+    }
 
-        [Fact]
-        public void ShouldExecuteRunMethod()
-        {
-            _telemetriesClient.Run(MonitorKey);
+    [Fact]
+    public async Task ShouldExecuteRunAsyncMethod()
+    {
+        await _telemetriesClient.RunAsync(MonitorKey);
 
-            var request = Assert.Single(_handler.Requests);
-            Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Empty(QueryString.Parse(request.RequestUri));
-        }
+        var request = Assert.Single(_handler.Requests);
+        Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Empty(QueryString.Parse(request.RequestUri));
+    }
 
-        [Fact]
-        public async Task ShouldExecuteRunAsyncMethod()
-        {
-            await _telemetriesClient.RunAsync(MonitorKey);
+    [Fact]
+    public void ShouldExecuteRunMethodWithMessage()
+    {
+        _telemetriesClient.Run(MonitorKey, Message);
 
-            var request = Assert.Single(_handler.Requests);
-            Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Empty(QueryString.Parse(request.RequestUri));
-        }
+        var request = Assert.Single(_handler.Requests);
+        var query = QueryString.Parse(request.RequestUri);
+        Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Equal(Message, query["message"]);
+        Assert.Single(query);
+    }
 
-        [Fact]
-        public void ShouldExecuteRunMethodWithMessage()
-        {
-            _telemetriesClient.Run(MonitorKey, Message);
+    [Fact]
+    public async Task ShouldExecuteRunAsyncMethodWithMessage()
+    {
+        await _telemetriesClient.RunAsync(MonitorKey, Message);
 
-            var request = Assert.Single(_handler.Requests);
-            var query = QueryString.Parse(request.RequestUri);
-            Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal(Message, query["message"]);
-            Assert.Single(query);
-        }
+        var request = Assert.Single(_handler.Requests);
+        var query = QueryString.Parse(request.RequestUri);
+        Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Equal(Message, query["message"]);
+        Assert.Single(query);
+    }
 
-        [Fact]
-        public async Task ShouldExecuteRunAsyncMethodWithMessage()
-        {
-            await _telemetriesClient.RunAsync(MonitorKey, Message);
+    [Fact]
+    public void ShouldExecuteRunMethodWithEnvironment()
+    {
+        _telemetriesClient.Run(MonitorKey, environment: Environment);
 
-            var request = Assert.Single(_handler.Requests);
-            var query = QueryString.Parse(request.RequestUri);
-            Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal(Message, query["message"]);
-            Assert.Single(query);
-        }
+        var request = Assert.Single(_handler.Requests);
+        var query = QueryString.Parse(request.RequestUri);
+        Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Equal(Environment, query["env"]);
+        Assert.Single(query);
+    }
 
-        [Fact]
-        public void ShouldExecuteRunMethodWithEnvironment()
-        {
-            _telemetriesClient.Run(MonitorKey, environment: Environment);
+    [Fact]
+    public async Task ShouldExecuteRunAsyncMethodWithEnvironment()
+    {
+        await _telemetriesClient.RunAsync(MonitorKey, environment: Environment);
 
-            var request = Assert.Single(_handler.Requests);
-            var query = QueryString.Parse(request.RequestUri);
-            Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal(Environment, query["env"]);
-            Assert.Single(query);
-        }
+        var request = Assert.Single(_handler.Requests);
+        var query = QueryString.Parse(request.RequestUri);
+        Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Equal(Environment, query["env"]);
+        Assert.Single(query);
+    }
 
-        [Fact]
-        public async Task ShouldExecuteRunAsyncMethodWithEnvironment()
-        {
-            await _telemetriesClient.RunAsync(MonitorKey, environment: Environment);
+    [Fact]
+    public void ShouldExecuteRunMethodWithMessageAndEnvironment()
+    {
+        _telemetriesClient.Run(MonitorKey, Message, Environment);
 
-            var request = Assert.Single(_handler.Requests);
-            var query = QueryString.Parse(request.RequestUri);
-            Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal(Environment, query["env"]);
-            Assert.Single(query);
-        }
+        var request = Assert.Single(_handler.Requests);
+        var query = QueryString.Parse(request.RequestUri);
+        Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Equal(Message, query["message"]);
+        Assert.Equal(Environment, query["env"]);
+        Assert.Equal(2, query.Count);
+    }
 
-        [Fact]
-        public void ShouldExecuteRunMethodWithMessageAndEnvironment()
-        {
-            _telemetriesClient.Run(MonitorKey, Message, Environment);
+    [Fact]
+    public async Task ShouldExecuteRunAsyncMethodWithMessageAndEnvironment()
+    {
+        await _telemetriesClient.RunAsync(MonitorKey, Message, Environment);
 
-            var request = Assert.Single(_handler.Requests);
-            var query = QueryString.Parse(request.RequestUri);
-            Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal(Message, query["message"]);
-            Assert.Equal(Environment, query["env"]);
-            Assert.Equal(2, query.Count);
-        }
+        var request = Assert.Single(_handler.Requests);
+        var query = QueryString.Parse(request.RequestUri);
+        Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+        Assert.Equal(Message, query["message"]);
+        Assert.Equal(Environment, query["env"]);
+        Assert.Equal(2, query.Count);
+    }
 
-        [Fact]
-        public async Task ShouldExecuteRunAsyncMethodWithMessageAndEnvironment()
-        {
-            await _telemetriesClient.RunAsync(MonitorKey, Message, Environment);
+    [Theory]
+    [InlineData("a & b")]
+    [InlineData("50% done #3")]
+    [InlineData("it's ok")]
+    [InlineData("x=1+2")]
+    public void ShouldSendMessageUnchanged(string message)
+    {
+        _telemetriesClient.Run(MonitorKey, message);
 
-            var request = Assert.Single(_handler.Requests);
-            var query = QueryString.Parse(request.RequestUri);
-            Assert.Equal(RunUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-            Assert.Equal(Message, query["message"]);
-            Assert.Equal(Environment, query["env"]);
-            Assert.Equal(2, query.Count);
-        }
+        var request = Assert.Single(_handler.Requests);
+        Assert.Equal(message, QueryString.Parse(request.RequestUri)["message"]);
+    }
 
-        [Theory]
-        [InlineData("a & b")]
-        [InlineData("50% done #3")]
-        [InlineData("it's ok")]
-        [InlineData("x=1+2")]
-        public void ShouldSendMessageUnchanged(string message)
-        {
-            _telemetriesClient.Run(MonitorKey, message);
+    [Fact]
+    public void ShouldSendEnvironmentUnchanged()
+    {
+        const string environment = "staging & qa";
 
-            var request = Assert.Single(_handler.Requests);
-            Assert.Equal(message, QueryString.Parse(request.RequestUri)["message"]);
-        }
+        _telemetriesClient.Run(MonitorKey, environment: environment);
 
-        [Fact]
-        public void ShouldSendEnvironmentUnchanged()
-        {
-            const string environment = "staging & qa";
+        var request = Assert.Single(_handler.Requests);
+        Assert.Equal(environment, QueryString.Parse(request.RequestUri)["env"]);
+    }
 
-            _telemetriesClient.Run(MonitorKey, environment: environment);
+    [Fact]
+    public void ShouldUrlEncodeQueryValues()
+    {
+        _telemetriesClient.Run(MonitorKey, "a & b");
 
-            var request = Assert.Single(_handler.Requests);
-            Assert.Equal(environment, QueryString.Parse(request.RequestUri)["env"]);
-        }
-
-        [Fact]
-        public void ShouldUrlEncodeQueryValues()
-        {
-            _telemetriesClient.Run(MonitorKey, "a & b");
-
-            var request = Assert.Single(_handler.Requests);
-            Assert.Equal($"{RunUri}?message=a%20%26%20b", request.RequestUri.AbsoluteUri);
-        }
+        var request = Assert.Single(_handler.Requests);
+        Assert.Equal($"{RunUri}?message=a%20%26%20b", request.RequestUri.AbsoluteUri);
     }
 }

@@ -6,164 +6,163 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cronitor.Tests
+namespace Cronitor.Tests;
+
+[Collection(StaticCronitorCollection.Name)]
+public class CronitorTests : BaseTest
 {
-    [Collection(StaticCronitorCollection.Name)]
-    public class CronitorTests : BaseTest
+    private readonly FakeHttpMessageHandler _handler;
+
+    public CronitorTests()
     {
-        private readonly FakeHttpMessageHandler _handler;
+        _handler = new FakeHttpMessageHandler();
+    }
 
-        public CronitorTests()
-        {
-            _handler = new FakeHttpMessageHandler();
-        }
+    [Fact]
+    public void ShouldConfigureCronitor()
+    {
+        Cronitor.Configure(ApiKey);
 
-        [Fact]
-        public void ShouldConfigureCronitor()
-        {
-            Cronitor.Configure(ApiKey);
+        Assert.NotNull(Cronitor.Issues);
+        Assert.NotNull(Cronitor.Monitors);
+        Assert.NotNull(Cronitor.Notifications);
+        Assert.NotNull(Cronitor.Telemetries);
+    }
 
-            Assert.NotNull(Cronitor.Issues);
-            Assert.NotNull(Cronitor.Monitors);
-            Assert.NotNull(Cronitor.Notifications);
-            Assert.NotNull(Cronitor.Telemetries);
-        }
+    [Fact]
+    public void ShouldExecuteRunMethod()
+    {
+        ConfigureWithFakeHandler();
 
-        [Fact]
-        public void ShouldExecuteRunMethod()
-        {
-            ConfigureWithFakeHandler();
+        Cronitor.Run(MonitorKey);
 
-            Cronitor.Run(MonitorKey);
+        AssertSent("run");
+    }
 
-            AssertSent("run");
-        }
+    [Fact]
+    public async Task ShouldExecuteRunAsyncMethod()
+    {
+        ConfigureWithFakeHandler();
 
-        [Fact]
-        public async Task ShouldExecuteRunAsyncMethod()
-        {
-            ConfigureWithFakeHandler();
+        await Cronitor.RunAsync(MonitorKey);
 
-            await Cronitor.RunAsync(MonitorKey);
+        AssertSent("run");
+    }
 
-            AssertSent("run");
-        }
+    [Fact]
+    public void ShouldExecuteCompleteMethod()
+    {
+        ConfigureWithFakeHandler();
 
-        [Fact]
-        public void ShouldExecuteCompleteMethod()
-        {
-            ConfigureWithFakeHandler();
+        Cronitor.Complete(MonitorKey);
 
-            Cronitor.Complete(MonitorKey);
+        AssertSent("complete");
+    }
 
-            AssertSent("complete");
-        }
+    [Fact]
+    public async Task ShouldExecuteCompleteAsyncMethod()
+    {
+        ConfigureWithFakeHandler();
 
-        [Fact]
-        public async Task ShouldExecuteCompleteAsyncMethod()
-        {
-            ConfigureWithFakeHandler();
+        await Cronitor.CompleteAsync(MonitorKey);
 
-            await Cronitor.CompleteAsync(MonitorKey);
+        AssertSent("complete");
+    }
 
-            AssertSent("complete");
-        }
+    [Fact]
+    public void ShouldExecuteFailMethod()
+    {
+        ConfigureWithFakeHandler();
 
-        [Fact]
-        public void ShouldExecuteFailMethod()
-        {
-            ConfigureWithFakeHandler();
+        Cronitor.Fail(MonitorKey);
 
-            Cronitor.Fail(MonitorKey);
+        AssertSent("fail");
+    }
 
-            AssertSent("fail");
-        }
+    [Fact]
+    public async Task ShouldExecuteFailAsyncMethod()
+    {
+        ConfigureWithFakeHandler();
 
-        [Fact]
-        public async Task ShouldExecuteFailAsyncMethod()
-        {
-            ConfigureWithFakeHandler();
+        await Cronitor.FailAsync(MonitorKey);
 
-            await Cronitor.FailAsync(MonitorKey);
+        AssertSent("fail");
+    }
 
-            AssertSent("fail");
-        }
+    [Fact]
+    public void ShouldExecuteTickMethod()
+    {
+        ConfigureWithFakeHandler();
 
-        [Fact]
-        public void ShouldExecuteTickMethod()
-        {
-            ConfigureWithFakeHandler();
+        Cronitor.Tick(MonitorKey);
 
-            Cronitor.Tick(MonitorKey);
+        AssertSent("tick");
+    }
 
-            AssertSent("tick");
-        }
+    [Fact]
+    public async Task ShouldExecuteTickAsyncMethod()
+    {
+        ConfigureWithFakeHandler();
 
-        [Fact]
-        public async Task ShouldExecuteTickAsyncMethod()
-        {
-            ConfigureWithFakeHandler();
+        await Cronitor.TickAsync(MonitorKey);
 
-            await Cronitor.TickAsync(MonitorKey);
+        AssertSent("tick");
+    }
 
-            AssertSent("tick");
-        }
+    [Fact]
+    public void ShouldExecutePingMethod()
+    {
+        ConfigureWithFakeHandler();
+        var command = new CompleteCommand()
+            .WithApiKey(ApiKey)
+            .WithMonitorKey(MonitorKey);
 
-        [Fact]
-        public void ShouldExecutePingMethod()
-        {
-            ConfigureWithFakeHandler();
-            var command = new CompleteCommand()
-                .WithApiKey(ApiKey)
-                .WithMonitorKey(MonitorKey);
+        Cronitor.Ping(command);
 
-            Cronitor.Ping(command);
+        AssertSent("complete");
+    }
 
-            AssertSent("complete");
-        }
+    [Fact]
+    public async Task ShouldExecutePingAsyncMethod()
+    {
+        ConfigureWithFakeHandler();
+        var command = new CompleteCommand()
+            .WithApiKey(ApiKey)
+            .WithMonitorKey(MonitorKey);
 
-        [Fact]
-        public async Task ShouldExecutePingAsyncMethod()
-        {
-            ConfigureWithFakeHandler();
-            var command = new CompleteCommand()
-                .WithApiKey(ApiKey)
-                .WithMonitorKey(MonitorKey);
+        await Cronitor.PingAsync(command);
 
-            await Cronitor.PingAsync(command);
+        AssertSent("complete");
+    }
 
-            AssertSent("complete");
-        }
+    [Fact]
+    public void ShouldExecuteStartMethod()
+    {
+        ConfigureWithFakeHandler();
 
-        [Fact]
-        public void ShouldExecuteStartMethod()
-        {
-            ConfigureWithFakeHandler();
+        Cronitor.Start(MonitorKey);
 
-            Cronitor.Start(MonitorKey);
+        AssertSent("run");
+    }
 
-            AssertSent("run");
-        }
+    [Fact]
+    public async Task ShouldExecuteStartAsyncMethod()
+    {
+        ConfigureWithFakeHandler();
 
-        [Fact]
-        public async Task ShouldExecuteStartAsyncMethod()
-        {
-            ConfigureWithFakeHandler();
+        await Cronitor.StartAsync(MonitorKey);
 
-            await Cronitor.StartAsync(MonitorKey);
+        AssertSent("run");
+    }
 
-            AssertSent("run");
-        }
+    private void ConfigureWithFakeHandler()
+    {
+        Cronitor.Configure(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, _handler));
+    }
 
-        private void ConfigureWithFakeHandler()
-        {
-            Cronitor.Configure(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, _handler));
-        }
-
-        private void AssertSent(string endpoint)
-        {
-            var request = Assert.Single(_handler.Requests);
-            Assert.Equal($"https://cronitor.link/p/{ApiKey}/{MonitorKey}/{endpoint}", request.RequestUri.GetLeftPart(UriPartial.Path));
-        }
+    private void AssertSent(string endpoint)
+    {
+        var request = Assert.Single(_handler.Requests);
+        Assert.Equal($"https://cronitor.link/p/{ApiKey}/{MonitorKey}/{endpoint}", request.RequestUri.GetLeftPart(UriPartial.Path));
     }
 }

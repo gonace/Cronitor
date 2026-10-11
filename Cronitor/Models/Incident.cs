@@ -1,12 +1,11 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Cronitor.Models
+namespace Cronitor.Models;
+
+public class Incident
 {
-    public class Incident
-    {
-        [JsonPropertyName("stamp")]
-        public decimal Timestamp { get; set; }
-        [JsonPropertyName("state")]
-        public string State { get; set; }
-    }
+    [JsonPropertyName("stamp")]
+    public decimal Timestamp { get; set; }
+    [JsonPropertyName("state")]
+    public string State { get; set; }
 }

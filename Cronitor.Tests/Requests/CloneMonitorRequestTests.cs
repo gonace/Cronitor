@@ -4,48 +4,47 @@ using Cronitor.Requests;
 using Cronitor.Tests.Helpers;
 using Xunit;
 
-namespace Cronitor.Tests.Requests
+namespace Cronitor.Tests.Requests;
+
+public class CloneMonitorRequestTests
 {
-    public class CloneMonitorRequestTests
+    [Theory]
+    [JsonData("CloneMonitorRequest.json")]
+    public async Task ShouldCreateCloneMonitorRequestAsync(string expected)
     {
-        [Theory]
-        [JsonData("CloneMonitorRequest.json")]
-        public async Task ShouldCreateCloneMonitorRequestAsync(string expected)
-        {
-            var request = new CloneMonitorRequest("nightly-backup-job", "nightly-backup-job-clone");
+        var request = new CloneMonitorRequest("nightly-backup-job", "nightly-backup-job-clone");
 
 #if NET8_0_OR_GREATER
-            var actual = await request.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+        var actual = await request.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
 #else
-            var actual = await request.Content.ReadAsStringAsync();
+        var actual = await request.Content.ReadAsStringAsync();
 #endif
-            Assert.Equal(expected, actual);
-        }
+        Assert.Equal(expected, actual);
+    }
 
-        [Fact]
-        public void ShouldSetEndpoint()
-        {
-            var request = new CloneMonitorRequest("test");
+    [Fact]
+    public void ShouldSetEndpoint()
+    {
+        var request = new CloneMonitorRequest("test");
 
-            Assert.Equal("monitors/clone", request.Endpoint);
-        }
+        Assert.Equal("monitors/clone", request.Endpoint);
+    }
 
-        [Fact]
-        public void ShouldSetHttpMethodToPost()
-        {
-            var request = new CloneMonitorRequest("test");
+    [Fact]
+    public void ShouldSetHttpMethodToPost()
+    {
+        var request = new CloneMonitorRequest("test");
 
-            Assert.Equal(HttpMethod.Post, request.Method);
-        }
+        Assert.Equal(HttpMethod.Post, request.Method);
+    }
 
-        [Fact]
-        public void ShouldBuildUri()
-        {
-            var request = new CloneMonitorRequest("test");
+    [Fact]
+    public void ShouldBuildUri()
+    {
+        var request = new CloneMonitorRequest("test");
 
-            var uri = request.ToUri();
+        var uri = request.ToUri();
 
-            Assert.Equal("https://cronitor.io/api/monitors/clone", uri.ToString());
-        }
+        Assert.Equal("https://cronitor.io/api/monitors/clone", uri.ToString());
     }
 }

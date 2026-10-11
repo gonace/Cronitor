@@ -1,11 +1,10 @@
 ﻿using System.Collections.Generic;
 using System.Text.Json.Serialization;
 
-namespace Cronitor.Responses
+namespace Cronitor.Responses;
+
+public class CreateMonitorResponse
 {
-    public class CreateMonitorResponse
-    {
-        [JsonPropertyName("monitors")]
-        public IEnumerable<Models.Monitor> Monitors { get; set; }
-    }
+    [JsonPropertyName("monitors")]
+    public IEnumerable<Models.Monitor> Monitors { get; set; }
 }

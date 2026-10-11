@@ -2,42 +2,41 @@ using System.Net.Http;
 using Cronitor.Requests;
 using Xunit;
 
-namespace Cronitor.Tests.Requests
+namespace Cronitor.Tests.Requests;
+
+public class DeleteMonitorRequestTests
 {
-    public class DeleteMonitorRequestTests
+    [Fact]
+    public void ShouldSetEndpoint()
     {
-        [Fact]
-        public void ShouldSetEndpoint()
-        {
-            var request = new DeleteMonitorRequest("abc123");
+        var request = new DeleteMonitorRequest("abc123");
 
-            Assert.Equal("monitors/:key", request.Endpoint);
-        }
+        Assert.Equal("monitors/:key", request.Endpoint);
+    }
 
-        [Fact]
-        public void ShouldSetHttpMethodToDelete()
-        {
-            var request = new DeleteMonitorRequest("abc123");
+    [Fact]
+    public void ShouldSetHttpMethodToDelete()
+    {
+        var request = new DeleteMonitorRequest("abc123");
 
-            Assert.Equal(HttpMethod.Delete, request.Method);
-        }
+        Assert.Equal(HttpMethod.Delete, request.Method);
+    }
 
-        [Fact]
-        public void ShouldSetKey()
-        {
-            var request = new DeleteMonitorRequest("abc123");
+    [Fact]
+    public void ShouldSetKey()
+    {
+        var request = new DeleteMonitorRequest("abc123");
 
-            Assert.Equal("abc123", request.Key);
-        }
+        Assert.Equal("abc123", request.Key);
+    }
 
-        [Fact]
-        public void ShouldBuildUriWithKey()
-        {
-            var request = new DeleteMonitorRequest("abc123");
+    [Fact]
+    public void ShouldBuildUriWithKey()
+    {
+        var request = new DeleteMonitorRequest("abc123");
 
-            var uri = request.ToUri();
+        var uri = request.ToUri();
 
-            Assert.Equal("https://cronitor.io/api/monitors/abc123", uri.ToString());
-        }
+        Assert.Equal("https://cronitor.io/api/monitors/abc123", uri.ToString());
     }
 }

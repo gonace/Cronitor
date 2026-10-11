@@ -6,28 +6,27 @@ using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 
-namespace Cronitor.Requests
+namespace Cronitor.Requests;
+
+public class UpdateIssueRequest : BaseRequest
 {
-    public class UpdateIssueRequest : BaseRequest
+    public override string Endpoint { get; set; } = "issues/:key";
+    public string Key { get; set; }
+    public override HttpMethod Method => HttpMethod.Put;
+
+    public UpdateIssueRequest(string issueKey, Issue issue)
     {
-        public override string Endpoint { get; set; } = "issues/:key";
-        public string Key { get; set; }
-        public override HttpMethod Method => HttpMethod.Put;
+        Key = issueKey;
+        Content = new StringContent(Serializer.Serialize(issue), Encoding.UTF8, "application/json");
+    }
 
-        public UpdateIssueRequest(string issueKey, Issue issue)
+    public override Uri ToUri()
+    {
+        var dictionary = new Dictionary<string, string>
         {
-            Key = issueKey;
-            Content = new StringContent(Serializer.Serialize(issue), Encoding.UTF8, "application/json");
-        }
+            { ":key", Key }
+        };
 
-        public override Uri ToUri()
-        {
-            var dictionary = new Dictionary<string, string>
-            {
-                { ":key", Key }
-            };
-
-            return base.ToUri().Build(dictionary);
-        }
+        return base.ToUri().Build(dictionary);
     }
 }

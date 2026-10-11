@@ -10,39 +10,72 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cronitor.Tests
+namespace Cronitor.Tests;
+
+public class IssuesClientTests : BaseTest
 {
-    public class IssuesClientTests : BaseTest
+    private const string IssuesUri = "https://cronitor.io/api/issues";
+    private const string IssueUri = IssuesUri + "/" + MonitorKey;
+
+    [Fact]
+    public void ShouldConstructWithApiKey()
     {
-        private const string IssuesUri = "https://cronitor.io/api/issues";
-        private const string IssueUri = IssuesUri + "/" + MonitorKey;
+        var client = new IssuesClient(ApiKey);
 
-        [Fact]
-        public void ShouldConstructWithApiKey()
+        Assert.NotNull(client);
+    }
+
+    [Fact]
+    public void ShouldDisposeIssuesClient()
+    {
+        using (var client = new IssuesClient(ApiKey))
         {
-            var client = new IssuesClient(ApiKey);
-
             Assert.NotNull(client);
         }
+        // Test passes if no exception is thrown during disposal
+    }
 
-        [Fact]
-        public void ShouldDisposeIssuesClient()
+    [Fact]
+    public void ShouldExecuteListMethod()
+    {
+        var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
+        var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
+        var issuesClient = CreateClient(handler);
+
+        var result = issuesClient.List();
+
+        Assert.NotNull(result);
+        Assert.Single(result.Items);
+        Assert.Equal(1, result.Page);
+        Assert.Equal(50, result.PageSize);
+        AssertRequest.Sent(handler, HttpMethod.Get, IssuesUri + "?page=1");
+    }
+
+    [Fact]
+    public async Task ShouldExecuteListAsyncMethod()
+    {
+        var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
+        var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
+        var issuesClient = CreateClient(handler);
+
+        var result = await issuesClient.ListAsync();
+
+        Assert.NotNull(result);
+        Assert.Single(result.Items);
+        Assert.Equal(1, result.Page);
+        Assert.Equal(50, result.PageSize);
+        AssertRequest.Sent(handler, HttpMethod.Get, IssuesUri + "?page=1");
+    }
+
+    [Fact]
+    public void ShouldExecuteListMethodInUsingBlock()
+    {
+        var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
+        var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
+
+        using (var client = CreateClient(handler))
         {
-            using (var client = new IssuesClient(ApiKey))
-            {
-                Assert.NotNull(client);
-            }
-            // Test passes if no exception is thrown during disposal
-        }
-
-        [Fact]
-        public void ShouldExecuteListMethod()
-        {
-            var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
-            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
-            var issuesClient = CreateClient(handler);
-
-            var result = issuesClient.List();
+            var result = client.List();
 
             Assert.NotNull(result);
             Assert.Single(result.Items);
@@ -50,160 +83,126 @@ namespace Cronitor.Tests
             Assert.Equal(50, result.PageSize);
             AssertRequest.Sent(handler, HttpMethod.Get, IssuesUri + "?page=1");
         }
+    }
 
-        [Fact]
-        public async Task ShouldExecuteListAsyncMethod()
-        {
-            var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
-            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
-            var issuesClient = CreateClient(handler);
+    [Fact]
+    public void ShouldExecuteListMethodWithFilters()
+    {
+        var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
+        var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
+        var issuesClient = CreateClient(handler);
 
-            var result = await issuesClient.ListAsync();
+        var result = issuesClient.List(new ListIssueRequest { States = { IssueState.Unresolved }, Time = "24h" });
 
-            Assert.NotNull(result);
-            Assert.Single(result.Items);
-            Assert.Equal(1, result.Page);
-            Assert.Equal(50, result.PageSize);
-            AssertRequest.Sent(handler, HttpMethod.Get, IssuesUri + "?page=1");
-        }
+        Assert.Single(result.Items);
+        AssertRequest.Sent(handler, HttpMethod.Get, IssuesUri + "?page=1&state=unresolved&time=24h");
+    }
 
-        [Fact]
-        public void ShouldExecuteListMethodInUsingBlock()
-        {
-            var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
-            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
+    [Fact]
+    public async Task ShouldExecuteListAsyncMethodWithFilters()
+    {
+        var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
+        var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
+        var issuesClient = CreateClient(handler);
 
-            using (var client = CreateClient(handler))
-            {
-                var result = client.List();
+        var result = await issuesClient.ListAsync(new ListIssueRequest { Jobs = { MonitorKey }, OrderBy = IssueOrder.StartedDescending });
 
-                Assert.NotNull(result);
-                Assert.Single(result.Items);
-                Assert.Equal(1, result.Page);
-                Assert.Equal(50, result.PageSize);
-                AssertRequest.Sent(handler, HttpMethod.Get, IssuesUri + "?page=1");
-            }
-        }
+        Assert.Single(result.Items);
+        AssertRequest.Sent(handler, HttpMethod.Get, IssuesUri + $"?page=1&job={MonitorKey}&orderBy=-started");
+    }
 
-        [Fact]
-        public void ShouldExecuteListMethodWithFilters()
-        {
-            var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
-            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
-            var issuesClient = CreateClient(handler);
+    [Fact]
+    public async Task ListAsyncShouldRequireARequest()
+    {
+        var issuesClient = CreateClient(new FakeHttpMessageHandler());
 
-            var result = issuesClient.List(new ListIssueRequest { States = { IssueState.Unresolved }, Time = "24h" });
+        await Assert.ThrowsAsync<ArgumentNullException>(() => issuesClient.ListAsync((ListIssueRequest)null));
+    }
 
-            Assert.Single(result.Items);
-            AssertRequest.Sent(handler, HttpMethod.Get, IssuesUri + "?page=1&state=unresolved&time=24h");
-        }
+    [Fact]
+    public void ShouldExecuteGetMethod()
+    {
+        var response = Make.Issue.Key(MonitorKey).Build();
+        var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
+        var issuesClient = CreateClient(handler);
 
-        [Fact]
-        public async Task ShouldExecuteListAsyncMethodWithFilters()
-        {
-            var response = new ListIssueResponse { Items = new List<Issue> { Make.Issue.Build() } };
-            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
-            var issuesClient = CreateClient(handler);
+        var result = issuesClient.Get(MonitorKey);
 
-            var result = await issuesClient.ListAsync(new ListIssueRequest { Jobs = { MonitorKey }, OrderBy = IssueOrder.StartedDescending });
+        Assert.NotNull(result);
+        Assert.Equal(response.Key, result.Key);
+        AssertRequest.Sent(handler, HttpMethod.Get, IssueUri);
+    }
 
-            Assert.Single(result.Items);
-            AssertRequest.Sent(handler, HttpMethod.Get, IssuesUri + $"?page=1&job={MonitorKey}&orderBy=-started");
-        }
+    [Fact]
+    public async Task ShouldExecuteGetAsyncMethod()
+    {
+        var response = Make.Issue.Key(MonitorKey).Build();
+        var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
+        var issuesClient = CreateClient(handler);
 
-        [Fact]
-        public async Task ListAsyncShouldRequireARequest()
-        {
-            var issuesClient = CreateClient(new FakeHttpMessageHandler());
+        var result = await issuesClient.GetAsync(MonitorKey);
 
-            await Assert.ThrowsAsync<ArgumentNullException>(() => issuesClient.ListAsync((ListIssueRequest)null));
-        }
+        Assert.NotNull(result);
+        Assert.Equal(response.Key, result.Key);
+        AssertRequest.Sent(handler, HttpMethod.Get, IssueUri);
+    }
 
-        [Fact]
-        public void ShouldExecuteGetMethod()
-        {
-            var response = Make.Issue.Key(MonitorKey).Build();
-            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
-            var issuesClient = CreateClient(handler);
+    [Fact]
+    public void ShouldExecuteCreateMethod()
+    {
+        var issue = Make.Issue.Build();
+        var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(issue));
+        var issuesClient = CreateClient(handler);
 
-            var result = issuesClient.Get(MonitorKey);
+        var result = issuesClient.Create(new CreateIssueRequest(issue));
 
-            Assert.NotNull(result);
-            Assert.Equal(response.Key, result.Key);
-            AssertRequest.Sent(handler, HttpMethod.Get, IssueUri);
-        }
+        Assert.NotNull(result);
+        AssertRequest.Sent(handler, HttpMethod.Post, IssuesUri);
+    }
 
-        [Fact]
-        public async Task ShouldExecuteGetAsyncMethod()
-        {
-            var response = Make.Issue.Key(MonitorKey).Build();
-            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(response));
-            var issuesClient = CreateClient(handler);
+    [Fact]
+    public async Task ShouldExecuteCreateAsyncMethod()
+    {
+        var issue = Make.Issue.Build();
+        var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(issue));
+        var issuesClient = CreateClient(handler);
 
-            var result = await issuesClient.GetAsync(MonitorKey);
+        var result = await issuesClient.CreateAsync(new CreateIssueRequest(issue));
 
-            Assert.NotNull(result);
-            Assert.Equal(response.Key, result.Key);
-            AssertRequest.Sent(handler, HttpMethod.Get, IssueUri);
-        }
+        Assert.NotNull(result);
+        AssertRequest.Sent(handler, HttpMethod.Post, IssuesUri);
+    }
 
-        [Fact]
-        public void ShouldExecuteCreateMethod()
-        {
-            var issue = Make.Issue.Build();
-            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(issue));
-            var issuesClient = CreateClient(handler);
+    [Fact]
+    public void ShouldExecuteUpdateMethod()
+    {
+        var issue = Make.Issue.Key(MonitorKey).Build();
+        var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(issue));
+        var issuesClient = CreateClient(handler);
 
-            var result = issuesClient.Create(new CreateIssueRequest(issue));
+        var result = issuesClient.Update(new UpdateIssueRequest(MonitorKey, issue));
 
-            Assert.NotNull(result);
-            AssertRequest.Sent(handler, HttpMethod.Post, IssuesUri);
-        }
+        Assert.NotNull(result);
+        Assert.Equal(MonitorKey, result.Key);
+        AssertRequest.Sent(handler, HttpMethod.Put, IssueUri);
+    }
 
-        [Fact]
-        public async Task ShouldExecuteCreateAsyncMethod()
-        {
-            var issue = Make.Issue.Build();
-            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(issue));
-            var issuesClient = CreateClient(handler);
+    [Fact]
+    public async Task ShouldExecuteUpdateAsyncMethod()
+    {
+        var issue = Make.Issue.Key(MonitorKey).Build();
+        var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(issue));
+        var issuesClient = CreateClient(handler);
 
-            var result = await issuesClient.CreateAsync(new CreateIssueRequest(issue));
+        var result = await issuesClient.UpdateAsync(new UpdateIssueRequest(MonitorKey, issue));
 
-            Assert.NotNull(result);
-            AssertRequest.Sent(handler, HttpMethod.Post, IssuesUri);
-        }
+        Assert.NotNull(result);
+        Assert.Equal(MonitorKey, result.Key);
+        AssertRequest.Sent(handler, HttpMethod.Put, IssueUri);
+    }
 
-        [Fact]
-        public void ShouldExecuteUpdateMethod()
-        {
-            var issue = Make.Issue.Key(MonitorKey).Build();
-            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(issue));
-            var issuesClient = CreateClient(handler);
-
-            var result = issuesClient.Update(new UpdateIssueRequest(MonitorKey, issue));
-
-            Assert.NotNull(result);
-            Assert.Equal(MonitorKey, result.Key);
-            AssertRequest.Sent(handler, HttpMethod.Put, IssueUri);
-        }
-
-        [Fact]
-        public async Task ShouldExecuteUpdateAsyncMethod()
-        {
-            var issue = Make.Issue.Key(MonitorKey).Build();
-            var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(issue));
-            var issuesClient = CreateClient(handler);
-
-            var result = await issuesClient.UpdateAsync(new UpdateIssueRequest(MonitorKey, issue));
-
-            Assert.NotNull(result);
-            Assert.Equal(MonitorKey, result.Key);
-            AssertRequest.Sent(handler, HttpMethod.Put, IssueUri);
-        }
-
-        private static IssuesClient CreateClient(FakeHttpMessageHandler handler)
-        {
-            return new IssuesClient(new Internals.HttpClient(Urls.DefaultApiUrl, ApiKey, handler));
-        }
+    private static IssuesClient CreateClient(FakeHttpMessageHandler handler)
+    {
+        return new IssuesClient(new Internals.HttpClient(Urls.DefaultApiUrl, ApiKey, handler));
     }
 }

@@ -7,205 +7,204 @@ using System;
 using Xunit;
 using Host = Microsoft.Extensions.Hosting.Host;
 
-namespace Cronitor.Tests
+namespace Cronitor.Tests;
+
+[Collection(StaticCronitorCollection.Name)]
+public class HostBuilderExtensionsTests : BaseTest
 {
-    [Collection(StaticCronitorCollection.Name)]
-    public class HostBuilderExtensionsTests : BaseTest
+    [Fact]
+    public void ConfigureCronitor_WithApiKey_ShouldRegisterAllServices()
     {
-        [Fact]
-        public void ConfigureCronitor_WithApiKey_ShouldRegisterAllServices()
+        var hostBuilder = Host.CreateDefaultBuilder();
+
+        var result = hostBuilder.ConfigureCronitor(ApiKey);
+
+        Assert.NotNull(result);
+        var host = hostBuilder.Build();
+
+        var issuesClient = host.Services.GetService<IIssuesClient>();
+        var monitorsClient = host.Services.GetService<IMonitorsClient>();
+        var notificationsClient = host.Services.GetService<INotificationsClient>();
+        var telemetriesClient = host.Services.GetService<ITelemetriesClient>();
+
+        Assert.NotNull(issuesClient);
+        Assert.NotNull(monitorsClient);
+        Assert.NotNull(notificationsClient);
+        Assert.NotNull(telemetriesClient);
+    }
+
+    [Fact]
+    public void ConfigureCronitor_WithApiKey_ShouldRegisterServicesAsTransient()
+    {
+        var hostBuilder = Host.CreateDefaultBuilder();
+        hostBuilder.ConfigureCronitor(ApiKey);
+        var host = hostBuilder.Build();
+
+        var issuesClient1 = host.Services.GetService<IIssuesClient>();
+        var issuesClient2 = host.Services.GetService<IIssuesClient>();
+
+        Assert.NotNull(issuesClient1);
+        Assert.NotNull(issuesClient2);
+        Assert.NotSame(issuesClient1, issuesClient2);
+    }
+
+    [Fact]
+    public void ConfigureCronitor_WithNullBuilder_ShouldThrowArgumentNullException()
+    {
+        IHostBuilder builder = null;
+
+        Assert.Throws<ArgumentNullException>(() => builder.ConfigureCronitor(ApiKey));
+    }
+
+    [Fact]
+    public void ConfigureCronitor_WithOptionsBuilder_ShouldRegisterAllServices()
+    {
+        var hostBuilder = Host.CreateDefaultBuilder();
+
+        var result = hostBuilder.ConfigureCronitor(context => ApiKey);
+
+        Assert.NotNull(result);
+        var host = hostBuilder.Build();
+
+        var issuesClient = host.Services.GetService<IIssuesClient>();
+        var monitorsClient = host.Services.GetService<IMonitorsClient>();
+        var notificationsClient = host.Services.GetService<INotificationsClient>();
+        var telemetriesClient = host.Services.GetService<ITelemetriesClient>();
+
+        Assert.NotNull(issuesClient);
+        Assert.NotNull(monitorsClient);
+        Assert.NotNull(notificationsClient);
+        Assert.NotNull(telemetriesClient);
+    }
+
+    [Fact]
+    public void ConfigureCronitor_WithOptionsBuilder_ShouldInvokeContextFunction()
+    {
+        var hostBuilder = Host.CreateDefaultBuilder();
+        var functionCalled = false;
+
+        hostBuilder.ConfigureCronitor(context =>
         {
-            var hostBuilder = Host.CreateDefaultBuilder();
+            functionCalled = true;
+            Assert.NotNull(context);
+            return ApiKey;
+        });
 
-            var result = hostBuilder.ConfigureCronitor(ApiKey);
+        var host = hostBuilder.Build();
+        var client = host.Services.GetService<IIssuesClient>();
 
-            Assert.NotNull(result);
-            var host = hostBuilder.Build();
+        Assert.True(functionCalled);
+        Assert.NotNull(client);
+    }
 
-            var issuesClient = host.Services.GetService<IIssuesClient>();
-            var monitorsClient = host.Services.GetService<IMonitorsClient>();
-            var notificationsClient = host.Services.GetService<INotificationsClient>();
-            var telemetriesClient = host.Services.GetService<ITelemetriesClient>();
+    [Fact]
+    public void ConfigureCronitor_WithOptionsBuilderAndNullBuilder_ShouldThrowArgumentNullException()
+    {
+        IHostBuilder builder = null;
 
-            Assert.NotNull(issuesClient);
-            Assert.NotNull(monitorsClient);
-            Assert.NotNull(notificationsClient);
-            Assert.NotNull(telemetriesClient);
-        }
+        Assert.Throws<ArgumentNullException>(() =>
+            builder.ConfigureCronitor(context => ApiKey));
+    }
 
-        [Fact]
-        public void ConfigureCronitor_WithApiKey_ShouldRegisterServicesAsTransient()
-        {
-            var hostBuilder = Host.CreateDefaultBuilder();
-            hostBuilder.ConfigureCronitor(ApiKey);
-            var host = hostBuilder.Build();
+    [Fact]
+    public void UseCronitor_WithApiKey_ShouldReturnBuilder()
+    {
+        var hostBuilder = Host.CreateDefaultBuilder();
 
-            var issuesClient1 = host.Services.GetService<IIssuesClient>();
-            var issuesClient2 = host.Services.GetService<IIssuesClient>();
+        var result = hostBuilder.UseCronitor(ApiKey);
 
-            Assert.NotNull(issuesClient1);
-            Assert.NotNull(issuesClient2);
-            Assert.NotSame(issuesClient1, issuesClient2);
-        }
+        Assert.NotNull(result);
+        Assert.Same(hostBuilder, result);
+    }
 
-        [Fact]
-        public void ConfigureCronitor_WithNullBuilder_ShouldThrowArgumentNullException()
-        {
-            IHostBuilder builder = null;
+    [Fact]
+    public void UseCronitor_WithApiKey_ShouldConfigureStaticCronitor()
+    {
+        var hostBuilder = Host.CreateDefaultBuilder();
 
-            Assert.Throws<ArgumentNullException>(() => builder.ConfigureCronitor(ApiKey));
-        }
+        hostBuilder.UseCronitor(ApiKey);
 
-        [Fact]
-        public void ConfigureCronitor_WithOptionsBuilder_ShouldRegisterAllServices()
-        {
-            var hostBuilder = Host.CreateDefaultBuilder();
+        // Verify static Cronitor is configured by accessing its properties
+        Assert.NotNull(Cronitor.Issues);
+        Assert.NotNull(Cronitor.Monitors);
+        Assert.NotNull(Cronitor.Notifications);
+        Assert.NotNull(Cronitor.Telemetries);
+    }
 
-            var result = hostBuilder.ConfigureCronitor(context => ApiKey);
+    [Fact]
+    public void UseCronitor_WithApiKey_ShouldRegisterLoggingHostedService()
+    {
+        var hostBuilder = Host.CreateDefaultBuilder();
 
-            Assert.NotNull(result);
-            var host = hostBuilder.Build();
+        var host = hostBuilder.UseCronitor(ApiKey).Build();
 
-            var issuesClient = host.Services.GetService<IIssuesClient>();
-            var monitorsClient = host.Services.GetService<IMonitorsClient>();
-            var notificationsClient = host.Services.GetService<INotificationsClient>();
-            var telemetriesClient = host.Services.GetService<ITelemetriesClient>();
+        Assert.Contains(host.Services.GetServices<IHostedService>(), service => service is CronitorLoggingHostedService);
+    }
 
-            Assert.NotNull(issuesClient);
-            Assert.NotNull(monitorsClient);
-            Assert.NotNull(notificationsClient);
-            Assert.NotNull(telemetriesClient);
-        }
+    [Fact]
+    public void UseCronitor_WithOptionsBuilder_ShouldRegisterLoggingHostedService()
+    {
+        var hostBuilder = Host.CreateDefaultBuilder();
 
-        [Fact]
-        public void ConfigureCronitor_WithOptionsBuilder_ShouldInvokeContextFunction()
-        {
-            var hostBuilder = Host.CreateDefaultBuilder();
-            var functionCalled = false;
+        var host = hostBuilder.UseCronitor(context => ApiKey).Build();
 
-            hostBuilder.ConfigureCronitor(context =>
-            {
-                functionCalled = true;
-                Assert.NotNull(context);
-                return ApiKey;
-            });
+        Assert.Contains(host.Services.GetServices<IHostedService>(), service => service is CronitorLoggingHostedService);
+    }
 
-            var host = hostBuilder.Build();
-            var client = host.Services.GetService<IIssuesClient>();
+    [Fact]
+    public void UseCronitor_WithNullBuilder_ShouldThrowArgumentNullException()
+    {
+        IHostBuilder builder = null;
 
-            Assert.True(functionCalled);
-            Assert.NotNull(client);
-        }
+        Assert.Throws<ArgumentNullException>(() => builder.UseCronitor(ApiKey));
+    }
 
-        [Fact]
-        public void ConfigureCronitor_WithOptionsBuilderAndNullBuilder_ShouldThrowArgumentNullException()
-        {
-            IHostBuilder builder = null;
+    [Fact]
+    public void UseCronitor_WithNullApiKey_ShouldThrowArgumentNullException()
+    {
+        var hostBuilder = Host.CreateDefaultBuilder();
 
-            Assert.Throws<ArgumentNullException>(() =>
-                builder.ConfigureCronitor(context => ApiKey));
-        }
+        Assert.Throws<ArgumentNullException>(() => hostBuilder.UseCronitor((string)null));
+    }
 
-        [Fact]
-        public void UseCronitor_WithApiKey_ShouldReturnBuilder()
-        {
-            var hostBuilder = Host.CreateDefaultBuilder();
+    [Fact]
+    public void UseCronitor_WithEmptyApiKey_ShouldThrowArgumentNullException()
+    {
+        var hostBuilder = Host.CreateDefaultBuilder();
 
-            var result = hostBuilder.UseCronitor(ApiKey);
+        Assert.Throws<ArgumentNullException>(() => hostBuilder.UseCronitor(string.Empty));
+    }
 
-            Assert.NotNull(result);
-            Assert.Same(hostBuilder, result);
-        }
+    [Fact]
+    public void UseCronitor_WithWhitespaceApiKey_ShouldThrowArgumentNullException()
+    {
+        var hostBuilder = Host.CreateDefaultBuilder();
 
-        [Fact]
-        public void UseCronitor_WithApiKey_ShouldConfigureStaticCronitor()
-        {
-            var hostBuilder = Host.CreateDefaultBuilder();
+        Assert.Throws<ArgumentNullException>(() => hostBuilder.UseCronitor("   "));
+    }
 
-            hostBuilder.UseCronitor(ApiKey);
+    [Fact]
+    public void UseCronitor_WithOptionsBuilder_ShouldConfigureStaticCronitor()
+    {
+        var hostBuilder = Host.CreateDefaultBuilder();
 
-            // Verify static Cronitor is configured by accessing its properties
-            Assert.NotNull(Cronitor.Issues);
-            Assert.NotNull(Cronitor.Monitors);
-            Assert.NotNull(Cronitor.Notifications);
-            Assert.NotNull(Cronitor.Telemetries);
-        }
+        hostBuilder.UseCronitor(context => ApiKey);
+        var host = hostBuilder.Build();
 
-        [Fact]
-        public void UseCronitor_WithApiKey_ShouldRegisterLoggingHostedService()
-        {
-            var hostBuilder = Host.CreateDefaultBuilder();
+        // Verify static Cronitor is configured
+        Assert.NotNull(host);
+        Assert.NotNull(Cronitor.Issues);
+        Assert.NotNull(Cronitor.Monitors);
+        Assert.NotNull(Cronitor.Notifications);
+        Assert.NotNull(Cronitor.Telemetries);
+    }
 
-            var host = hostBuilder.UseCronitor(ApiKey).Build();
+    [Fact]
+    public void UseCronitor_WithOptionsBuilderAndNullBuilder_ShouldThrowArgumentNullException()
+    {
+        IHostBuilder builder = null;
 
-            Assert.Contains(host.Services.GetServices<IHostedService>(), service => service is CronitorLoggingHostedService);
-        }
-
-        [Fact]
-        public void UseCronitor_WithOptionsBuilder_ShouldRegisterLoggingHostedService()
-        {
-            var hostBuilder = Host.CreateDefaultBuilder();
-
-            var host = hostBuilder.UseCronitor(context => ApiKey).Build();
-
-            Assert.Contains(host.Services.GetServices<IHostedService>(), service => service is CronitorLoggingHostedService);
-        }
-
-        [Fact]
-        public void UseCronitor_WithNullBuilder_ShouldThrowArgumentNullException()
-        {
-            IHostBuilder builder = null;
-
-            Assert.Throws<ArgumentNullException>(() => builder.UseCronitor(ApiKey));
-        }
-
-        [Fact]
-        public void UseCronitor_WithNullApiKey_ShouldThrowArgumentNullException()
-        {
-            var hostBuilder = Host.CreateDefaultBuilder();
-
-            Assert.Throws<ArgumentNullException>(() => hostBuilder.UseCronitor((string)null));
-        }
-
-        [Fact]
-        public void UseCronitor_WithEmptyApiKey_ShouldThrowArgumentNullException()
-        {
-            var hostBuilder = Host.CreateDefaultBuilder();
-
-            Assert.Throws<ArgumentNullException>(() => hostBuilder.UseCronitor(string.Empty));
-        }
-
-        [Fact]
-        public void UseCronitor_WithWhitespaceApiKey_ShouldThrowArgumentNullException()
-        {
-            var hostBuilder = Host.CreateDefaultBuilder();
-
-            Assert.Throws<ArgumentNullException>(() => hostBuilder.UseCronitor("   "));
-        }
-
-        [Fact]
-        public void UseCronitor_WithOptionsBuilder_ShouldConfigureStaticCronitor()
-        {
-            var hostBuilder = Host.CreateDefaultBuilder();
-
-            hostBuilder.UseCronitor(context => ApiKey);
-            var host = hostBuilder.Build();
-
-            // Verify static Cronitor is configured
-            Assert.NotNull(host);
-            Assert.NotNull(Cronitor.Issues);
-            Assert.NotNull(Cronitor.Monitors);
-            Assert.NotNull(Cronitor.Notifications);
-            Assert.NotNull(Cronitor.Telemetries);
-        }
-
-        [Fact]
-        public void UseCronitor_WithOptionsBuilderAndNullBuilder_ShouldThrowArgumentNullException()
-        {
-            IHostBuilder builder = null;
-
-            Assert.Throws<ArgumentNullException>(() =>
-                builder.UseCronitor(context => ApiKey));
-        }
+        Assert.Throws<ArgumentNullException>(() =>
+            builder.UseCronitor(context => ApiKey));
     }
 }

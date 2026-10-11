@@ -8,31 +8,30 @@ using Xunit;
 using Xunit.Sdk;
 using Xunit.v3;
 
-namespace Cronitor.Tests.Helpers
+namespace Cronitor.Tests.Helpers;
+
+public class JsonDataAttribute : DataAttribute
 {
-    public class JsonDataAttribute : DataAttribute
+    private readonly string _filePath;
+
+    public JsonDataAttribute(string filePath)
     {
-        private readonly string _filePath;
+        _filePath = filePath;
+    }
 
-        public JsonDataAttribute(string filePath)
-        {
-            _filePath = filePath;
-        }
+    public override ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
+    {
+        var directoryPath = AppContext.BaseDirectory;
 
-        public override ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
-        {
-            var directoryPath = AppContext.BaseDirectory;
+        var file = string.Concat(directoryPath, "\\Files\\", _filePath.Replace("/", "\\"));
+        var content = File.ReadAllText(file, Encoding.UTF8);
+        var data = new List<ITheoryDataRow> { new TheoryDataRow(content) };
 
-            var file = string.Concat(directoryPath, "\\Files\\", _filePath.Replace("/", "\\"));
-            var content = File.ReadAllText(file, Encoding.UTF8);
-            var data = new List<ITheoryDataRow> { new TheoryDataRow(content) };
+        return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(data);
+    }
 
-            return new ValueTask<IReadOnlyCollection<ITheoryDataRow>>(data);
-        }
-
-        public override bool SupportsDiscoveryEnumeration()
-        {
-            return true;
-        }
+    public override bool SupportsDiscoveryEnumeration()
+    {
+        return true;
     }
 }

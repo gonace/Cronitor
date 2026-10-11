@@ -3,37 +3,36 @@ using Cronitor.Constants;
 using Cronitor.Scheduling;
 using Cronitor.Models.Monitors;
 
-namespace Cronitor.Tests.Builders
+namespace Cronitor.Tests.Builders;
+
+public class CheckBuilder
 {
-    public class CheckBuilder
+    private readonly string _key = "Key";
+    private readonly ScheduleExpression _schedule = Schedule.Every(60).Seconds;
+    private readonly string _timezone = "Europe/Stockholm";
+    private readonly string _url = "https://www.google.se";
+
+    private readonly List<Region> _regions = new List<Region>
     {
-        private readonly string _key = "Key";
-        private readonly ScheduleExpression _schedule = Schedule.Every(60).Seconds;
-        private readonly string _timezone = "Europe/Stockholm";
-        private readonly string _url = "https://www.google.se";
+        Region.Bahrain,
+        Region.California,
+        Region.Dublin,
+        Region.Frankfurt,
+        Region.Mumbai,
+        Region.Ohio,
+        Region.SaoPaulo,
+        Region.Singapore,
+        Region.Stockholm,
+        Region.Sydney,
+        Region.Virginia
+    };
 
-        private readonly List<Region> _regions = new List<Region>
+    public Check Build()
+    {
+        return new Check(_key, new Models.Request(_url, _regions))
         {
-            Region.Bahrain,
-            Region.California,
-            Region.Dublin,
-            Region.Frankfurt,
-            Region.Mumbai,
-            Region.Ohio,
-            Region.SaoPaulo,
-            Region.Singapore,
-            Region.Stockholm,
-            Region.Sydney,
-            Region.Virginia
+            Schedule = _schedule,
+            Timezone = _timezone
         };
-
-        public Check Build()
-        {
-            return new Check(_key, new Models.Request(_url, _regions))
-            {
-                Schedule = _schedule,
-                Timezone = _timezone
-            };
-        }
     }
 }

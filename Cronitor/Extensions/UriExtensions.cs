@@ -1,53 +1,52 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Cronitor.Extensions
+namespace Cronitor.Extensions;
+
+public static class UriExtensions
 {
-    public static class UriExtensions
+    public static Uri Build(this Uri uri, IDictionary<string, string> dictionary)
     {
-        public static Uri Build(this Uri uri, IDictionary<string, string> dictionary)
+        var address = uri.ToString();
+
+        foreach (var kv in dictionary)
         {
-            var address = uri.ToString();
-
-            foreach (var kv in dictionary)
-            {
-                address = address.Replace(kv.Key, kv.Value);
-            }
-
-            return new Uri(address);
+            address = address.Replace(kv.Key, kv.Value);
         }
 
-        public static Uri AddQueryString(this Uri uri, string queryString)
+        return new Uri(address);
+    }
+
+    public static Uri AddQueryString(this Uri uri, string queryString)
+    {
+        var address = uri.ToString();
+        var builder = new UriBuilder(address + queryString);
+
+        return builder.Uri;
+    }
+
+    public static Uri Combine(this Uri uri, string endpoint)
+    {
+        var address = $"{uri}{endpoint}";
+
+        return new Uri(address);
+    }
+
+    public static Uri AsHttp(this Uri uri)
+    {
+        return new UriBuilder(uri)
         {
-            var address = uri.ToString();
-            var builder = new UriBuilder(address + queryString);
+            Scheme = Uri.UriSchemeHttp,
+            Port = -1
+        }.Uri;
+    }
 
-            return builder.Uri;
-        }
-
-        public static Uri Combine(this Uri uri, string endpoint)
+    public static Uri AsHttps(this Uri uri)
+    {
+        return new UriBuilder(uri)
         {
-            var address = $"{uri}{endpoint}";
-
-            return new Uri(address);
-        }
-
-        public static Uri AsHttp(this Uri uri)
-        {
-            return new UriBuilder(uri)
-            {
-                Scheme = Uri.UriSchemeHttp,
-                Port = -1
-            }.Uri;
-        }
-
-        public static Uri AsHttps(this Uri uri)
-        {
-            return new UriBuilder(uri)
-            {
-                Scheme = Uri.UriSchemeHttps,
-                Port = -1
-            }.Uri;
-        }
+            Scheme = Uri.UriSchemeHttps,
+            Port = -1
+        }.Uri;
     }
 }

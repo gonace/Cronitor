@@ -1,10 +1,9 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Cronitor.Models
+namespace Cronitor.Models;
+
+public class ApiError
 {
-    public class ApiError
-    {
-        [JsonPropertyName("detail")]
-        public string Message { get; set; }
-    }
+    [JsonPropertyName("detail")]
+    public string Message { get; set; }
 }

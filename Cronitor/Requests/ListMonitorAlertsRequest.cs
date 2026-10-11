@@ -3,26 +3,25 @@ using Cronitor.Extensions;
 using System;
 using System.Collections.Generic;
 
-namespace Cronitor.Requests
+namespace Cronitor.Requests;
+
+public class ListAlertsRequest : BaseRequest
 {
-    public class ListAlertsRequest : BaseRequest
+    public override string Endpoint { get; set; } = "monitors/:key/alerts";
+    public string Key { get; set; }
+
+    public ListAlertsRequest(string monitorKey)
     {
-        public override string Endpoint { get; set; } = "monitors/:key/alerts";
-        public string Key { get; set; }
+        Key = monitorKey;
+    }
 
-        public ListAlertsRequest(string monitorKey)
+    public override Uri ToUri()
+    {
+        var dictionary = new Dictionary<string, string>
         {
-            Key = monitorKey;
-        }
+            { ":key", Key }
+        };
 
-        public override Uri ToUri()
-        {
-            var dictionary = new Dictionary<string, string>
-            {
-                { ":key", Key }
-            };
-
-            return base.ToUri().Build(dictionary);
-        }
+        return base.ToUri().Build(dictionary);
     }
 }

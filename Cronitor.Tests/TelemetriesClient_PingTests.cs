@@ -6,45 +6,44 @@ using System;
 using System.Threading.Tasks;
 using Xunit;
 
-namespace Cronitor.Tests
+namespace Cronitor.Tests;
+
+public class TelemetriesClient_PingTests : BaseTest
 {
-    public class TelemetriesClient_PingTests : BaseTest
+    private const string CompleteUri = "https://cronitor.link/p/" + ApiKey + "/" + MonitorKey + "/complete";
+
+    private readonly FakeHttpMessageHandler _handler;
+    private readonly TelemetriesClient _telemetriesClient;
+
+    public TelemetriesClient_PingTests()
     {
-        private const string CompleteUri = "https://cronitor.link/p/" + ApiKey + "/" + MonitorKey + "/complete";
+        _handler = new FakeHttpMessageHandler();
+        _telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, _handler));
+    }
 
-        private readonly FakeHttpMessageHandler _handler;
-        private readonly TelemetriesClient _telemetriesClient;
+    [Fact]
+    public void ShouldExecutePingMethod()
+    {
+        var command = new CompleteCommand()
+            .WithApiKey(ApiKey)
+            .WithMonitorKey(MonitorKey);
 
-        public TelemetriesClient_PingTests()
-        {
-            _handler = new FakeHttpMessageHandler();
-            _telemetriesClient = new TelemetriesClient(ApiKey, new HttpClient(Urls.TelemetryBaseUrl, ApiKey, _handler));
-        }
+        _telemetriesClient.Ping(command);
 
-        [Fact]
-        public void ShouldExecutePingMethod()
-        {
-            var command = new CompleteCommand()
-                .WithApiKey(ApiKey)
-                .WithMonitorKey(MonitorKey);
+        var request = Assert.Single(_handler.Requests);
+        Assert.Equal(CompleteUri, request.RequestUri.GetLeftPart(UriPartial.Path));
+    }
 
-            _telemetriesClient.Ping(command);
+    [Fact]
+    public async Task ShouldExecutePingAsyncMethod()
+    {
+        var command = new CompleteCommand()
+            .WithApiKey(ApiKey)
+            .WithMonitorKey(MonitorKey);
 
-            var request = Assert.Single(_handler.Requests);
-            Assert.Equal(CompleteUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-        }
+        await _telemetriesClient.PingAsync(command);
 
-        [Fact]
-        public async Task ShouldExecutePingAsyncMethod()
-        {
-            var command = new CompleteCommand()
-                .WithApiKey(ApiKey)
-                .WithMonitorKey(MonitorKey);
-
-            await _telemetriesClient.PingAsync(command);
-
-            var request = Assert.Single(_handler.Requests);
-            Assert.Equal(CompleteUri, request.RequestUri.GetLeftPart(UriPartial.Path));
-        }
+        var request = Assert.Single(_handler.Requests);
+        Assert.Equal(CompleteUri, request.RequestUri.GetLeftPart(UriPartial.Path));
     }
 }

@@ -2,42 +2,41 @@ using System.Net.Http;
 using Cronitor.Requests;
 using Xunit;
 
-namespace Cronitor.Tests.Requests
+namespace Cronitor.Tests.Requests;
+
+public class GetMonitorRequestTests
 {
-    public class GetMonitorRequestTests
+    [Fact]
+    public void ShouldSetEndpoint()
     {
-        [Fact]
-        public void ShouldSetEndpoint()
-        {
-            var request = new GetMonitorRequest("abc123");
+        var request = new GetMonitorRequest("abc123");
 
-            Assert.Equal("monitors/:key", request.Endpoint);
-        }
+        Assert.Equal("monitors/:key", request.Endpoint);
+    }
 
-        [Fact]
-        public void ShouldSetHttpMethodToGet()
-        {
-            var request = new GetMonitorRequest("abc123");
+    [Fact]
+    public void ShouldSetHttpMethodToGet()
+    {
+        var request = new GetMonitorRequest("abc123");
 
-            Assert.Equal(HttpMethod.Get, request.Method);
-        }
+        Assert.Equal(HttpMethod.Get, request.Method);
+    }
 
-        [Fact]
-        public void ShouldSetKey()
-        {
-            var request = new GetMonitorRequest("abc123");
+    [Fact]
+    public void ShouldSetKey()
+    {
+        var request = new GetMonitorRequest("abc123");
 
-            Assert.Equal("abc123", request.Key);
-        }
+        Assert.Equal("abc123", request.Key);
+    }
 
-        [Fact]
-        public void ShouldBuildUriWithKey()
-        {
-            var request = new GetMonitorRequest("abc123");
+    [Fact]
+    public void ShouldBuildUriWithKey()
+    {
+        var request = new GetMonitorRequest("abc123");
 
-            var uri = request.ToUri();
+        var uri = request.ToUri();
 
-            Assert.Equal("https://cronitor.io/api/monitors/abc123", uri.ToString());
-        }
+        Assert.Equal("https://cronitor.io/api/monitors/abc123", uri.ToString());
     }
 }
