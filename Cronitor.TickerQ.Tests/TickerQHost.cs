@@ -18,6 +18,11 @@ namespace Cronitor.TickerQ.Tests;
 /// </summary>
 public sealed class TickerQHost : IAsyncLifetime
 {
+    /// <summary>
+    /// How far ahead a cron ticker is scheduled, so TickerQ has picked it up before its second comes.
+    /// </summary>
+    public static readonly TimeSpan LeadTime = TimeSpan.FromSeconds(5);
+
     private readonly ForwardingTelemetriesClient _telemetries = new ForwardingTelemetriesClient();
     private IHost _host;
 
@@ -50,12 +55,12 @@ public sealed class TickerQHost : IAsyncLifetime
     }
 
     /// <summary>
-    /// Schedules the function to run once a minute, at a second two seconds from now, so the test sees exactly one
+    /// Schedules the function to run once a minute, at a second <see cref="LeadTime"/> from now, so the test sees exactly one
     /// occurrence. Disposing the result removes the cron ticker again, so it doesn't fire during later tests.
     /// </summary>
     public async Task<IAsyncDisposable> AddCronTicker(string function, int retries = 0)
     {
-        var second = DateTime.UtcNow.AddSeconds(2).Second;
+        var second = DateTime.UtcNow.Add(LeadTime).Second;
         var cronTickers = _host.Services.GetRequiredService<ICronTickerManager<CronTickerEntity>>();
         var cronTicker = new CronTickerEntity { Function = function, Expression = $"{second} * * * * *", Retries = retries, RetryIntervals = [1] };
 

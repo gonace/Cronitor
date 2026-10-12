@@ -16,7 +16,10 @@ namespace Cronitor.TickerQ.Tests;
 [Collection(TickerQHostCollection.Name)]
 public class AddCronitorTickerQTests(TickerQHost host)
 {
-    private static readonly TimeSpan Limit = TimeSpan.FromSeconds(10);
+    /// <summary>
+    /// How long a test waits for its cron job: until the scheduled second, then up to ten seconds for the job and its reports.
+    /// </summary>
+    private static readonly TimeSpan Limit = TickerQHost.LeadTime + TimeSpan.FromSeconds(10);
 
     [Fact]
     public async Task Should_send_run_and_complete_when_a_cron_job_succeeds()
