@@ -183,11 +183,14 @@ var monitors = await Cronitor.Monitors.CreateAsync(new CreateMonitorRequest(job)
 
 `Assertion` and `Schedule` are fluent builders, so you don't have to write raw assertion or cron strings. See the [wiki](https://github.com/gonace/Cronitor/wiki) for all operations and options.
 
-## Quartz.NET
-`Cronitor.Quartz` reports every Quartz.NET job to Cronitor. See its [README](Cronitor.Quartz/README.md) for installation and setup.
+## Integrations
+These packages report a scheduler's jobs to Cronitor without any reporting code in the jobs themselves. See each package's README for installation and setup.
 
-## Hangfire
-`Cronitor.Hangfire` reports every Hangfire recurring job to Cronitor. See its [README](Cronitor.Hangfire/README.md) for installation and setup.
+| Package | Scheduler | Reports |
+| --- | --- | --- |
+| [`Cronitor.Quartz`](Cronitor.Quartz/README.md) | [Quartz.NET](https://www.quartz-scheduler.net) | every job |
+| [`Cronitor.Hangfire`](Cronitor.Hangfire/README.md) | [Hangfire](https://www.hangfire.io) | every recurring job |
+| [`Cronitor.TickerQ`](Cronitor.TickerQ/README.md) | [TickerQ](https://tickerq.net) | every cron job |
 
 ## Development
 ### Suggestions

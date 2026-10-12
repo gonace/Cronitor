@@ -1,0 +1,49 @@
+# Cronitor.TickerQ
+Reports every [TickerQ](https://tickerq.net) cron job to [Cronitor](https://cronitor.io): run when the job starts, complete when it succeeds, and fail, with the exception's message, when it fails.
+
+![Nuget](https://img.shields.io/nuget/v/Cronitor.TickerQ)
+![Nuget](https://img.shields.io/nuget/dt/Cronitor.TickerQ)
+
+## Install
+```
+dotnet add package Cronitor.TickerQ
+```
+The package's major version matches TickerQ's: version 10 is for TickerQ 10 (10.4.0 or later) on .NET 10.
+
+## Setup
+Register Cronitor with `.ConfigureCronitor()`, then call `AddCronitorTickerQ()` after `AddTickerQ()`:
+```c#
+using Cronitor.Extensions;
+using Cronitor.TickerQ;
+using TickerQ.DependencyInjection;
+
+var builder = WebApplication.CreateBuilder(args);
+builder.Host.ConfigureCronitor((context) => context.Configuration.GetValue<string>("Cronitor:ApiKey"));
+builder.Services.AddTickerQ();
+builder.Services.AddCronitorTickerQ();
+
+var app = builder.Build();
+app.UseTickerQ();
+app.Run();
+```
+`AddCronitorTickerQ()` wraps the job handler `AddTickerQ()` registers, so it must come after it; otherwise it throws at startup.
+
+## What is reported
+Every cron job occurrence is reported once: run when it starts, then, depending on how TickerQ ends it:
+
+| TickerQ ends the job as | Reported to Cronitor |
+| --- | --- |
+| Done | complete |
+| Failed | fail, with the exception's message |
+| Cancelled, for example when the application stops | fail, with "The job was cancelled" |
+| Skipped, when the job throws TickerQ's `TerminateExecutionException` | complete, with the job's message |
+
+TickerQ retries a failing job within the same occurrence, so a job that succeeds on a retry is reported as complete. One-off jobs, scheduled with TickerQ's time tickers, are not reported, since they have no schedule for Cronitor to monitor.
+
+## Monitor keys
+A cron job reports to the monitor with the same key as its function name, the name in `[TickerFunction("…")]`. Cron tickers that run the same function share its monitor.
+
+## Errors
+Reporting never affects your jobs: reports are sent in the background, so a job never waits for Cronitor. If a report can't be sent, the job still runs, and the error is logged through the host's logging. When the application stops, TickerQ cancels the jobs still running; the outcome of those jobs, and of reports still being sent, is waited for up to five seconds after TickerQ has stopped, so it isn't lost.
+
+For everything else about the Cronitor client, such as logging and the API key, see the [Cronitor README](https://github.com/gonace/Cronitor#readme).
