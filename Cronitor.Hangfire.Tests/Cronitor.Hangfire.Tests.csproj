@@ -22,4 +22,9 @@
     <ProjectReference Include="..\Cronitor.Hangfire\Cronitor.Hangfire.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\Shared.Tests\*.cs" Link="Shared\%(Filename)%(Extension)" />
+    <Using Include="Cronitor.Shared.Tests" />
+  </ItemGroup>
+
 </Project>

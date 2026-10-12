@@ -21,4 +21,9 @@
     <ProjectReference Include="..\Cronitor.Quartz\Cronitor.Quartz.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Compile Include="..\Shared.Tests\*.cs" Link="Shared\%(Filename)%(Extension)" />
+    <Using Include="Cronitor.Shared.Tests" />
+  </ItemGroup>
+
 </Project>
