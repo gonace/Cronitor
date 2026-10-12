@@ -43,7 +43,7 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
         }
 
         var start = ReportStart(context);
-        var execution = _inner.ExecuteTaskAsync(context, isDue, cancellationToken);
+        var execution = Execute(context, isDue, cancellationToken);
 
         // Tracked from the start: TickerQ cancels running jobs when the application stops without waiting for them,
         // so a job may only end after the application has begun waiting for the reports.
@@ -68,6 +68,22 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
         if (await Task.WhenAny(sent, Task.Delay(limit, cancellationToken)).ConfigureAwait(false) != sent)
         {
             _logger.ReportsPendingAtShutdown(_pendingReports.Count);
+        }
+    }
+
+    /// <summary>
+    /// Runs TickerQ's own handler, turning an exception it throws before returning a task into a faulted task,
+    /// so the end of the run is still reported and the exception still reaches TickerQ when it awaits the job.
+    /// </summary>
+    private Task Execute(InternalFunctionContext context, bool isDue, CancellationToken cancellationToken)
+    {
+        try
+        {
+            return _inner.ExecuteTaskAsync(context, isDue, cancellationToken);
+        }
+        catch (Exception exception)
+        {
+            return Task.FromException(exception);
         }
     }
 
