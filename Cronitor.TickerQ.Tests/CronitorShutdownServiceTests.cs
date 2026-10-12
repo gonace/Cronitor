@@ -21,7 +21,12 @@ public class CronitorShutdownServiceTests
     {
         var finishGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
         var telemetries = new FakeTelemetriesClient { FinishGate = finishGate.Task };
-        var handler = new CronitorExecutionTaskHandler(new FakeTickerQHandler(RunUntilCancelled), telemetries);
+        var jobCancelled = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var handler = new CronitorExecutionTaskHandler(new FakeTickerQHandler(async (context, cancellationToken) =>
+        {
+            await RunUntilCancelled(context, cancellationToken);
+            jobCancelled.SetResult(true);
+        }), telemetries);
         var scheduler = new CancelsJobsWhenStopping(handler);
 
         var builder = Host.CreateApplicationBuilder();
@@ -29,17 +34,28 @@ public class CronitorShutdownServiceTests
         builder.Services.AddHostedService(_ => scheduler);
         builder.Services.AddHostedService(_ => new CronitorShutdownService(handler));
 
+        bool stoppedWhileReportWasHeld;
         using (var host = builder.Build())
         {
             await host.StartAsync(TestContext.Current.CancellationToken);
             await Task.WhenAny(scheduler.JobStarted, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
 
-            _ = Task.Delay(TimeSpan.FromMilliseconds(500), TestContext.Current.CancellationToken).ContinueWith(_ => finishGate.SetResult(true), TaskScheduler.Default);
-            await host.StopAsync(TestContext.Current.CancellationToken);
+            // The end report stays held until the host has been seen still stopping after the job was cancelled, so
+            // the host only finishes stopping in time if it does not wait for the report.
+            var stop = host.StopAsync(TestContext.Current.CancellationToken);
+            await Task.WhenAny(jobCancelled.Task, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
+            stoppedWhileReportWasHeld = await FinishesWithin(stop, TimeSpan.FromMilliseconds(500));
+            finishGate.SetResult(true);
+            await stop;
         }
 
+        Assert.True(jobCancelled.Task.IsCompleted, "The stand-in did not cancel the job.");
+        Assert.False(stoppedWhileReportWasHeld, "The host stopped without waiting for the end report.");
         Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: The job was cancelled" }, telemetries.Sent);
     }
+
+    private static async Task<bool> FinishesWithin(Task task, TimeSpan limit) =>
+        await Task.WhenAny(task, Task.Delay(limit, TestContext.Current.CancellationToken)) == task;
 
     private static async Task RunUntilCancelled(InternalFunctionContext context, CancellationToken cancellationToken)
     {
