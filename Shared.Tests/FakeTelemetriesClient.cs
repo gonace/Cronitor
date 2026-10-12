@@ -92,7 +92,7 @@ public class FakeTelemetriesClient : ITelemetriesClient
 
         public bool Complete(string message = null)
         {
-            _client.Finish($"complete {_monitorKey}");
+            _client.Finish(message == null ? $"complete {_monitorKey}" : $"complete {_monitorKey}: {message}");
             return true;
         }
 
