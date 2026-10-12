@@ -12,5 +12,7 @@
   <Project Path="Cronitor.Quartz.Tests/Cronitor.Quartz.Tests.csproj" />
   <Project Path="Cronitor.Quartz/Cronitor.Quartz.csproj" />
   <Project Path="Cronitor.Tests/Cronitor.Tests.csproj" />
+  <Project Path="Cronitor.TickerQ.Tests/Cronitor.TickerQ.Tests.csproj" />
+  <Project Path="Cronitor.TickerQ/Cronitor.TickerQ.csproj" />
   <Project Path="Cronitor/Cronitor.csproj" />
 </Solution>
