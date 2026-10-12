@@ -104,6 +104,19 @@ public class CronitorExecutionTaskHandlerTests
     }
 
     [Fact]
+    public async Task Should_send_run_and_fail_and_still_throw_when_TickerQ_s_own_handler_throws_synchronously()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var handler = new CronitorExecutionTaskHandler(new FakeTickerQHandler((_, _) => throw new InvalidOperationException("Store is down")), telemetries);
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => handler.ExecuteTaskAsync(CronJob(), false, TestContext.Current.CancellationToken));
+        await Task.WhenAny(telemetries.Finished, Task.Delay(Limit, TestContext.Current.CancellationToken));
+
+        Assert.Equal("Store is down", exception.Message);
+        Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: Store is down" }, telemetries.Sent);
+    }
+
+    [Fact]
     public async Task Should_run_but_not_report_a_one_off_time_ticker()
     {
         var telemetries = new FakeTelemetriesClient();
