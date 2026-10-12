@@ -229,7 +229,8 @@ public class CronitorExecutionTaskHandlerTests
         await handler.ExecuteTaskAsync(CronJob(), false, TestContext.Current.CancellationToken);
 
         var waiting = handler.WaitForPendingReports(TimeSpan.FromMilliseconds(200), TestContext.Current.CancellationToken);
-        var stoppedWithinLimit = await FinishesWithin(waiting, TimeSpan.FromSeconds(5));
+        // 200 ms requested; a second allows for a slow test host but fails a wait that ignores the limit.
+        var stoppedWithinLimit = await FinishesWithin(waiting, TimeSpan.FromSeconds(1));
         var sentWhenStopped = telemetries.Sent.ToArray();
         finishGate.SetResult(true);
         await waiting;
