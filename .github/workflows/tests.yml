@@ -28,3 +28,6 @@ jobs:
     - run: dotnet restore
     - run: dotnet build --no-restore --configuration Release
     - run: dotnet test --no-build --configuration Release --verbosity normal
+    # Cronitor.TickerQ is built for one TickerQ major at a time; the solution covers TickerQ 10.
+    - run: dotnet test Cronitor.TickerQ.Tests --configuration Release --verbosity normal -p:TickerQMajor=9
+    - run: dotnet test Cronitor.TickerQ.Tests --configuration Release --verbosity normal -p:TickerQMajor=8

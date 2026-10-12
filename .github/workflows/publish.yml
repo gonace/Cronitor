@@ -21,6 +21,9 @@ jobs:
     - run: dotnet restore
     - run: dotnet build --no-restore --configuration Release
     - run: dotnet test --no-build --configuration Release --verbosity normal
+    # Cronitor.TickerQ is built for one TickerQ major at a time; the solution covers TickerQ 10.
+    - run: dotnet test Cronitor.TickerQ.Tests --configuration Release --verbosity normal -p:TickerQMajor=9
+    - run: dotnet test Cronitor.TickerQ.Tests --configuration Release --verbosity normal -p:TickerQMajor=8
 
   tag:
     runs-on: ubuntu-latest
@@ -73,6 +76,8 @@ jobs:
         echo "CRONITOR_QUARTZ_VERSION=$(dotnet msbuild Cronitor.Quartz/Cronitor.Quartz.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN)" >> "$GITHUB_ENV"
         echo "CRONITOR_HANGFIRE_VERSION=$(dotnet msbuild Cronitor.Hangfire/Cronitor.Hangfire.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN)" >> "$GITHUB_ENV"
         echo "CRONITOR_TICKERQ_VERSION=$(dotnet msbuild Cronitor.TickerQ/Cronitor.TickerQ.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN)" >> "$GITHUB_ENV"
+        echo "CRONITOR_TICKERQ_9_VERSION=$(dotnet msbuild Cronitor.TickerQ/Cronitor.TickerQ.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN -p:TickerQMajor=9)" >> "$GITHUB_ENV"
+        echo "CRONITOR_TICKERQ_8_VERSION=$(dotnet msbuild Cronitor.TickerQ/Cronitor.TickerQ.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN -p:TickerQMajor=8)" >> "$GITHUB_ENV"
 
     - name: Restore
       run: dotnet restore
@@ -144,6 +149,25 @@ jobs:
           -p:IncludeSymbols=true \
           -p:SymbolPackageFormat=snupkg
 
+    # The same project again for TickerQ 9 and 8, each its own version line. Building restores for that major.
+    - name: Build and pack Cronitor.TickerQ for TickerQ 9 and 8
+      run: |
+        for major in 9 8; do
+          dotnet build Cronitor.TickerQ/Cronitor.TickerQ.csproj \
+            --configuration Release \
+            -p:CronitorVersion=$CRONITOR_VERSION \
+            -p:ReleaseRun=$RELEASE_RUN \
+            -p:TickerQMajor=$major
+          dotnet pack Cronitor.TickerQ/Cronitor.TickerQ.csproj \
+            --configuration Release \
+            --no-build \
+            -p:CronitorVersion=$CRONITOR_VERSION \
+            -p:ReleaseRun=$RELEASE_RUN \
+            -p:TickerQMajor=$major \
+            -p:IncludeSymbols=true \
+            -p:SymbolPackageFormat=snupkg
+        done
+
     # One short-lived key from nuget.org's trusted publishing, valid for an hour, pushes every package.
     - name: Log in to NuGet
       id: login
@@ -180,5 +204,11 @@ jobs:
         NUGET_API_KEY: ${{steps.login.outputs.NUGET_API_KEY}}
       run: |
         dotnet nuget push Cronitor.TickerQ/bin/Release/Cronitor.TickerQ.$CRONITOR_TICKERQ_VERSION.nupkg \
+          --api-key "$NUGET_API_KEY" \
+          --source "$NUGET_SOURCE"
+        dotnet nuget push Cronitor.TickerQ/bin/Release/Cronitor.TickerQ.$CRONITOR_TICKERQ_9_VERSION.nupkg \
+          --api-key "$NUGET_API_KEY" \
+          --source "$NUGET_SOURCE"
+        dotnet nuget push Cronitor.TickerQ/bin/Release/Cronitor.TickerQ.$CRONITOR_TICKERQ_8_VERSION.nupkg \
           --api-key "$NUGET_API_KEY" \
           --source "$NUGET_SOURCE"

@@ -1,7 +1,25 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!--
+    TickerQ ships one major per .NET version, so this project builds one package per TickerQ major from the same
+    source: pass -p:TickerQMajor=8 or 9 to build for TickerQ 8 on .NET 8 or TickerQ 9 on .NET 9. Each major is
+    published as its own version line of Cronitor.TickerQ, with major and minor following the lowest TickerQ
+    version it supports.
+  -->
   <PropertyGroup>
-    <TargetFrameworks>net10.0</TargetFrameworks>
+    <TickerQMajor Condition="'$(TickerQMajor)' == ''">10</TickerQMajor>
+    <TickerQMinimumVersion Condition="'$(TickerQMajor)' == '8'">8.3.0</TickerQMinimumVersion>
+    <TickerQMinimumVersion Condition="'$(TickerQMajor)' == '9'">9.3.0</TickerQMinimumVersion>
+    <TickerQMinimumVersion Condition="'$(TickerQMajor)' == '10'">10.4.0</TickerQMinimumVersion>
+    <TickerQNextMajor>$([MSBuild]::Add($(TickerQMajor), 1))</TickerQNextMajor>
+  </PropertyGroup>
+
+  <Target Name="ValidateTickerQMajor" BeforeTargets="Restore;CollectPackageReferences;Build">
+    <Error Condition="'$(TickerQMinimumVersion)' == ''" Text="TickerQMajor must be 8, 9 or 10, not '$(TickerQMajor)'." />
+  </Target>
+
+  <PropertyGroup>
+    <TargetFramework>net$(TickerQMajor).0</TargetFramework>
     <RootNamespace>Cronitor.TickerQ</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
@@ -10,8 +28,8 @@
 
   <PropertyGroup>
     <PackageId>Cronitor.TickerQ</PackageId>
-    <!-- Major and minor follow the lowest TickerQ version this package supports, see the TickerQ reference below. -->
-    <Version Condition="'$(ReleaseRun)' != ''">10.4.$(ReleaseRun)</Version>
+    <!-- Major and minor follow the lowest TickerQ version this package supports, see TickerQMinimumVersion above. -->
+    <Version Condition="'$(ReleaseRun)' != ''">$([System.Version]::Parse($(TickerQMinimumVersion)).ToString(2)).$(ReleaseRun)</Version>
     <Description>Reports every TickerQ cron job to Cronitor: run when it starts, complete when it succeeds and fail when it fails.</Description>
     <PackageTags>cronitor;tickerq;monitoring;cron;scheduler;jobs</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -26,7 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="TickerQ" Version="[10.4.0,11.0)" />
+    <PackageReference Include="TickerQ" Version="[$(TickerQMinimumVersion),$(TickerQNextMajor).0)" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,7 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- Runs against the TickerQ major Cronitor.TickerQ is built for; pass -p:TickerQMajor=8 or 9 to test the others. -->
   <PropertyGroup>
-    <TargetFrameworks>net10.0</TargetFrameworks>
+    <TickerQMajor Condition="'$(TickerQMajor)' == ''">10</TickerQMajor>
+    <TargetFramework>net$(TickerQMajor).0</TargetFramework>
     <IsPackable>false</IsPackable>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <OutputType>Exe</OutputType>

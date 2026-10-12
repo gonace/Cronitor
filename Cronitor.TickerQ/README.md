@@ -8,7 +8,15 @@ Reports every [TickerQ](https://tickerq.net) cron job to [Cronitor](https://cron
 ```
 dotnet add package Cronitor.TickerQ
 ```
-The package's major version matches TickerQ's: version 10 is for TickerQ 10 (10.4.0 or later) on .NET 10.
+The package's major version matches TickerQ's, which ships one major per .NET version:
+
+| Cronitor.TickerQ | TickerQ | .NET |
+| --- | --- | --- |
+| 10.x | 10.4.0 or later | .NET 10 |
+| 9.x | 9.3.0 or later | .NET 9 |
+| 8.x | 8.3.0 or later | .NET 8 |
+
+`dotnet add package` picks the latest version, which is for .NET 10. On .NET 8 or 9, pick the version matching your TickerQ, for example `dotnet add package Cronitor.TickerQ --version 8.*`.
 
 ## Setup
 Register Cronitor with `.ConfigureCronitor()`, then call `AddCronitorTickerQ()` after `AddTickerQ()`:
