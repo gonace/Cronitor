@@ -18,9 +18,9 @@ Or download it from [NuGet](https://www.nuget.org/packages/Cronitor).
 
 ## Quick start
 ```c#
-Cronitor.Configure("apiKey");
+CronitorClient.Configure("apiKey");
 
-using (var run = await Cronitor.StartAsync("monitorKey"))
+using (var run = await CronitorClient.StartAsync("monitorKey"))
 {
     // ... do the work
     await run.CompleteAsync();
@@ -29,11 +29,11 @@ using (var run = await Cronitor.StartAsync("monitorKey"))
 
 ## Setup
 ### Static
-Configure the static `Cronitor` class once, then use it anywhere in your application.
+Configure the static `CronitorClient` once, then use it anywhere in your application. It used to be called `Cronitor`; that name still works but is obsolete, since it shares its name with the namespace and can only be called as `Cronitor.Cronitor`.
 
 Without a host:
 ```c#
-Cronitor.Configure("apiKey");
+CronitorClient.Configure("apiKey");
 ```
 
 With the .NET Generic Host (`Microsoft.Extensions.Hosting`):
@@ -45,7 +45,7 @@ await Host.CreateDefaultBuilder()
 ```
 
 ### Dependency injection
-`.ConfigureCronitor()` registers `ITelemetriesClient`, `IMonitorsClient`, `IIssuesClient` and `INotificationsClient` in the service container instead. It does not configure the static `Cronitor` class.
+`.ConfigureCronitor()` registers `ITelemetriesClient`, `IMonitorsClient`, `IIssuesClient` and `INotificationsClient` in the service container instead. It does not configure the static `CronitorClient`.
 ```c#
 await Host.CreateDefaultBuilder()
     .ConfigureCronitor((context) => context.Configuration.GetValue<string>("Cronitor:ApiKey"))
@@ -73,9 +73,9 @@ Telemetry never breaks the job it monitors: transient failures are retried, and 
 Events that can't be delivered are logged as errors, see [Logging](#logging).
 
 ### Using block
-`Cronitor.Start()` (or `ITelemetriesClient.Start()`) reports the run and returns an `ITelemetryRun`. Call `Complete()` when the job succeeds; if the run is disposed without it (for example because an exception was thrown), it's reported as failed.
+`CronitorClient.Start()` (or `ITelemetriesClient.Start()`) reports the run and returns an `ITelemetryRun`. Call `Complete()` when the job succeeds; if the run is disposed without it (for example because an exception was thrown), it's reported as failed.
 ```c#
-using (var run = await Cronitor.StartAsync("monitorKey", environment: "production"))
+using (var run = await CronitorClient.StartAsync("monitorKey", environment: "production"))
 {
     // ... do the work
     await run.CompleteAsync();
@@ -87,13 +87,13 @@ Every run gets its own `series`, so overlapping runs of the same monitor are mat
 ```c#
 try
 {
-    await Cronitor.RunAsync("monitorKey");
+    await CronitorClient.RunAsync("monitorKey");
     // ... do the work
-    await Cronitor.CompleteAsync("monitorKey");
+    await CronitorClient.CompleteAsync("monitorKey");
 }
 catch (Exception ex)
 {
-    await Cronitor.FailAsync("monitorKey", ex.Message, environment: "production");
+    await CronitorClient.FailAsync("monitorKey", ex.Message, environment: "production");
     throw;
 }
 ```
@@ -182,7 +182,7 @@ var command = new CompleteCommand()
     .WithMetric(Metric.Count, 42)
     .WithMetric(Metric.Duration, 12.5);
 
-await Cronitor.PingAsync(command);
+await CronitorClient.PingAsync(command);
 ```
 
 ### Logging
@@ -200,18 +200,18 @@ await Host.CreateDefaultBuilder()
     .RunAsync();
 ```
 
-Without a host, pass an `ILoggerFactory`, either to the static `Cronitor` class or to a client:
+Without a host, pass an `ILoggerFactory`, either to the static `CronitorClient` or to a client:
 ```c#
 using var loggerFactory = LoggerFactory.Create(builder => builder.AddConsole());
 
-Cronitor.Configure("apiKey", loggerFactory);
+CronitorClient.Configure("apiKey", loggerFactory);
 // or
 var telemetriesClient = new TelemetriesClient("apiKey", loggerFactory);
 ```
 `AddConsole()` comes from the `Microsoft.Extensions.Logging.Console` package; any logging provider works. Without an `ILoggerFactory`, nothing is logged.
 
 ## Management
-Monitors, issues and notifications are managed through `Cronitor.Monitors`, `Cronitor.Issues` and `Cronitor.Notifications` (or the injected `IMonitorsClient`, `IIssuesClient` and `INotificationsClient`). For example, creating a job monitor:
+Monitors, issues and notifications are managed through `CronitorClient.Monitors`, `CronitorClient.Issues` and `CronitorClient.Notifications` (or the injected `IMonitorsClient`, `IIssuesClient` and `INotificationsClient`). For example, creating a job monitor:
 ```c#
 using Cronitor.Assertions;
 using Cronitor.Models.Monitors;
@@ -227,7 +227,7 @@ var job = new Job("nightly-backup")
     }
 };
 
-var monitors = await Cronitor.Monitors.CreateAsync(new CreateMonitorRequest(job));
+var monitors = await CronitorClient.Monitors.CreateAsync(new CreateMonitorRequest(job));
 ```
 
 `Assertion` and `Schedule` are fluent builders, so you don't have to write raw assertion or cron strings. See the [wiki](https://github.com/gonace/Cronitor/wiki) for all operations and options.

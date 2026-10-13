@@ -33,12 +33,12 @@ await Host.CreateDefaultBuilder()
 `AddHangfire()` and `AddHangfireServer()` come from Hangfire's own `Hangfire.NetCore` package (or `Hangfire.AspNetCore`).
 
 ### Without dependency injection
-Configure the static `Cronitor` class first, then call `UseCronitor()`:
+Configure the static `CronitorClient` first, then call `UseCronitor()`:
 ```c#
 using Cronitor.Hangfire;
 using Hangfire;
 
-Cronitor.Cronitor.Configure("apiKey");
+CronitorClient.Configure("apiKey");
 
 GlobalConfiguration.Configuration
     .UseSqlServerStorage("connectionString")
