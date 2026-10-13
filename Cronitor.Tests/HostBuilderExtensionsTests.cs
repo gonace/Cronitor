@@ -118,17 +118,17 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void Should_configure_the_static_Cronitor_when_UseCronitor_gets_an_api_key()
+    public void Should_configure_CronitorClient_when_UseCronitor_gets_an_api_key()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
 
         hostBuilder.UseCronitor(ApiKey);
 
-        // Verify static Cronitor is configured by accessing its properties
-        Assert.NotNull(Cronitor.Issues);
-        Assert.NotNull(Cronitor.Monitors);
-        Assert.NotNull(Cronitor.Notifications);
-        Assert.NotNull(Cronitor.Telemetries);
+        // Verify CronitorClient is configured by accessing its properties
+        Assert.NotNull(CronitorClient.Issues);
+        Assert.NotNull(CronitorClient.Monitors);
+        Assert.NotNull(CronitorClient.Notifications);
+        Assert.NotNull(CronitorClient.Telemetries);
     }
 
     [Fact]
@@ -184,19 +184,19 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
-    public void Should_configure_the_static_Cronitor_when_UseCronitor_gets_an_options_builder()
+    public void Should_configure_CronitorClient_when_UseCronitor_gets_an_options_builder()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
 
         hostBuilder.UseCronitor(context => ApiKey);
         var host = hostBuilder.Build();
 
-        // Verify static Cronitor is configured
+        // Verify CronitorClient is configured
         Assert.NotNull(host);
-        Assert.NotNull(Cronitor.Issues);
-        Assert.NotNull(Cronitor.Monitors);
-        Assert.NotNull(Cronitor.Notifications);
-        Assert.NotNull(Cronitor.Telemetries);
+        Assert.NotNull(CronitorClient.Issues);
+        Assert.NotNull(CronitorClient.Monitors);
+        Assert.NotNull(CronitorClient.Notifications);
+        Assert.NotNull(CronitorClient.Telemetries);
     }
 
     [Fact]
