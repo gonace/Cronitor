@@ -51,7 +51,7 @@ public class Monitor
     /// If the monitor recovers during the grace period, no alert will be sent.
     /// </summary>
     [JsonPropertyName("grace_seconds")]
-    public int GraceSeconds { get; set; }
+    public int? GraceSeconds { get; set; }
     /// <summary>
     /// Groups are user-defined collections of monitors, which are used to group monitors in the Cronitor application.
     /// Each group has a unique URL with the format https://cronitor.io/app/groups/:groupKey
@@ -284,7 +284,10 @@ public class Monitor
 
     public Monitor With(Expression<Func<Monitor, object>> expression, object value)
     {
-        if (expression.Body is MemberExpression memberSelectorExpression)
+        // A value-type property such as GraceSeconds is boxed to object, which wraps the member in a Convert.
+        var body = expression.Body is UnaryExpression { NodeType: ExpressionType.Convert } conversion ? conversion.Operand : expression.Body;
+
+        if (body is MemberExpression memberSelectorExpression)
         {
             var property = memberSelectorExpression.Member as PropertyInfo;
 
