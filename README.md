@@ -172,6 +172,7 @@ await Host.CreateDefaultBuilder()
 ### Custom commands
 Use `Ping` when you need more than a message and environment, such as metrics, host or series:
 ```c#
+using Cronitor;
 using Cronitor.Commands;
 using Cronitor.Constants;
 
@@ -213,6 +214,7 @@ var telemetriesClient = new TelemetriesClient("apiKey", loggerFactory);
 ## Management
 Monitors, issues and notifications are managed through `CronitorClient.Monitors`, `CronitorClient.Issues` and `CronitorClient.Notifications` (or the injected `IMonitorsClient`, `IIssuesClient` and `INotificationsClient`). For example, creating a job monitor:
 ```c#
+using Cronitor;
 using Cronitor.Assertions;
 using Cronitor.Models.Monitors;
 using Cronitor.Requests;

@@ -35,6 +35,7 @@ await Host.CreateDefaultBuilder()
 ### Without dependency injection
 Configure the static `CronitorClient` first, then call `UseCronitor()`:
 ```c#
+using Cronitor;
 using Cronitor.Hangfire;
 using Hangfire;
 
