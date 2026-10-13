@@ -49,7 +49,7 @@ Every cron job occurrence is reported once: run when it starts, then, depending 
 TickerQ retries a failing job within the same occurrence, so a job that succeeds on a retry is reported as complete. One-off jobs, scheduled with TickerQ's time tickers, are not reported, since they have no schedule for Cronitor to monitor.
 
 ## Monitor keys
-A cron job reports to the monitor with the same key as its function name, the name in `[TickerFunction("…")]`. Cron tickers that run the same function share its monitor. Cronitor doesn't accept `/` in a monitor key, so a `/` in the function name becomes `-`: a function `reports/daily` reports to `reports-daily`.
+A cron job reports to the monitor with the same key as its function name, the name in `[TickerFunction("…")]`. Cron tickers that run the same function share its monitor. Cronitor doesn't accept `/` in a monitor key, so a `/` in the function name becomes `-`: a function `reports/daily` reports to `reports-daily`. Functions `reports/daily` and `reports-daily` would therefore share a monitor; rename one of them to keep them apart.
 
 ## Errors
 Reporting never affects your jobs: reports are sent in the background, so a job never waits for Cronitor. If a report can't be sent, the job still runs, and the error is logged through the host's logging. When the application stops, TickerQ cancels the jobs still running; the outcome of those jobs, and of reports still being sent, is waited for up to five seconds after TickerQ has stopped, so it isn't lost.
