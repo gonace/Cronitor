@@ -41,6 +41,11 @@ A job reports to the monitor with the same key as the job's name. Use `.WithCron
 
 A job scheduled without a name, such as `q.ScheduleJob<BackupJob>(trigger => …)` without `WithIdentity`, gets a new random name from Quartz on every start. Such a job reports under its class name instead, `BackupJob` here, so it keeps reporting to the same monitor. Two unnamed jobs of the same class share that monitor; give them names, or monitor keys, to keep them apart.
 
+Quartz can't tell its own random names from a name you set to a GUID yourself, so a job you name with a GUID also reports under its class name. Give such jobs a monitor key of their own:
+```c#
+job => job.WithIdentity(tenantId.ToString()).WithCronitorMonitorKey($"sync-{tenantId}")
+```
+
 ## Errors
 Reporting never affects your jobs: reports are sent in the background, so a job never waits for Cronitor. If a report can't be sent, the job still runs, and the error is logged through the host's logging. When the scheduler shuts down, it waits up to five seconds for reports that are still being sent, so the outcome of the last jobs isn't lost.
 

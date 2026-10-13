@@ -166,7 +166,9 @@ public class CronitorJobListener : IJobListener
 
     /// <summary>
     /// Whether Quartz made up the job's name. A job built without an identity gets a new GUID as its name on every
-    /// start, which would report to a new monitor each time, so its class name is used instead.
+    /// start, which would report to a new monitor each time, so its class name is used instead. Quartz records nothing
+    /// that tells a generated name from one set to a GUID on purpose, so every GUID name counts as generated; such a
+    /// job keeps a monitor of its own with <see cref="CronitorJobBuilderExtensions.WithCronitorMonitorKey"/>.
     /// </summary>
     private static bool IsGeneratedName(string name) => Guid.TryParseExact(name, "D", out _);
 }
