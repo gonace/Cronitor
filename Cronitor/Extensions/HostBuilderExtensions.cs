@@ -83,17 +83,17 @@ public static class HostBuilderExtensions
             throw new ArgumentNullException(nameof(apiKey));
         }
 
-        Cronitor.Configure(apiKey);
+        CronitorClient.Configure(apiKey);
     }
 
     /// <summary>
-    /// Reconfigures the static Cronitor class with the host's logging when the host starts,
+    /// Reconfigures the static <see cref="CronitorClient"/> with the host's logging when the host starts,
     /// since its <see cref="ILoggerFactory"/> doesn't exist yet when UseCronitor runs.
     /// </summary>
     private static void AddLogging(IServiceCollection services, string apiKey)
     {
         services.AddHostedService(provider => new CronitorLoggingHostedService(
-            loggerFactory => Cronitor.Configure(apiKey, loggerFactory),
+            loggerFactory => CronitorClient.Configure(apiKey, loggerFactory),
             LoggerFactory(provider)));
     }
 
