@@ -51,7 +51,7 @@ scheduler.ScheduleWithCronitor<BackupJob>("nightly-backup").DailyAt(3, 0);
 Cronitor doesn't accept `/` in a monitor key, so `ScheduleWithCronitor()` throws when given one.
 
 ## Errors
-Reporting never affects your jobs: the start of a run is reported in the background, so a job never waits for Cronitor. If a report can't be sent, the job still runs and keeps its result, and the error is logged through the host's logging.
+Reporting never affects your jobs: the start of a run is reported in the background, so a job never waits for Cronitor. If a report can't be sent, the job still runs and keeps its result, and the error is logged through the host's logging. When the application stops, Coravel cancels the jobs still running and waits for them; reports still being sent are then waited for up to five seconds, so the outcome of the last jobs isn't lost.
 
 Without `AddCronitorCoravel()`, a job scheduled with `ScheduleWithCronitor()` doesn't run: Coravel reports an error, through `.OnError()` and its log, that says to call it.
 

@@ -1,6 +1,9 @@
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Abstractions;
 using System;
+using System.Collections.Concurrent;
+using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cronitor.Coravel;
@@ -16,6 +19,7 @@ internal sealed class CronitorReporter
 
     private readonly ITelemetriesClient _telemetries;
     private readonly ILogger<CronitorReporter> _logger;
+    private readonly ConcurrentDictionary<Task, bool> _pendingReports = new ConcurrentDictionary<Task, bool>();
 
     public CronitorReporter(ITelemetriesClient telemetries, ILogger<CronitorReporter> logger = null)
     {
@@ -32,9 +36,34 @@ internal sealed class CronitorReporter
         var start = ReportStartAsync(monitorKey);
         var execution = ExecuteAsync(job);
 
-        _ = ReportEndAsync(start, execution, monitorKey);
+        Track(ReportEndAsync(start, execution, monitorKey));
 
         return execution;
+    }
+
+    /// <summary>
+    /// Waits for the reports still being sent, at most for the given time, so they are not lost when the application
+    /// stops. <see cref="CronitorShutdownService"/> calls it once the scheduler has stopped.
+    /// </summary>
+    internal async Task WaitForPendingReportsAsync(TimeSpan limit, CancellationToken cancellationToken)
+    {
+        var pending = _pendingReports.Keys.ToArray();
+        if (pending.Length == 0)
+        {
+            return;
+        }
+
+        var sent = Task.WhenAll(pending);
+        if (await Task.WhenAny(sent, Task.Delay(limit, cancellationToken)).ConfigureAwait(false) != sent)
+        {
+            _logger.ReportsPendingAtShutdown(_pendingReports.Count);
+        }
+    }
+
+    private void Track(Task report)
+    {
+        _pendingReports.TryAdd(report, true);
+        report.ContinueWith(sent => _pendingReports.TryRemove(sent, out _), CancellationToken.None, TaskContinuationOptions.ExecuteSynchronously, TaskScheduler.Default);
     }
 
     /// <summary>

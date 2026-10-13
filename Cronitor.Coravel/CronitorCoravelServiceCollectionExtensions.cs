@@ -7,8 +7,9 @@ namespace Cronitor.Coravel;
 public static class CronitorCoravelServiceCollectionExtensions
 {
     /// <summary>
-    /// Registers what the jobs scheduled with <c>ScheduleWithCronitor</c> need to report to Cronitor. Cronitor must be
-    /// registered with <c>ConfigureCronitor(apiKey)</c> on the host builder.
+    /// Registers what the jobs scheduled with <c>ScheduleWithCronitor</c> need to report to Cronitor, and waits up to
+    /// five seconds for reports still being sent when the application stops. Cronitor must be registered with
+    /// <c>ConfigureCronitor(apiKey)</c> on the host builder.
     /// </summary>
     public static IServiceCollection AddCronitorCoravel(this IServiceCollection services)
     {
@@ -18,6 +19,7 @@ public static class CronitorCoravelServiceCollectionExtensions
         }
 
         services.AddSingleton(provider => new CronitorReporter(TelemetriesClient(provider), provider.GetService<ILogger<CronitorReporter>>()));
+        services.AddHostedService(provider => new CronitorShutdownService(provider.GetRequiredService<CronitorReporter>()));
 
         return services;
     }
