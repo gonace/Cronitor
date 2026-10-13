@@ -100,6 +100,31 @@ public class UseCronitorTests : IDisposable
     }
 
     [Fact]
+    public async Task Should_report_to_the_job_class_name_when_a_job_is_scheduled_without_a_name()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddSingleton<ITelemetriesClient>(telemetries);
+        services.AddQuartz(q =>
+        {
+            q.SchedulerName = Guid.NewGuid().ToString("N");
+            q.UseCronitor();
+            q.ScheduleJob<SucceedingJob>(trigger => trigger.StartNow());
+        });
+
+        using (var provider = services.BuildServiceProvider())
+        {
+            var scheduler = await provider.GetRequiredService<ISchedulerFactory>().GetScheduler(TestContext.Current.CancellationToken);
+            await scheduler.Start(TestContext.Current.CancellationToken);
+            await Task.WhenAny(telemetries.Finished, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
+            await scheduler.Shutdown(true, TestContext.Current.CancellationToken);
+        }
+
+        Assert.Equal(new[] { "run SucceedingJob", "complete SucceedingJob" }, telemetries.Sent);
+    }
+
+    [Fact]
     public async Task Should_throw_when_UseCronitor_is_called_without_configuring_Cronitor()
     {
         var services = new ServiceCollection();

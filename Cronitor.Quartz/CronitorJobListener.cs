@@ -13,6 +13,8 @@ namespace Cronitor.Quartz;
 /// Reports every job Quartz runs to Cronitor: run when the job starts, then complete when it
 /// succeeds or fail when it throws. The job's name is used as the monitor key, unless the job
 /// chooses one with <see cref="CronitorJobBuilderExtensions.WithCronitorMonitorKey"/>.
+/// A job without a name of its own, which Quartz names with a new GUID on every start,
+/// reports under its class name instead.
 /// Reporting never affects the job: Quartz waits for a listener before and after every job, and
 /// skips a job when a listener throws before it. So reports are sent in the background, without
 /// the job waiting for Cronitor, and every failure is logged instead of thrown.
@@ -153,8 +155,20 @@ public class CronitorJobListener : IJobListener
 
     private static string MonitorKeyOf(IJobExecutionContext context)
     {
-        return context.MergedJobDataMap.TryGetString(CronitorJobBuilderExtensions.MonitorKey, out var monitorKey) && !string.IsNullOrWhiteSpace(monitorKey)
-            ? monitorKey
-            : context.JobDetail.Key.Name;
+        if (context.MergedJobDataMap.TryGetString(CronitorJobBuilderExtensions.MonitorKey, out var monitorKey) && !string.IsNullOrWhiteSpace(monitorKey))
+        {
+            return monitorKey;
+        }
+
+        var name = context.JobDetail.Key.Name;
+        return IsGeneratedName(name) ? context.JobDetail.JobType.Name : name;
     }
+
+    /// <summary>
+    /// Whether Quartz made up the job's name. A job built without an identity gets a new GUID as its name on every
+    /// start, which would report to a new monitor each time, so its class name is used instead. Quartz records nothing
+    /// that tells a generated name from one set to a GUID on purpose, so every GUID name counts as generated; such a
+    /// job keeps a monitor of its own with <see cref="CronitorJobBuilderExtensions.WithCronitorMonitorKey"/>.
+    /// </summary>
+    private static bool IsGeneratedName(string name) => Guid.TryParseExact(name, "D", out _);
 }

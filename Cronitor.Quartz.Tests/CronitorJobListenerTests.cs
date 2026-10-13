@@ -45,6 +45,50 @@ public class CronitorJobListenerTests
     }
 
     [Fact]
+    public async Task Should_report_to_the_job_class_name_when_Quartz_generated_the_job_name()
+    {
+        var telemetries = new FakeTelemetriesClient();
+
+        await RunJob(JobBuilder.Create<SucceedingJob>().Build(), telemetries);
+
+        Assert.Equal(new[] { "run SucceedingJob", "complete SucceedingJob" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public async Task Should_report_to_the_monitor_key_chosen_with_WithCronitorMonitorKey_when_Quartz_generated_the_job_name()
+    {
+        var telemetries = new FakeTelemetriesClient();
+
+        await RunJob(JobBuilder.Create<SucceedingJob>().WithCronitorMonitorKey("nightly-backup").Build(), telemetries);
+
+        Assert.Equal(new[] { "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
+    }
+
+    /// <summary>
+    /// Quartz records nothing that tells a generated name from one set to a GUID on purpose, so both are treated as generated.
+    /// </summary>
+    [Fact]
+    public async Task Should_report_a_job_named_with_a_GUID_under_its_class_name()
+    {
+        var telemetries = new FakeTelemetriesClient();
+
+        await RunJob(JobBuilder.Create<SucceedingJob>().WithIdentity("3f2c8a1e-5b7d-4c9e-a6f0-1d2b3c4e5f60").Build(), telemetries);
+
+        Assert.Equal(new[] { "run SucceedingJob", "complete SucceedingJob" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public async Task Should_report_a_job_named_with_a_GUID_to_the_monitor_key_chosen_with_WithCronitorMonitorKey()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var job = JobBuilder.Create<SucceedingJob>().WithIdentity("3f2c8a1e-5b7d-4c9e-a6f0-1d2b3c4e5f60").WithCronitorMonitorKey("sync-3f2c8a1e").Build();
+
+        await RunJob(job, telemetries);
+
+        Assert.Equal(new[] { "run sync-3f2c8a1e", "complete sync-3f2c8a1e" }, telemetries.Sent);
+    }
+
+    [Fact]
     public async Task Should_still_run_the_job_and_log_the_error_when_the_listener_fails_before_it()
     {
         var telemetries = new FakeTelemetriesClient { ThrowOnStart = true };
