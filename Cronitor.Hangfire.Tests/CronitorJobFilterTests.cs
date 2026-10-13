@@ -36,6 +36,31 @@ public class CronitorJobFilterTests
     }
 
     [Fact]
+    public async Task Should_add_the_attempt_to_the_fail_message_when_Hangfire_retries_a_recurring_job()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var filters = new JobFilterCollection
+        {
+            new CronitorJobFilter(telemetries),
+            new AutomaticRetryAttribute { Attempts = 1, DelaysInSeconds = new[] { 1 } },
+        };
+        var storage = new InMemoryStorage();
+
+        using (TestServer.Start(storage, filters))
+        {
+            var recurringJobs = new RecurringJobManager(storage);
+            recurringJobs.AddOrUpdate("nightly-backup", () => TestJobs.Throw(), Cron.Never());
+            recurringJobs.Trigger("nightly-backup");
+
+            await TestServer.WaitUntil(() => telemetries.Sent.Count == 4);
+        }
+
+        Assert.Equal(
+            new[] { "run nightly-backup", "fail nightly-backup: Disk is full", "run nightly-backup", "fail nightly-backup: Disk is full (attempt 2)" },
+            telemetries.Sent);
+    }
+
+    [Fact]
     public async Task Should_not_report_a_job_that_is_not_recurring()
     {
         var telemetries = new FakeTelemetriesClient();
