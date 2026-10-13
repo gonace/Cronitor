@@ -94,6 +94,19 @@ public class AddCronitorTickerQTests(TickerQHost host)
 public class Jobs
 {
     private static readonly ConcurrentDictionary<Guid, int> Attempts = new ConcurrentDictionary<Guid, int>();
+    private static readonly TaskCompletionSource<bool> WarmUpRan = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    /// <summary>
+    /// Completes when <see cref="WarmUpJob"/> has run, which <see cref="TickerQHost"/> waits for before the tests start.
+    /// </summary>
+    public static Task WarmedUp => WarmUpRan.Task;
+
+    [TickerFunction(nameof(WarmUpJob))]
+    public Task WarmUpJob(TickerFunctionContext context, CancellationToken cancellationToken)
+    {
+        WarmUpRan.TrySetResult(true);
+        return Task.CompletedTask;
+    }
 
     [TickerFunction(nameof(SucceedingJob))]
     public Task SucceedingJob(TickerFunctionContext context, CancellationToken cancellationToken) => Task.CompletedTask;

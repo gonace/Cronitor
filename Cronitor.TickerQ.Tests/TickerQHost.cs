@@ -24,12 +24,16 @@ public sealed class TickerQHost : IAsyncLifetime
     public static readonly TimeSpan LeadTime = TimeSpan.FromSeconds(5);
 
     private readonly ForwardingTelemetriesClient _telemetries = new ForwardingTelemetriesClient();
+    private readonly RecordingLoggerProvider _log = new RecordingLoggerProvider();
     private IHost _host;
 
     public async ValueTask InitializeAsync()
     {
         var builder = Host.CreateApplicationBuilder();
         builder.Logging.ClearProviders();
+        builder.Logging.AddProvider(_log);
+        builder.Logging.SetMinimumLevel(LogLevel.Debug);
+        builder.Logging.AddFilter("Microsoft", LogLevel.Warning);
         builder.Services.AddSingleton<ITelemetriesClient>(_telemetries);
         builder.Services.AddTickerQ();
         builder.Services.AddCronitorTickerQ();
@@ -37,6 +41,27 @@ public sealed class TickerQHost : IAsyncLifetime
         _host = builder.Build();
         _host.UseTickerQ();
         await _host.StartAsync(TestContext.Current.CancellationToken);
+        await WarmUp();
+    }
+
+    /// <summary>
+    /// Waits until the host has fired a cron ticker added after it started, so the tests only begin once TickerQ picks up
+    /// new cron tickers. In CI, the first test after the host started once saw its cron job never fire; if the host
+    /// doesn't fire this one either, every test fails with TickerQ's log instead of one test failing without it.
+    /// </summary>
+    private async Task WarmUp()
+    {
+        var startedAt = DateTime.UtcNow;
+        await using (await AddCronTicker(nameof(Jobs.WarmUpJob)))
+        {
+            var limit = Task.Delay(LeadTime + TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+            if (await Task.WhenAny(Jobs.WarmedUp, limit) != Jobs.WarmedUp)
+            {
+                throw new InvalidOperationException(
+                    "TickerQ did not fire a cron ticker added after the host started. Its log:" + Environment.NewLine
+                    + string.Join(Environment.NewLine, _log.Since(startedAt)));
+            }
+        }
     }
 
     public async ValueTask DisposeAsync()
@@ -56,23 +81,44 @@ public sealed class TickerQHost : IAsyncLifetime
 
     /// <summary>
     /// Schedules the function to run once a minute, at a second <see cref="LeadTime"/> from now, so the test sees exactly one
-    /// occurrence. Disposing the result removes the cron ticker again, so it doesn't fire during later tests.
+    /// occurrence. Disposing the result removes the cron ticker again, so it doesn't fire during later tests, and writes
+    /// what TickerQ logged meanwhile to the test's output, so a failing test shows what the scheduler did.
     /// </summary>
     public async Task<IAsyncDisposable> AddCronTicker(string function, int retries = 0)
     {
-        var second = DateTime.UtcNow.Add(LeadTime).Second;
+        var addedAt = DateTime.UtcNow;
+        var second = addedAt.Add(LeadTime).Second;
         var cronTickers = _host.Services.GetRequiredService<ICronTickerManager<CronTickerEntity>>();
         var cronTicker = new CronTickerEntity { Function = function, Expression = $"{second} * * * * *", Retries = retries, RetryIntervals = [1] };
 
         var result = await cronTickers.AddAsync(cronTicker, TestContext.Current.CancellationToken);
 
         Assert.True(result.IsSucceeded, $"TickerQ refused the cron ticker for {function}.");
-        return new CronTickerRemoval(cronTickers, cronTicker.Id);
+        return new CronTickerRemoval(cronTickers, cronTicker.Id, () => WriteLogSince(addedAt, $"TickerQ's log since the cron ticker for {function} was added at second {second}:"));
     }
 
-    private sealed class CronTickerRemoval(ICronTickerManager<CronTickerEntity> cronTickers, Guid id) : IAsyncDisposable
+    private void WriteLogSince(DateTime from, string heading)
     {
-        public async ValueTask DisposeAsync() => await cronTickers.DeleteAsync(id, CancellationToken.None);
+        var output = TestContext.Current.TestOutputHelper;
+        if (output == null)
+        {
+            return;
+        }
+
+        output.WriteLine(heading);
+        foreach (var line in _log.Since(from))
+        {
+            output.WriteLine(line);
+        }
+    }
+
+    private sealed class CronTickerRemoval(ICronTickerManager<CronTickerEntity> cronTickers, Guid id, Action writeLog) : IAsyncDisposable
+    {
+        public async ValueTask DisposeAsync()
+        {
+            await cronTickers.DeleteAsync(id, CancellationToken.None);
+            writeLog();
+        }
     }
 }
 
