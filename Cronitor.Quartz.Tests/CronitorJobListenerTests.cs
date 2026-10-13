@@ -1,8 +1,6 @@
 using Microsoft.Extensions.Logging;
 using Quartz;
-using Quartz.Impl;
 using System;
-using System.Collections.Specialized;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -12,7 +10,7 @@ namespace Cronitor.Quartz.Tests;
 /// Runs jobs on a real Quartz scheduler and checks what the listener reports to Cronitor.
 /// </summary>
 [Collection(StaticQuartzCollection.Name)]
-public class CronitorJobListenerTests
+public partial class CronitorJobListenerTests
 {
     [Fact]
     public async Task Should_send_run_and_complete_when_a_job_succeeds()
@@ -142,13 +140,12 @@ public class CronitorJobListenerTests
     {
         var telemetries = new FakeTelemetriesClient();
         InterruptibleJob.Reset();
-        var properties = new NameValueCollection { ["quartz.scheduler.instanceName"] = Guid.NewGuid().ToString("N") };
-        var scheduler = await new StdSchedulerFactory(properties).GetScheduler(TestContext.Current.CancellationToken);
-        scheduler.ListenerManager.AddJobListener(new CronitorJobListener(telemetries));
+        var scheduler = await NewScheduler();
+        AddJobListener(scheduler, new CronitorJobListener(telemetries));
         await scheduler.Start(TestContext.Current.CancellationToken);
 
         var job = JobBuilder.Create<InterruptibleJob>().WithIdentity("nightly-backup").Build();
-        await scheduler.ScheduleJob(job, TriggerBuilder.Create().StartNow().Build(), TestContext.Current.CancellationToken);
+        await scheduler.ScheduleJob(job, TriggerBuilder.Create().StartNow().Build(), cancellationToken: TestContext.Current.CancellationToken);
         await Task.WhenAny(InterruptibleJob.Started, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
         await scheduler.Interrupt(job.Key, TestContext.Current.CancellationToken);
         await Task.WhenAny(telemetries.Finished, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
@@ -219,7 +216,7 @@ public class CronitorJobListenerTests
         var listener = new CronitorJobListener(telemetries, logger);
         var scheduler = await StartAndRunJob(listener, new CronitorSchedulerListener(listener, TimeSpan.FromMilliseconds(200)));
 
-        var shutdown = scheduler.Shutdown(true, TestContext.Current.CancellationToken);
+        var shutdown = ShutdownAsTask(scheduler);
         var shutDownWithinLimit = await FinishesWithin(shutdown, TimeSpan.FromSeconds(5));
         var sentAtShutdown = telemetries.Sent.ToArray();
         finishGate.SetResult(true);
@@ -237,13 +234,12 @@ public class CronitorJobListenerTests
     private static async Task<IScheduler> StartAndRunJob(IJobListener jobListener, ISchedulerListener schedulerListener)
     {
         SucceedingJob.Reset();
-        var properties = new NameValueCollection { ["quartz.scheduler.instanceName"] = Guid.NewGuid().ToString("N") };
-        var scheduler = await new StdSchedulerFactory(properties).GetScheduler(TestContext.Current.CancellationToken);
-        scheduler.ListenerManager.AddJobListener(jobListener);
+        var scheduler = await NewScheduler();
+        AddJobListener(scheduler, jobListener);
         scheduler.ListenerManager.AddSchedulerListener(schedulerListener);
         await scheduler.Start(TestContext.Current.CancellationToken);
 
-        await scheduler.ScheduleJob(JobBuilder.Create<SucceedingJob>().WithIdentity("nightly-backup").Build(), TriggerBuilder.Create().StartNow().Build(), TestContext.Current.CancellationToken);
+        await scheduler.ScheduleJob(JobBuilder.Create<SucceedingJob>().WithIdentity("nightly-backup").Build(), TriggerBuilder.Create().StartNow().Build(), cancellationToken: TestContext.Current.CancellationToken);
         await Task.WhenAny(SucceedingJob.Ran, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
 
         return scheduler;
@@ -260,49 +256,13 @@ public class CronitorJobListenerTests
 
     private static async Task RunJob(IJobDetail job, IJobListener listener, Task done)
     {
-        var properties = new NameValueCollection { ["quartz.scheduler.instanceName"] = Guid.NewGuid().ToString("N") };
-        var scheduler = await new StdSchedulerFactory(properties).GetScheduler(TestContext.Current.CancellationToken);
-        scheduler.ListenerManager.AddJobListener(listener);
+        var scheduler = await NewScheduler();
+        AddJobListener(scheduler, listener);
         await scheduler.Start(TestContext.Current.CancellationToken);
 
-        await scheduler.ScheduleJob(job, TriggerBuilder.Create().StartNow().Build(), TestContext.Current.CancellationToken);
+        await scheduler.ScheduleJob(job, TriggerBuilder.Create().StartNow().Build(), cancellationToken: TestContext.Current.CancellationToken);
         await Task.WhenAny(done, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
 
         await scheduler.Shutdown(true, TestContext.Current.CancellationToken);
-    }
-
-    private sealed class SucceedingJob : IJob
-    {
-        private static TaskCompletionSource<bool> _ran = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        public static Task Ran => _ran.Task;
-
-        public static void Reset() => _ran = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        public Task Execute(IJobExecutionContext context)
-        {
-            _ran.TrySetResult(true);
-            return Task.CompletedTask;
-        }
-    }
-
-    private sealed class FailingJob : IJob
-    {
-        public Task Execute(IJobExecutionContext context) => throw new InvalidOperationException("Disk is full");
-    }
-
-    private sealed class InterruptibleJob : IJob
-    {
-        private static TaskCompletionSource<bool> _started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        public static Task Started => _started.Task;
-
-        public static void Reset() => _started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-
-        public async Task Execute(IJobExecutionContext context)
-        {
-            _started.TrySetResult(true);
-            await Task.Delay(TimeSpan.FromSeconds(30), context.CancellationToken);
-        }
     }
 }

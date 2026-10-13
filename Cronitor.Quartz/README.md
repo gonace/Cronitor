@@ -8,7 +8,14 @@ Reports every [Quartz.NET](https://www.quartz-scheduler.net) job to [Cronitor](h
 ```
 dotnet add package Cronitor.Quartz
 ```
-The package's major version matches Quartz's: version 3 is for Quartz 3 (3.22.4 or later).
+The package's major version matches Quartz's:
+
+| Cronitor.Quartz | Quartz | .NET |
+| --- | --- | --- |
+| 4.x | 4.0.0 or later | .NET 10 |
+| 3.x | 3.22.4 or later | .NET 8, 9 and 10, and .NET Standard 2.0 |
+
+`dotnet add package` picks the latest version, which is for Quartz 4. On Quartz 3, pick version 3: `dotnet add package Cronitor.Quartz --version 3.*`.
 
 ## Setup
 Register Cronitor with `.ConfigureCronitor()`, then call `UseCronitor()` when adding Quartz:
@@ -34,7 +41,7 @@ await Host.CreateDefaultBuilder()
     .Build()
     .RunAsync();
 ```
-`AddQuartzHostedService()` comes from Quartz's own `Quartz.Extensions.Hosting` package.
+The setup is the same for Quartz 3 and 4. `AddQuartzHostedService()` comes from Quartz's own `Quartz.Extensions.Hosting` package, which in Quartz 4 is part of the `Quartz` package itself.
 
 ## Monitor keys
 A job reports to the monitor with the same key as the job's name. Use `.WithCronitorMonitorKey()` to report to a different monitor, as above.

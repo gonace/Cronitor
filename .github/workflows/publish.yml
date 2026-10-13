@@ -25,6 +25,8 @@ jobs:
     # Cronitor.TickerQ is built for one TickerQ major at a time; the solution covers TickerQ 10.
     - run: dotnet test Cronitor.TickerQ.Tests --configuration Release --verbosity normal -p:TickerQMajor=9 --report-xunit-trx --results-directory TestResults
     - run: dotnet test Cronitor.TickerQ.Tests --configuration Release --verbosity normal -p:TickerQMajor=8 --report-xunit-trx --results-directory TestResults
+    # Cronitor.Quartz is built for one Quartz major at a time; the solution covers Quartz 3.
+    - run: dotnet test Cronitor.Quartz.Tests --configuration Release --verbosity normal -p:QuartzMajor=4 --report-xunit-trx --results-directory TestResults
     # Writes the report to the job summary, the action's default, which needs no write permission.
     - uses: dorny/test-reporter@v2.1.1
       if: ${{ !cancelled() }}
@@ -82,6 +84,7 @@ jobs:
     - name: Read extension versions
       run: |
         echo "CRONITOR_QUARTZ_VERSION=$(dotnet msbuild Cronitor.Quartz/Cronitor.Quartz.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN)" >> "$GITHUB_ENV"
+        echo "CRONITOR_QUARTZ_4_VERSION=$(dotnet msbuild Cronitor.Quartz/Cronitor.Quartz.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN -p:QuartzMajor=4)" >> "$GITHUB_ENV"
         echo "CRONITOR_HANGFIRE_VERSION=$(dotnet msbuild Cronitor.Hangfire/Cronitor.Hangfire.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN)" >> "$GITHUB_ENV"
         echo "CRONITOR_TICKERQ_VERSION=$(dotnet msbuild Cronitor.TickerQ/Cronitor.TickerQ.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN)" >> "$GITHUB_ENV"
         echo "CRONITOR_TICKERQ_9_VERSION=$(dotnet msbuild Cronitor.TickerQ/Cronitor.TickerQ.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN -p:TickerQMajor=9)" >> "$GITHUB_ENV"
@@ -120,6 +123,22 @@ jobs:
           --no-build \
           -p:CronitorVersion=$CRONITOR_VERSION \
           -p:ReleaseRun=$RELEASE_RUN \
+          -p:IncludeSymbols=true \
+          -p:SymbolPackageFormat=snupkg
+    # The same project again for Quartz 4, its own version line. Building restores for that major.
+    - name: Build and pack Cronitor.Quartz for Quartz 4
+      run: |
+        dotnet build Cronitor.Quartz/Cronitor.Quartz.csproj \
+          --configuration Release \
+          -p:CronitorVersion=$CRONITOR_VERSION \
+          -p:ReleaseRun=$RELEASE_RUN \
+          -p:QuartzMajor=4
+        dotnet pack Cronitor.Quartz/Cronitor.Quartz.csproj \
+          --configuration Release \
+          --no-build \
+          -p:CronitorVersion=$CRONITOR_VERSION \
+          -p:ReleaseRun=$RELEASE_RUN \
+          -p:QuartzMajor=4 \
           -p:IncludeSymbols=true \
           -p:SymbolPackageFormat=snupkg
 
@@ -196,6 +215,9 @@ jobs:
         NUGET_API_KEY: ${{steps.login.outputs.NUGET_API_KEY}}
       run: |
         dotnet nuget push Cronitor.Quartz/bin/Release/Cronitor.Quartz.$CRONITOR_QUARTZ_VERSION.nupkg \
+          --api-key "$NUGET_API_KEY" \
+          --source "$NUGET_SOURCE"
+        dotnet nuget push Cronitor.Quartz/bin/Release/Cronitor.Quartz.$CRONITOR_QUARTZ_4_VERSION.nupkg \
           --api-key "$NUGET_API_KEY" \
           --source "$NUGET_SOURCE"
 

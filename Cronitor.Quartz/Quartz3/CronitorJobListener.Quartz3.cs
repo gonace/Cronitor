@@ -1,0 +1,27 @@
+using Quartz;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace Cronitor.Quartz;
+
+/// <summary>
+/// The methods Quartz 3 calls, with Quartz 3's signatures.
+/// </summary>
+public partial class CronitorJobListener : IJobListener
+{
+    public Task JobToBeExecuted(IJobExecutionContext context, CancellationToken cancellationToken = default)
+    {
+        OnJobToBeExecuted(context);
+        return Task.CompletedTask;
+    }
+
+    public Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken cancellationToken = default) => Task.CompletedTask;
+
+    public Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken cancellationToken = default)
+    {
+        OnJobWasExecuted(context, jobException);
+        return Task.CompletedTask;
+    }
+
+    private static string ClassNameOf(IJobDetail job) => job.JobType.Name;
+}

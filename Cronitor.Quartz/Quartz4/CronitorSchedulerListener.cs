@@ -1,5 +1,4 @@
 using Quartz;
-using Quartz.Listener;
 using System;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,9 +11,10 @@ namespace Cronitor.Quartz;
 /// and only for reports already being sent: jobs still running are only covered when Quartz waits for them to
 /// finish, with <c>Shutdown(true)</c> or <c>WaitForJobsToComplete</c> in Quartz's hosting options.
 /// <c>UseCronitor()</c> registers it; without dependency injection, add it next to the job listener with
-/// <c>ListenerManager.AddSchedulerListener</c>.
+/// <c>ListenerManager.AddSchedulerListener</c>. Like <see cref="CronitorJobListener"/>, it implements its method
+/// explicitly, so a signature that doesn't match Quartz 4's is a compile error instead of a method never called.
 /// </summary>
-public class CronitorSchedulerListener : SchedulerListenerSupport
+public class CronitorSchedulerListener : ISchedulerListener
 {
     private readonly CronitorJobListener _jobListener;
     private readonly TimeSpan _limit;
@@ -30,6 +30,6 @@ public class CronitorSchedulerListener : SchedulerListenerSupport
         _limit = limit;
     }
 
-    public override Task SchedulerShutdown(CancellationToken cancellationToken = default) =>
-        _jobListener.WaitForPendingReports(_limit, cancellationToken);
+    ValueTask ISchedulerListener.SchedulerShutdown(IScheduler scheduler, CancellationToken cancellationToken) =>
+        new ValueTask(_jobListener.WaitForPendingReportsAsync(_limit, cancellationToken));
 }
