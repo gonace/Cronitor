@@ -1,81 +1,66 @@
 using Cronitor.Commands;
-using Cronitor.Exceptions;
 using Cronitor.Internals;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace Cronitor;
 
+/// <summary>
+/// The former name of <see cref="CronitorClient"/>, to which every member forwards. It shares its name with the
+/// namespace <c>Cronitor</c>, so outside the library it can only be called as <c>Cronitor.Cronitor</c>.
+/// </summary>
+[Obsolete("Use CronitorClient, which has the same members. Cronitor shares its name with the namespace Cronitor, so it can only be called as Cronitor.Cronitor.")]
 public static class Cronitor
 {
-    private static Service _service;
+    /// <inheritdoc cref="CronitorClient.Configure(string)"/>
+    public static void Configure(string key) => CronitorClient.Configure(key);
 
-    /// <summary>
-    /// Configures the instance.
-    /// Must be called before any other methods.
-    /// </summary>
-    public static void Configure(string key)
-    {
-        _service = new Service(key);
-    }
+    /// <inheritdoc cref="CronitorClient.Configure(string, ILoggerFactory)"/>
+    public static void Configure(string key, ILoggerFactory loggerFactory) => CronitorClient.Configure(key, loggerFactory);
 
-    /// <summary>
-    /// Configures the instance, logging an error through <paramref name="loggerFactory"/>
-    /// whenever a telemetry event cannot be delivered.
-    /// Must be called before any other methods.
-    /// </summary>
-    public static void Configure(string key, ILoggerFactory loggerFactory)
-    {
-        _service = new Service(key, loggerFactory);
-    }
+    internal static void Configure(string key, HttpClient client) => CronitorClient.Configure(key, client);
 
-    internal static void Configure(string key, HttpClient client)
-    {
-        _service = new Service(key, client);
-    }
-
-    public static IssuesClient Issues => Service.Issues;
-    public static IMonitorsClient Monitors => Service.Monitors;
-    public static INotificationsClient Notifications => Service.Notifications;
-    public static ITelemetriesClient Telemetries => Service.Telemetries;
+    public static IssuesClient Issues => CronitorClient.Issues;
+    public static IMonitorsClient Monitors => CronitorClient.Monitors;
+    public static INotificationsClient Notifications => CronitorClient.Notifications;
+    public static ITelemetriesClient Telemetries => CronitorClient.Telemetries;
 
     /// <inheritdoc cref="ITelemetriesClient.Start"/>
     public static ITelemetryRun Start(string monitorKey, string environment = null) =>
-        Telemetries.Start(monitorKey, environment);
+        CronitorClient.Start(monitorKey, environment);
 
     /// <inheritdoc cref="ITelemetriesClient.StartAsync"/>
     public static Task<ITelemetryRun> StartAsync(string monitorKey, string environment = null) =>
-        Telemetries.StartAsync(monitorKey, environment);
+        CronitorClient.StartAsync(monitorKey, environment);
 
     public static bool Run(string monitorKey, string message = null, string environment = null) =>
-        Telemetries.Run(monitorKey, message, environment);
+        CronitorClient.Run(monitorKey, message, environment);
 
     public static Task<bool> RunAsync(string monitorKey, string message = null, string environment = null) =>
-        Telemetries.RunAsync(monitorKey, message, environment);
+        CronitorClient.RunAsync(monitorKey, message, environment);
 
     public static bool Complete(string monitorKey, string message = null, string environment = null) =>
-        Telemetries.Complete(monitorKey, message, environment);
+        CronitorClient.Complete(monitorKey, message, environment);
 
     public static Task<bool> CompleteAsync(string monitorKey, string message = null, string environment = null) =>
-        Telemetries.CompleteAsync(monitorKey, message, environment);
+        CronitorClient.CompleteAsync(monitorKey, message, environment);
 
     public static bool Fail(string monitorKey, string message = null, string environment = null) =>
-        Telemetries.Fail(monitorKey, message, environment);
+        CronitorClient.Fail(monitorKey, message, environment);
 
     public static Task<bool> FailAsync(string monitorKey, string message = null, string environment = null) =>
-        Telemetries.FailAsync(monitorKey, message, environment);
+        CronitorClient.FailAsync(monitorKey, message, environment);
 
     public static bool Tick(string monitorKey, string message = null, string environment = null) =>
-        Telemetries.Tick(monitorKey, message, environment);
+        CronitorClient.Tick(monitorKey, message, environment);
 
     public static Task<bool> TickAsync(string monitorKey, string message = null, string environment = null) =>
-        Telemetries.TickAsync(monitorKey, message, environment);
+        CronitorClient.TickAsync(monitorKey, message, environment);
 
     public static bool Ping(Command command) =>
-        Telemetries.Ping(command);
+        CronitorClient.Ping(command);
 
     public static Task<bool> PingAsync(Command command) =>
-        Telemetries.PingAsync(command);
-
-    private static Service Service => _service ?? throw new NotConfiguredException();
+        CronitorClient.PingAsync(command);
 }

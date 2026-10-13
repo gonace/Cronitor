@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Cronitor.Internals;
 
 /// <summary>
-/// Gives the static <see cref="Cronitor"/> class the host's logging once the host starts.
+/// Gives the static <see cref="CronitorClient"/> the host's logging once the host starts.
 /// UseCronitor configures Cronitor while the host is still being built, before its
 /// <see cref="ILoggerFactory"/> exists, so this completes the setup when it does.
 /// </summary>

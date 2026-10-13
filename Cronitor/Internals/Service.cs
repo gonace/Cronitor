@@ -5,7 +5,7 @@ using System;
 namespace Cronitor.Internals;
 
 /// <summary>
-/// The clients behind the static <see cref="Cronitor"/> class, all created from the same API key.
+/// The clients behind the static <see cref="CronitorClient"/>, all created from the same API key.
 /// </summary>
 internal sealed class Service : IDisposable
 {

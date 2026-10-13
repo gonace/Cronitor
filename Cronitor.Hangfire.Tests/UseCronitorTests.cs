@@ -56,7 +56,7 @@ public class UseCronitorTests : IDisposable
     [Fact]
     public void Should_register_the_filter_when_UseCronitor_is_called_after_configuring_Cronitor()
     {
-        global::Cronitor.Cronitor.Configure("apiKey");
+        CronitorClient.Configure("apiKey");
 
         GlobalConfiguration.Configuration.UseCronitor();
 

@@ -33,7 +33,7 @@ public static class CronitorGlobalConfigurationExtensions
 
     /// <summary>
     /// Reports every recurring job Hangfire runs to Cronitor with a <see cref="CronitorJobFilter"/>, using the
-    /// static Cronitor client. Call <c>Cronitor.Configure(apiKey)</c> first.
+    /// static <see cref="CronitorClient"/>. Call <c>CronitorClient.Configure(apiKey)</c> first.
     /// </summary>
     public static IGlobalConfiguration<CronitorJobFilter> UseCronitor(this IGlobalConfiguration configuration)
     {
@@ -42,6 +42,6 @@ public static class CronitorGlobalConfigurationExtensions
             throw new ArgumentNullException(nameof(configuration));
         }
 
-        return configuration.UseFilter(new CronitorJobFilter(global::Cronitor.Cronitor.Telemetries));
+        return configuration.UseFilter(new CronitorJobFilter(CronitorClient.Telemetries));
     }
 }
