@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <!-- Coravel 6 targets .NET 6 and later, so there is no .NET Standard build. -->
+    <TargetFrameworks>net10.0;net9.0;net8.0</TargetFrameworks>
+    <CoravelMinimumVersion>6.0.0</CoravelMinimumVersion>
+    <RootNamespace>Cronitor.Coravel</RootNamespace>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Cronitor.Coravel</PackageId>
+    <!-- Major and minor follow the lowest Coravel version this package supports, see CoravelMinimumVersion above. -->
+    <Version Condition="'$(ReleaseRun)' != ''">$([System.Version]::Parse($(CoravelMinimumVersion)).ToString(2)).$(ReleaseRun)</Version>
+    <Description>Reports Coravel scheduled jobs to Cronitor: run when they start, complete when they succeed and fail when they throw.</Description>
+    <PackageTags>cronitor;coravel;monitoring;cron;scheduler;jobs</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="README.md" Pack="true" PackagePath="\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="Cronitor.Coravel.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Coravel" Version="[$(CoravelMinimumVersion),7.0)" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Cronitor\Cronitor.csproj" />
+  </ItemGroup>
+
+</Project>

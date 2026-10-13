@@ -7,6 +7,8 @@
     <File Path=".gitignore" />
     <File Path="README.md" />
   </Folder>
+  <Project Path="Cronitor.Coravel.Tests/Cronitor.Coravel.Tests.csproj" />
+  <Project Path="Cronitor.Coravel/Cronitor.Coravel.csproj" />
   <Project Path="Cronitor.Hangfire.Tests/Cronitor.Hangfire.Tests.csproj" />
   <Project Path="Cronitor.Hangfire/Cronitor.Hangfire.csproj" />
   <Project Path="Cronitor.Quartz.Tests/Cronitor.Quartz.Tests.csproj" />
