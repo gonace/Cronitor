@@ -52,6 +52,9 @@ RecurringJob.AddOrUpdate("nightly-backup", () => Backup.Run(), Cron.Daily(3));
 ```
 Jobs that are not recurring, such as those started with `BackgroundJob.Enqueue()`, are not reported.
 
+## Retries
+When a recurring job fails, Hangfire retries it by default, often minutes or hours later. Each attempt is reported as its own run, and a retry's fail message ends with its attempt, for example `Disk is full (attempt 2)`. A job that fails twice and then succeeds is therefore reported as two failed runs followed by a completed one.
+
 ## Errors
 Reporting never affects your jobs: the start of a job is reported in the background, and the worker waits at most five seconds for its end to be reported. If Cronitor is slower than that, the worker moves on and the report continues in the background, so a report still pending when the application stops can be lost. If a report can't be sent, the job still runs and keeps its result, and the error is logged through the host's logging.
 

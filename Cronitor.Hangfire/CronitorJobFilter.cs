@@ -10,6 +10,8 @@ namespace Cronitor.Hangfire;
 /// <summary>
 /// Reports every recurring job Hangfire runs to Cronitor: run when the job starts, then complete when it
 /// succeeds or fail when it throws. The recurring job's ID is used as the monitor key; other jobs are not reported.
+/// Each attempt is reported as its own run, so when Hangfire retries a failed job, the retry's fail message
+/// ends with its attempt, such as "(attempt 2)".
 /// Reporting never affects the job: Hangfire runs filters on the job's worker, skips a job when a filter throws
 /// before it, and marks a successful job as failed when a filter throws after it. So the run is reported in the
 /// background, the worker waits at most five seconds for the end to be reported, and every failure is logged
@@ -20,6 +22,7 @@ public class CronitorJobFilter : IServerFilter
 {
     private const string StartKey = "Cronitor.Start";
     private const string RecurringJobIdParameter = "RecurringJobId";
+    private const string RetryCountParameter = "RetryCount";
 
     private readonly ITelemetriesClient _telemetries;
     private readonly ILogger<CronitorJobFilter> _logger;
@@ -72,10 +75,21 @@ public class CronitorJobFilter : IServerFilter
     }
 
     /// <summary>
+    /// Why the job did not succeed, with the attempt when it was a retry, or null if it succeeded.
+    /// </summary>
+    private static string FailureOf(PerformedContext context)
+    {
+        var failure = ReasonOf(context);
+        var retries = context.GetJobParameter<int>(RetryCountParameter);
+
+        return failure != null && retries > 0 ? $"{failure} (attempt {retries + 1})" : failure;
+    }
+
+    /// <summary>
     /// Why the job did not succeed, or null if it did. When another filter cancels the job, Hangfire still
     /// calls this filter after it, without an exception, although the job never ran.
     /// </summary>
-    private static string FailureOf(PerformedContext context)
+    private static string ReasonOf(PerformedContext context)
     {
         if (context.Exception != null)
         {
