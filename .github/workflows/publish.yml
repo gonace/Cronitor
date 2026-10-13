@@ -10,11 +10,6 @@ jobs:
   tests:
     runs-on: windows-latest
 
-    permissions:
-      contents: read
-      actions: read
-      checks: write
-
     steps:
     - uses: actions/checkout@v7
     - uses: actions/setup-dotnet@v6
@@ -30,6 +25,7 @@ jobs:
     # Cronitor.TickerQ is built for one TickerQ major at a time; the solution covers TickerQ 10.
     - run: dotnet test Cronitor.TickerQ.Tests --configuration Release --verbosity normal -p:TickerQMajor=9 --report-xunit-trx --results-directory TestResults
     - run: dotnet test Cronitor.TickerQ.Tests --configuration Release --verbosity normal -p:TickerQMajor=8 --report-xunit-trx --results-directory TestResults
+    # Writes the report to the job summary, the action's default, which needs no write permission.
     - uses: dorny/test-reporter@v2.1.1
       if: ${{ !cancelled() }}
       with:
