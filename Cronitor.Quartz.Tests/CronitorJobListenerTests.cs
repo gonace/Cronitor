@@ -45,6 +45,26 @@ public class CronitorJobListenerTests
     }
 
     [Fact]
+    public async Task Should_report_a_job_named_with_a_slash_to_the_key_with_the_slash_replaced_by_a_dash()
+    {
+        var telemetries = new FakeTelemetriesClient();
+
+        await RunJob(JobBuilder.Create<SucceedingJob>().WithIdentity("reports/daily").Build(), telemetries);
+
+        Assert.Equal(new[] { "run reports-daily", "complete reports-daily" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public void Should_throw_when_WithCronitorMonitorKey_is_given_a_key_with_a_slash()
+    {
+        var job = JobBuilder.Create<SucceedingJob>();
+
+        var exception = Assert.Throws<ArgumentException>(() => job.WithCronitorMonitorKey("reports/daily"));
+
+        Assert.Contains("/", exception.Message);
+    }
+
+    [Fact]
     public async Task Should_report_to_the_job_class_name_when_Quartz_generated_the_job_name()
     {
         var telemetries = new FakeTelemetriesClient();

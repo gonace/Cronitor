@@ -39,6 +39,8 @@ await Host.CreateDefaultBuilder()
 ## Monitor keys
 A job reports to the monitor with the same key as the job's name. Use `.WithCronitorMonitorKey()` to report to a different monitor, as above.
 
+Cronitor doesn't accept `/` in a monitor key, so a `/` in a job's name becomes `-`: a job named `reports/daily` reports to `reports-daily`. A key given to `.WithCronitorMonitorKey()` is used exactly as given, so it can't contain `/`; it throws if it does.
+
 A job scheduled without a name, such as `q.ScheduleJob<BackupJob>(trigger => …)` without `WithIdentity`, gets a new random name from Quartz on every start. Such a job reports under its class name instead, `BackupJob` here, so it keeps reporting to the same monitor. Two unnamed jobs of the same class share that monitor; give them names, or monitor keys, to keep them apart.
 
 Quartz can't tell its own random names from a name you set to a GUID yourself, so a job you name with a GUID also reports under its class name. Give such jobs a monitor key of their own:
