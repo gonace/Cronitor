@@ -31,5 +31,5 @@ public class CronitorSchedulerListener : SchedulerListenerSupport
     }
 
     public override Task SchedulerShutdown(CancellationToken cancellationToken = default) =>
-        _jobListener.WaitForPendingReports(_limit, cancellationToken);
+        _jobListener.WaitForPendingReportsAsync(_limit, cancellationToken);
 }

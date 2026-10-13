@@ -43,7 +43,7 @@ public partial class CronitorJobListener
     /// Waits for the end reports still being sent, at most for the given time, so they are not lost when the
     /// application stops. <see cref="CronitorSchedulerListener"/> calls it when the scheduler shuts down.
     /// </summary>
-    internal async Task WaitForPendingReports(TimeSpan limit, CancellationToken cancellationToken)
+    internal async Task WaitForPendingReportsAsync(TimeSpan limit, CancellationToken cancellationToken)
     {
         var pending = _pendingReports.Keys.ToArray();
         if (pending.Length == 0)
@@ -65,7 +65,7 @@ public partial class CronitorJobListener
     {
         try
         {
-            _starts[context.FireInstanceId] = ReportStart(context);
+            _starts[context.FireInstanceId] = ReportStartAsync(context);
         }
         catch (Exception exception)
         {
@@ -79,7 +79,7 @@ public partial class CronitorJobListener
         {
             if (_starts.TryRemove(context.FireInstanceId, out var start))
             {
-                Track(ReportEnd(start, FailureOf(context, jobException), context.JobDetail.Key));
+                Track(ReportEndAsync(start, FailureOf(context, jobException), context.JobDetail.Key));
             }
         }
         catch (Exception exception)
@@ -97,7 +97,7 @@ public partial class CronitorJobListener
     /// <summary>
     /// Sends the run event. The returned task completes with the run, or with null if it could not be reported.
     /// </summary>
-    private async Task<ITelemetryRun> ReportStart(IJobExecutionContext context)
+    private async Task<ITelemetryRun> ReportStartAsync(IJobExecutionContext context)
     {
         try
         {
@@ -127,7 +127,7 @@ public partial class CronitorJobListener
     /// <summary>
     /// Sends complete, or fail with the failure, once the run event has been sent, so Cronitor always receives them in order.
     /// </summary>
-    private async Task ReportEnd(Task<ITelemetryRun> start, string failure, JobKey jobKey)
+    private async Task ReportEndAsync(Task<ITelemetryRun> start, string failure, JobKey jobKey)
     {
         try
         {
