@@ -89,6 +89,7 @@ jobs:
         echo "CRONITOR_TICKERQ_VERSION=$(dotnet msbuild Cronitor.TickerQ/Cronitor.TickerQ.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN)" >> "$GITHUB_ENV"
         echo "CRONITOR_TICKERQ_9_VERSION=$(dotnet msbuild Cronitor.TickerQ/Cronitor.TickerQ.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN -p:TickerQMajor=9)" >> "$GITHUB_ENV"
         echo "CRONITOR_TICKERQ_8_VERSION=$(dotnet msbuild Cronitor.TickerQ/Cronitor.TickerQ.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN -p:TickerQMajor=8)" >> "$GITHUB_ENV"
+        echo "CRONITOR_CORAVEL_VERSION=$(dotnet msbuild Cronitor.Coravel/Cronitor.Coravel.csproj -getProperty:Version -p:ReleaseRun=$RELEASE_RUN)" >> "$GITHUB_ENV"
 
     - name: Restore
       run: dotnet restore
@@ -195,6 +196,23 @@ jobs:
             -p:SymbolPackageFormat=snupkg
         done
 
+    - name: Build Cronitor.Coravel
+      run: |
+        dotnet build Cronitor.Coravel/Cronitor.Coravel.csproj \
+          --configuration Release \
+          -p:CronitorVersion=$CRONITOR_VERSION \
+          -p:ReleaseRun=$RELEASE_RUN
+
+    - name: Pack Cronitor.Coravel
+      run: |
+        dotnet pack Cronitor.Coravel/Cronitor.Coravel.csproj \
+          --configuration Release \
+          --no-build \
+          -p:CronitorVersion=$CRONITOR_VERSION \
+          -p:ReleaseRun=$RELEASE_RUN \
+          -p:IncludeSymbols=true \
+          -p:SymbolPackageFormat=snupkg
+
     # One short-lived key from nuget.org's trusted publishing, valid for an hour, pushes every package.
     - name: Log in to NuGet
       id: login
@@ -240,5 +258,13 @@ jobs:
           --api-key "$NUGET_API_KEY" \
           --source "$NUGET_SOURCE"
         dotnet nuget push Cronitor.TickerQ/bin/Release/Cronitor.TickerQ.$CRONITOR_TICKERQ_8_VERSION.nupkg \
+          --api-key "$NUGET_API_KEY" \
+          --source "$NUGET_SOURCE"
+
+    - name: Push Cronitor.Coravel
+      env:
+        NUGET_API_KEY: ${{steps.login.outputs.NUGET_API_KEY}}
+      run: |
+        dotnet nuget push Cronitor.Coravel/bin/Release/Cronitor.Coravel.$CRONITOR_CORAVEL_VERSION.nupkg \
           --api-key "$NUGET_API_KEY" \
           --source "$NUGET_SOURCE"
