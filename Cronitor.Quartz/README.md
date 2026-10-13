@@ -55,6 +55,9 @@ Quartz can't tell its own random names from a name you set to a GUID yourself, s
 job => job.WithIdentity(tenantId.ToString()).WithCronitorMonitorKey($"sync-{tenantId}")
 ```
 
+## Retries
+Quartz 4 retries a failed job when its trigger, its job class or the scheduler has a retry policy, such as `.WithRetryPolicy(RetryPolicy.Fixed(3, TimeSpan.FromMinutes(5)))`. Each attempt is reported as its own run, and a retry's fail message ends with its attempt, for example `Disk is full (attempt 2)`. A job that fails twice and then succeeds is therefore reported as two failed runs followed by a completed one. Quartz 3 doesn't retry failed jobs.
+
 ## Errors
 Reporting never affects your jobs: reports are sent in the background, so a job never waits for Cronitor. If a report can't be sent, the job still runs, and the error is logged through the host's logging. When the scheduler shuts down, it waits up to five seconds for reports that are still being sent, so the outcome of the last jobs isn't lost.
 

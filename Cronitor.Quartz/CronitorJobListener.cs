@@ -16,6 +16,8 @@ namespace Cronitor.Quartz;
 /// A job without a name of its own, which Quartz names with a new GUID on every start,
 /// reports under its class name instead. Cronitor doesn't accept <c>/</c> in a monitor key,
 /// so a <c>/</c> in the job's name becomes <c>-</c>.
+/// Each attempt is reported as its own run, so when Quartz 4 retries a failed job, the retry's fail message
+/// ends with its attempt, such as "(attempt 2)".
 /// Reporting never affects the job: Quartz waits for a listener before and after every job, and
 /// skips a job when a listener throws before it. So reports are sent in the background, without
 /// the job waiting for Cronitor, and every failure is logged instead of thrown.
@@ -28,7 +30,7 @@ public partial class CronitorJobListener
 {
     private readonly ITelemetriesClient _telemetries;
     private readonly ILogger<CronitorJobListener> _logger;
-    private readonly ConcurrentDictionary<string, Task<ITelemetryRun>> _starts = new ConcurrentDictionary<string, Task<ITelemetryRun>>();
+    private readonly ConcurrentDictionary<string, (Task<ITelemetryRun> Run, int Retry)> _starts = new ConcurrentDictionary<string, (Task<ITelemetryRun> Run, int Retry)>();
     private readonly ConcurrentDictionary<Task, bool> _pendingReports = new ConcurrentDictionary<Task, bool>();
 
     public CronitorJobListener(ITelemetriesClient telemetries, ILogger<CronitorJobListener> logger = null)
@@ -59,13 +61,14 @@ public partial class CronitorJobListener
     }
 
     /// <summary>
-    /// Starts reporting the run, keyed by the run's fire instance, so the end can be reported after the job.
+    /// Starts reporting the run, keyed by the run's fire instance, so the end can be reported after the job. Which retry
+    /// the run is, is read now: some Quartz versions have already moved on to the next retry when the job has ended.
     /// </summary>
     private void OnJobToBeExecuted(IJobExecutionContext context)
     {
         try
         {
-            _starts[context.FireInstanceId] = ReportStartAsync(context);
+            _starts[context.FireInstanceId] = (ReportStartAsync(context), RetryOf(context));
         }
         catch (Exception exception)
         {
@@ -79,7 +82,7 @@ public partial class CronitorJobListener
         {
             if (_starts.TryRemove(context.FireInstanceId, out var start))
             {
-                Track(ReportEndAsync(start, FailureOf(context, jobException), context.JobDetail.Key));
+                Track(ReportEndAsync(start.Run, FailureOf(context, jobException, start.Retry), context.JobDetail.Key));
             }
         }
         catch (Exception exception)
@@ -111,10 +114,20 @@ public partial class CronitorJobListener
     }
 
     /// <summary>
+    /// Why the job did not succeed, with the attempt when it was a retry, or null if it succeeded.
+    /// </summary>
+    private static string FailureOf(IJobExecutionContext context, JobExecutionException jobException, int retry)
+    {
+        var failure = ReasonOf(context, jobException);
+
+        return failure != null && retry > 0 ? $"{failure} (attempt {retry + 1})" : failure;
+    }
+
+    /// <summary>
     /// Why the job did not succeed, or null if it did. Quartz passes no exception for a job it interrupted,
     /// even when the job threw because of the interrupt, so an interrupt is checked separately.
     /// </summary>
-    private static string FailureOf(IJobExecutionContext context, JobExecutionException jobException)
+    private static string ReasonOf(IJobExecutionContext context, JobExecutionException jobException)
     {
         if (jobException != null)
         {

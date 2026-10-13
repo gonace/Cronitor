@@ -24,4 +24,9 @@ public partial class CronitorJobListener : IJobListener
     }
 
     private static string ClassNameOf(IJobDetail job) => job.JobType.Type.Name;
+
+    /// <summary>
+    /// Which retry of a failed job this run is, under the trigger's retry policy: 0 for the first attempt.
+    /// </summary>
+    private static int RetryOf(IJobExecutionContext context) => context.RetryAttempt;
 }
