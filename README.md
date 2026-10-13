@@ -6,7 +6,7 @@ Cronitor is a service for heartbeat-style monitoring of anything that can send a
 
 This .NET library has two parts:
 * **Telemetry**: report when your jobs run, complete or fail ([Telemetry API](https://cronitor.io/docs/telemetry-api)).
-* **Management**: create, read, update and delete monitors, issues and notifications ([Monitor API](https://cronitor.io/docs/monitor-api), [Issues API](https://cronitor.io/docs/issues-api), [Notifications API](https://cronitor.io/docs/template-api), [Activity API](https://cronitor.io/docs/activity-api)).
+* **Management**: create, read, update and delete monitors, issues and notifications ([Monitor API](https://cronitor.io/docs/monitors-api), [Issues API](https://cronitor.io/docs/issues-api), [Notifications API](https://cronitor.io/docs/notifications-api)).
 
 > For the full documentation, please read our [wiki](https://github.com/gonace/Cronitor/wiki).
 
