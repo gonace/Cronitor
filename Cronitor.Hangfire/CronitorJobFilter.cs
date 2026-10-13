@@ -44,19 +44,25 @@ public class CronitorJobFilter : IServerFilter
     {
         try
         {
-            var monitorKey = context.GetJobParameter<string>(RecurringJobIdParameter);
-            if (string.IsNullOrWhiteSpace(monitorKey))
+            var recurringJobId = context.GetJobParameter<string>(RecurringJobIdParameter);
+            if (string.IsNullOrWhiteSpace(recurringJobId))
             {
                 return;
             }
 
-            context.Items[StartKey] = ReportStart(monitorKey, context.BackgroundJob.Id);
+            context.Items[StartKey] = ReportStart(MonitorKeyOf(recurringJobId), context.BackgroundJob.Id);
         }
         catch (Exception exception)
         {
             _logger.StartNotReported(exception, context.BackgroundJob.Id);
         }
     }
+
+    /// <summary>
+    /// The monitor key for a recurring job: its ID, with each <c>/</c> replaced by <c>-</c>, since Cronitor
+    /// doesn't accept <c>/</c> in a monitor key.
+    /// </summary>
+    private static string MonitorKeyOf(string recurringJobId) => recurringJobId.Replace('/', '-');
 
     public void OnPerformed(PerformedContext context)
     {

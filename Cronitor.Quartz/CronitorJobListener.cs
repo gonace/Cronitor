@@ -14,7 +14,8 @@ namespace Cronitor.Quartz;
 /// succeeds or fail when it throws. The job's name is used as the monitor key, unless the job
 /// chooses one with <see cref="CronitorJobBuilderExtensions.WithCronitorMonitorKey"/>.
 /// A job without a name of its own, which Quartz names with a new GUID on every start,
-/// reports under its class name instead.
+/// reports under its class name instead. Cronitor doesn't accept <c>/</c> in a monitor key,
+/// so a <c>/</c> in the job's name becomes <c>-</c>.
 /// Reporting never affects the job: Quartz waits for a listener before and after every job, and
 /// skips a job when a listener throws before it. So reports are sent in the background, without
 /// the job waiting for Cronitor, and every failure is logged instead of thrown.
@@ -161,7 +162,7 @@ public class CronitorJobListener : IJobListener
         }
 
         var name = context.JobDetail.Key.Name;
-        return IsGeneratedName(name) ? context.JobDetail.JobType.Name : name;
+        return IsGeneratedName(name) ? context.JobDetail.JobType.Name : name.Replace('/', '-');
     }
 
     /// <summary>

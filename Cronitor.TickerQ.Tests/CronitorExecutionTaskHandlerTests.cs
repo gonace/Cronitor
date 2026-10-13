@@ -29,6 +29,17 @@ public class CronitorExecutionTaskHandlerTests
     }
 
     [Fact]
+    public async Task Should_report_a_cron_job_whose_function_name_has_a_slash_to_the_key_with_the_slash_replaced_by_a_dash()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var cronJob = new InternalFunctionContext { FunctionName = "reports/daily", Type = TickerType.CronTickerOccurrence, TickerId = Guid.NewGuid() };
+
+        await Run(new CronitorExecutionTaskHandler(EndsWith(TickerStatus.Done), telemetries), cronJob, telemetries);
+
+        Assert.Equal(new[] { "run reports-daily", "complete reports-daily" }, telemetries.Sent);
+    }
+
+    [Fact]
     public async Task Should_complete_without_the_error_of_a_failed_attempt_when_a_retry_succeeds()
     {
         var telemetries = new FakeTelemetriesClient();
