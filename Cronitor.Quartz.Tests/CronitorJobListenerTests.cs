@@ -45,6 +45,26 @@ public class CronitorJobListenerTests
     }
 
     [Fact]
+    public async Task Should_report_to_the_job_class_name_when_Quartz_generated_the_job_name()
+    {
+        var telemetries = new FakeTelemetriesClient();
+
+        await RunJob(JobBuilder.Create<SucceedingJob>().Build(), telemetries);
+
+        Assert.Equal(new[] { "run SucceedingJob", "complete SucceedingJob" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public async Task Should_report_to_the_monitor_key_chosen_with_WithCronitorMonitorKey_when_Quartz_generated_the_job_name()
+    {
+        var telemetries = new FakeTelemetriesClient();
+
+        await RunJob(JobBuilder.Create<SucceedingJob>().WithCronitorMonitorKey("nightly-backup").Build(), telemetries);
+
+        Assert.Equal(new[] { "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
+    }
+
+    [Fact]
     public async Task Should_still_run_the_job_and_log_the_error_when_the_listener_fails_before_it()
     {
         var telemetries = new FakeTelemetriesClient { ThrowOnStart = true };
