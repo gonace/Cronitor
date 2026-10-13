@@ -234,6 +234,19 @@ var monitors = await CronitorClient.Monitors.CreateAsync(new CreateMonitorReques
 
 `Assertion` and `Schedule` are fluent builders, so you don't have to write raw assertion or cron strings. See the [wiki](https://github.com/gonace/Cronitor/wiki) for all operations and options.
 
+### Timezone
+A monitor's schedule is evaluated in its `Timezone`, which Cronitor expects as an IANA name such as `Europe/Berlin`. `CronitorTimezone.Of()` gives the IANA name of a `TimeZoneInfo`, also on Windows, where time zones have Windows names such as `W. Europe Standard Time`:
+```c#
+using Cronitor.Scheduling;
+
+var job = new Job("nightly-backup")
+{
+    Schedule = Schedule.Cron.Daily(hour: 3),
+    Timezone = CronitorTimezone.Of(TimeZoneInfo.Local),
+};
+```
+`Of()` throws for a time zone without an IANA name, such as a custom one; `CronitorTimezone.TryGetIanaName()` returns false instead.
+
 ## Integrations
 These packages report a scheduler's jobs to Cronitor without any reporting code in the jobs themselves. See each package's README for installation and setup.
 
@@ -243,11 +256,6 @@ These packages report a scheduler's jobs to Cronitor without any reporting code 
 | [`Cronitor.Hangfire`](Cronitor.Hangfire/README.md) | [Hangfire](https://www.hangfire.io) | every recurring job |
 | [`Cronitor.TickerQ`](Cronitor.TickerQ/README.md) | [TickerQ](https://tickerq.net) | every cron job |
 | [`Cronitor.Coravel`](Cronitor.Coravel/README.md) | [Coravel](https://docs.coravel.net) | every job scheduled with `ScheduleWithCronitor` |
-
-## Development
-### Suggestions
-* Implement Timezone constant (if not too big of a hassle to maintain)
-
 
 ## Contributing
 Pull requests and features are happily considered! By participating in this project you agree to abide by the [Code of Conduct](http://contributor-covenant.org/version/2/0).
