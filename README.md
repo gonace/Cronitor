@@ -167,7 +167,7 @@ await Host.CreateDefaultBuilder()
 ```
 * A failed pass doesn't stop the service: the exception is reported with its message and logged, and the loop continues. Without the `catch`, an exception in `ExecuteAsync` stops the whole application by default.
 * A pass interrupted by shutdown is reported as failed, since its run is disposed without being completed.
-* Cronitor only alerts when the work stops if the monitor has a schedule. Give it the loop's interval, in the Cronitor dashboard or with `Schedule.Every(5).Minutes` through [Management](#management). `PeriodicTimer` keeps passes five minutes apart from start to start, whereas `Task.Delay` waits five minutes after each pass, so the interval grows with the time the work takes.
+* Cronitor only alerts when the work stops if the monitor has a schedule. Give it the loop's interval, in the Cronitor dashboard or with `Schedule.Every(5).Minutes` through [Management](#management). `PeriodicTimer` starts a pass every five minutes, as long as each pass takes less than that; a pass that runs longer is followed by the next one right away. `Task.Delay` instead waits five minutes after each pass, so the interval grows with the time the work takes.
 
 ### Custom commands
 Use `Ping` when you need more than a message and environment, such as metrics, host or series:
