@@ -41,6 +41,27 @@ public sealed class TickerQHost : IAsyncLifetime
         _host = builder.Build();
         _host.UseTickerQ();
         await _host.StartAsync(TestContext.Current.CancellationToken);
+        await WarmUp();
+    }
+
+    /// <summary>
+    /// Waits until the host has fired a cron ticker added after it started, so the tests only begin once TickerQ picks up
+    /// new cron tickers. In CI, the first test after the host started once saw its cron job never fire; if the host
+    /// doesn't fire this one either, every test fails with TickerQ's log instead of one test failing without it.
+    /// </summary>
+    private async Task WarmUp()
+    {
+        var startedAt = DateTime.UtcNow;
+        await using (await AddCronTicker(nameof(Jobs.WarmUpJob)))
+        {
+            var limit = Task.Delay(LeadTime + TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken);
+            if (await Task.WhenAny(Jobs.WarmedUp, limit) != Jobs.WarmedUp)
+            {
+                throw new InvalidOperationException(
+                    "TickerQ did not fire a cron ticker added after the host started. Its log:" + Environment.NewLine
+                    + string.Join(Environment.NewLine, _log.Since(startedAt)));
+            }
+        }
     }
 
     public async ValueTask DisposeAsync()
