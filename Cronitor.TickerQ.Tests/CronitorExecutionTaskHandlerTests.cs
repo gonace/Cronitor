@@ -136,7 +136,7 @@ public class CronitorExecutionTaskHandlerTests
         var timeTicker = new InternalFunctionContext { FunctionName = "send-invoice", Type = TickerType.TimeTicker, TickerId = Guid.NewGuid() };
 
         await handler.ExecuteTaskAsync(timeTicker, false, TestContext.Current.CancellationToken);
-        await handler.WaitForPendingReports(Limit, TestContext.Current.CancellationToken);
+        await handler.WaitForPendingReportsAsync(Limit, TestContext.Current.CancellationToken);
 
         Assert.Equal(1, inner.Calls);
         Assert.Empty(telemetries.Sent);
@@ -151,7 +151,7 @@ public class CronitorExecutionTaskHandlerTests
         var handler = new CronitorExecutionTaskHandler(inner, telemetries, logger);
 
         await handler.ExecuteTaskAsync(CronJob(), false, TestContext.Current.CancellationToken);
-        await handler.WaitForPendingReports(Limit, TestContext.Current.CancellationToken);
+        await handler.WaitForPendingReportsAsync(Limit, TestContext.Current.CancellationToken);
 
         Assert.Equal(1, inner.Calls);
         Assert.Empty(telemetries.Sent);
@@ -168,7 +168,7 @@ public class CronitorExecutionTaskHandlerTests
         var handler = new CronitorExecutionTaskHandler(EndsWith(TickerStatus.Done), telemetries, logger);
 
         await handler.ExecuteTaskAsync(CronJob(), false, TestContext.Current.CancellationToken);
-        await handler.WaitForPendingReports(Limit, TestContext.Current.CancellationToken);
+        await handler.WaitForPendingReportsAsync(Limit, TestContext.Current.CancellationToken);
 
         Assert.Equal(new[] { "run nightly-backup" }, telemetries.Sent);
         var entry = Assert.Single(logger.Entries);
@@ -187,7 +187,7 @@ public class CronitorExecutionTaskHandlerTests
         var finishedWhileStartWasHeld = await FinishesWithin(handler.ExecuteTaskAsync(CronJob(), false, TestContext.Current.CancellationToken), TimeSpan.FromSeconds(5));
         var sentWhileStartWasHeld = telemetries.Sent.ToArray();
         startGate.SetResult(true);
-        await handler.WaitForPendingReports(Limit, TestContext.Current.CancellationToken);
+        await handler.WaitForPendingReportsAsync(Limit, TestContext.Current.CancellationToken);
 
         Assert.True(finishedWhileStartWasHeld, "The handler made the job wait for the start report.");
         Assert.Equal(1, inner.Calls);
@@ -204,7 +204,7 @@ public class CronitorExecutionTaskHandlerTests
 
         var finishedWhileEndWasHeld = await FinishesWithin(handler.ExecuteTaskAsync(CronJob(), false, TestContext.Current.CancellationToken), TimeSpan.FromSeconds(5));
         finishGate.SetResult(true);
-        await handler.WaitForPendingReports(Limit, TestContext.Current.CancellationToken);
+        await handler.WaitForPendingReportsAsync(Limit, TestContext.Current.CancellationToken);
 
         Assert.True(finishedWhileEndWasHeld, "The handler made the job wait for the end report.");
         Assert.Equal(new[] { "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
@@ -223,7 +223,7 @@ public class CronitorExecutionTaskHandlerTests
 
         var execution = handler.ExecuteTaskAsync(CronJob(), false, TestContext.Current.CancellationToken);
         _ = Task.Delay(TimeSpan.FromMilliseconds(300), TestContext.Current.CancellationToken).ContinueWith(_ => jobGate.SetResult(true), TaskScheduler.Default);
-        await handler.WaitForPendingReports(Limit, TestContext.Current.CancellationToken);
+        await handler.WaitForPendingReportsAsync(Limit, TestContext.Current.CancellationToken);
         var sentAfterWaiting = telemetries.Sent.ToArray();
         await execution;
 
@@ -239,7 +239,7 @@ public class CronitorExecutionTaskHandlerTests
         var handler = new CronitorExecutionTaskHandler(EndsWith(TickerStatus.Done), telemetries, logger);
         await handler.ExecuteTaskAsync(CronJob(), false, TestContext.Current.CancellationToken);
 
-        var waiting = handler.WaitForPendingReports(TimeSpan.FromMilliseconds(200), TestContext.Current.CancellationToken);
+        var waiting = handler.WaitForPendingReportsAsync(TimeSpan.FromMilliseconds(200), TestContext.Current.CancellationToken);
         // 200 ms requested; a second allows for a slow test host but fails a wait that ignores the limit.
         var stoppedWithinLimit = await FinishesWithin(waiting, TimeSpan.FromSeconds(1));
         var sentWhenStopped = telemetries.Sent.ToArray();

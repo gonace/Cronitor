@@ -50,7 +50,7 @@ public class CronitorJobFilter : IServerFilter
                 return;
             }
 
-            context.Items[StartKey] = ReportStart(MonitorKeyOf(recurringJobId), context.BackgroundJob.Id);
+            context.Items[StartKey] = ReportStartAsync(MonitorKeyOf(recurringJobId), context.BackgroundJob.Id);
         }
         catch (Exception exception)
         {
@@ -69,7 +69,7 @@ public class CronitorJobFilter : IServerFilter
         try
         {
             if (context.Items.TryGetValue(StartKey, out var value) && value is Task<ITelemetryRun> start
-                && !ReportEnd(start, FailureOf(context), context.BackgroundJob.Id).Wait(_endReportLimit))
+                && !ReportEndAsync(start, FailureOf(context), context.BackgroundJob.Id).Wait(_endReportLimit))
             {
                 _logger.EndReportStillPending(context.BackgroundJob.Id);
             }
@@ -108,7 +108,7 @@ public class CronitorJobFilter : IServerFilter
     /// <summary>
     /// Sends the run event. The returned task completes with the run, or with null if it could not be reported.
     /// </summary>
-    private async Task<ITelemetryRun> ReportStart(string monitorKey, string jobId)
+    private async Task<ITelemetryRun> ReportStartAsync(string monitorKey, string jobId)
     {
         try
         {
@@ -124,7 +124,7 @@ public class CronitorJobFilter : IServerFilter
     /// <summary>
     /// Sends complete, or fail with the failure, once the run event has been sent, so Cronitor always receives them in order.
     /// </summary>
-    private async Task ReportEnd(Task<ITelemetryRun> start, string failure, string jobId)
+    private async Task ReportEndAsync(Task<ITelemetryRun> start, string failure, string jobId)
     {
         try
         {

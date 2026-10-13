@@ -26,7 +26,7 @@ internal sealed class CronitorShutdownService : IHostedLifecycleService
         _limit = limit;
     }
 
-    public Task StoppedAsync(CancellationToken cancellationToken) => _handler.WaitForPendingReports(_limit, cancellationToken);
+    public Task StoppedAsync(CancellationToken cancellationToken) => _handler.WaitForPendingReportsAsync(_limit, cancellationToken);
 
     public Task StartingAsync(CancellationToken cancellationToken) => Task.CompletedTask;
 

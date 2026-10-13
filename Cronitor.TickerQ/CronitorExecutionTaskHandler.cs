@@ -42,12 +42,12 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
             return _inner.ExecuteTaskAsync(context, isDue, cancellationToken);
         }
 
-        var start = ReportStart(context);
-        var execution = Execute(context, isDue, cancellationToken);
+        var start = ReportStartAsync(context);
+        var execution = ExecuteAsync(context, isDue, cancellationToken);
 
         // Tracked from the start: TickerQ cancels running jobs when the application stops without waiting for them,
         // so a job may only end after the application has begun waiting for the reports.
-        Track(ReportEnd(start, execution, context));
+        Track(ReportEndAsync(start, execution, context));
 
         return execution;
     }
@@ -56,7 +56,7 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
     /// Waits for the jobs still running and the reports still being sent, at most for the given time, so they are
     /// not lost when the application stops. <see cref="CronitorShutdownService"/> calls it once TickerQ has stopped.
     /// </summary>
-    internal async Task WaitForPendingReports(TimeSpan limit, CancellationToken cancellationToken)
+    internal async Task WaitForPendingReportsAsync(TimeSpan limit, CancellationToken cancellationToken)
     {
         var pending = _pendingReports.Keys.ToArray();
         if (pending.Length == 0)
@@ -75,7 +75,7 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
     /// Runs TickerQ's own handler, turning an exception it throws before returning a task into a faulted task,
     /// so the end of the run is still reported and the exception still reaches TickerQ when it awaits the job.
     /// </summary>
-    private Task Execute(InternalFunctionContext context, bool isDue, CancellationToken cancellationToken)
+    private Task ExecuteAsync(InternalFunctionContext context, bool isDue, CancellationToken cancellationToken)
     {
         try
         {
@@ -96,7 +96,7 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
     /// <summary>
     /// Sends the run event. The returned task completes with the run, or with null if it could not be reported.
     /// </summary>
-    private async Task<ITelemetryRun> ReportStart(InternalFunctionContext context)
+    private async Task<ITelemetryRun> ReportStartAsync(InternalFunctionContext context)
     {
         try
         {
@@ -118,11 +118,11 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
     /// <summary>
     /// Sends complete or fail once the job has ended and the run event has been sent, so Cronitor always receives them in order.
     /// </summary>
-    private async Task ReportEnd(Task<ITelemetryRun> start, Task execution, InternalFunctionContext context)
+    private async Task ReportEndAsync(Task<ITelemetryRun> start, Task execution, InternalFunctionContext context)
     {
         try
         {
-            var crash = await CrashOf(execution).ConfigureAwait(false);
+            var crash = await CrashOfAsync(execution).ConfigureAwait(false);
             using (var run = await start.ConfigureAwait(false))
             {
                 if (run == null)
@@ -130,7 +130,7 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
                     return;
                 }
 
-                await (crash == null ? SendEnd(run, context) : run.FailAsync(crash)).ConfigureAwait(false);
+                await (crash == null ? SendEndAsync(run, context) : run.FailAsync(crash)).ConfigureAwait(false);
             }
         }
         catch (Exception exception)
@@ -143,7 +143,7 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
     /// The message of the exception TickerQ's own handler threw, or null if it returned. It does not throw when a job
     /// fails, so this only covers a fault in TickerQ itself.
     /// </summary>
-    private static async Task<string> CrashOf(Task execution)
+    private static async Task<string> CrashOfAsync(Task execution)
     {
         try
         {
@@ -164,7 +164,7 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
     /// Reports the status TickerQ ended the job with. A job that skips itself, by throwing TickerQ's
     /// <c>TerminateExecutionException</c>, ended on purpose, so it completes with its reason.
     /// </summary>
-    private static Task<bool> SendEnd(ITelemetryRun run, InternalFunctionContext context) => context.Status switch
+    private static Task<bool> SendEndAsync(ITelemetryRun run, InternalFunctionContext context) => context.Status switch
     {
         TickerStatus.Done or TickerStatus.DueDone => run.CompleteAsync(),
         TickerStatus.Skipped => run.CompleteAsync(context.ExceptionDetails),
