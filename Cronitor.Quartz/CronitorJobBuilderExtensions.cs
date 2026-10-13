@@ -27,7 +27,7 @@ public static class CronitorJobBuilderExtensions
             throw new ArgumentException("A monitor key is required.", nameof(monitorKey));
         }
 
-        if (monitorKey.Contains("/"))
+        if (monitorKey.IndexOf('/') >= 0)
         {
             throw new ArgumentException($"Cronitor doesn't accept '/' in a monitor key: '{monitorKey}'.", nameof(monitorKey));
         }
