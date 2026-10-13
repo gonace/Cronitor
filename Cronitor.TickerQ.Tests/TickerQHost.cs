@@ -6,6 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using TickerQ.DependencyInjection;
 using TickerQ.Utilities.Entities;
+using TickerQ.Utilities.Interfaces;
 using TickerQ.Utilities.Interfaces.Managers;
 using Xunit;
 
@@ -92,8 +93,13 @@ public sealed class TickerQHost : IAsyncLifetime
         var cronTicker = new CronTickerEntity { Function = function, Expression = $"{second} * * * * *", Retries = retries, RetryIntervals = [1] };
 
         var result = await cronTickers.AddAsync(cronTicker, TestContext.Current.CancellationToken);
-
         Assert.True(result.IsSucceeded, $"TickerQ refused the cron ticker for {function}.");
+
+        // TickerQ only wakes its scheduler for a new cron ticker if the scheduler has planned something later. During
+        // the scheduler's first pass after the host started, it hasn't planned anything yet, so it misses a cron ticker
+        // added then and sleeps for a day. Waking it explicitly makes it read the cron tickers again.
+        _host.Services.GetRequiredService<ITickerQHostScheduler>().Restart();
+
         return new CronTickerRemoval(cronTickers, cronTicker.Id, () => WriteLogSince(addedAt, $"TickerQ's log since the cron ticker for {function} was added at second {second}:"));
     }
 
