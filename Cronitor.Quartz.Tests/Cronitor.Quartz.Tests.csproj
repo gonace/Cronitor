@@ -1,5 +1,15 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!-- Tests the Quartz major Cronitor.Quartz is built for; like there, only the QuartzN folder of that major is compiled. -->
+  <PropertyGroup>
+    <QuartzMajor Condition="'$(QuartzMajor)' == ''">3</QuartzMajor>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Quartz*\**" />
+    <Compile Include="Quartz$(QuartzMajor)\**\*.cs" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFrameworks>net10.0;net9.0;net8.0;net48</TargetFrameworks>
     <IsPackable>false</IsPackable>
