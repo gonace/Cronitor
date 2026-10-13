@@ -61,6 +61,16 @@ public class CronitorJobFilterTests
     }
 
     [Fact]
+    public async Task Should_report_a_recurring_job_whose_ID_has_a_slash_to_the_key_with_the_slash_replaced_by_a_dash()
+    {
+        var telemetries = new FakeTelemetriesClient();
+
+        await RunRecurringJob("reports/daily", () => TestJobs.Succeed(), new CronitorJobFilter(telemetries));
+
+        Assert.Equal(new[] { "run reports-daily", "complete reports-daily" }, telemetries.Sent);
+    }
+
+    [Fact]
     public async Task Should_not_report_a_job_that_is_not_recurring()
     {
         var telemetries = new FakeTelemetriesClient();
