@@ -12,7 +12,7 @@ namespace Cronitor.Quartz;
 /// <summary>
 /// Reports every job Quartz runs to Cronitor: run when the job starts, then complete when it
 /// succeeds or fail when it throws. The job's name is used as the monitor key, unless the job
-/// chooses one with <see cref="CronitorJobBuilderExtensions.WithCronitorMonitorKey"/>.
+/// chooses one with <c>WithCronitorMonitorKey</c>.
 /// A job without a name of its own, which Quartz names with a new GUID on every start,
 /// reports under its class name instead. Cronitor doesn't accept <c>/</c> in a monitor key,
 /// so a <c>/</c> in the job's name becomes <c>-</c>.
@@ -169,7 +169,7 @@ public partial class CronitorJobListener
     /// Whether Quartz made up the job's name. A job built without an identity gets a new GUID as its name on every
     /// start, which would report to a new monitor each time, so its class name is used instead. Quartz records nothing
     /// that tells a generated name from one set to a GUID on purpose, so every GUID name counts as generated; such a
-    /// job keeps a monitor of its own with <see cref="CronitorJobBuilderExtensions.WithCronitorMonitorKey"/>.
+    /// job keeps a monitor of its own with <c>WithCronitorMonitorKey</c>.
     /// </summary>
     private static bool IsGeneratedName(string name) => Guid.TryParseExact(name, "D", out _);
 }

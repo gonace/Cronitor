@@ -1,15 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <!--
-    The code that is the same for every Quartz major lives in this folder; the code that uses an API that differs
-    between majors lives in a QuartzN folder, and only the folder of the major being built is compiled.
+    Quartz 4 changed the API this package builds on, so this project builds one package per Quartz major from the
+    same source: pass -p:QuartzMajor=4 to build for Quartz 4. Each major is published as its own version line of
+    Cronitor.Quartz, with major and minor following the lowest Quartz version it supports. The code that is the same
+    for every Quartz major lives in this folder; the code that uses an API that differs between majors lives in a
+    QuartzN folder, and only the folder of the major being built is compiled.
   -->
   <PropertyGroup>
     <QuartzMajor Condition="'$(QuartzMajor)' == ''">3</QuartzMajor>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(QuartzMajor)' == '3'">
+    <TargetFrameworks>net10.0;net9.0;net8.0;netstandard2.0</TargetFrameworks>
+    <QuartzMinimumVersion>3.22.4</QuartzMinimumVersion>
+  </PropertyGroup>
+
+  <!-- Every Quartz 4 release targets .NET 10 only. -->
+  <PropertyGroup Condition="'$(QuartzMajor)' == '4'">
+    <TargetFrameworks>net10.0</TargetFrameworks>
+    <QuartzMinimumVersion>4.0.0</QuartzMinimumVersion>
+  </PropertyGroup>
+
   <Target Name="ValidateQuartzMajor" BeforeTargets="Restore;CollectPackageReferences;Build">
-    <Error Condition="'$(QuartzMajor)' != '3'" Text="QuartzMajor must be 3, not '$(QuartzMajor)'." />
+    <Error Condition="'$(QuartzMinimumVersion)' == ''" Text="QuartzMajor must be 3 or 4, not '$(QuartzMajor)'." />
   </Target>
 
   <ItemGroup>
@@ -18,7 +32,6 @@
   </ItemGroup>
 
   <PropertyGroup>
-    <TargetFrameworks>net10.0;net9.0;net8.0;netstandard2.0</TargetFrameworks>
     <RootNamespace>Cronitor.Quartz</RootNamespace>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <NoWarn>$(NoWarn);1591</NoWarn>
@@ -27,8 +40,8 @@
 
   <PropertyGroup>
     <PackageId>Cronitor.Quartz</PackageId>
-    <!-- Major and minor follow the lowest Quartz version this package supports, see the Quartz references below. -->
-    <Version Condition="'$(ReleaseRun)' != ''">3.22.$(ReleaseRun)</Version>
+    <!-- Major and minor follow the lowest Quartz version this package supports, see QuartzMinimumVersion above. -->
+    <Version Condition="'$(ReleaseRun)' != '' And '$(QuartzMinimumVersion)' != ''">$([System.Version]::Parse($(QuartzMinimumVersion)).ToString(2)).$(ReleaseRun)</Version>
     <Description>Reports every Quartz.NET job to Cronitor: run when it starts, complete when it succeeds and fail when it throws.</Description>
     <PackageTags>cronitor;quartz;quartz.net;monitoring;cron;scheduler;jobs</PackageTags>
     <PackageReadmeFile>README.md</PackageReadmeFile>
@@ -42,9 +55,14 @@
     <InternalsVisibleTo Include="Cronitor.Quartz.Tests" />
   </ItemGroup>
 
-  <ItemGroup>
+  <ItemGroup Condition="'$(QuartzMajor)' == '3'">
     <PackageReference Include="Quartz" Version="[3.22.4,4.0)" />
     <PackageReference Include="Quartz.Extensions.DependencyInjection" Version="[3.22.4,4.0)" />
+  </ItemGroup>
+
+  <!-- In Quartz 4 the dependency injection support is part of the Quartz package itself. -->
+  <ItemGroup Condition="'$(QuartzMajor)' == '4'">
+    <PackageReference Include="Quartz" Version="[4.0.0,5.0)" />
   </ItemGroup>
 
   <ItemGroup>
