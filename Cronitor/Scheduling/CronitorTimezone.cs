@@ -1,8 +1,6 @@
 using System;
-#if !NET6_0_OR_GREATER
 using System.Linq;
 using TimeZoneConverter;
-#endif
 
 namespace Cronitor.Scheduling;
 
@@ -58,14 +56,22 @@ public static class CronitorTimezone
         return false;
     }
 
+    // .NET 6 and later convert with ICU, which a Windows app without it (invariant globalization or NLS mode) doesn't
+    // have, so TimeZoneConverter's copy of the Unicode CLDR mapping is the fallback there, and the only conversion on
+    // .NET Standard.
+    private static bool IsIanaName(string id) =>
 #if NET6_0_OR_GREATER
-    private static bool IsIanaName(string id) => TimeZoneInfo.TryConvertIanaIdToWindowsId(id, out _);
-
-    private static bool TryConvertWindowsName(string id, out string ianaName) => TimeZoneInfo.TryConvertWindowsIdToIanaId(id, out ianaName);
-#else
-    // .NET Standard has no conversion of its own, so TimeZoneConverter's copy of the Unicode CLDR mapping is used.
-    private static bool IsIanaName(string id) => TZConvert.KnownIanaTimeZoneNames.Contains(id, StringComparer.Ordinal);
-
-    private static bool TryConvertWindowsName(string id, out string ianaName) => TZConvert.TryWindowsToIana(id, out ianaName);
+        TimeZoneInfo.TryConvertIanaIdToWindowsId(id, out _) ||
 #endif
+        IsIanaNameInMapping(id);
+
+    private static bool TryConvertWindowsName(string id, out string ianaName) =>
+#if NET6_0_OR_GREATER
+        TimeZoneInfo.TryConvertWindowsIdToIanaId(id, out ianaName) ||
+#endif
+        TryConvertWindowsNameWithMapping(id, out ianaName);
+
+    internal static bool IsIanaNameInMapping(string id) => TZConvert.KnownIanaTimeZoneNames.Contains(id, StringComparer.Ordinal);
+
+    internal static bool TryConvertWindowsNameWithMapping(string id, out string ianaName) => TZConvert.TryWindowsToIana(id, out ianaName);
 }

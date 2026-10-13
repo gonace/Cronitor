@@ -28,14 +28,17 @@
   </ItemGroup>
 
   <!--
-    System.Text.Json is part of .NET itself since .NET Core 3.0; 8.0.0 to 8.0.4 have known vulnerabilities.
-    TimeZoneConverter converts Windows time zone names to IANA names, which .NET does itself since .NET 6. It is mostly
-    data, a copy of the Unicode CLDR mapping, so its minimum is a recent version rather than the lowest that compiles:
-    older versions don't know newer time zones.
+    TimeZoneConverter converts Windows time zone names to IANA names: on .NET Standard, which can't, and on .NET 6 and
+    later when .NET can't either, in a Windows app without ICU. It is mostly data, a copy of the Unicode CLDR mapping,
+    so its minimum is a recent version rather than the lowest that compiles: older versions don't know newer time zones.
   -->
+  <ItemGroup>
+    <PackageReference Include="TimeZoneConverter" Version="7.2.0" />
+  </ItemGroup>
+
+  <!-- System.Text.Json is part of .NET itself since .NET Core 3.0; 8.0.0 to 8.0.4 have known vulnerabilities. -->
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0'">
     <PackageReference Include="System.Text.Json" Version="8.0.5" />
-    <PackageReference Include="TimeZoneConverter" Version="7.2.0" />
   </ItemGroup>
 
 </Project>

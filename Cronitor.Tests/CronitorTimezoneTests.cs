@@ -55,6 +55,26 @@ public class CronitorTimezoneTests
         Assert.Contains("Office hours", exception.Message);
     }
 
+    /// <summary>
+    /// The fallback for a Windows app without ICU, where .NET's own conversion fails.
+    /// </summary>
+    [Fact]
+    public void Should_convert_a_Windows_name_with_the_mapping_alone()
+    {
+        var converted = CronitorTimezone.TryConvertWindowsNameWithMapping("W. Europe Standard Time", out var ianaName);
+
+        Assert.True(converted);
+        Assert.Equal("Europe/Berlin", ianaName);
+    }
+
+    [Fact]
+    public void Should_recognise_an_IANA_name_with_the_mapping_alone()
+    {
+        var recognised = CronitorTimezone.IsIanaNameInMapping("Europe/Stockholm");
+
+        Assert.True(recognised);
+    }
+
     [Fact]
     public void Should_throw_when_the_time_zone_is_null()
     {
