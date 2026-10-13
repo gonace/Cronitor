@@ -1,6 +1,7 @@
 using Cronitor.Commands;
 using Cronitor.Internals;
 using Microsoft.Extensions.Logging;
+using System;
 using System.Threading.Tasks;
 
 namespace Cronitor;
@@ -9,6 +10,7 @@ namespace Cronitor;
 /// The former name of <see cref="CronitorClient"/>, to which every member forwards. It shares its name with the
 /// namespace <c>Cronitor</c>, so outside the library it can only be called as <c>Cronitor.Cronitor</c>.
 /// </summary>
+[Obsolete("Use CronitorClient, which has the same members. Cronitor shares its name with the namespace Cronitor, so it can only be called as Cronitor.Cronitor.")]
 public static class Cronitor
 {
     /// <inheritdoc cref="CronitorClient.Configure(string)"/>
