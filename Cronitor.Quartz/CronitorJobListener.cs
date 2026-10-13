@@ -20,12 +20,15 @@ namespace Cronitor.Quartz;
 /// skips a job when a listener throws before it. So reports are sent in the background, without
 /// the job waiting for Cronitor, and every failure is logged instead of thrown.
 /// </summary>
-public class CronitorJobListener : IJobListener
+/// <remarks>
+/// This part is the same for every Quartz major; the methods Quartz calls, whose signatures differ between
+/// majors, are in the <c>Quartz3</c> and <c>Quartz4</c> folders.
+/// </remarks>
+public partial class CronitorJobListener
 {
-    private const string StartKey = "Cronitor.Start";
-
     private readonly ITelemetriesClient _telemetries;
     private readonly ILogger<CronitorJobListener> _logger;
+    private readonly ConcurrentDictionary<string, Task<ITelemetryRun>> _starts = new ConcurrentDictionary<string, Task<ITelemetryRun>>();
     private readonly ConcurrentDictionary<Task, bool> _pendingReports = new ConcurrentDictionary<Task, bool>();
 
     public CronitorJobListener(ITelemetriesClient telemetries, ILogger<CronitorJobListener> logger = null)
@@ -35,39 +38,6 @@ public class CronitorJobListener : IJobListener
     }
 
     public string Name => "Cronitor";
-
-    public Task JobToBeExecuted(IJobExecutionContext context, CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            context.Put(StartKey, ReportStart(context));
-        }
-        catch (Exception exception)
-        {
-            _logger.StartNotReported(exception, context.JobDetail.Key);
-        }
-
-        return Task.CompletedTask;
-    }
-
-    public Task JobExecutionVetoed(IJobExecutionContext context, CancellationToken cancellationToken = default) => Task.CompletedTask;
-
-    public Task JobWasExecuted(IJobExecutionContext context, JobExecutionException jobException, CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            if (context.Get(StartKey) is Task<ITelemetryRun> start)
-            {
-                Track(ReportEnd(start, FailureOf(context, jobException), context.JobDetail.Key));
-            }
-        }
-        catch (Exception exception)
-        {
-            _logger.EndNotReported(exception, context.JobDetail.Key);
-        }
-
-        return Task.CompletedTask;
-    }
 
     /// <summary>
     /// Waits for the end reports still being sent, at most for the given time, so they are not lost when the
@@ -85,6 +55,36 @@ public class CronitorJobListener : IJobListener
         if (await Task.WhenAny(sent, Task.Delay(limit, cancellationToken)).ConfigureAwait(false) != sent)
         {
             _logger.ReportsPendingAtShutdown(_pendingReports.Count);
+        }
+    }
+
+    /// <summary>
+    /// Starts reporting the run, keyed by the run's fire instance, so the end can be reported after the job.
+    /// </summary>
+    private void OnJobToBeExecuted(IJobExecutionContext context)
+    {
+        try
+        {
+            _starts[context.FireInstanceId] = ReportStart(context);
+        }
+        catch (Exception exception)
+        {
+            _logger.StartNotReported(exception, context.JobDetail.Key);
+        }
+    }
+
+    private void OnJobWasExecuted(IJobExecutionContext context, JobExecutionException jobException)
+    {
+        try
+        {
+            if (_starts.TryRemove(context.FireInstanceId, out var start))
+            {
+                Track(ReportEnd(start, FailureOf(context, jobException), context.JobDetail.Key));
+            }
+        }
+        catch (Exception exception)
+        {
+            _logger.EndNotReported(exception, context.JobDetail.Key);
         }
     }
 
@@ -156,13 +156,13 @@ public class CronitorJobListener : IJobListener
 
     private static string MonitorKeyOf(IJobExecutionContext context)
     {
-        if (context.MergedJobDataMap.TryGetString(CronitorJobBuilderExtensions.MonitorKey, out var monitorKey) && !string.IsNullOrWhiteSpace(monitorKey))
+        if (context.MergedJobDataMap.TryGetValue(CronitorJobBuilderExtensions.MonitorKey, out var value) && value is string monitorKey && !string.IsNullOrWhiteSpace(monitorKey))
         {
             return monitorKey;
         }
 
         var name = context.JobDetail.Key.Name;
-        return IsGeneratedName(name) ? context.JobDetail.JobType.Name : name.Replace('/', '-');
+        return IsGeneratedName(name) ? ClassNameOf(context.JobDetail) : name.Replace('/', '-');
     }
 
     /// <summary>

@@ -3,7 +3,11 @@ using System;
 
 namespace Cronitor.Quartz;
 
-public static class CronitorJobBuilderExtensions
+/// <remarks>
+/// This part is the same for every Quartz major; <c>WithCronitorMonitorKey</c>, whose job configurator type differs
+/// between majors, is in the <c>Quartz3</c> and <c>Quartz4</c> folders.
+/// </remarks>
+public static partial class CronitorJobBuilderExtensions
 {
     /// <summary>
     /// The <see cref="JobDataMap"/> key holding the Cronitor monitor key a job reports to.
@@ -11,17 +15,10 @@ public static class CronitorJobBuilderExtensions
     public const string MonitorKey = "Cronitor.MonitorKey";
 
     /// <summary>
-    /// Reports this job to the Cronitor monitor with the given key, instead of the job's name.
-    /// Works on a <see cref="JobBuilder"/> and on the <see cref="IJobConfigurator"/> of <c>AddJob</c> and <c>ScheduleJob</c>.
-    /// The key can't contain <c>/</c>, which Cronitor doesn't accept in a monitor key.
+    /// Throws unless the key can be used as given: it must not be blank, and Cronitor doesn't accept <c>/</c> in a monitor key.
     /// </summary>
-    public static TJob WithCronitorMonitorKey<TJob>(this TJob job, string monitorKey) where TJob : IJobConfigurator
+    private static void ValidateMonitorKey(string monitorKey)
     {
-        if (job == null)
-        {
-            throw new ArgumentNullException(nameof(job));
-        }
-
         if (string.IsNullOrWhiteSpace(monitorKey))
         {
             throw new ArgumentException("A monitor key is required.", nameof(monitorKey));
@@ -31,9 +28,5 @@ public static class CronitorJobBuilderExtensions
         {
             throw new ArgumentException($"Cronitor doesn't accept '/' in a monitor key: '{monitorKey}'.", nameof(monitorKey));
         }
-
-        job.UsingJobData(MonitorKey, monitorKey);
-
-        return job;
     }
 }

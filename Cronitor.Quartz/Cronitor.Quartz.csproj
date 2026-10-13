@@ -1,5 +1,22 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <!--
+    The code that is the same for every Quartz major lives in this folder; the code that uses an API that differs
+    between majors lives in a QuartzN folder, and only the folder of the major being built is compiled.
+  -->
+  <PropertyGroup>
+    <QuartzMajor Condition="'$(QuartzMajor)' == ''">3</QuartzMajor>
+  </PropertyGroup>
+
+  <Target Name="ValidateQuartzMajor" BeforeTargets="Restore;CollectPackageReferences;Build">
+    <Error Condition="'$(QuartzMajor)' != '3'" Text="QuartzMajor must be 3, not '$(QuartzMajor)'." />
+  </Target>
+
+  <ItemGroup>
+    <Compile Remove="Quartz*\**" />
+    <Compile Include="Quartz$(QuartzMajor)\**\*.cs" />
+  </ItemGroup>
+
   <PropertyGroup>
     <TargetFrameworks>net10.0;net9.0;net8.0;netstandard2.0</TargetFrameworks>
     <RootNamespace>Cronitor.Quartz</RootNamespace>
