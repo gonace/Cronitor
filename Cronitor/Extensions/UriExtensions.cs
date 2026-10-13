@@ -5,13 +5,18 @@ namespace Cronitor.Extensions;
 
 public static class UriExtensions
 {
+    /// <summary>
+    /// Replaces each placeholder in the uri, such as <c>:key</c>, with its value. Every value is escaped, so a value
+    /// containing <c>?</c>, <c>#</c> or <c>/</c> stays a single path segment instead of starting a query, a fragment
+    /// or another segment.
+    /// </summary>
     public static Uri Build(this Uri uri, IDictionary<string, string> dictionary)
     {
         var address = uri.ToString();
 
         foreach (var kv in dictionary)
         {
-            address = address.Replace(kv.Key, kv.Value);
+            address = address.Replace(kv.Key, Uri.EscapeDataString(kv.Value));
         }
 
         return new Uri(address);

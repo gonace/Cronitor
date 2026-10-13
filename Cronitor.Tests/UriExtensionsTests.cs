@@ -23,6 +23,23 @@ public class UriExtensionsTests
         Assert.Equal(expected, actual);
     }
 
+    [Theory]
+    [InlineData("a?b", "a%3Fb")]
+    [InlineData("a#b", "a%23b")]
+    [InlineData("a b", "a%20b")]
+    [InlineData("a%b", "a%25b")]
+    [InlineData("a/b", "a%2Fb")]
+    [InlineData("åäö", "%C3%A5%C3%A4%C3%B6")]
+    public void Should_escape_the_values_so_each_stays_one_path_segment(string value, string escaped)
+    {
+        var uri = new Uri("https://cronitor.link/p/:key/run");
+        var dictionary = new Dictionary<string, string> { { ":key", value } };
+
+        var actual = uri.Build(dictionary).AbsoluteUri;
+
+        Assert.Equal($"https://cronitor.link/p/{escaped}/run", actual);
+    }
+
     [Fact]
     public void Should_add_a_query_string()
     {
