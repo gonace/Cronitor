@@ -284,7 +284,10 @@ public class Monitor
 
     public Monitor With(Expression<Func<Monitor, object>> expression, object value)
     {
-        if (expression.Body is MemberExpression memberSelectorExpression)
+        // A value-type property such as GraceSeconds is boxed to object, which wraps the member in a Convert.
+        var body = expression.Body is UnaryExpression { NodeType: ExpressionType.Convert } conversion ? conversion.Operand : expression.Body;
+
+        if (body is MemberExpression memberSelectorExpression)
         {
             var property = memberSelectorExpression.Member as PropertyInfo;
 
