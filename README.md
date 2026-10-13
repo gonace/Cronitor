@@ -1,4 +1,4 @@
-# Cronitor API Client
+# <img src="https://raw.githubusercontent.com/gonace/Cronitor/master/assets/icon.png" width="32" alt=""> Cronitor API Client
 Cronitor is a service for heartbeat-style monitoring of anything that can send an HTTP request. It's particularly well suited for monitoring cron jobs, Jenkins jobs, or any other scheduled task.
 
 ![Nuget](https://img.shields.io/nuget/v/Cronitor)
