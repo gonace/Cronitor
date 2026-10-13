@@ -36,6 +36,25 @@ public class UpdateMonitorRequestTests
         Assert.Equal(expected, actual);
     }
 
+    /// <summary>
+    /// Cronitor keeps the fields a PUT doesn't send, so an update that sends grace_seconds without it being set would
+    /// reset the monitor's grace period to zero.
+    /// </summary>
+    [Fact]
+    public async Task Should_not_send_grace_seconds_when_it_is_not_set()
+    {
+        var monitor = new Monitor("nightly-backup-job")
+            .With(x => x.Schedule, Schedule.Cron.Daily());
+        var request = new UpdateMonitorRequest(monitor);
+
+#if NET8_0_OR_GREATER
+        var actual = await request.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+#else
+        var actual = await request.Content.ReadAsStringAsync();
+#endif
+        Assert.Equal("""{"monitors":[{"key":"nightly-backup-job","schedules":["0 0 * * *"]}]}""", actual);
+    }
+
     [Fact]
     public void Should_set_Endpoint()
     {

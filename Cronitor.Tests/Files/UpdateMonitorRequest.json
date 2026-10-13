@@ -1,1 +1,1 @@
-{"monitors":[{"key":"nightly-backup-job","assertions":["metric.duration < 15min"],"grace_seconds":0,"note":"note","notify":["default"],"platform":"linux","schedules":["0 0 * * *"],"tags":["nightly"],"timezone":"Europe/Stockholm","type":"job"}]}
+{"monitors":[{"key":"nightly-backup-job","assertions":["metric.duration < 15min"],"note":"note","notify":["default"],"platform":"linux","schedules":["0 0 * * *"],"tags":["nightly"],"timezone":"Europe/Stockholm","type":"job"}]}

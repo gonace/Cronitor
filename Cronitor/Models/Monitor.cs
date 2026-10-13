@@ -51,7 +51,7 @@ public class Monitor
     /// If the monitor recovers during the grace period, no alert will be sent.
     /// </summary>
     [JsonPropertyName("grace_seconds")]
-    public int GraceSeconds { get; set; }
+    public int? GraceSeconds { get; set; }
     /// <summary>
     /// Groups are user-defined collections of monitors, which are used to group monitors in the Cronitor application.
     /// Each group has a unique URL with the format https://cronitor.io/app/groups/:groupKey
