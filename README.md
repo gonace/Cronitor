@@ -120,6 +120,55 @@ public class SomeJob
 }
 ```
 
+### BackgroundService
+A `BackgroundService` usually repeats its work in a loop. Report each pass through the loop as a run of its own:
+```c#
+public class CleanupService : BackgroundService
+{
+    private readonly ITelemetriesClient _telemetries;
+    private readonly ILogger<CleanupService> _logger;
+
+    public CleanupService(ITelemetriesClient telemetries, ILogger<CleanupService> logger)
+    {
+        _telemetries = telemetries;
+        _logger = logger;
+    }
+
+    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    {
+        using var timer = new PeriodicTimer(TimeSpan.FromMinutes(5));
+        do
+        {
+            using (var run = await _telemetries.StartAsync("cleanup"))
+            {
+                try
+                {
+                    // ... do the work
+                    await run.CompleteAsync();
+                }
+                catch (Exception exception) when (!stoppingToken.IsCancellationRequested)
+                {
+                    await run.FailAsync(exception.Message);
+                    _logger.LogError(exception, "Cleanup failed");
+                }
+            }
+        }
+        while (await timer.WaitForNextTickAsync(stoppingToken));
+    }
+}
+```
+Register it next to Cronitor:
+```c#
+await Host.CreateDefaultBuilder()
+    .ConfigureCronitor((context) => context.Configuration.GetValue<string>("Cronitor:ApiKey"))
+    .ConfigureServices(services => services.AddHostedService<CleanupService>())
+    .Build()
+    .RunAsync();
+```
+* A failed pass doesn't stop the service: the exception is reported with its message and logged, and the loop continues. Without the `catch`, an exception in `ExecuteAsync` stops the whole application by default.
+* A pass interrupted by shutdown is reported as failed, since its run is disposed without being completed.
+* Cronitor only alerts when the work stops if the monitor has a schedule. Give it the loop's interval, in the Cronitor dashboard or with `Schedule.Every(5).Minutes` through [Management](#management). `PeriodicTimer` starts a pass every five minutes, as long as each pass takes less than that; a pass that runs longer is followed by the next one right away. `Task.Delay` instead waits five minutes after each pass, so the interval grows with the time the work takes.
+
 ### Custom commands
 Use `Ping` when you need more than a message and environment, such as metrics, host or series:
 ```c#
