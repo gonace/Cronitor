@@ -240,6 +240,7 @@ These packages report a scheduler's jobs to Cronitor without any reporting code 
 | [`Cronitor.Quartz`](Cronitor.Quartz/README.md) | [Quartz.NET](https://www.quartz-scheduler.net) | every job |
 | [`Cronitor.Hangfire`](Cronitor.Hangfire/README.md) | [Hangfire](https://www.hangfire.io) | every recurring job |
 | [`Cronitor.TickerQ`](Cronitor.TickerQ/README.md) | [TickerQ](https://tickerq.net) | every cron job |
+| [`Cronitor.Coravel`](Cronitor.Coravel/README.md) | [Coravel](https://docs.coravel.net) | every job scheduled with `ScheduleWithCronitor` |
 
 ## Development
 ### Suggestions
