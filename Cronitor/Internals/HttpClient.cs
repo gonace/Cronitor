@@ -116,8 +116,9 @@ internal class HttpClient : IDisposable
             return;
         }
 
-        var details = Serializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync());
-        throw new ApiException(details, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        var details = Serializer.Deserialize<ApiError>(body);
+        throw new ApiException(details, response.StatusCode, body);
     }
 
     private async Task<TReturn> PerformRequestAsync<TReturn>(Task<HttpResponseMessage> request)
@@ -128,8 +129,9 @@ internal class HttpClient : IDisposable
             return Serializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync());
         }
 
-        var details = Serializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync());
-        throw new ApiException(details, response.StatusCode);
+        var body = await response.Content.ReadAsStringAsync();
+        var details = Serializer.Deserialize<ApiError>(body);
+        throw new ApiException(details, response.StatusCode, body);
     }
 
     private System.Net.Http.HttpClient CreateHttpClient(HttpMessageHandler handler)
