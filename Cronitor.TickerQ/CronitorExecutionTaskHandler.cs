@@ -100,7 +100,7 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
     {
         try
         {
-            return await _telemetries.StartAsync(context.FunctionName).ConfigureAwait(false);
+            return await _telemetries.StartAsync(MonitorKeyOf(context.FunctionName)).ConfigureAwait(false);
         }
         catch (Exception exception)
         {
@@ -108,6 +108,12 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
             return null;
         }
     }
+
+    /// <summary>
+    /// The monitor key for a cron job: its function name, with each <c>/</c> replaced by <c>-</c>, since Cronitor
+    /// doesn't accept <c>/</c> in a monitor key.
+    /// </summary>
+    private static string MonitorKeyOf(string functionName) => functionName.Replace('/', '-');
 
     /// <summary>
     /// Sends complete or fail once the job has ended and the run event has been sent, so Cronitor always receives them in order.
