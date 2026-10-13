@@ -22,6 +22,13 @@ public partial class CronitorJobListenerTests
         return new StdSchedulerFactory(properties).GetScheduler(TestContext.Current.CancellationToken);
     }
 
+    private static void AddJobListener(IScheduler scheduler, IJobListener listener) => scheduler.ListenerManager.AddJobListener(listener);
+
+    /// <summary>
+    /// Shuts the scheduler down, waiting for running jobs, as a task the caller can wait for with a time limit.
+    /// </summary>
+    private static Task ShutdownAsTask(IScheduler scheduler) => scheduler.Shutdown(true, TestContext.Current.CancellationToken);
+
     private sealed class SucceedingJob : IJob
     {
         private static TaskCompletionSource<bool> _ran = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);

@@ -141,11 +141,11 @@ public partial class CronitorJobListenerTests
         var telemetries = new FakeTelemetriesClient();
         InterruptibleJob.Reset();
         var scheduler = await NewScheduler();
-        scheduler.ListenerManager.AddJobListener(new CronitorJobListener(telemetries));
+        AddJobListener(scheduler, new CronitorJobListener(telemetries));
         await scheduler.Start(TestContext.Current.CancellationToken);
 
         var job = JobBuilder.Create<InterruptibleJob>().WithIdentity("nightly-backup").Build();
-        await scheduler.ScheduleJob(job, TriggerBuilder.Create().StartNow().Build(), TestContext.Current.CancellationToken);
+        await scheduler.ScheduleJob(job, TriggerBuilder.Create().StartNow().Build(), cancellationToken: TestContext.Current.CancellationToken);
         await Task.WhenAny(InterruptibleJob.Started, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
         await scheduler.Interrupt(job.Key, TestContext.Current.CancellationToken);
         await Task.WhenAny(telemetries.Finished, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
@@ -216,7 +216,7 @@ public partial class CronitorJobListenerTests
         var listener = new CronitorJobListener(telemetries, logger);
         var scheduler = await StartAndRunJob(listener, new CronitorSchedulerListener(listener, TimeSpan.FromMilliseconds(200)));
 
-        var shutdown = scheduler.Shutdown(true, TestContext.Current.CancellationToken);
+        var shutdown = ShutdownAsTask(scheduler);
         var shutDownWithinLimit = await FinishesWithin(shutdown, TimeSpan.FromSeconds(5));
         var sentAtShutdown = telemetries.Sent.ToArray();
         finishGate.SetResult(true);
@@ -235,11 +235,11 @@ public partial class CronitorJobListenerTests
     {
         SucceedingJob.Reset();
         var scheduler = await NewScheduler();
-        scheduler.ListenerManager.AddJobListener(jobListener);
+        AddJobListener(scheduler, jobListener);
         scheduler.ListenerManager.AddSchedulerListener(schedulerListener);
         await scheduler.Start(TestContext.Current.CancellationToken);
 
-        await scheduler.ScheduleJob(JobBuilder.Create<SucceedingJob>().WithIdentity("nightly-backup").Build(), TriggerBuilder.Create().StartNow().Build(), TestContext.Current.CancellationToken);
+        await scheduler.ScheduleJob(JobBuilder.Create<SucceedingJob>().WithIdentity("nightly-backup").Build(), TriggerBuilder.Create().StartNow().Build(), cancellationToken: TestContext.Current.CancellationToken);
         await Task.WhenAny(SucceedingJob.Ran, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
 
         return scheduler;
@@ -257,10 +257,10 @@ public partial class CronitorJobListenerTests
     private static async Task RunJob(IJobDetail job, IJobListener listener, Task done)
     {
         var scheduler = await NewScheduler();
-        scheduler.ListenerManager.AddJobListener(listener);
+        AddJobListener(scheduler, listener);
         await scheduler.Start(TestContext.Current.CancellationToken);
 
-        await scheduler.ScheduleJob(job, TriggerBuilder.Create().StartNow().Build(), TestContext.Current.CancellationToken);
+        await scheduler.ScheduleJob(job, TriggerBuilder.Create().StartNow().Build(), cancellationToken: TestContext.Current.CancellationToken);
         await Task.WhenAny(done, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
 
         await scheduler.Shutdown(true, TestContext.Current.CancellationToken);
