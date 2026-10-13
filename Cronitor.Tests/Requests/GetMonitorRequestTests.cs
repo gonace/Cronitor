@@ -39,4 +39,14 @@ public class GetMonitorRequestTests
 
         Assert.Equal("https://cronitor.io/api/monitors/abc123", uri.ToString());
     }
+
+    [Fact]
+    public void Should_escape_the_key_in_the_uri()
+    {
+        var request = new GetMonitorRequest("reports?daily #1");
+
+        var uri = request.ToUri();
+
+        Assert.Equal("https://cronitor.io/api/monitors/reports%3Fdaily%20%231", uri.AbsoluteUri);
+    }
 }

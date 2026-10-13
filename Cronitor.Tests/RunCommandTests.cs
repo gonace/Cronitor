@@ -23,6 +23,31 @@ public class RunCommandTests
     }
 
     [Fact]
+    public void Should_escape_the_monitor_key_in_the_url()
+    {
+        var command = new RunCommand()
+            .WithApiKey("apiKey")
+            .WithMonitorKey("reports?daily #1");
+
+        var actual = command.ToUri().AbsoluteUri;
+
+        Assert.Equal("https://cronitor.link/p/apiKey/reports%3Fdaily%20%231/run", actual);
+    }
+
+    [Fact]
+    public void Should_escape_the_monitor_key_in_the_url_with_a_query_string()
+    {
+        var command = new RunCommand()
+            .WithApiKey("apiKey")
+            .WithMonitorKey("reports?daily #1")
+            .WithMessage("done");
+
+        var actual = command.ToUri().AbsoluteUri;
+
+        Assert.Equal("https://cronitor.link/p/apiKey/reports%3Fdaily%20%231/run?message=done", actual);
+    }
+
+    [Fact]
     public void Should_create_a_RunCommand_with_extended_properties()
     {
         var command = new RunCommand()

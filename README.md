@@ -66,7 +66,7 @@ Telemetry events report the state of a job to a monitor. Each event has a sync a
 | `Tick` | A heartbeat, for monitors without a start/end |
 | `Ping` | Sends a custom `Command` |
 
-All events except `Ping` take a monitor key and an optional `message` and `environment`.
+All events except `Ping` take a monitor key and an optional `message` and `environment`. A monitor that doesn't exist yet is created by its first event. Monitor keys may contain any character except `/`, which Cronitor doesn't accept in a monitor key; an event for such a key can't be delivered.
 
 Telemetry never breaks the job it monitors: transient failures are retried, and if an event still can't be delivered the method returns `false` instead of throwing.
 
