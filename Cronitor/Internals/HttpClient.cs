@@ -8,6 +8,7 @@ using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Cronitor.Internals;
@@ -116,8 +117,7 @@ internal class HttpClient : IDisposable
             return;
         }
 
-        var details = Serializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync());
-        throw new ApiException(details, response.StatusCode);
+        throw await ErrorOfAsync(response);
     }
 
     private async Task<TReturn> PerformRequestAsync<TReturn>(Task<HttpResponseMessage> request)
@@ -128,8 +128,25 @@ internal class HttpClient : IDisposable
             return Serializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync());
         }
 
-        var details = Serializer.Deserialize<ApiError>(await response.Content.ReadAsStringAsync());
-        throw new ApiException(details, response.StatusCode);
+        throw await ErrorOfAsync(response);
+    }
+
+    private static async Task<ApiException> ErrorOfAsync(HttpResponseMessage response)
+    {
+        var body = await response.Content.ReadAsStringAsync();
+        return new ApiException(DetailOf(body), response.StatusCode, body);
+    }
+
+    private static ApiError DetailOf(string body)
+    {
+        try
+        {
+            return Serializer.Deserialize<ApiError>(body) ?? new ApiError();
+        }
+        catch (JsonException)
+        {
+            return new ApiError();
+        }
     }
 
     private System.Net.Http.HttpClient CreateHttpClient(HttpMessageHandler handler)
