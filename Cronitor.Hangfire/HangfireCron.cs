@@ -58,7 +58,7 @@ internal static class HangfireCron
         }
 
         var fields = cron.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
-        if (fields.Length == 6 && IsSingleSecond(fields[0]))
+        if (fields.Length == 6 && fields[0] == "0")
         {
             fields = fields.Skip(1).ToArray();
         }
@@ -78,9 +78,6 @@ internal static class HangfireCron
         schedule = string.Join(" ", fields[0], fields[1], dayOfMonth, fields[MonthField], dayOfWeek);
         return true;
     }
-
-    private static bool IsSingleSecond(string field) =>
-        int.TryParse(field, NumberStyles.None, CultureInfo.InvariantCulture, out var second) && second < 60;
 
     private static bool IsHashed(string field) => Hash.IsMatch(field);
 

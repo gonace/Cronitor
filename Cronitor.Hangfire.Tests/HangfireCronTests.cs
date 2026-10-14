@@ -12,7 +12,6 @@ public class HangfireCronTests
     [InlineData("0 3 * FEB-NOV SUN-SAT", "0 3 * FEB-NOV SUN-SAT")]
     [InlineData("0 3 * * 5-7", "0 3 * * 5-7")]
     [InlineData("0 0 3 * * *", "0 3 * * *")]
-    [InlineData("30 */5 * * * *", "*/5 * * * *")]
     [InlineData("0 3 ? * MON", "0 3 * * MON")]
     [InlineData("0 3 1 * ?", "0 3 1 * *")]
     [InlineData("0 3 L * *", "0 3 L * *")]
@@ -33,6 +32,8 @@ public class HangfireCronTests
 
     [Theory]
     [InlineData("*/30 * * * * *")]
+    [InlineData("30 */5 * * * *")]
+    [InlineData("30 0 3 * * *")]
     [InlineData("0-30 * * * * *")]
     [InlineData("0 3 15W * *")]
     [InlineData("0 3 LW * *")]
