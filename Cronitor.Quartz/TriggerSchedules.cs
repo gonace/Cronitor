@@ -26,6 +26,12 @@ internal static class TriggerSchedules
     private static bool TryScheduleOf(string monitorKey, IReadOnlyList<ITrigger> triggers, ILogger logger, out MonitorSchedule schedule)
     {
         schedule = null;
+        if (monitorKey.IndexOf('/') >= 0)
+        {
+            logger.ScheduleNotSynced(monitorKey, "Cronitor doesn't accept '/' in a monitor key");
+            return false;
+        }
+
         var expressions = new List<string>();
         var timeZones = new List<TimeZoneInfo>();
         foreach (var trigger in triggers)

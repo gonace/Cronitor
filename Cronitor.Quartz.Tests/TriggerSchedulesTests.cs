@@ -92,6 +92,19 @@ public class TriggerSchedulesTests
     }
 
     [Fact]
+    public void Should_not_sync_a_monitor_whose_chosen_key_contains_a_slash_and_sync_the_others()
+    {
+        var logger = new FakeLogger<TriggerSchedulesTests>();
+        var payroll = JobBuilder.Create<NoopJob>().WithIdentity("payroll").UsingJobData(CronitorJobBuilderExtensions.MonitorKey, "reports/payroll").Build();
+        var backup = Job("nightly-backup");
+
+        var schedules = TriggerSchedules.Of(new[] { (payroll, CronTrigger(payroll, "0 0 3 * * ?", TimeZoneInfo.Utc)), (backup, CronTrigger(backup, "0 0 3 * * ?", TimeZoneInfo.Utc)) }, logger);
+
+        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey));
+        Assert.Equal(LogLevel.Information, Assert.Single(logger.Entries).Level);
+    }
+
+    [Fact]
     public void Should_not_sync_a_simple_trigger_that_stops_repeating()
     {
         var job = Job("nightly-backup");
