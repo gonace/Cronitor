@@ -23,8 +23,6 @@ public partial class CronitorJobListener : IJobListener
         return Task.CompletedTask;
     }
 
-    private static string ClassNameOf(IJobDetail job) => job.JobType.Name;
-
     /// <summary>
     /// Quartz 3 doesn't retry failed jobs, so every run is a first attempt.
     /// </summary>

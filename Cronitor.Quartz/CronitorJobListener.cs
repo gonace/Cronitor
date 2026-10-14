@@ -104,7 +104,7 @@ public partial class CronitorJobListener
     {
         try
         {
-            return await _telemetries.StartAsync(MonitorKeyOf(context)).ConfigureAwait(false);
+            return await _telemetries.StartAsync(MonitorKey.Of(context.JobDetail, context.MergedJobDataMap)).ConfigureAwait(false);
         }
         catch (Exception exception)
         {
@@ -166,23 +166,4 @@ public partial class CronitorJobListener
             _logger.EndNotReported(exception, jobKey);
         }
     }
-
-    private static string MonitorKeyOf(IJobExecutionContext context)
-    {
-        if (context.MergedJobDataMap.TryGetValue(CronitorJobBuilderExtensions.MonitorKey, out var value) && value is string monitorKey && !string.IsNullOrWhiteSpace(monitorKey))
-        {
-            return monitorKey;
-        }
-
-        var name = context.JobDetail.Key.Name;
-        return IsGeneratedName(name) ? ClassNameOf(context.JobDetail) : name.Replace('/', '-');
-    }
-
-    /// <summary>
-    /// Whether Quartz made up the job's name. A job built without an identity gets a new GUID as its name on every
-    /// start, which would report to a new monitor each time, so its class name is used instead. Quartz records nothing
-    /// that tells a generated name from one set to a GUID on purpose, so every GUID name counts as generated; such a
-    /// job keeps a monitor of its own with <c>WithCronitorMonitorKey</c>.
-    /// </summary>
-    private static bool IsGeneratedName(string name) => Guid.TryParseExact(name, "D", out _);
 }

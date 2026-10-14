@@ -23,8 +23,6 @@ public partial class CronitorJobListener : IJobListener
         return default;
     }
 
-    private static string ClassNameOf(IJobDetail job) => job.JobType.Type.Name;
-
     /// <summary>
     /// Which retry of a failed job this run is, under the trigger's retry policy: 0 for the first attempt.
     /// </summary>

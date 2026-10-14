@@ -26,4 +26,16 @@ internal static partial class LogMessages
         Level = LogLevel.Warning,
         Message = "Stopped waiting for {Count} job reports to Cronitor while the scheduler shut down")]
     internal static partial void ReportsPendingAtShutdown(this ILogger logger, int count);
+
+    [LoggerMessage(
+        EventId = 4,
+        Level = LogLevel.Information,
+        Message = "Not syncing the schedule of monitor {MonitorKey} to Cronitor: {Reason}")]
+    internal static partial void ScheduleNotSynced(this ILogger logger, string monitorKey, string reason);
+
+    [LoggerMessage(
+        EventId = 5,
+        Level = LogLevel.Error,
+        Message = "Could not read Quartz's triggers to sync their schedules to Cronitor")]
+    internal static partial void TriggersNotRead(this ILogger logger, Exception exception);
 }
