@@ -543,6 +543,20 @@ public class MonitorsClientTests : BaseTest
         Assert.Equal(response, exception.Response);
     }
 
+    [Theory]
+    [InlineData(429, "")]
+    [InlineData(502, "<html>Bad Gateway</html>")]
+    [InlineData(400, "null")]
+    public async Task Should_keep_the_status_code_and_response_of_an_error_whose_body_is_not_an_error_object(int statusCode, string response)
+    {
+        var monitorsClient = CreateClient(new FakeHttpMessageHandler((HttpStatusCode)statusCode, response));
+
+        var exception = await Assert.ThrowsAsync<ApiException>(() => monitorsClient.UpdateAsync(new UpdateMonitorRequest(Make.Job.Build())));
+
+        Assert.Equal((HttpStatusCode)statusCode, exception.StatusCode);
+        Assert.Equal(response, exception.Response);
+    }
+
     private static MonitorsClient CreateClient(FakeHttpMessageHandler handler)
     {
         return new MonitorsClient(new Internals.HttpClient(Urls.DefaultApiUrl, ApiKey, handler));
