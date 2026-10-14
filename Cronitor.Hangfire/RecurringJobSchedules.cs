@@ -59,14 +59,29 @@ internal static class RecurringJobSchedules
 
     private static bool TryGetIanaName(string timeZoneId, out string ianaName)
     {
-        try
-        {
-            return CronitorTimezone.TryGetIanaName(TimeZoneInfo.FindSystemTimeZoneById(timeZoneId), out ianaName);
-        }
-        catch (Exception exception) when (exception is TimeZoneNotFoundException || exception is InvalidTimeZoneException)
+        var timeZone = FindTimeZone(timeZoneId);
+        if (timeZone == null)
         {
             ianaName = null;
             return false;
+        }
+
+        return CronitorTimezone.TryGetIanaName(timeZone, out ianaName);
+    }
+
+    private static TimeZoneInfo FindTimeZone(string timeZoneId)
+    {
+        try
+        {
+            return TimeZoneInfo.FindSystemTimeZoneById(timeZoneId);
+        }
+        catch (TimeZoneNotFoundException)
+        {
+            return null;
+        }
+        catch (InvalidTimeZoneException)
+        {
+            return null;
         }
     }
 }
