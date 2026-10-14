@@ -41,7 +41,6 @@ internal static class HangfireCron
 
     private static readonly IReadOnlyDictionary<string, int> NoNames = new Dictionary<string, int>();
 
-    private static readonly Regex Hash = new Regex(@"(^|[,/-])H($|[,/(-])", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
     private static readonly Regex Range = new Regex(@"([A-Za-z0-9]+)-([A-Za-z0-9]+)", RegexOptions.CultureInvariant);
 
     internal static bool TryConvert(string cron, out string schedule)
@@ -58,12 +57,12 @@ internal static class HangfireCron
         }
 
         var fields = cron.Split((char[])null, StringSplitOptions.RemoveEmptyEntries);
-        if (fields.Length == 6 && fields[0] == "0")
+        if (fields.Length == 6 && IsZero(fields[0]))
         {
             fields = fields.Skip(1).ToArray();
         }
 
-        if (fields.Length != 5 || fields.Any(IsHashed) || fields.Where(HasReversedRange).Any())
+        if (fields.Length != 5 || fields.Where(HasReversedRange).Any())
         {
             return false;
         }
@@ -79,7 +78,7 @@ internal static class HangfireCron
         return true;
     }
 
-    private static bool IsHashed(string field) => Hash.IsMatch(field);
+    private static bool IsZero(string field) => field == "0" || field == "00";
 
     private static bool HasReversedRange(string field, int position) =>
         Range.Matches(field).Cast<Match>().Any(range => ValueOf(range.Groups[1].Value, position) > ValueOf(range.Groups[2].Value, position));
