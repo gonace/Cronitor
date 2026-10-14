@@ -25,4 +25,16 @@ internal static partial class LogMessages
         Level = LogLevel.Warning,
         Message = "Stopped waiting for the end of job {JobId} to be reported to Cronitor; the report continues in the background")]
     internal static partial void EndReportStillPending(this ILogger logger, string jobId);
+
+    [LoggerMessage(
+        EventId = 4,
+        Level = LogLevel.Information,
+        Message = "Not syncing the schedule of monitor {MonitorKey} to Cronitor: {Reason}")]
+    internal static partial void ScheduleNotSynced(this ILogger logger, string monitorKey, string reason);
+
+    [LoggerMessage(
+        EventId = 5,
+        Level = LogLevel.Error,
+        Message = "Could not read Hangfire's recurring jobs to sync their schedules to Cronitor")]
+    internal static partial void RecurringJobsNotRead(this ILogger logger, Exception exception);
 }
