@@ -28,8 +28,18 @@ internal static class HangfireCron
         ["@every_minute"] = "* * * * *",
     };
 
-    private static readonly string[] MonthNames = { "JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC" };
-    private static readonly string[] DayNames = { "SUN", "MON", "TUE", "WED", "THU", "FRI", "SAT" };
+    private static readonly IReadOnlyDictionary<string, int> MonthNumbers = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["JAN"] = 1, ["FEB"] = 2, ["MAR"] = 3, ["APR"] = 4, ["MAY"] = 5, ["JUN"] = 6,
+        ["JUL"] = 7, ["AUG"] = 8, ["SEP"] = 9, ["OCT"] = 10, ["NOV"] = 11, ["DEC"] = 12,
+    };
+
+    private static readonly IReadOnlyDictionary<string, int> DayNumbers = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase)
+    {
+        ["SUN"] = 0, ["MON"] = 1, ["TUE"] = 2, ["WED"] = 3, ["THU"] = 4, ["FRI"] = 5, ["SAT"] = 6,
+    };
+
+    private static readonly IReadOnlyDictionary<string, int> NoNames = new Dictionary<string, int>();
 
     private static readonly Regex Hash = new Regex(@"(^|[,/-])H($|[,/(-])", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
     private static readonly Regex Range = new Regex(@"([A-Za-z0-9]+)-([A-Za-z0-9]+)", RegexOptions.CultureInvariant);
@@ -84,15 +94,15 @@ internal static class HangfireCron
             return number;
         }
 
-        var names = position == MonthField ? MonthNames : position == DayOfWeekField ? DayNames : Array.Empty<string>();
-        var index = Array.IndexOf(names, token.ToUpperInvariant());
-        if (index < 0)
-        {
-            return null;
-        }
-
-        return position == MonthField ? index + 1 : index;
+        return NamedNumbersOf(position).TryGetValue(token, out var named) ? named : null;
     }
+
+    private static IReadOnlyDictionary<string, int> NamedNumbersOf(int position) => position switch
+    {
+        MonthField => MonthNumbers,
+        DayOfWeekField => DayNumbers,
+        _ => NoNames,
+    };
 
     private static string UnspecifiedAsAny(string field) => field == "?" ? "*" : field;
 
