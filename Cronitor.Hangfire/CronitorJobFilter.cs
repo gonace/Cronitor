@@ -50,19 +50,13 @@ public class CronitorJobFilter : IServerFilter
                 return;
             }
 
-            context.Items[StartKey] = ReportStartAsync(MonitorKeyOf(recurringJobId), context.BackgroundJob.Id);
+            context.Items[StartKey] = ReportStartAsync(MonitorKey.Of(recurringJobId), context.BackgroundJob.Id);
         }
         catch (Exception exception)
         {
             _logger.StartNotReported(exception, context.BackgroundJob.Id);
         }
     }
-
-    /// <summary>
-    /// The monitor key for a recurring job: its ID, with each <c>/</c> replaced by <c>-</c>, since Cronitor
-    /// doesn't accept <c>/</c> in a monitor key.
-    /// </summary>
-    private static string MonitorKeyOf(string recurringJobId) => recurringJobId.Replace('/', '-');
 
     public void OnPerformed(PerformedContext context)
     {

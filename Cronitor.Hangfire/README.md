@@ -58,6 +58,16 @@ Jobs that are not recurring, such as those started with `BackgroundJob.Enqueue()
 ## Retries
 When a recurring job fails, Hangfire retries it by default, often minutes or hours later. Each attempt is reported as its own run, and a retry's fail message ends with its attempt, for example `Disk is full (attempt 2)`. A job that fails twice and then succeeds is therefore reported as two failed runs followed by a completed one.
 
+## Schedules
+A monitor created by a job's first report has no schedule, so Cronitor alerts when the job fails but not when it doesn't run at all. To give each recurring job's monitor the job's schedule and time zone, add schedule sync:
+```c#
+services.AddHangfireServer();
+services.AddCronitorHangfireScheduleSync();
+```
+Once the application has started, the recurring jobs in Hangfire's storage are sent to Cronitor in one request, in the background. Only the schedule and time zone are set; everything else on the monitor, such as its name and alerts, is kept. Recurring jobs added later get their schedule at the next start.
+
+A schedule is only synced when Cronitor reads it the same way as Hangfire. A cron expression with a seconds field is synced without it when the seconds are a single value; one Cronitor doesn't support, such as the nearest weekday (`15W`), isn't synced, and the reason is logged. Recurring jobs that share a monitor key share its schedules, as long as they run in the same time zone. Schedule sync needs dependency injection.
+
 ## Errors
 Reporting never affects your jobs: the start of a job is reported in the background, and the worker waits at most five seconds for its end to be reported. If Cronitor is slower than that, the worker moves on and the report continues in the background, so a report still pending when the application stops can be lost. If a report can't be sent, the job still runs and keeps its result, and the error is logged through the host's logging.
 
