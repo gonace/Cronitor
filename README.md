@@ -68,7 +68,7 @@ Telemetry events report the state of a job to a monitor. Each event has a sync a
 
 All events except `Ping` take a monitor key and an optional `message` and `environment`. A monitor that doesn't exist yet is created by its first event.
 
-A monitor key is a `MonitorKey`, and a string converts to one. It follows Cronitor's rules for keys: it can't be blank, contain `/`, be longer than 100 characters, or start or end with whitespace. An invalid key throws an `ArgumentException` before anything is sent, since Cronitor would otherwise drop the event without telling.
+A monitor key is a `MonitorKey`, and a string converts to one. It follows Cronitor's rules for keys: it can't be blank, contain `/`, be longer than 100 characters, or start or end with whitespace, and it must be valid Unicode. An invalid key throws an `ArgumentException` before anything is sent, since Cronitor would otherwise drop the event without telling.
 
 Telemetry never breaks the job it monitors because of Cronitor: transient failures are retried, and if an event still can't be delivered the method returns `false` instead of throwing.
 

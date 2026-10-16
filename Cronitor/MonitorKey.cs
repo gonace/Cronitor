@@ -19,6 +19,11 @@ public sealed class MonitorKey
             throw new ArgumentException($"Cronitor doesn't accept '/' in a monitor key: '{value}'.", nameof(value));
         }
 
+        if (HasIncompleteCharacter(value))
+        {
+            throw new ArgumentException($"A monitor key must be valid Unicode, but '{value}' has an incomplete character.", nameof(value));
+        }
+
         if (CodePointsIn(value) > MaxLength)
         {
             throw new ArgumentException($"Cronitor accepts at most {MaxLength} characters in a monitor key: '{value}'.", nameof(value));
@@ -36,13 +41,30 @@ public sealed class MonitorKey
     {
         key = null;
         var candidate = name?.Replace('/', '-').Trim();
-        if (string.IsNullOrWhiteSpace(candidate) || CodePointsIn(candidate) > MaxLength)
+        if (string.IsNullOrWhiteSpace(candidate) || HasIncompleteCharacter(candidate) || CodePointsIn(candidate) > MaxLength)
         {
             return false;
         }
 
         key = new MonitorKey(candidate);
         return true;
+    }
+
+    private static bool HasIncompleteCharacter(string value)
+    {
+        for (var i = 0; i < value.Length; i++)
+        {
+            if (char.IsSurrogatePair(value, i))
+            {
+                i++;
+            }
+            else if (char.IsSurrogate(value[i]))
+            {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private static int CodePointsIn(string value) => value.Length - value.Count(char.IsLowSurrogate);

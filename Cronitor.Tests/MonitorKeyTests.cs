@@ -85,6 +85,17 @@ public class MonitorKeyTests
         Assert.Throws<ArgumentException>(() => new MonitorKey(value));
     }
 
+    [Theory]
+    [InlineData("nightly", '\uDC00', "")]
+    [InlineData("nightly", '\uD800', "")]
+    [InlineData("nightly", '\uD800', "-backup")]
+    public void Should_reject_a_key_with_an_incomplete_character(string before, char half, string after)
+    {
+        var exception = Assert.Throws<ArgumentException>(() => new MonitorKey(before + half + after));
+
+        Assert.Contains("Unicode", exception.Message);
+    }
+
     [Fact]
     public void Should_convert_implicitly_from_a_valid_string()
     {
@@ -135,6 +146,15 @@ public class MonitorKeyTests
     public void Should_not_derive_a_key_from_a_name_longer_than_100_code_points()
     {
         var derived = MonitorKey.TryFromName(new string('x', 101), out var key);
+
+        Assert.False(derived);
+        Assert.Null(key);
+    }
+
+    [Fact]
+    public void Should_not_derive_a_key_from_a_name_with_an_incomplete_character()
+    {
+        var derived = MonitorKey.TryFromName("nightly" + '\uDC00', out var key);
 
         Assert.False(derived);
         Assert.Null(key);
