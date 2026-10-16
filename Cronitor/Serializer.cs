@@ -16,6 +16,7 @@ public static class Serializer
 
     private static readonly JsonSerializerOptions Options = new JsonSerializerOptions
     {
+        Converters = { MonitorKeyConverter.ForCronitorResponses() },
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         IgnoreReadOnlyProperties = true,

@@ -127,9 +127,15 @@ public class MonitorKeyTests
     [Fact]
     public void Should_read_a_key_from_Cronitor_without_validating_it()
     {
-        var key = JsonSerializer.Deserialize<MonitorKey>("\"reports/daily\"");
+        var key = Serializer.Deserialize<MonitorKey>("\"reports/daily\"");
 
         Assert.Equal("reports/daily", key.ToString());
+    }
+
+    [Fact]
+    public void Should_reject_an_invalid_key_in_JSON_from_outside_Cronitor()
+    {
+        Assert.Throws<ArgumentException>(() => JsonSerializer.Deserialize<MonitorKey>("\"reports/daily\""));
     }
 
     [Fact]
