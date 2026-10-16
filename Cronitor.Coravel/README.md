@@ -48,7 +48,7 @@ A job reports to the monitor with the same key as its class name, `BackupJob` ab
 ```c#
 scheduler.ScheduleWithCronitor<BackupJob>("nightly-backup").DailyAt(3, 0);
 ```
-Cronitor doesn't accept `/` in a monitor key, so `ScheduleWithCronitor()` throws when given one.
+The key must follow Cronitor's [rules for monitor keys](https://github.com/gonace/Cronitor#telemetry), such as no `/` and at most 100 characters, so `ScheduleWithCronitor()` throws when given one that doesn't.
 
 ## Errors
 Reporting never affects your jobs: the start of a run is reported in the background, so a job never waits for Cronitor. If a report can't be sent, the job still runs and keeps its result, and the error is logged through the host's logging. When the application stops, Coravel cancels the jobs still running and waits for them; reports still being sent are then waited for up to five seconds, so the outcome of the last jobs isn't lost.

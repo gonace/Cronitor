@@ -63,6 +63,32 @@ public partial class CronitorJobListenerTests
     }
 
     [Fact]
+    public void Should_throw_when_WithCronitorMonitorKey_is_given_a_key_longer_than_100_characters()
+    {
+        var job = JobBuilder.Create<SucceedingJob>();
+
+        Assert.Throws<ArgumentException>(() => job.WithCronitorMonitorKey(new string('x', 101)));
+    }
+
+    [Theory]
+    [InlineData(" nightly-backup")]
+    [InlineData("nightly-backup ")]
+    public void Should_throw_when_WithCronitorMonitorKey_is_given_a_key_with_surrounding_whitespace(string monitorKey)
+    {
+        var job = JobBuilder.Create<SucceedingJob>();
+
+        Assert.Throws<ArgumentException>(() => job.WithCronitorMonitorKey(monitorKey));
+    }
+
+    [Fact]
+    public void Should_throw_when_WithCronitorMonitorKey_is_given_no_key()
+    {
+        var job = JobBuilder.Create<SucceedingJob>();
+
+        Assert.Throws<ArgumentNullException>(() => job.WithCronitorMonitorKey((MonitorKey)null));
+    }
+
+    [Fact]
     public async Task Should_report_to_the_job_class_name_when_Quartz_generated_the_job_name()
     {
         var telemetries = new FakeTelemetriesClient();
