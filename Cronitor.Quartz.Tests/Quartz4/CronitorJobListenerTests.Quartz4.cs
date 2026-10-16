@@ -53,6 +53,25 @@ public partial class CronitorJobListenerTests
         public ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken) => throw new InvalidOperationException("Disk is full");
     }
 
+    private sealed class RefiredOnceJob : IJob
+    {
+        public ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken) =>
+            context.RefireCount == 0 ? throw new JobExecutionException("Network is down") { RefireImmediately = true } : new ValueTask();
+    }
+
+    private sealed class RefiredOnceThenFailingJob : IJob
+    {
+        public ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken)
+        {
+            if (context.RefireCount == 0)
+            {
+                throw new JobExecutionException("Network is down") { RefireImmediately = true };
+            }
+
+            throw new InvalidOperationException("Disk is full");
+        }
+    }
+
     private sealed class InterruptibleJob : IJob
     {
         private static TaskCompletionSource<bool> _started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
