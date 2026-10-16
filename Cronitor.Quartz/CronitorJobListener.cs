@@ -72,12 +72,14 @@ public partial class CronitorJobListener
     {
         try
         {
+            var previousEnd = Task.CompletedTask;
             if (_starts.TryRemove(context.FireInstanceId, out var refired))
             {
-                Track(ReportEndAsync(refired.Run, RefiredFailure, context.JobDetail.Key));
+                previousEnd = ReportEndAsync(refired.Run, RefiredFailure, context.JobDetail.Key);
+                Track(previousEnd);
             }
 
-            _starts[context.FireInstanceId] = (ReportStartAsync(context), RetryOf(context));
+            _starts[context.FireInstanceId] = (ReportStartAsync(context, previousEnd), RetryOf(context));
         }
         catch (Exception exception)
         {
@@ -107,10 +109,13 @@ public partial class CronitorJobListener
     }
 
     /// <summary>
-    /// Sends the run event. The returned task completes with the run, or with null if it could not be reported.
+    /// Sends the run event once the end of the attempt before it has been reported, so Cronitor receives a refired
+    /// job's events in order. The returned task completes with the run, or with null if it could not be reported.
     /// </summary>
-    private async Task<ITelemetryRun> ReportStartAsync(IJobExecutionContext context)
+    private async Task<ITelemetryRun> ReportStartAsync(IJobExecutionContext context, Task previousEnd)
     {
+        await previousEnd.ConfigureAwait(false);
+
         if (!context.JobDetail.TryGetMonitorKey(context.MergedJobDataMap, out var monitorKey))
         {
             _logger.NoValidMonitorKey(context.JobDetail.Key);
