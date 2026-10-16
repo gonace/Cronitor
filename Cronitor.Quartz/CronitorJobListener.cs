@@ -17,7 +17,7 @@ namespace Cronitor.Quartz;
 /// reports under its class name instead. Cronitor doesn't accept <c>/</c> in a monitor key,
 /// so a <c>/</c> in the job's name becomes <c>-</c>.
 /// Each attempt is reported as its own run, so when Quartz 4 retries a failed job, the retry's fail message
-/// ends with its attempt, such as "(attempt 2)".
+/// ends with its attempt, such as "(attempt 2)", and an attempt Quartz refires at once is reported as failed.
 /// Reporting never affects the job: Quartz waits for a listener before and after every job, and
 /// skips a job when a listener throws before it. So reports are sent in the background, without
 /// the job waiting for Cronitor, and every failure is logged instead of thrown.
@@ -28,6 +28,8 @@ namespace Cronitor.Quartz;
 /// </remarks>
 public partial class CronitorJobListener
 {
+    private const string RefiredFailure = "The job failed and Quartz ran it again";
+
     private readonly ITelemetriesClient _telemetries;
     private readonly ILogger<CronitorJobListener> _logger;
     private readonly ConcurrentDictionary<string, (Task<ITelemetryRun> Run, int Retry)> _starts = new ConcurrentDictionary<string, (Task<ITelemetryRun> Run, int Retry)>();
@@ -63,11 +65,18 @@ public partial class CronitorJobListener
     /// <summary>
     /// Starts reporting the run, keyed by the run's fire instance, so the end can be reported after the job. Which retry
     /// the run is, is read now: some Quartz versions have already moved on to the next retry when the job has ended.
+    /// A fire instance that is already running was refired: Quartz runs a job again at once when it fails with
+    /// <c>RefireImmediately</c>, without telling listeners that the failed attempt ended, or why it failed.
     /// </summary>
     private void OnJobToBeExecuted(IJobExecutionContext context)
     {
         try
         {
+            if (_starts.TryRemove(context.FireInstanceId, out var refired))
+            {
+                Track(ReportEndAsync(refired.Run, RefiredFailure, context.JobDetail.Key));
+            }
+
             _starts[context.FireInstanceId] = (ReportStartAsync(context), RetryOf(context));
         }
         catch (Exception exception)

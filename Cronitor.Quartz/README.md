@@ -56,7 +56,9 @@ job => job.WithIdentity(tenantId.ToString()).WithCronitorMonitorKey($"sync-{tena
 ```
 
 ## Retries
-Quartz 4 retries a failed job when its trigger, its job class or the scheduler has a retry policy, such as `.WithRetryPolicy(RetryPolicy.Fixed(3, TimeSpan.FromMinutes(5)))`. Each attempt is reported as its own run, and a retry's fail message ends with its attempt, for example `Disk is full (attempt 2)`. A job that fails twice and then succeeds is therefore reported as two failed runs followed by a completed one. Quartz 3 doesn't retry failed jobs.
+Quartz 4 retries a failed job when its trigger, its job class or the scheduler has a retry policy, such as `.WithRetryPolicy(RetryPolicy.Fixed(3, TimeSpan.FromMinutes(5)))`. Each attempt is reported as its own run, and a retry's fail message ends with its attempt, for example `Disk is full (attempt 2)`. A job that fails twice and then succeeds is therefore reported as two failed runs followed by a completed one. Quartz 3 has no retry policies.
+
+In both Quartz 3 and 4, a job that throws a `JobExecutionException` with `RefireImmediately = true` is run again at once. Quartz doesn't tell listeners why that attempt failed, so it's reported as a failed run with the message `The job failed and Quartz ran it again`, and the next attempt as a run of its own.
 
 ## Schedules
 A monitor created by a job's first report has no schedule, so Cronitor alerts when the job fails but not when it doesn't run at all. To give each job's monitor the schedules of its triggers, add schedule sync:

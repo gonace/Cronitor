@@ -33,6 +33,26 @@ public partial class CronitorJobListenerTests
     }
 
     [Fact]
+    public async Task Should_report_a_refired_attempt_as_failed_before_the_next_attempt_runs()
+    {
+        var telemetries = new FakeTelemetriesClient();
+
+        await RunJob(JobBuilder.Create<RefiredOnceJob>().WithIdentity("nightly-backup").Build(), new CronitorJobListener(telemetries), HasSent(telemetries, 4));
+
+        Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: The job failed and Quartz ran it again", "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public async Task Should_report_the_last_refired_attempt_with_its_own_failure()
+    {
+        var telemetries = new FakeTelemetriesClient();
+
+        await RunJob(JobBuilder.Create<RefiredOnceThenFailingJob>().WithIdentity("nightly-backup").Build(), new CronitorJobListener(telemetries), HasSent(telemetries, 4));
+
+        Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: The job failed and Quartz ran it again", "run nightly-backup", "fail nightly-backup: Disk is full" }, telemetries.Sent);
+    }
+
+    [Fact]
     public async Task Should_report_to_the_monitor_key_chosen_with_WithCronitorMonitorKey()
     {
         var telemetries = new FakeTelemetriesClient();
@@ -302,6 +322,14 @@ public partial class CronitorJobListenerTests
 
     private static async Task<bool> FinishesWithin(Task run, TimeSpan limit) =>
         await Task.WhenAny(run, Task.Delay(limit, TestContext.Current.CancellationToken)) == run;
+
+    private static async Task HasSent(FakeTelemetriesClient telemetries, int count)
+    {
+        while (telemetries.Sent.Count < count)
+        {
+            await Task.Delay(10, TestContext.Current.CancellationToken);
+        }
+    }
 
     private static Task RunJob<TJob>(string name, FakeTelemetriesClient telemetries) where TJob : IJob =>
         RunJob(JobBuilder.Create<TJob>().WithIdentity(name).Build(), telemetries);
