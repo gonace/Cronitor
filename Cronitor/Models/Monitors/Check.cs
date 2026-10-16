@@ -11,7 +11,7 @@ public class Check : Monitor
     [JsonPropertyName("request")]
     public Request Request { get; set; }
 
-    public Check(string key, Request request)
+    public Check(MonitorKey key, Request request)
         : base(key)
     {
         Request = request;

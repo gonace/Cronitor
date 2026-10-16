@@ -14,11 +14,11 @@ namespace Cronitor.Coravel;
 /// </summary>
 internal sealed class CronitorInvocable<TInvocable> : IInvocable, ICancellableInvocable where TInvocable : IInvocable
 {
-    private readonly string _monitorKey;
+    private readonly MonitorKey _monitorKey;
     private readonly TInvocable _invocable;
     private readonly CronitorReporter _reporter;
 
-    public CronitorInvocable(string monitorKey, IServiceProvider services)
+    public CronitorInvocable(MonitorKey monitorKey, IServiceProvider services)
     {
         _monitorKey = monitorKey;
         _reporter = services.GetService<CronitorReporter>()

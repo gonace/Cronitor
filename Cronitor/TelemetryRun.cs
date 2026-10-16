@@ -8,12 +8,12 @@ namespace Cronitor;
 internal sealed class TelemetryRun : ITelemetryRun
 {
     private readonly TelemetriesClient _client;
-    private readonly string _monitorKey;
+    private readonly MonitorKey _monitorKey;
     private readonly string _environment;
     private readonly string _series = Guid.NewGuid().ToString("N");
     private bool _finished;
 
-    internal TelemetryRun(TelemetriesClient client, string monitorKey, string environment)
+    internal TelemetryRun(TelemetriesClient client, MonitorKey monitorKey, string environment)
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
 
@@ -22,10 +22,10 @@ internal sealed class TelemetryRun : ITelemetryRun
         _environment = environment;
     }
 
-    internal static TelemetryRun Start(TelemetriesClient client, string monitorKey, string environment = null) =>
+    internal static TelemetryRun Start(TelemetriesClient client, MonitorKey monitorKey, string environment = null) =>
         StartAsync(client, monitorKey, environment).GetAwaiter().GetResult();
 
-    internal static async Task<TelemetryRun> StartAsync(TelemetriesClient client, string monitorKey, string environment = null)
+    internal static async Task<TelemetryRun> StartAsync(TelemetriesClient client, MonitorKey monitorKey, string environment = null)
     {
         var run = new TelemetryRun(client, monitorKey, environment);
         await run.SendAsync(new RunCommand(), null);

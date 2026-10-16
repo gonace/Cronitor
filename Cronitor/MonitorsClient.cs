@@ -22,27 +22,27 @@ public interface IMonitorsClient
     ListMonitorResponse List(ListMonitorRequest request);
     /// <inheritdoc cref="List(ListMonitorRequest)"/>
     Task<ListMonitorResponse> ListAsync(ListMonitorRequest request);
-    Monitor Get(string key);
-    Task<Monitor> GetAsync(string key);
-    Monitor Clone(string key, string name = null);
-    Task<Monitor> CloneAsync(string key, string name = null);
+    Monitor Get(MonitorKey key);
+    Task<Monitor> GetAsync(MonitorKey key);
+    Monitor Clone(MonitorKey key, string name = null);
+    Task<Monitor> CloneAsync(MonitorKey key, string name = null);
     IEnumerable<Monitor> Create(CreateMonitorRequest request);
     Task<IEnumerable<Monitor>> CreateAsync(CreateMonitorRequest request);
     IEnumerable<Monitor> Update(UpdateMonitorRequest request);
     Task<IEnumerable<Monitor>> UpdateAsync(UpdateMonitorRequest request);
-    void Delete(string key);
-    Task DeleteAsync(string key);
-    void Pause(string key, int? hours = null);
-    Task PauseAsync(string key, int? hours = null);
-    void Unpause(string key);
-    Task UnpauseAsync(string key);
+    void Delete(MonitorKey key);
+    Task DeleteAsync(MonitorKey key);
+    void Pause(MonitorKey key, int? hours = null);
+    Task PauseAsync(MonitorKey key, int? hours = null);
+    void Unpause(MonitorKey key);
+    Task UnpauseAsync(MonitorKey key);
 
-    IEnumerable<Activity> Activities(string key);
-    Task<IEnumerable<Activity>> ActivitiesAsync(string key);
-    IEnumerable<Alert> Alerts(string key);
-    Task<IEnumerable<Alert>> AlertsAsync(string key);
-    IEnumerable<Ping> Pings(string key);
-    Task<IEnumerable<Ping>> PingsAsync(string key);
+    IEnumerable<Activity> Activities(MonitorKey key);
+    Task<IEnumerable<Activity>> ActivitiesAsync(MonitorKey key);
+    IEnumerable<Alert> Alerts(MonitorKey key);
+    Task<IEnumerable<Alert>> AlertsAsync(MonitorKey key);
+    IEnumerable<Ping> Pings(MonitorKey key);
+    Task<IEnumerable<Ping>> PingsAsync(MonitorKey key);
 }
 
 public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
@@ -77,10 +77,10 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
         return await SendAsync<ListMonitorResponse>(request);
     }
 
-    public Monitor Get(string key) =>
+    public Monitor Get(MonitorKey key) =>
         GetAsync(key).GetAwaiter().GetResult();
 
-    public async Task<Monitor> GetAsync(string key)
+    public async Task<Monitor> GetAsync(MonitorKey key)
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
 
@@ -99,10 +99,10 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
         return response?.Monitors;
     }
 
-    public Monitor Clone(string key, string name = null) =>
+    public Monitor Clone(MonitorKey key, string name = null) =>
         CloneAsync(key, name).GetAwaiter().GetResult();
 
-    public async Task<Monitor> CloneAsync(string key, string name = null)
+    public async Task<Monitor> CloneAsync(MonitorKey key, string name = null)
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
 
@@ -121,10 +121,10 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
         return response.Monitors;
     }
 
-    public void Delete(string key) =>
+    public void Delete(MonitorKey key) =>
         DeleteAsync(key).GetAwaiter().GetResult();
 
-    public async Task DeleteAsync(string key)
+    public async Task DeleteAsync(MonitorKey key)
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
 
@@ -133,10 +133,10 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
         await SendAsync(request);
     }
 
-    public void Pause(string key, int? hours = null) =>
+    public void Pause(MonitorKey key, int? hours = null) =>
         PauseAsync(key, hours).GetAwaiter().GetResult();
 
-    public async Task PauseAsync(string key, int? hours = null)
+    public async Task PauseAsync(MonitorKey key, int? hours = null)
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
 
@@ -145,10 +145,10 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
         await SendAsync(request);
     }
 
-    public void Unpause(string key) =>
+    public void Unpause(MonitorKey key) =>
         UnpauseAsync(key).GetAwaiter().GetResult();
 
-    public async Task UnpauseAsync(string key)
+    public async Task UnpauseAsync(MonitorKey key)
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
 
@@ -157,10 +157,10 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
         await SendAsync(request);
     }
 
-    public IEnumerable<Activity> Activities(string key) =>
+    public IEnumerable<Activity> Activities(MonitorKey key) =>
         ActivitiesAsync(key).GetAwaiter().GetResult();
 
-    public async Task<IEnumerable<Activity>> ActivitiesAsync(string key)
+    public async Task<IEnumerable<Activity>> ActivitiesAsync(MonitorKey key)
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(key);
 
@@ -169,20 +169,20 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
         return await SendAsync<IEnumerable<Activity>>(request);
     }
 
-    public IEnumerable<Alert> Alerts(string key) =>
+    public IEnumerable<Alert> Alerts(MonitorKey key) =>
         AlertsAsync(key).GetAwaiter().GetResult();
 
-    public async Task<IEnumerable<Alert>> AlertsAsync(string key)
+    public async Task<IEnumerable<Alert>> AlertsAsync(MonitorKey key)
     {
         var request = new ListAlertsRequest(key);
 
         return await SendAsync<IEnumerable<Alert>>(request);
     }
 
-    public IEnumerable<Ping> Pings(string key) =>
+    public IEnumerable<Ping> Pings(MonitorKey key) =>
         PingsAsync(key).GetAwaiter().GetResult();
 
-    public async Task<IEnumerable<Ping>> PingsAsync(string key)
+    public async Task<IEnumerable<Ping>> PingsAsync(MonitorKey key)
     {
         var request = new ListPingsRequest(key);
         var response = await SendAsync<Dictionary<string, IEnumerable<Ping>>>(request);

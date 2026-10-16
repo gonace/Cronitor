@@ -24,6 +24,16 @@ public class CronTickerSchedulesTests
     }
 
     [Fact]
+    public void Should_combine_the_schedules_of_functions_whose_names_differ_only_in_letter_case()
+    {
+        var cronTickers = new[] { CronTicker("Nightly-Backup", "0 0 3 * * *"), CronTicker("nightly-backup", "0 0 15 * * *") };
+
+        var schedule = Assert.Single(CronTickerSchedules.Of(cronTickers, TimeZoneInfo.Utc, NullLogger.Instance));
+
+        Assert.Equal(new[] { "0 3 * * *", "0 15 * * *" }, schedule.Schedules);
+    }
+
+    [Fact]
     public void Should_give_a_monitor_the_schedules_of_all_cron_tickers_of_its_function()
     {
         var cronTickers = new[] { CronTicker("nightly-backup", "0 0 3 * * *"), CronTicker("nightly-backup", "0 0 15 * * SUN") };
@@ -41,7 +51,19 @@ public class CronTickerSchedulesTests
 
         var schedules = CronTickerSchedules.Of(cronTickers, TimeZoneInfo.Utc, logger);
 
-        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey));
+        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey.ToString()));
+        Assert.Equal(LogLevel.Information, Assert.Single(logger.Entries).Level);
+    }
+
+    [Fact]
+    public void Should_not_sync_a_function_whose_name_is_too_long_for_a_monitor_key_and_sync_the_others()
+    {
+        var logger = new FakeLogger<CronTickerSchedulesTests>();
+        var cronTickers = new[] { CronTicker(new string('x', 101), "0 0 3 * * *"), CronTicker("nightly-backup", "0 0 3 * * *") };
+
+        var schedules = CronTickerSchedules.Of(cronTickers, TimeZoneInfo.Utc, logger);
+
+        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey.ToString()));
         Assert.Equal(LogLevel.Information, Assert.Single(logger.Entries).Level);
     }
 

@@ -56,6 +56,17 @@ public class TriggerSchedulesTests
     }
 
     [Fact]
+    public void Should_combine_the_schedules_of_jobs_whose_names_differ_only_in_letter_case()
+    {
+        var upper = Job("Nightly-Backup");
+        var lower = Job("nightly-backup");
+
+        var schedule = Assert.Single(TriggerSchedules.Of(new[] { (upper, CronTrigger(upper, "0 0 3 * * ?", TimeZoneInfo.Utc)), (lower, CronTrigger(lower, "0 0 15 * * ?", TimeZoneInfo.Utc)) }, NullLogger.Instance));
+
+        Assert.Equal(new[] { "0 3 * * *", "0 15 * * *" }, schedule.Schedules);
+    }
+
+    [Fact]
     public void Should_give_a_monitor_the_schedules_of_all_its_triggers()
     {
         var job = Job("nightly-backup");
@@ -87,7 +98,7 @@ public class TriggerSchedulesTests
 
         var schedules = TriggerSchedules.Of(new[] { (payroll, CronTrigger(payroll, "0 0 3 15W * ?", TimeZoneInfo.Utc)), (backup, CronTrigger(backup, "0 0 3 * * ?", TimeZoneInfo.Utc)) }, logger);
 
-        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey));
+        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey.ToString()));
         Assert.Equal(LogLevel.Information, Assert.Single(logger.Entries).Level);
     }
 
@@ -100,7 +111,33 @@ public class TriggerSchedulesTests
 
         var schedules = TriggerSchedules.Of(new[] { (payroll, CronTrigger(payroll, "0 0 3 * * ?", TimeZoneInfo.Utc)), (backup, CronTrigger(backup, "0 0 3 * * ?", TimeZoneInfo.Utc)) }, logger);
 
-        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey));
+        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey.ToString()));
+        Assert.Equal(LogLevel.Information, Assert.Single(logger.Entries).Level);
+    }
+
+    [Fact]
+    public void Should_not_sync_a_job_whose_name_is_too_long_for_a_monitor_key_and_sync_the_others()
+    {
+        var logger = new FakeLogger<TriggerSchedulesTests>();
+        var longNamed = Job(new string('x', 101));
+        var backup = Job("nightly-backup");
+
+        var schedules = TriggerSchedules.Of(new[] { (longNamed, CronTrigger(longNamed, "0 0 3 * * ?", TimeZoneInfo.Utc)), (backup, CronTrigger(backup, "0 0 3 * * ?", TimeZoneInfo.Utc)) }, logger);
+
+        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey.ToString()));
+        Assert.Equal(LogLevel.Information, Assert.Single(logger.Entries).Level);
+    }
+
+    [Fact]
+    public void Should_not_sync_a_job_whose_chosen_key_is_too_long_and_sync_the_others()
+    {
+        var logger = new FakeLogger<TriggerSchedulesTests>();
+        var payroll = JobBuilder.Create<NoopJob>().WithIdentity("payroll").UsingJobData(CronitorJobBuilderExtensions.MonitorKey, new string('x', 101)).Build();
+        var backup = Job("nightly-backup");
+
+        var schedules = TriggerSchedules.Of(new[] { (payroll, CronTrigger(payroll, "0 0 3 * * ?", TimeZoneInfo.Utc)), (backup, CronTrigger(backup, "0 0 3 * * ?", TimeZoneInfo.Utc)) }, logger);
+
+        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey.ToString()));
         Assert.Equal(LogLevel.Information, Assert.Single(logger.Entries).Level);
     }
 

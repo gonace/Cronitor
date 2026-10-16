@@ -102,9 +102,15 @@ public partial class CronitorJobListener
     /// </summary>
     private async Task<ITelemetryRun> ReportStartAsync(IJobExecutionContext context)
     {
+        if (!context.JobDetail.TryGetMonitorKey(context.MergedJobDataMap, out var monitorKey))
+        {
+            _logger.NoValidMonitorKey(context.JobDetail.Key);
+            return null;
+        }
+
         try
         {
-            return await _telemetries.StartAsync(MonitorKey.Of(context.JobDetail, context.MergedJobDataMap)).ConfigureAwait(false);
+            return await _telemetries.StartAsync(monitorKey).ConfigureAwait(false);
         }
         catch (Exception exception)
         {

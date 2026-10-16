@@ -63,6 +63,32 @@ public partial class CronitorJobListenerTests
     }
 
     [Fact]
+    public void Should_throw_when_WithCronitorMonitorKey_is_given_a_key_longer_than_100_characters()
+    {
+        var job = JobBuilder.Create<SucceedingJob>();
+
+        Assert.Throws<ArgumentException>(() => job.WithCronitorMonitorKey(new string('x', 101)));
+    }
+
+    [Theory]
+    [InlineData(" nightly-backup")]
+    [InlineData("nightly-backup ")]
+    public void Should_throw_when_WithCronitorMonitorKey_is_given_a_key_with_surrounding_whitespace(string monitorKey)
+    {
+        var job = JobBuilder.Create<SucceedingJob>();
+
+        Assert.Throws<ArgumentException>(() => job.WithCronitorMonitorKey(monitorKey));
+    }
+
+    [Fact]
+    public void Should_throw_when_WithCronitorMonitorKey_is_given_no_key()
+    {
+        var job = JobBuilder.Create<SucceedingJob>();
+
+        Assert.Throws<ArgumentNullException>(() => job.WithCronitorMonitorKey((MonitorKey)null));
+    }
+
+    [Fact]
     public async Task Should_report_to_the_job_class_name_when_Quartz_generated_the_job_name()
     {
         var telemetries = new FakeTelemetriesClient();
@@ -104,6 +130,35 @@ public partial class CronitorJobListenerTests
         await RunJob(job, telemetries);
 
         Assert.Equal(new[] { "run sync-3f2c8a1e", "complete sync-3f2c8a1e" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public async Task Should_not_report_a_job_whose_name_is_too_long_for_a_monitor_key_and_log_a_warning()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var logger = new FakeLogger<CronitorJobListener>();
+        SucceedingJob.Reset();
+
+        await RunJob(JobBuilder.Create<SucceedingJob>().WithIdentity(new string('x', 101)).Build(), new CronitorJobListener(telemetries, logger), SucceedingJob.Ran);
+
+        Assert.True(SucceedingJob.Ran.IsCompleted);
+        Assert.Empty(telemetries.Sent);
+        Assert.Equal(LogLevel.Warning, Assert.Single(logger.Entries).Level);
+    }
+
+    [Fact]
+    public async Task Should_not_report_a_job_whose_chosen_key_is_invalid_and_log_a_warning()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var logger = new FakeLogger<CronitorJobListener>();
+        SucceedingJob.Reset();
+        var job = JobBuilder.Create<SucceedingJob>().WithIdentity("payroll").UsingJobData(CronitorJobBuilderExtensions.MonitorKey, "reports/payroll").Build();
+
+        await RunJob(job, new CronitorJobListener(telemetries, logger), SucceedingJob.Ran);
+
+        Assert.True(SucceedingJob.Ran.IsCompleted);
+        Assert.Empty(telemetries.Sent);
+        Assert.Equal(LogLevel.Warning, Assert.Single(logger.Entries).Level);
     }
 
     [Fact]

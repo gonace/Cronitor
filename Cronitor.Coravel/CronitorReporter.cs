@@ -31,7 +31,7 @@ internal sealed class CronitorReporter
     /// Runs the job and reports it to the monitor with the given key. The returned task is the job's own, so Coravel
     /// still sees the job's exception.
     /// </summary>
-    internal Task RunAsync(string monitorKey, Func<Task> job)
+    internal Task RunAsync(MonitorKey monitorKey, Func<Task> job)
     {
         var start = ReportStartAsync(monitorKey);
         var execution = ExecuteAsync(job);
@@ -85,7 +85,7 @@ internal sealed class CronitorReporter
     /// <summary>
     /// Sends the run event. The returned task completes with the run, or with null if it could not be reported.
     /// </summary>
-    private async Task<ITelemetryRun> ReportStartAsync(string monitorKey)
+    private async Task<ITelemetryRun> ReportStartAsync(MonitorKey monitorKey)
     {
         try
         {
@@ -101,7 +101,7 @@ internal sealed class CronitorReporter
     /// <summary>
     /// Sends complete or fail once the job has ended and the run event has been sent, so Cronitor always receives them in order.
     /// </summary>
-    private async Task ReportEndAsync(Task<ITelemetryRun> start, Task execution, string monitorKey)
+    private async Task ReportEndAsync(Task<ITelemetryRun> start, Task execution, MonitorKey monitorKey)
     {
         try
         {

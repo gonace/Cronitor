@@ -66,9 +66,11 @@ Telemetry events report the state of a job to a monitor. Each event has a sync a
 | `Tick` | A heartbeat, for monitors without a start/end |
 | `Ping` | Sends a custom `Command` |
 
-All events except `Ping` take a monitor key and an optional `message` and `environment`. A monitor that doesn't exist yet is created by its first event. Monitor keys may contain any character except `/`, which Cronitor doesn't accept in a monitor key; an event for such a key can't be delivered.
+All events except `Ping` take a monitor key and an optional `message` and `environment`. A monitor that doesn't exist yet is created by its first event.
 
-Telemetry never breaks the job it monitors: transient failures are retried, and if an event still can't be delivered the method returns `false` instead of throwing.
+A monitor key is a `MonitorKey`, and a string converts to one. It follows Cronitor's rules for keys: it can't be blank, contain `/`, be longer than 100 Unicode characters (an emoji counts as one), or start or end with whitespace, and it must be valid Unicode. An invalid key throws an `ArgumentException` before anything is sent, since Cronitor would otherwise drop the event without telling.
+
+Telemetry never breaks the job it monitors because of Cronitor: transient failures are retried, and if an event still can't be delivered the method returns `false` instead of throwing.
 
 Events that can't be delivered are logged as errors, see [Logging](#logging).
 
@@ -233,6 +235,8 @@ var monitors = await CronitorClient.Monitors.CreateAsync(new CreateMonitorReques
 ```
 
 `Assertion` and `Schedule` are fluent builders, so you don't have to write raw assertion or cron strings. See the [wiki](https://github.com/gonace/Cronitor/wiki) for all operations and options.
+
+Monitor keys are `MonitorKey`s here too, with the same rules as for telemetry. Keys read from Cronitor are taken as they are, even if they break those rules, so a monitor you've read can always be passed back, such as `GetAsync(monitor.Key)`.
 
 ### Timezone
 A monitor's schedule is evaluated in its `Timezone`, which Cronitor expects as an IANA name such as `Europe/Berlin`. `CronitorTimezone.Of()` gives the IANA name of a `TimeZoneInfo`, also on Windows, where time zones have Windows names such as `W. Europe Standard Time`:

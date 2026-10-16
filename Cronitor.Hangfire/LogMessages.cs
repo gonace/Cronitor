@@ -37,4 +37,10 @@ internal static partial class LogMessages
         Level = LogLevel.Error,
         Message = "Could not read Hangfire's recurring jobs to sync their schedules to Cronitor")]
     internal static partial void RecurringJobsNotRead(this ILogger logger, Exception exception);
+
+    [LoggerMessage(
+        EventId = 6,
+        Level = LogLevel.Warning,
+        Message = "Not reporting recurring job {RecurringJobId} to Cronitor: a monitor key can't be blank or longer than 100 characters")]
+    internal static partial void RecurringJobIdNotAMonitorKey(this ILogger logger, string recurringJobId);
 }

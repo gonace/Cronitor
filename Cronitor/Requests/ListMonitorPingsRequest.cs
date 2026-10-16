@@ -8,9 +8,9 @@ namespace Cronitor.Requests;
 public class ListPingsRequest : BaseRequest
 {
     public override string Endpoint { get; set; } = "monitors/:key/pings";
-    public string Key { get; set; }
+    public MonitorKey Key { get; set; }
 
-    public ListPingsRequest(string monitorKey)
+    public ListPingsRequest(MonitorKey monitorKey)
     {
         Key = monitorKey;
     }

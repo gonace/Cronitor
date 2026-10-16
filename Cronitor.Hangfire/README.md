@@ -51,7 +51,7 @@ A recurring job reports to the monitor with the same key as its ID, so name your
 ```c#
 RecurringJob.AddOrUpdate("nightly-backup", () => Backup.Run(), Cron.Daily(3));
 ```
-Cronitor doesn't accept `/` in a monitor key, so a `/` in the ID becomes `-`: a recurring job `reports/daily` reports to `reports-daily`. Recurring jobs `reports/daily` and `reports-daily` would therefore share a monitor; rename one of them to keep them apart.
+Cronitor doesn't accept `/` in a monitor key, so a `/` in the ID becomes `-`: a recurring job `reports/daily` reports to `reports-daily`. Recurring jobs `reports/daily` and `reports-daily` would therefore share a monitor; rename one of them to keep them apart. A monitor key can be at most 100 characters: a recurring job whose key would be longer isn't reported or synced, and the reason is logged.
 
 Jobs that are not recurring, such as those started with `BackgroundJob.Enqueue()`, are not reported.
 

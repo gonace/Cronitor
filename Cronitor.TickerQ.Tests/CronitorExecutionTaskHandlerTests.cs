@@ -40,6 +40,20 @@ public class CronitorExecutionTaskHandlerTests
     }
 
     [Fact]
+    public async Task Should_not_report_a_cron_job_whose_function_name_is_too_long_for_a_monitor_key_and_log_a_warning()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var logger = new FakeLogger<CronitorExecutionTaskHandler>();
+        var cronJob = new InternalFunctionContext { FunctionName = new string('x', 101), Type = TickerType.CronTickerOccurrence, TickerId = Guid.NewGuid() };
+        var handler = new CronitorExecutionTaskHandler(EndsWith(TickerStatus.Done), telemetries, logger);
+
+        await handler.ExecuteTaskAsync(cronJob, false, TestContext.Current.CancellationToken);
+
+        Assert.Empty(telemetries.Sent);
+        Assert.Equal(LogLevel.Warning, Assert.Single(logger.Entries).Level);
+    }
+
+    [Fact]
     public async Task Should_complete_without_the_error_of_a_failed_attempt_when_a_retry_succeeds()
     {
         var telemetries = new FakeTelemetriesClient();

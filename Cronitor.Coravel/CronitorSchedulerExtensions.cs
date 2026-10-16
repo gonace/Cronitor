@@ -16,23 +16,18 @@ public static class CronitorSchedulerExtensions
 
     /// <summary>
     /// Schedules the job like <c>Schedule&lt;TInvocable&gt;()</c> and reports each run to the Cronitor monitor with
-    /// the given key. The key can't contain <c>/</c>, which Cronitor doesn't accept in a monitor key.
+    /// the given key.
     /// </summary>
-    public static IScheduleInterval ScheduleWithCronitor<TInvocable>(this IScheduler scheduler, string monitorKey) where TInvocable : IInvocable
+    public static IScheduleInterval ScheduleWithCronitor<TInvocable>(this IScheduler scheduler, MonitorKey monitorKey) where TInvocable : IInvocable
     {
         if (scheduler == null)
         {
             throw new ArgumentNullException(nameof(scheduler));
         }
 
-        if (string.IsNullOrWhiteSpace(monitorKey))
+        if (monitorKey == null)
         {
-            throw new ArgumentException("A monitor key is required.", nameof(monitorKey));
-        }
-
-        if (monitorKey.IndexOf('/') >= 0)
-        {
-            throw new ArgumentException($"Cronitor doesn't accept '/' in a monitor key: '{monitorKey}'.", nameof(monitorKey));
+            throw new ArgumentNullException(nameof(monitorKey));
         }
 
         return scheduler.ScheduleWithParams<CronitorInvocable<TInvocable>>(monitorKey);

@@ -46,7 +46,7 @@ The setup is the same for Quartz 3 and 4. `AddQuartzHostedService()` comes from 
 ## Monitor keys
 A job reports to the monitor with the same key as the job's name. Use `.WithCronitorMonitorKey()` to report to a different monitor, as above.
 
-Cronitor doesn't accept `/` in a monitor key, so a `/` in a job's name becomes `-`: a job named `reports/daily` reports to `reports-daily`. Jobs named `reports/daily` and `reports-daily` would therefore share a monitor; give one of them `.WithCronitorMonitorKey()` to keep them apart. A key given to `.WithCronitorMonitorKey()` is used exactly as given, so it can't contain `/`; it throws if it does.
+Cronitor doesn't accept `/` in a monitor key, so a `/` in a job's name becomes `-`: a job named `reports/daily` reports to `reports-daily`. Jobs named `reports/daily` and `reports-daily` would therefore share a monitor; give one of them `.WithCronitorMonitorKey()` to keep them apart. A key given to `.WithCronitorMonitorKey()` is used exactly as given, so it must follow Cronitor's [rules for monitor keys](https://github.com/gonace/Cronitor#telemetry); it throws if it doesn't. A monitor key can be at most 100 characters: a job whose key would be longer, or breaks Cronitor's rules in another way, isn't reported or synced, and the reason is logged.
 
 A job scheduled without a name, such as `q.ScheduleJob<BackupJob>(trigger => …)` without `WithIdentity`, gets a new random name from Quartz on every start. Such a job reports under its class name instead, `BackupJob` here, so it keeps reporting to the same monitor. Two unnamed jobs of the same class share that monitor; give them names, or monitor keys, to keep them apart.
 

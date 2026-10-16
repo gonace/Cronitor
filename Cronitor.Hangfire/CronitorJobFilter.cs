@@ -50,7 +50,13 @@ public class CronitorJobFilter : IServerFilter
                 return;
             }
 
-            context.Items[StartKey] = ReportStartAsync(MonitorKey.Of(recurringJobId), context.BackgroundJob.Id);
+            if (!MonitorKey.TryFromName(recurringJobId, out var monitorKey))
+            {
+                _logger.RecurringJobIdNotAMonitorKey(recurringJobId);
+                return;
+            }
+
+            context.Items[StartKey] = ReportStartAsync(monitorKey, context.BackgroundJob.Id);
         }
         catch (Exception exception)
         {
@@ -102,7 +108,7 @@ public class CronitorJobFilter : IServerFilter
     /// <summary>
     /// Sends the run event. The returned task completes with the run, or with null if it could not be reported.
     /// </summary>
-    private async Task<ITelemetryRun> ReportStartAsync(string monitorKey, string jobId)
+    private async Task<ITelemetryRun> ReportStartAsync(MonitorKey monitorKey, string jobId)
     {
         try
         {

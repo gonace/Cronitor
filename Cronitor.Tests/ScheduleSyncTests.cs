@@ -111,7 +111,7 @@ public class ScheduleSyncTests
     [InlineData("reports/daily")]
     public void Should_not_accept_a_monitor_key_Cronitor_does_not_accept(string monitorKey)
     {
-        Assert.Throws<ArgumentException>(() => new MonitorSchedule(monitorKey, new[] { "0 3 * * *" }));
+        Assert.ThrowsAny<ArgumentException>(() => new MonitorSchedule(monitorKey, new[] { "0 3 * * *" }));
     }
 
     [Fact]
@@ -165,23 +165,23 @@ public class ScheduleSyncTests
         public Task<ListMonitorResponse> ListAsync(int page = 1) => throw new NotSupportedException();
         public ListMonitorResponse List(ListMonitorRequest request) => throw new NotSupportedException();
         public Task<ListMonitorResponse> ListAsync(ListMonitorRequest request) => throw new NotSupportedException();
-        public Monitor Get(string key) => throw new NotSupportedException();
-        public Task<Monitor> GetAsync(string key) => throw new NotSupportedException();
-        public Monitor Clone(string key, string name = null) => throw new NotSupportedException();
-        public Task<Monitor> CloneAsync(string key, string name = null) => throw new NotSupportedException();
+        public Monitor Get(MonitorKey key) => throw new NotSupportedException();
+        public Task<Monitor> GetAsync(MonitorKey key) => throw new NotSupportedException();
+        public Monitor Clone(MonitorKey key, string name = null) => throw new NotSupportedException();
+        public Task<Monitor> CloneAsync(MonitorKey key, string name = null) => throw new NotSupportedException();
         public IEnumerable<Monitor> Create(CreateMonitorRequest request) => throw new NotSupportedException();
         public Task<IEnumerable<Monitor>> CreateAsync(CreateMonitorRequest request) => throw new NotSupportedException();
-        public void Delete(string key) => throw new NotSupportedException();
-        public Task DeleteAsync(string key) => throw new NotSupportedException();
-        public void Pause(string key, int? hours = null) => throw new NotSupportedException();
-        public Task PauseAsync(string key, int? hours = null) => throw new NotSupportedException();
-        public void Unpause(string key) => throw new NotSupportedException();
-        public Task UnpauseAsync(string key) => throw new NotSupportedException();
-        public IEnumerable<Activity> Activities(string key) => throw new NotSupportedException();
-        public Task<IEnumerable<Activity>> ActivitiesAsync(string key) => throw new NotSupportedException();
-        public IEnumerable<Alert> Alerts(string key) => throw new NotSupportedException();
-        public Task<IEnumerable<Alert>> AlertsAsync(string key) => throw new NotSupportedException();
-        public IEnumerable<Ping> Pings(string key) => throw new NotSupportedException();
-        public Task<IEnumerable<Ping>> PingsAsync(string key) => throw new NotSupportedException();
+        public void Delete(MonitorKey key) => throw new NotSupportedException();
+        public Task DeleteAsync(MonitorKey key) => throw new NotSupportedException();
+        public void Pause(MonitorKey key, int? hours = null) => throw new NotSupportedException();
+        public Task PauseAsync(MonitorKey key, int? hours = null) => throw new NotSupportedException();
+        public void Unpause(MonitorKey key) => throw new NotSupportedException();
+        public Task UnpauseAsync(MonitorKey key) => throw new NotSupportedException();
+        public IEnumerable<Activity> Activities(MonitorKey key) => throw new NotSupportedException();
+        public Task<IEnumerable<Activity>> ActivitiesAsync(MonitorKey key) => throw new NotSupportedException();
+        public IEnumerable<Alert> Alerts(MonitorKey key) => throw new NotSupportedException();
+        public Task<IEnumerable<Alert>> AlertsAsync(MonitorKey key) => throw new NotSupportedException();
+        public IEnumerable<Ping> Pings(MonitorKey key) => throw new NotSupportedException();
+        public Task<IEnumerable<Ping>> PingsAsync(MonitorKey key) => throw new NotSupportedException();
     }
 }

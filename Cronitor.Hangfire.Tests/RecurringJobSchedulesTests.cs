@@ -41,6 +41,16 @@ public class RecurringJobSchedulesTests
     }
 
     [Fact]
+    public void Should_combine_the_schedules_of_recurring_jobs_whose_IDs_differ_only_in_letter_case()
+    {
+        var recurringJobs = new[] { RecurringJob("Nightly-Backup", "0 3 * * *"), RecurringJob("nightly-backup", "0 15 * * *") };
+
+        var schedule = Assert.Single(RecurringJobSchedules.Of(recurringJobs, NullLogger.Instance));
+
+        Assert.Equal(new[] { "0 3 * * *", "0 15 * * *" }, schedule.Schedules);
+    }
+
+    [Fact]
     public void Should_not_sync_a_monitor_whose_recurring_jobs_run_in_different_time_zones()
     {
         var logger = new FakeLogger<RecurringJobSchedulesTests>();
@@ -60,7 +70,7 @@ public class RecurringJobSchedulesTests
 
         var schedules = RecurringJobSchedules.Of(recurringJobs, logger);
 
-        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey));
+        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey.ToString()));
         Assert.Equal(LogLevel.Information, Assert.Single(logger.Entries).Level);
     }
 
@@ -70,6 +80,18 @@ public class RecurringJobSchedulesTests
         var recurringJobs = new[] { RecurringJob("nightly-backup", "0 3 * * *", "Somewhere/Nowhere") };
 
         Assert.Empty(RecurringJobSchedules.Of(recurringJobs, NullLogger.Instance));
+    }
+
+    [Fact]
+    public void Should_not_sync_a_recurring_job_whose_ID_is_too_long_for_a_monitor_key_and_sync_the_others()
+    {
+        var logger = new FakeLogger<RecurringJobSchedulesTests>();
+        var recurringJobs = new[] { RecurringJob(new string('x', 101), "0 3 * * *"), RecurringJob("nightly-backup", "0 3 * * *") };
+
+        var schedules = RecurringJobSchedules.Of(recurringJobs, logger);
+
+        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey.ToString()));
+        Assert.Equal(LogLevel.Information, Assert.Single(logger.Entries).Level);
     }
 
     [Fact]

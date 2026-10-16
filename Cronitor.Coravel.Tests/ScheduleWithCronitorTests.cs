@@ -69,7 +69,51 @@ public class ScheduleWithCronitorTests
         {
             var scheduler = provider.GetRequiredService<IScheduler>();
 
+            Assert.ThrowsAny<ArgumentException>(() => scheduler.ScheduleWithCronitor<SucceedingJob>(monitorKey));
+        }
+    }
+
+    [Fact]
+    public void Should_throw_when_ScheduleWithCronitor_is_given_a_monitor_key_longer_than_100_characters()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddScheduler();
+        using (var provider = services.BuildServiceProvider())
+        {
+            var scheduler = provider.GetRequiredService<IScheduler>();
+
+            Assert.Throws<ArgumentException>(() => scheduler.ScheduleWithCronitor<SucceedingJob>(new string('x', 101)));
+        }
+    }
+
+    [Theory]
+    [InlineData(" nightly-backup")]
+    [InlineData("nightly-backup ")]
+    public void Should_throw_when_ScheduleWithCronitor_is_given_a_monitor_key_with_surrounding_whitespace(string monitorKey)
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddScheduler();
+        using (var provider = services.BuildServiceProvider())
+        {
+            var scheduler = provider.GetRequiredService<IScheduler>();
+
             Assert.Throws<ArgumentException>(() => scheduler.ScheduleWithCronitor<SucceedingJob>(monitorKey));
+        }
+    }
+
+    [Fact]
+    public void Should_throw_when_ScheduleWithCronitor_is_given_no_monitor_key()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddScheduler();
+        using (var provider = services.BuildServiceProvider())
+        {
+            var scheduler = provider.GetRequiredService<IScheduler>();
+
+            Assert.Throws<ArgumentNullException>(() => scheduler.ScheduleWithCronitor<SucceedingJob>((MonitorKey)null));
         }
     }
 

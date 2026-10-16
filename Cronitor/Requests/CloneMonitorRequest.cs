@@ -10,21 +10,21 @@ public class CloneMonitorRequest : BaseRequest
     public override string Endpoint { get; set; } = "monitors/clone";
     public override HttpMethod Method => HttpMethod.Post;
 
-    public CloneMonitorRequest(string key, string name = null)
+    public CloneMonitorRequest(MonitorKey key, string name = null)
     {
         Content = new StringContent(Serializer.Serialize(new CloneMonitorRequestContent(key, name)), Encoding.UTF8, "application/json");
     }
 
     private class CloneMonitorRequestContent
     {
-        public CloneMonitorRequestContent(string key, string name)
+        public CloneMonitorRequestContent(MonitorKey key, string name)
         {
             Key = key;
             Name = name;
         }
 
         [JsonPropertyName("key")]
-        public string Key { get; set; }
+        public MonitorKey Key { get; set; }
         [JsonPropertyName("name")]
         public string Name { get; set; }
     }

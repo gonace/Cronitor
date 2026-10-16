@@ -12,7 +12,7 @@ internal static class CronTickerSchedules
     internal static IReadOnlyList<MonitorSchedule> Of(IEnumerable<CronTickerEntity> cronTickers, TimeZoneInfo timeZone, ILogger logger)
     {
         var schedules = new List<MonitorSchedule>();
-        foreach (var monitor in cronTickers.Where(cronTicker => cronTicker.IsEnabled).GroupBy(cronTicker => MonitorKey.Of(cronTicker.Function)))
+        foreach (var monitor in ByMonitorKey(cronTickers.Where(cronTicker => cronTicker.IsEnabled), logger))
         {
             if (TryScheduleOf(monitor.Key, monitor.ToList(), timeZone, logger, out var schedule))
             {
@@ -23,7 +23,25 @@ internal static class CronTickerSchedules
         return schedules;
     }
 
-    private static bool TryScheduleOf(string monitorKey, IReadOnlyList<CronTickerEntity> cronTickers, TimeZoneInfo timeZone, ILogger logger, out MonitorSchedule schedule)
+    private static IEnumerable<IGrouping<MonitorKey, CronTickerEntity>> ByMonitorKey(IEnumerable<CronTickerEntity> cronTickers, ILogger logger)
+    {
+        var keyed = new List<(MonitorKey MonitorKey, CronTickerEntity CronTicker)>();
+        foreach (var cronTicker in cronTickers)
+        {
+            if (MonitorKey.TryFromName(cronTicker.Function, out var monitorKey))
+            {
+                keyed.Add((monitorKey, cronTicker));
+            }
+            else
+            {
+                logger.ScheduleNotSynced(cronTicker.Function, $"the function name of cron ticker {cronTicker.Id} can't be a monitor key, which can't be blank or longer than 100 characters");
+            }
+        }
+
+        return keyed.GroupBy(entry => entry.MonitorKey, entry => entry.CronTicker);
+    }
+
+    private static bool TryScheduleOf(MonitorKey monitorKey, IReadOnlyList<CronTickerEntity> cronTickers, TimeZoneInfo timeZone, ILogger logger, out MonitorSchedule schedule)
     {
         schedule = null;
         var expressions = new List<string>();

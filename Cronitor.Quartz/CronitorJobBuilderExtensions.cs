@@ -1,5 +1,4 @@
 using Quartz;
-using System;
 
 namespace Cronitor.Quartz;
 
@@ -13,20 +12,4 @@ public static partial class CronitorJobBuilderExtensions
     /// The <see cref="JobDataMap"/> key holding the Cronitor monitor key a job reports to.
     /// </summary>
     public const string MonitorKey = "Cronitor.MonitorKey";
-
-    /// <summary>
-    /// Throws unless the key can be used as given: it must not be blank, and Cronitor doesn't accept <c>/</c> in a monitor key.
-    /// </summary>
-    private static void ValidateMonitorKey(string monitorKey)
-    {
-        if (string.IsNullOrWhiteSpace(monitorKey))
-        {
-            throw new ArgumentException("A monitor key is required.", nameof(monitorKey));
-        }
-
-        if (monitorKey.IndexOf('/') >= 0)
-        {
-            throw new ArgumentException($"Cronitor doesn't accept '/' in a monitor key: '{monitorKey}'.", nameof(monitorKey));
-        }
-    }
 }

@@ -26,7 +26,7 @@ public class Ping
     /// The unique identifier
     /// </summary>
     [JsonPropertyName("monitor_code")]
-    public string MonitorKey { get; set; }
+    public MonitorKey MonitorKey { get; set; }
     /// <summary>
     /// Enum(alert, healthcheck, ping)
     /// </summary>

@@ -6,7 +6,7 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace Cronitor;
 
-public static class Serializer
+internal static class Serializer
 {
     public static T Deserialize<T>(string json) =>
         JsonSerializer.Deserialize<T>(json, Options);
@@ -16,6 +16,7 @@ public static class Serializer
 
     private static readonly JsonSerializerOptions Options = new JsonSerializerOptions
     {
+        Converters = { MonitorKeyConverter.ForCronitorResponses() },
         DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
         Encoder = JavaScriptEncoder.UnsafeRelaxedJsonEscaping,
         IgnoreReadOnlyProperties = true,

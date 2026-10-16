@@ -16,7 +16,7 @@ public class TemplateBuilder
         Emails = new List<string> { "jane.doe@domain.tld", "john.doe@domain.tld" }
     };
 
-    private readonly List<string> _monitors = new List<string>() { "Monitor1", "Monitor2", "Monitor3" };
+    private readonly List<MonitorKey> _monitors = new List<MonitorKey>() { "Monitor1", "Monitor2", "Monitor3" };
 
     public Notification Build()
     {

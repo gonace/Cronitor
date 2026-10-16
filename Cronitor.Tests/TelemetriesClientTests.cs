@@ -166,6 +166,22 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
+    public void Should_reject_an_invalid_monitor_key_without_sending_anything()
+    {
+        Assert.Throws<ArgumentException>(() => _telemetriesClient.Run("reports/daily"));
+
+        Assert.Empty(_handler.Requests);
+    }
+
+    [Fact]
+    public void Should_reject_an_invalid_monitor_key_without_starting_a_run()
+    {
+        Assert.Throws<ArgumentException>(() => _telemetriesClient.Start("reports/daily"));
+
+        Assert.Empty(_handler.Requests);
+    }
+
+    [Fact]
     public void Should_retry_telemetry_pings()
     {
         var network = new ScriptedHttpMessageHandler(

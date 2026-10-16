@@ -24,7 +24,7 @@ public class Alert
     [JsonPropertyName("destination")]
     public string Destination { get; set; }
     [JsonPropertyName("monitor")]
-    public EntityReference Monitor { get; set; }
+    public MonitorReference Monitor { get; set; }
     /// <summary>
     /// Key of the incident the notification belongs to; an alert and its recovery share it.
     /// </summary>

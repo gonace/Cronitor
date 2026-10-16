@@ -9,7 +9,7 @@ public class IssueMonitor
 {
     [JsonInclude]
     [JsonPropertyName("key")]
-    public string Key { get; internal set; }
+    public MonitorKey Key { get; internal set; }
     [JsonInclude]
     [JsonPropertyName("name")]
     public string Name { get; internal set; }
