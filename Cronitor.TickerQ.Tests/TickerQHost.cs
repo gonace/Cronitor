@@ -65,6 +65,8 @@ public sealed class TickerQHost : IAsyncLifetime
         }
     }
 
+    public IServiceProvider Services => _host.Services;
+
     public async ValueTask DisposeAsync()
     {
         await _host.StopAsync(CancellationToken.None);

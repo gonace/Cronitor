@@ -1,7 +1,10 @@
+using Cronitor.Scheduling;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using TickerQ.Utilities;
 using TickerQ.Utilities.Interfaces;
 
 namespace Cronitor.TickerQ;
@@ -37,6 +40,38 @@ public static class CronitorTickerQServiceCollectionExtensions
 
         return services;
     }
+
+    /// <summary>
+    /// Gives each cron job's Cronitor monitor the schedules of its cron tickers, in TickerQ's time zone, once the
+    /// application has started, so Cronitor alerts when a job doesn't run. Call it after <c>AddTickerQ()</c>. Cronitor
+    /// must be registered with <c>ConfigureCronitor(apiKey)</c> on the host builder.
+    /// </summary>
+    public static IServiceCollection AddCronitorTickerQScheduleSync(this IServiceCollection services)
+    {
+        if (services == null)
+        {
+            throw new ArgumentNullException(nameof(services));
+        }
+
+        var persistenceProviderType = services.LastOrDefault(service => IsPersistenceProvider(service.ServiceType))?.ServiceType
+            ?? throw new InvalidOperationException("TickerQ is not registered. Call AddCronitorTickerQScheduleSync() after AddTickerQ().");
+
+        services.AddHostedService(provider => new CronitorScheduleSyncService(
+            CronTickerStore.Of(provider, persistenceProviderType),
+            provider.GetRequiredService<SchedulerOptionsBuilder>().SchedulerTimeZone,
+            new ScheduleSync(MonitorsClient(provider), provider.GetService<ILogger<ScheduleSync>>()),
+            provider.GetRequiredService<IHostApplicationLifetime>(),
+            provider.GetService<ILogger<CronitorScheduleSyncService>>()));
+
+        return services;
+    }
+
+    private static bool IsPersistenceProvider(Type serviceType) =>
+        serviceType.IsGenericType && serviceType.GetGenericTypeDefinition() == typeof(ITickerPersistenceProvider<,>);
+
+    private static IMonitorsClient MonitorsClient(IServiceProvider provider) =>
+        provider.GetService<IMonitorsClient>()
+        ?? throw new InvalidOperationException("No IMonitorsClient is registered. Register Cronitor with ConfigureCronitor(apiKey) on the host builder.");
 
     private static ITelemetriesClient TelemetriesClient(IServiceProvider provider) =>
         provider.GetService<ITelemetriesClient>()

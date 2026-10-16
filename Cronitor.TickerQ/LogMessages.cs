@@ -25,4 +25,16 @@ internal static partial class LogMessages
         Level = LogLevel.Warning,
         Message = "Stopped waiting for {Count} cron job reports to Cronitor while the application stopped")]
     internal static partial void ReportsPendingAtShutdown(this ILogger logger, int count);
+
+    [LoggerMessage(
+        EventId = 4,
+        Level = LogLevel.Information,
+        Message = "Not syncing the schedule of monitor {MonitorKey} to Cronitor: {Reason}")]
+    internal static partial void ScheduleNotSynced(this ILogger logger, string monitorKey, string reason);
+
+    [LoggerMessage(
+        EventId = 5,
+        Level = LogLevel.Error,
+        Message = "Could not read TickerQ's cron tickers to sync their schedules to Cronitor")]
+    internal static partial void CronTickersNotRead(this ILogger logger, Exception exception);
 }
