@@ -12,9 +12,9 @@ internal static class TriggerSchedules
     internal static IReadOnlyList<MonitorSchedule> Of(IEnumerable<(IJobDetail Job, ITrigger Trigger)> triggers, ILogger logger)
     {
         var schedules = new List<MonitorSchedule>();
-        foreach (var monitor in triggers.GroupBy(scheduled => MonitorKey.Of(scheduled.Job, scheduled.Trigger)))
+        foreach (var monitor in ByMonitorKey(triggers, logger))
         {
-            if (TryScheduleOf(monitor.Key, monitor.Select(scheduled => scheduled.Trigger).ToList(), logger, out var schedule))
+            if (TryScheduleOf(monitor.Key, monitor.ToList(), logger, out var schedule))
             {
                 schedules.Add(schedule);
             }
@@ -23,15 +23,27 @@ internal static class TriggerSchedules
         return schedules;
     }
 
+    private static IEnumerable<IGrouping<string, ITrigger>> ByMonitorKey(IEnumerable<(IJobDetail Job, ITrigger Trigger)> triggers, ILogger logger)
+    {
+        var keyed = new List<(string MonitorKey, ITrigger Trigger)>();
+        foreach (var (job, trigger) in triggers)
+        {
+            if (job.TryGetMonitorKey(trigger, out var monitorKey))
+            {
+                keyed.Add((monitorKey.ToString(), trigger));
+            }
+            else
+            {
+                logger.ScheduleNotSynced(job.Key.ToString(), $"the monitor key of job {job.Key}, chosen or from its name, can't be blank, contain '/' or be longer than 100 characters");
+            }
+        }
+
+        return keyed.GroupBy(entry => entry.MonitorKey, entry => entry.Trigger);
+    }
+
     private static bool TryScheduleOf(string monitorKey, IReadOnlyList<ITrigger> triggers, ILogger logger, out MonitorSchedule schedule)
     {
         schedule = null;
-        if (monitorKey.IndexOf('/') >= 0)
-        {
-            logger.ScheduleNotSynced(monitorKey, "Cronitor doesn't accept '/' in a monitor key");
-            return false;
-        }
-
         var expressions = new List<string>();
         var timeZones = new List<TimeZoneInfo>();
         foreach (var trigger in triggers)

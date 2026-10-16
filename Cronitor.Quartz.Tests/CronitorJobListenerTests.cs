@@ -107,6 +107,35 @@ public partial class CronitorJobListenerTests
     }
 
     [Fact]
+    public async Task Should_not_report_a_job_whose_name_is_too_long_for_a_monitor_key_and_log_a_warning()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var logger = new FakeLogger<CronitorJobListener>();
+        SucceedingJob.Reset();
+
+        await RunJob(JobBuilder.Create<SucceedingJob>().WithIdentity(new string('x', 101)).Build(), new CronitorJobListener(telemetries, logger), SucceedingJob.Ran);
+
+        Assert.True(SucceedingJob.Ran.IsCompleted);
+        Assert.Empty(telemetries.Sent);
+        Assert.Equal(LogLevel.Warning, Assert.Single(logger.Entries).Level);
+    }
+
+    [Fact]
+    public async Task Should_not_report_a_job_whose_chosen_key_is_invalid_and_log_a_warning()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var logger = new FakeLogger<CronitorJobListener>();
+        SucceedingJob.Reset();
+        var job = JobBuilder.Create<SucceedingJob>().WithIdentity("payroll").UsingJobData(CronitorJobBuilderExtensions.MonitorKey, "reports/payroll").Build();
+
+        await RunJob(job, new CronitorJobListener(telemetries, logger), SucceedingJob.Ran);
+
+        Assert.True(SucceedingJob.Ran.IsCompleted);
+        Assert.Empty(telemetries.Sent);
+        Assert.Equal(LogLevel.Warning, Assert.Single(logger.Entries).Level);
+    }
+
+    [Fact]
     public async Task Should_still_run_the_job_and_log_the_error_when_the_listener_fails_before_it()
     {
         var telemetries = new FakeTelemetriesClient { ThrowOnStart = true };

@@ -38,4 +38,10 @@ internal static partial class LogMessages
         Level = LogLevel.Error,
         Message = "Could not read Quartz's triggers to sync their schedules to Cronitor")]
     internal static partial void TriggersNotRead(this ILogger logger, Exception exception);
+
+    [LoggerMessage(
+        EventId = 6,
+        Level = LogLevel.Warning,
+        Message = "Not reporting job {JobKey} to Cronitor: its monitor key, chosen or from its name, can't be blank, contain '/' or be longer than 100 characters")]
+    internal static partial void NoValidMonitorKey(this ILogger logger, JobKey jobKey);
 }
