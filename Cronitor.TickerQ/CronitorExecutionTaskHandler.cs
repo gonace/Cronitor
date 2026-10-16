@@ -98,9 +98,15 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
     /// </summary>
     private async Task<ITelemetryRun> ReportStartAsync(InternalFunctionContext context)
     {
+        if (!MonitorKey.TryFromName(context.FunctionName, out var monitorKey))
+        {
+            _logger.FunctionNameNotAMonitorKey(context.FunctionName);
+            return null;
+        }
+
         try
         {
-            return await _telemetries.StartAsync(MonitorKey.Of(context.FunctionName)).ConfigureAwait(false);
+            return await _telemetries.StartAsync(monitorKey).ConfigureAwait(false);
         }
         catch (Exception exception)
         {

@@ -32,6 +32,19 @@ public sealed class MonitorKey
         _value = value;
     }
 
+    public static bool TryFromName(string name, out MonitorKey key)
+    {
+        key = null;
+        var candidate = name?.Replace('/', '-').Trim();
+        if (string.IsNullOrWhiteSpace(candidate) || CodePointsIn(candidate) > MaxLength)
+        {
+            return false;
+        }
+
+        key = new MonitorKey(candidate);
+        return true;
+    }
+
     private static int CodePointsIn(string value) => value.Length - value.Count(char.IsLowSurrogate);
 
     public override string ToString() => _value;

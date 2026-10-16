@@ -112,4 +112,43 @@ public class MonitorKeyTests
 
         Assert.Equal("nightly-backup", value);
     }
+
+    [Fact]
+    public void Should_replace_slashes_in_a_name()
+    {
+        var derived = MonitorKey.TryFromName("reports/daily", out var key);
+
+        Assert.True(derived);
+        Assert.Equal("reports-daily", key.ToString());
+    }
+
+    [Fact]
+    public void Should_trim_a_name()
+    {
+        var derived = MonitorKey.TryFromName(" nightly-backup ", out var key);
+
+        Assert.True(derived);
+        Assert.Equal("nightly-backup", key.ToString());
+    }
+
+    [Fact]
+    public void Should_not_derive_a_key_from_a_name_longer_than_100_code_points()
+    {
+        var derived = MonitorKey.TryFromName(new string('x', 101), out var key);
+
+        Assert.False(derived);
+        Assert.Null(key);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("  ")]
+    public void Should_not_derive_a_key_from_a_blank_name(string name)
+    {
+        var derived = MonitorKey.TryFromName(name, out var key);
+
+        Assert.False(derived);
+        Assert.Null(key);
+    }
 }

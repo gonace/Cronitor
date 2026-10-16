@@ -37,4 +37,10 @@ internal static partial class LogMessages
         Level = LogLevel.Error,
         Message = "Could not read TickerQ's cron tickers to sync their schedules to Cronitor")]
     internal static partial void CronTickersNotRead(this ILogger logger, Exception exception);
+
+    [LoggerMessage(
+        EventId = 6,
+        Level = LogLevel.Warning,
+        Message = "Not reporting cron job {FunctionName} to Cronitor: a monitor key can't be blank or longer than 100 characters")]
+    internal static partial void FunctionNameNotAMonitorKey(this ILogger logger, string functionName);
 }

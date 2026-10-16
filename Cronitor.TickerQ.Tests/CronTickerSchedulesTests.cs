@@ -46,6 +46,18 @@ public class CronTickerSchedulesTests
     }
 
     [Fact]
+    public void Should_not_sync_a_function_whose_name_is_too_long_for_a_monitor_key_and_sync_the_others()
+    {
+        var logger = new FakeLogger<CronTickerSchedulesTests>();
+        var cronTickers = new[] { CronTicker(new string('x', 101), "0 0 3 * * *"), CronTicker("nightly-backup", "0 0 3 * * *") };
+
+        var schedules = CronTickerSchedules.Of(cronTickers, TimeZoneInfo.Utc, logger);
+
+        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey));
+        Assert.Equal(LogLevel.Information, Assert.Single(logger.Entries).Level);
+    }
+
+    [Fact]
     public void Should_not_sync_a_disabled_cron_ticker()
     {
         var cronTicker = CronTicker("nightly-backup", "0 0 3 * * *");
