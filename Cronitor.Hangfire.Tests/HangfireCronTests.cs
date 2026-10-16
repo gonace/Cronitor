@@ -66,4 +66,17 @@ public class HangfireCronTests
         Assert.False(converted);
         Assert.Null(schedule);
     }
+
+    [Theory]
+    [InlineData("0 9 1 * MON")]
+    [InlineData("0 3 15 * 1#2")]
+    [InlineData("0 0 9 1 * MON")]
+    [InlineData("0 3 1-7 * 1-5")]
+    public void Should_not_convert_a_cron_expression_that_restricts_both_the_day_of_month_and_the_day_of_week(string cron)
+    {
+        var converted = HangfireCron.TryConvert(cron, out var schedule);
+
+        Assert.False(converted);
+        Assert.Null(schedule);
+    }
 }

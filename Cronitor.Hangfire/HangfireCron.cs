@@ -69,7 +69,7 @@ internal static class HangfireCron
 
         var dayOfMonth = UnspecifiedAsAny(fields[2]);
         var dayOfWeek = UnspecifiedAsAny(fields[DayOfWeekField]);
-        if (!IsSupportedDayOfMonth(dayOfMonth) || !IsSupportedDayOfWeek(dayOfWeek))
+        if (!IsSupportedDayOfMonth(dayOfMonth) || !IsSupportedDayOfWeek(dayOfWeek) || IsRestricted(dayOfMonth) && IsRestricted(dayOfWeek))
         {
             return false;
         }
@@ -101,6 +101,11 @@ internal static class HangfireCron
     };
 
     private static string UnspecifiedAsAny(string field) => field == "?" ? "*" : field;
+
+    /// <summary>
+    /// When both the day of the month and the day of the week are restricted, Hangfire needs both to match and Cronitor either.
+    /// </summary>
+    private static bool IsRestricted(string field) => field != "*";
 
     private static bool IsSupportedDayOfMonth(string field)
     {
