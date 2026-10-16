@@ -6,7 +6,7 @@ namespace Cronitor.Quartz;
 internal static partial class MonitorKeyExtensions
 {
     internal static bool TryGetMonitorKey(this IJobDetail job, JobDataMap mergedData, out MonitorKey key) =>
-        TryCreateMonitorKey(job, ChosenKeyIn(mergedData), out key);
+        TryCreateMonitorKey(job, ChosenKeyIn(mergedData) ?? ChosenKeyIn(job.JobDataMap), out key);
 
     internal static bool TryGetMonitorKey(this IJobDetail job, ITrigger trigger, out MonitorKey key) =>
         TryCreateMonitorKey(job, ChosenKeyIn(trigger.JobDataMap) ?? ChosenKeyIn(job.JobDataMap), out key);
