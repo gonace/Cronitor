@@ -17,18 +17,18 @@ internal abstract class CronTickerStore
 
     internal static CronTickerStore Of(IServiceProvider provider, Type persistenceProviderType)
     {
-        var storeType = typeof(CronTickerStore<,>).MakeGenericType(persistenceProviderType.GetGenericArguments());
+        var storeType = typeof(CronTickerStoreFor<,>).MakeGenericType(persistenceProviderType.GetGenericArguments());
         return (CronTickerStore)Activator.CreateInstance(storeType, provider.GetRequiredService(persistenceProviderType));
     }
 }
 
-internal sealed class CronTickerStore<TTimeTicker, TCronTicker> : CronTickerStore
+internal sealed class CronTickerStoreFor<TTimeTicker, TCronTicker> : CronTickerStore
     where TTimeTicker : TimeTickerEntity<TTimeTicker>, new()
     where TCronTicker : CronTickerEntity, new()
 {
     private readonly ITickerPersistenceProvider<TTimeTicker, TCronTicker> _persistence;
 
-    public CronTickerStore(ITickerPersistenceProvider<TTimeTicker, TCronTicker> persistence)
+    public CronTickerStoreFor(ITickerPersistenceProvider<TTimeTicker, TCronTicker> persistence)
     {
         _persistence = persistence ?? throw new ArgumentNullException(nameof(persistence));
     }
