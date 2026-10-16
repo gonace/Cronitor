@@ -88,4 +88,14 @@ public class HttpClientTests : BaseTest
 
         Assert.Equal("Monitor not found (NotFound)", exception.Message);
     }
+
+#if NET8_0_OR_GREATER
+    [Fact]
+    public void Should_renew_the_shared_connections_every_2_minutes_to_pick_up_DNS_changes()
+    {
+        var handler = Assert.IsType<SocketsHttpHandler>(HttpClient.SharedHandler);
+
+        Assert.Equal(TimeSpan.FromMinutes(2), handler.PooledConnectionLifetime);
+    }
+#endif
 }
