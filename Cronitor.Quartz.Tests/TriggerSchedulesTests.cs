@@ -7,9 +7,10 @@ using Xunit;
 
 namespace Cronitor.Quartz.Tests;
 
-public class TriggerSchedulesTests
+public partial class TriggerSchedulesTests
 {
     private static readonly TimeZoneInfo Berlin = TimeZoneInfo.FindSystemTimeZoneById("W. Europe Standard Time");
+    private static readonly DateTimeOffset EndOf2030 = new DateTimeOffset(2030, 12, 31, 0, 0, 0, TimeSpan.Zero);
 
     [Fact]
     public void Should_give_a_cron_trigger_s_job_its_monitor_key_schedule_and_time_zone()
@@ -157,6 +158,39 @@ public class TriggerSchedulesTests
         var trigger = TriggerBuilder.Create().ForJob(job).WithCalendarIntervalSchedule(schedule => schedule.WithInterval(1, IntervalUnit.Day)).Build();
 
         Assert.Empty(TriggerSchedules.Of(new[] { (job, trigger) }, NullLogger.Instance));
+    }
+
+    [Fact]
+    public void Should_not_sync_a_trigger_with_a_calendar()
+    {
+        var logger = new FakeLogger<TriggerSchedulesTests>();
+        var job = Job("nightly-backup");
+        var trigger = CronTriggerWithCalendar(job, "holidays");
+
+        Assert.Empty(TriggerSchedules.Of(new[] { (job, trigger) }, logger));
+        Assert.Equal(LogLevel.Information, Assert.Single(logger.Entries).Level);
+    }
+
+    [Fact]
+    public void Should_not_sync_a_cron_trigger_with_an_end_time()
+    {
+        var logger = new FakeLogger<TriggerSchedulesTests>();
+        var job = Job("nightly-backup");
+        var trigger = TriggerBuilder.Create().ForJob(job).WithCronSchedule("0 0 3 * * ?", schedule => schedule.InTimeZone(TimeZoneInfo.Utc)).EndAt(EndOf2030).Build();
+
+        Assert.Empty(TriggerSchedules.Of(new[] { (job, trigger) }, logger));
+        Assert.Equal(LogLevel.Information, Assert.Single(logger.Entries).Level);
+    }
+
+    [Fact]
+    public void Should_not_sync_a_simple_trigger_that_repeats_forever_until_an_end_time()
+    {
+        var logger = new FakeLogger<TriggerSchedulesTests>();
+        var job = Job("cleanup");
+        var trigger = TriggerBuilder.Create().ForJob(job).WithSimpleSchedule(schedule => schedule.WithInterval(TimeSpan.FromMinutes(5)).RepeatForever()).EndAt(EndOf2030).Build();
+
+        Assert.Empty(TriggerSchedules.Of(new[] { (job, trigger) }, logger));
+        Assert.Equal(LogLevel.Information, Assert.Single(logger.Entries).Level);
     }
 
     private static IJobDetail Job(string name) => JobBuilder.Create<NoopJob>().WithIdentity(name).Build();
