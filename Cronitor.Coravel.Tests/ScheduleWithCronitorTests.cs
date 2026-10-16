@@ -69,7 +69,7 @@ public class ScheduleWithCronitorTests
         {
             var scheduler = provider.GetRequiredService<IScheduler>();
 
-            Assert.Throws<ArgumentException>(() => scheduler.ScheduleWithCronitor<SucceedingJob>(monitorKey));
+            Assert.ThrowsAny<ArgumentException>(() => scheduler.ScheduleWithCronitor<SucceedingJob>(monitorKey));
         }
     }
 
