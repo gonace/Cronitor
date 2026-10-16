@@ -21,7 +21,10 @@ internal static partial class ScheduledTriggers
 
                 foreach (var trigger in await scheduler.GetTriggersOfJob(jobKey).ConfigureAwait(false))
                 {
-                    triggers.Add((job, trigger));
+                    if (await scheduler.GetTriggerState(trigger.Key).ConfigureAwait(false) != TriggerState.Paused)
+                    {
+                        triggers.Add((job, trigger));
+                    }
                 }
             }
         }
