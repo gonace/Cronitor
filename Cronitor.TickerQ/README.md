@@ -51,6 +51,17 @@ TickerQ retries a failing job within the same occurrence, so a job that succeeds
 ## Monitor keys
 A cron job reports to the monitor with the same key as its function name, the name in `[TickerFunction("…")]`. Cron tickers that run the same function share its monitor. Cronitor doesn't accept `/` in a monitor key, so a `/` in the function name becomes `-`: a function `reports/daily` reports to `reports-daily`. Functions `reports/daily` and `reports-daily` would therefore share a monitor; rename one of them to keep them apart.
 
+## Schedules
+A monitor created by a job's first report has no schedule, so Cronitor alerts when the job fails but not when it doesn't run at all. To give each cron job's monitor the schedules of its cron tickers, add schedule sync after `AddTickerQ()`:
+```c#
+builder.Services.AddTickerQ();
+builder.Services.AddCronitorTickerQ();
+builder.Services.AddCronitorTickerQScheduleSync();
+```
+Once the application has started, the enabled cron tickers in TickerQ's store, both those from `[TickerFunction]` and those added with `ICronTickerManager`, are sent to Cronitor in one request, in the background. They are sent with TickerQ's time zone, `SchedulerTimeZone`, which is the machine's local time zone unless you set it. Only the schedules and time zone are set; everything else on the monitor, such as its name and alerts, is kept. Cron tickers added later get their schedules at the next start.
+
+A schedule is only synced when Cronitor reads it the same way as TickerQ: a cron expression whose seconds aren't 0, that restricts both the day of the month and the day of the week (TickerQ then needs both to match, Cronitor either), that has a range running backwards, such as `22-2`, or that uses full day names, such as `Sunday`, isn't synced; the reason is logged. All the cron tickers of a function are synced together. Schedule sync needs dependency injection.
+
 ## Errors
 Reporting never affects your jobs: reports are sent in the background, so a job never waits for Cronitor. If a report can't be sent, the job still runs, and the error is logged through the host's logging. When the application stops, TickerQ cancels the jobs still running; the outcome of those jobs, and of reports still being sent, is waited for up to five seconds after TickerQ has stopped, so it isn't lost.
 
