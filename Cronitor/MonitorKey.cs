@@ -75,6 +75,10 @@ public sealed class MonitorKey
 
     private static int CodePointsIn(string value) => value.Length - value.Count(char.IsLowSurrogate);
 
+    public override bool Equals(object obj) => obj is MonitorKey other && StringComparer.OrdinalIgnoreCase.Equals(_value, other._value);
+
+    public override int GetHashCode() => StringComparer.OrdinalIgnoreCase.GetHashCode(_value);
+
     public override string ToString() => _value;
 
     public static implicit operator MonitorKey(string value) => new MonitorKey(value);

@@ -97,6 +97,25 @@ public class MonitorKeyTests
     }
 
     [Fact]
+    public void Should_equal_a_key_that_differs_only_in_letter_case()
+    {
+        var lower = new MonitorKey("nightly-backup");
+        var upper = new MonitorKey("Nightly-Backup");
+
+        Assert.True(lower.Equals(upper));
+        Assert.Equal(lower.GetHashCode(), upper.GetHashCode());
+    }
+
+    [Fact]
+    public void Should_not_equal_a_different_key()
+    {
+        var nightly = new MonitorKey("nightly-backup");
+        var weekly = new MonitorKey("weekly-backup");
+
+        Assert.False(nightly.Equals(weekly));
+    }
+
+    [Fact]
     public void Should_convert_implicitly_from_a_valid_string()
     {
         MonitorKey key = "nightly-backup";
