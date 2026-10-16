@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
 using Cronitor.Assertions;
+using Cronitor.Tests.Helpers;
 using Xunit;
 
 namespace Cronitor.Tests;
@@ -117,6 +118,24 @@ public class AssertionTests
 
         Assert.Single(result.Assertions);
         Assert.Equal("metric.duration < 15min", result.Assertions[0].Value);
+    }
+
+    [Fact]
+    [UseCulture("sv-SE")]
+    public void Should_build_a_double_with_a_decimal_point_in_a_culture_with_a_decimal_comma()
+    {
+        var result = Assertion.Metric.Duration.LessThan(1.5);
+
+        Assert.Equal("metric.duration < 1.5", result.Value);
+    }
+
+    [Fact]
+    [UseCulture("sv-SE")]
+    public void Should_build_a_decimal_with_a_decimal_point_in_a_culture_with_a_decimal_comma()
+    {
+        var result = Assertion.Metric.Duration.LessThan(1.5m);
+
+        Assert.Equal("metric.duration < 1.5", result.Value);
     }
 
     private class AssertionContainer
