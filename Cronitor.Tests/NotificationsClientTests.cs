@@ -50,6 +50,28 @@ public class NotificationsClientTests : BaseTest
     }
 
     [Fact]
+    public void Should_request_the_given_page_with_List()
+    {
+        var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(new ListNotificationResponse { Items = new List<Notification>() }));
+        var notificationsClient = CreateClient(handler);
+
+        notificationsClient.List(page: 2);
+
+        AssertRequest.Sent(handler, HttpMethod.Get, NotificationsUri + "?page=2");
+    }
+
+    [Fact]
+    public async Task Should_request_the_given_page_with_ListAsync()
+    {
+        var handler = new FakeHttpMessageHandler(body: Serializer.Serialize(new ListNotificationResponse { Items = new List<Notification>() }));
+        var notificationsClient = CreateClient(handler);
+
+        await notificationsClient.ListAsync(page: 2);
+
+        AssertRequest.Sent(handler, HttpMethod.Get, NotificationsUri + "?page=2");
+    }
+
+    [Fact]
     public async Task Should_execute_ListAsync()
     {
         var response = new ListNotificationResponse { Items = new List<Notification> { Make.Template.Build() } };
