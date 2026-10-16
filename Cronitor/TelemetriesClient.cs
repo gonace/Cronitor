@@ -21,14 +21,14 @@ namespace Cronitor;
 /// </summary>
 public interface ITelemetriesClient
 {
-    bool Run(string monitorKey, string message = null, string environment = null);
-    Task<bool> RunAsync(string monitorKey, string message = null, string environment = null);
-    bool Complete(string monitorKey, string message = null, string environment = null);
-    Task<bool> CompleteAsync(string monitorKey, string message = null, string environment = null);
-    bool Fail(string monitorKey, string message = null, string environment = null);
-    Task<bool> FailAsync(string monitorKey, string message = null, string environment = null);
-    bool Tick(string monitorKey, string message = null, string environment = null);
-    Task<bool> TickAsync(string monitorKey, string message = null, string environment = null);
+    bool Run(MonitorKey monitorKey, string message = null, string environment = null);
+    Task<bool> RunAsync(MonitorKey monitorKey, string message = null, string environment = null);
+    bool Complete(MonitorKey monitorKey, string message = null, string environment = null);
+    Task<bool> CompleteAsync(MonitorKey monitorKey, string message = null, string environment = null);
+    bool Fail(MonitorKey monitorKey, string message = null, string environment = null);
+    Task<bool> FailAsync(MonitorKey monitorKey, string message = null, string environment = null);
+    bool Tick(MonitorKey monitorKey, string message = null, string environment = null);
+    Task<bool> TickAsync(MonitorKey monitorKey, string message = null, string environment = null);
     bool Ping(Command command);
     Task<bool> PingAsync(Command command);
 
@@ -36,9 +36,9 @@ public interface ITelemetriesClient
     /// Starts a job run and reports it as running.
     /// Call <see cref="ITelemetryRun.Complete"/> when the job succeeds; disposing the run without it reports a failure.
     /// </summary>
-    ITelemetryRun Start(string monitorKey, string environment = null);
+    ITelemetryRun Start(MonitorKey monitorKey, string environment = null);
     /// <inheritdoc cref="Start"/>
-    Task<ITelemetryRun> StartAsync(string monitorKey, string environment = null);
+    Task<ITelemetryRun> StartAsync(MonitorKey monitorKey, string environment = null);
 }
 
 public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClient
@@ -77,10 +77,10 @@ public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClie
     }
 
 
-    public bool Run(string monitorKey, string message = null, string environment = null) =>
+    public bool Run(MonitorKey monitorKey, string message = null, string environment = null) =>
         RunAsync(monitorKey, message, environment).GetAwaiter().GetResult();
 
-    public async Task<bool> RunAsync(string monitorKey, string message = null, string environment = null)
+    public async Task<bool> RunAsync(MonitorKey monitorKey, string message = null, string environment = null)
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
 
@@ -101,10 +101,10 @@ public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClie
         return await PingAsync(command);
     }
 
-    public bool Complete(string monitorKey, string message = null, string environment = null) =>
+    public bool Complete(MonitorKey monitorKey, string message = null, string environment = null) =>
         CompleteAsync(monitorKey, message, environment).GetAwaiter().GetResult();
 
-    public async Task<bool> CompleteAsync(string monitorKey, string message = null, string environment = null)
+    public async Task<bool> CompleteAsync(MonitorKey monitorKey, string message = null, string environment = null)
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
 
@@ -125,10 +125,10 @@ public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClie
         return await PingAsync(command);
     }
 
-    public bool Fail(string monitorKey, string message = null, string environment = null) =>
+    public bool Fail(MonitorKey monitorKey, string message = null, string environment = null) =>
         FailAsync(monitorKey, message, environment).GetAwaiter().GetResult();
 
-    public async Task<bool> FailAsync(string monitorKey, string message = null, string environment = null)
+    public async Task<bool> FailAsync(MonitorKey monitorKey, string message = null, string environment = null)
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
 
@@ -149,10 +149,10 @@ public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClie
         return await PingAsync(command);
     }
 
-    public bool Tick(string monitorKey, string message = null, string environment = null) =>
+    public bool Tick(MonitorKey monitorKey, string message = null, string environment = null) =>
         TickAsync(monitorKey, message, environment).GetAwaiter().GetResult();
 
-    public async Task<bool> TickAsync(string monitorKey, string message = null, string environment = null)
+    public async Task<bool> TickAsync(MonitorKey monitorKey, string message = null, string environment = null)
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
 
@@ -190,10 +190,10 @@ public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClie
         }
     }
 
-    public ITelemetryRun Start(string monitorKey, string environment = null) =>
+    public ITelemetryRun Start(MonitorKey monitorKey, string environment = null) =>
         TelemetryRun.Start(this, monitorKey, environment);
 
-    public async Task<ITelemetryRun> StartAsync(string monitorKey, string environment = null) =>
+    public async Task<ITelemetryRun> StartAsync(MonitorKey monitorKey, string environment = null) =>
         await TelemetryRun.StartAsync(this, monitorKey, environment);
 
     /// <summary>

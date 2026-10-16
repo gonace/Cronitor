@@ -18,7 +18,7 @@ public class Command
     public Uri Uri { get; set; }
 
     public string ApiKey { get; set; }
-    public string MonitorKey { get; set; }
+    public MonitorKey MonitorKey { get; set; }
 
     /// <summary>
     /// The environment the telemetry event is being sent from.
@@ -120,7 +120,7 @@ public class Command
         return this;
     }
 
-    public Command WithMonitorKey(string monitorKey)
+    public Command WithMonitorKey(MonitorKey monitorKey)
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey);
 

@@ -40,7 +40,7 @@ public class FakeTelemetriesClient : ITelemetriesClient
     /// </summary>
     public Task FinishGate { get; set; } = Task.CompletedTask;
 
-    public ITelemetryRun Start(string monitorKey, string environment = null)
+    public ITelemetryRun Start(MonitorKey monitorKey, string environment = null)
     {
         if (ThrowOnStart)
         {
@@ -51,20 +51,20 @@ public class FakeTelemetriesClient : ITelemetriesClient
         return new FakeRun(this, monitorKey);
     }
 
-    public async Task<ITelemetryRun> StartAsync(string monitorKey, string environment = null)
+    public async Task<ITelemetryRun> StartAsync(MonitorKey monitorKey, string environment = null)
     {
         await StartGate;
         return Start(monitorKey, environment);
     }
 
-    public bool Run(string monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
-    public Task<bool> RunAsync(string monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
-    public bool Complete(string monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
-    public Task<bool> CompleteAsync(string monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
-    public bool Fail(string monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
-    public Task<bool> FailAsync(string monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
-    public bool Tick(string monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
-    public Task<bool> TickAsync(string monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
+    public bool Run(MonitorKey monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
+    public Task<bool> RunAsync(MonitorKey monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
+    public bool Complete(MonitorKey monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
+    public Task<bool> CompleteAsync(MonitorKey monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
+    public bool Fail(MonitorKey monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
+    public Task<bool> FailAsync(MonitorKey monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
+    public bool Tick(MonitorKey monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
+    public Task<bool> TickAsync(MonitorKey monitorKey, string message = null, string environment = null) => throw new NotSupportedException();
     public bool Ping(Command command) => throw new NotSupportedException();
     public Task<bool> PingAsync(Command command) => throw new NotSupportedException();
 

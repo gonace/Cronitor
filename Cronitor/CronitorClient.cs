@@ -45,35 +45,35 @@ public static class CronitorClient
     public static ITelemetriesClient Telemetries => Service.Telemetries;
 
     /// <inheritdoc cref="ITelemetriesClient.Start"/>
-    public static ITelemetryRun Start(string monitorKey, string environment = null) =>
+    public static ITelemetryRun Start(MonitorKey monitorKey, string environment = null) =>
         Telemetries.Start(monitorKey, environment);
 
     /// <inheritdoc cref="ITelemetriesClient.StartAsync"/>
-    public static Task<ITelemetryRun> StartAsync(string monitorKey, string environment = null) =>
+    public static Task<ITelemetryRun> StartAsync(MonitorKey monitorKey, string environment = null) =>
         Telemetries.StartAsync(monitorKey, environment);
 
-    public static bool Run(string monitorKey, string message = null, string environment = null) =>
+    public static bool Run(MonitorKey monitorKey, string message = null, string environment = null) =>
         Telemetries.Run(monitorKey, message, environment);
 
-    public static Task<bool> RunAsync(string monitorKey, string message = null, string environment = null) =>
+    public static Task<bool> RunAsync(MonitorKey monitorKey, string message = null, string environment = null) =>
         Telemetries.RunAsync(monitorKey, message, environment);
 
-    public static bool Complete(string monitorKey, string message = null, string environment = null) =>
+    public static bool Complete(MonitorKey monitorKey, string message = null, string environment = null) =>
         Telemetries.Complete(monitorKey, message, environment);
 
-    public static Task<bool> CompleteAsync(string monitorKey, string message = null, string environment = null) =>
+    public static Task<bool> CompleteAsync(MonitorKey monitorKey, string message = null, string environment = null) =>
         Telemetries.CompleteAsync(monitorKey, message, environment);
 
-    public static bool Fail(string monitorKey, string message = null, string environment = null) =>
+    public static bool Fail(MonitorKey monitorKey, string message = null, string environment = null) =>
         Telemetries.Fail(monitorKey, message, environment);
 
-    public static Task<bool> FailAsync(string monitorKey, string message = null, string environment = null) =>
+    public static Task<bool> FailAsync(MonitorKey monitorKey, string message = null, string environment = null) =>
         Telemetries.FailAsync(monitorKey, message, environment);
 
-    public static bool Tick(string monitorKey, string message = null, string environment = null) =>
+    public static bool Tick(MonitorKey monitorKey, string message = null, string environment = null) =>
         Telemetries.Tick(monitorKey, message, environment);
 
-    public static Task<bool> TickAsync(string monitorKey, string message = null, string environment = null) =>
+    public static Task<bool> TickAsync(MonitorKey monitorKey, string message = null, string environment = null) =>
         Telemetries.TickAsync(monitorKey, message, environment);
 
     public static bool Ping(Command command) =>
