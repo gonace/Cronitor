@@ -12,7 +12,7 @@ public class MonitorIssue
     /// </summary>
     [JsonInclude]
     [JsonPropertyName("stamp")]
-    public long? Timestamp { get; private set; }
+    public decimal? Timestamp { get; private set; }
 
     /// <summary>
     /// The issue state, e.g. "unresolved" or "resolved".

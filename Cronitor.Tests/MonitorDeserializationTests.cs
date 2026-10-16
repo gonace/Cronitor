@@ -247,4 +247,14 @@ public class MonitorDeserializationTests
 
         Assert.Equal(1792170828.775m, monitor.ExpectedAt);
     }
+
+    [Fact]
+    public void Should_read_the_start_of_the_latest_issue_with_its_decimals()
+    {
+        var json = "{\"monitors\":[{\"key\":\"nightly-backup\",\"latest_issue\":{\"stamp\":1792176156.0,\"state\":\"unresolved\"}}]}";
+
+        var monitor = Serializer.Deserialize<ListMonitorResponse>(json).Items.Single();
+
+        Assert.Equal(1792176156.0m, monitor.LatestIssue.Timestamp);
+    }
 }
