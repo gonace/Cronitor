@@ -15,7 +15,15 @@ namespace Cronitor.Internals;
 
 internal class HttpClient : IDisposable
 {
-    private static readonly HttpClientHandler SharedHandler = new HttpClientHandler();
+    /// <summary>
+    /// Shared by every client so connections are reused. On .NET 8 and later, each connection is replaced after two
+    /// minutes, as Microsoft recommends for a long-lived handler, so a change in Cronitor's DNS is picked up.
+    /// </summary>
+#if NET
+    internal static readonly HttpMessageHandler SharedHandler = new SocketsHttpHandler { PooledConnectionLifetime = TimeSpan.FromMinutes(2) };
+#else
+    internal static readonly HttpMessageHandler SharedHandler = new HttpClientHandler();
+#endif
     private static readonly TimeSpan TelemetryTimeout = TimeSpan.FromSeconds(30);
 
     /// <summary>
