@@ -525,11 +525,11 @@ public class MonitorsClientTests : BaseTest
     {
         var handler = new FakeHttpMessageHandler(body: "{\"key\":\"reports/daily\"}");
         var monitorsClient = CreateClient(handler);
-        var monitor = Serializer.Deserialize<Monitor>("{\"key\":\"reports/daily\"}");
+        var monitor = await monitorsClient.GetAsync(MonitorKey);
 
         await monitorsClient.GetAsync(monitor.Key);
 
-        AssertRequest.Sent(handler, HttpMethod.Get, MonitorsUri + "/reports%2Fdaily");
+        Assert.Equal(new[] { MonitorUri, MonitorsUri + "/reports%2Fdaily" }, handler.Requests.Select(request => request.RequestUri.ToString()));
     }
 
     [Fact]

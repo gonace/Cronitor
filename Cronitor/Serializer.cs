@@ -6,7 +6,7 @@ using System.Text.Json.Serialization.Metadata;
 
 namespace Cronitor;
 
-public static class Serializer
+internal static class Serializer
 {
     public static T Deserialize<T>(string json) =>
         JsonSerializer.Deserialize<T>(json, Options);
