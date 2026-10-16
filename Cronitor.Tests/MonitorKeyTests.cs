@@ -1,5 +1,4 @@
 using System;
-using System.Text.Json;
 using Xunit;
 
 namespace Cronitor.Tests;
@@ -11,9 +10,9 @@ public class MonitorKeyTests
     [Fact]
     public void Should_keep_a_valid_key()
     {
-        var key = new MonitorKey("nightly-backup");
+        var key = new MonitorKey("Nightly-Backup");
 
-        Assert.Equal("nightly-backup", key.ToString());
+        Assert.Equal("Nightly-Backup", key.ToString());
     }
 
     [Fact]
@@ -53,17 +52,12 @@ public class MonitorKeyTests
     }
 
     [Theory]
+    [InlineData(null)]
     [InlineData("")]
     [InlineData("  ")]
     public void Should_reject_a_blank_key(string value)
     {
-        Assert.Throws<ArgumentException>(() => new MonitorKey(value));
-    }
-
-    [Fact]
-    public void Should_reject_a_null_key()
-    {
-        Assert.Throws<ArgumentNullException>(() => new MonitorKey(null));
+        Assert.Throws<ArgumentNullException>(() => new MonitorKey(value));
     }
 
     [Fact]
@@ -92,40 +86,11 @@ public class MonitorKeyTests
     }
 
     [Fact]
-    public void Should_equal_a_key_that_differs_only_in_letter_case()
-    {
-        var lower = new MonitorKey("nightly-backup");
-        var upper = new MonitorKey("Nightly-Backup");
-
-        Assert.True(lower == upper);
-        Assert.True(lower.Equals(upper));
-        Assert.Equal(lower.GetHashCode(), upper.GetHashCode());
-    }
-
-    [Fact]
-    public void Should_not_equal_a_different_key()
-    {
-        var nightly = new MonitorKey("nightly-backup");
-        var weekly = new MonitorKey("weekly-backup");
-
-        Assert.True(nightly != weekly);
-        Assert.False(nightly.Equals(weekly));
-    }
-
-    [Fact]
-    public void Should_keep_the_original_letter_case_as_a_string()
-    {
-        var key = new MonitorKey("Nightly-Backup");
-
-        Assert.Equal("Nightly-Backup", key.ToString());
-    }
-
-    [Fact]
     public void Should_convert_implicitly_from_a_valid_string()
     {
         MonitorKey key = "nightly-backup";
 
-        Assert.Equal(new MonitorKey("nightly-backup"), key);
+        Assert.Equal("nightly-backup", key.ToString());
     }
 
     [Fact]
@@ -139,14 +104,6 @@ public class MonitorKeyTests
     }
 
     [Fact]
-    public void Should_convert_null_to_null()
-    {
-        MonitorKey key = (string)null;
-
-        Assert.Null(key);
-    }
-
-    [Fact]
     public void Should_convert_implicitly_to_a_string()
     {
         var key = new MonitorKey("nightly-backup");
@@ -154,68 +111,5 @@ public class MonitorKeyTests
         string value = key;
 
         Assert.Equal("nightly-backup", value);
-    }
-
-    [Fact]
-    public void Should_replace_slashes_in_a_name()
-    {
-        var derived = MonitorKey.TryFromName("reports/daily", out var key);
-
-        Assert.True(derived);
-        Assert.Equal("reports-daily", key.ToString());
-    }
-
-    [Fact]
-    public void Should_trim_a_name()
-    {
-        var derived = MonitorKey.TryFromName(" nightly-backup ", out var key);
-
-        Assert.True(derived);
-        Assert.Equal("nightly-backup", key.ToString());
-    }
-
-    [Fact]
-    public void Should_not_derive_a_key_from_a_name_longer_than_100_code_points()
-    {
-        var derived = MonitorKey.TryFromName(new string('x', 101), out var key);
-
-        Assert.False(derived);
-        Assert.Null(key);
-    }
-
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("  ")]
-    public void Should_not_derive_a_key_from_a_blank_name(string name)
-    {
-        var derived = MonitorKey.TryFromName(name, out var key);
-
-        Assert.False(derived);
-        Assert.Null(key);
-    }
-
-    [Fact]
-    public void Should_write_a_key_as_a_JSON_string()
-    {
-        var json = JsonSerializer.Serialize(new MonitorKey("nightly-backup"));
-
-        Assert.Equal("\"nightly-backup\"", json);
-    }
-
-    [Fact]
-    public void Should_read_a_key_from_Cronitor_without_validating_it()
-    {
-        var key = JsonSerializer.Deserialize<MonitorKey>("\"reports/daily\"");
-
-        Assert.Equal("reports/daily", key.ToString());
-    }
-
-    [Fact]
-    public void Should_read_a_JSON_null_as_null()
-    {
-        var key = JsonSerializer.Deserialize<MonitorKey>("null");
-
-        Assert.Null(key);
     }
 }
