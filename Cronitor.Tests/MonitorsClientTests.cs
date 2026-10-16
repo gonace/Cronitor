@@ -510,6 +510,29 @@ public class MonitorsClientTests : BaseTest
     }
 
     [Fact]
+    public async Task Should_reject_an_invalid_monitor_key_without_sending_anything()
+    {
+        var handler = new FakeHttpMessageHandler();
+        var monitorsClient = CreateClient(handler);
+
+        await Assert.ThrowsAsync<ArgumentException>(() => monitorsClient.GetAsync(" nightly-backup"));
+
+        Assert.Empty(handler.Requests);
+    }
+
+    [Fact]
+    public async Task Should_get_a_monitor_by_a_key_read_from_Cronitor_even_if_it_breaks_the_rules()
+    {
+        var handler = new FakeHttpMessageHandler(body: "{\"key\":\"reports/daily\"}");
+        var monitorsClient = CreateClient(handler);
+        var monitor = Serializer.Deserialize<Monitor>("{\"key\":\"reports/daily\"}");
+
+        await monitorsClient.GetAsync(monitor.Key);
+
+        AssertRequest.Sent(handler, HttpMethod.Get, MonitorsUri + "/reports%2Fdaily");
+    }
+
+    [Fact]
     public async Task Should_throw_ApiException_from_GetAsync_when_the_monitor_is_not_found()
     {
         var handler = new FakeHttpMessageHandler(HttpStatusCode.NotFound, "{\"detail\":\"Monitor not found\"}");

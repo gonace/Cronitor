@@ -236,6 +236,8 @@ var monitors = await CronitorClient.Monitors.CreateAsync(new CreateMonitorReques
 
 `Assertion` and `Schedule` are fluent builders, so you don't have to write raw assertion or cron strings. See the [wiki](https://github.com/gonace/Cronitor/wiki) for all operations and options.
 
+Monitor keys are `MonitorKey`s here too, with the same rules as for telemetry. Keys read from Cronitor are taken as they are, even if they break those rules, so a monitor you've read can always be passed back, such as `GetAsync(monitor.Key)`.
+
 ### Timezone
 A monitor's schedule is evaluated in its `Timezone`, which Cronitor expects as an IANA name such as `Europe/Berlin`. `CronitorTimezone.Of()` gives the IANA name of a `TimeZoneInfo`, also on Windows, where time zones have Windows names such as `W. Europe Standard Time`:
 ```c#

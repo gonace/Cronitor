@@ -8,9 +8,9 @@ namespace Cronitor.Requests;
 public class ListActivitiesRequest : BaseRequest
 {
     public override string Endpoint { get; set; } = "monitors/:key/activity";
-    public string Key { get; set; }
+    public MonitorKey Key { get; set; }
 
-    public ListActivitiesRequest(string monitorKey)
+    public ListActivitiesRequest(MonitorKey monitorKey)
     {
         Key = monitorKey;
     }

@@ -19,7 +19,7 @@ public class Monitor
     /// It is also the required identifier for sending telemetry events.https://cronitor.link/ping/API_KEY/:monitorKey
     /// </summary>
     [JsonPropertyName("key")]
-    public string Key { get; set; }
+    public MonitorKey Key { get; set; }
     /// <summary>
     /// The display name of this monitor. Used to identify your monitor in alerts and within the Cronitor application.
     /// </summary>
@@ -277,7 +277,7 @@ public class Monitor
     {
     }
 
-    public Monitor(string key)
+    public Monitor(MonitorKey key)
     {
         Key = key;
     }

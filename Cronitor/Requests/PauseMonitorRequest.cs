@@ -8,15 +8,15 @@ namespace Cronitor.Requests;
 public class PauseMonitorRequest : BaseRequest
 {
     public sealed override string Endpoint { get; set; } = "monitors/:key/pause";
-    public string Key { get; set; }
+    public MonitorKey Key { get; set; }
     public int? Duration { get; set; }
 
-    public PauseMonitorRequest(string monitorKey)
+    public PauseMonitorRequest(MonitorKey monitorKey)
     {
         Key = monitorKey;
     }
 
-    public PauseMonitorRequest(string monitorKey, int? duration)
+    public PauseMonitorRequest(MonitorKey monitorKey, int? duration)
     {
         Key = monitorKey;
         Duration = duration;

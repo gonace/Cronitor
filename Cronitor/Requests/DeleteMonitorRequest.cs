@@ -10,9 +10,9 @@ public class DeleteMonitorRequest : BaseRequest
 {
     public override string Endpoint { get; set; } = "monitors/:key";
     public override HttpMethod Method => HttpMethod.Delete;
-    public string Key { get; set; }
+    public MonitorKey Key { get; set; }
 
-    public DeleteMonitorRequest(string monitorKey)
+    public DeleteMonitorRequest(MonitorKey monitorKey)
     {
         Key = monitorKey;
     }
