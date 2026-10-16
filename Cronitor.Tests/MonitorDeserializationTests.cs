@@ -239,4 +239,12 @@ public class MonitorDeserializationTests
 
         Assert.Equal(new[] { typeof(Job), typeof(Heartbeat), typeof(Check), typeof(Monitor) }, monitors.Select(monitor => monitor.GetType()));
     }
+
+    [Fact]
+    public void Should_read_the_next_expected_time_with_its_decimals()
+    {
+        var monitor = Serializer.Deserialize<Monitor>("{\"key\":\"nightly-backup\",\"next_expected_at\":1792170828.775}");
+
+        Assert.Equal(1792170828.775m, monitor.ExpectedAt);
+    }
 }
