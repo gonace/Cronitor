@@ -102,7 +102,7 @@ public sealed class ScheduleSync
     /// </summary>
     private static IReadOnlyDictionary<string, string> RejectedMonitors(string response, IEnumerable<MonitorSchedule> sent)
     {
-        var sentKeys = new HashSet<string>(sent.Select(schedule => schedule.MonitorKey), StringComparer.Ordinal);
+        var sentKeys = new HashSet<string>(sent.Select(schedule => schedule.MonitorKey.ToString()), StringComparer.Ordinal);
         var rejected = new Dictionary<string, string>(StringComparer.Ordinal);
         if (string.IsNullOrWhiteSpace(response))
         {

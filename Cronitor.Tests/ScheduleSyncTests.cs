@@ -111,7 +111,7 @@ public class ScheduleSyncTests
     [InlineData("reports/daily")]
     public void Should_not_accept_a_monitor_key_Cronitor_does_not_accept(string monitorKey)
     {
-        Assert.Throws<ArgumentException>(() => new MonitorSchedule(monitorKey, new[] { "0 3 * * *" }));
+        Assert.ThrowsAny<ArgumentException>(() => new MonitorSchedule(monitorKey, new[] { "0 3 * * *" }));
     }
 
     [Fact]

@@ -23,14 +23,14 @@ internal static class TriggerSchedules
         return schedules;
     }
 
-    private static IEnumerable<IGrouping<string, ITrigger>> ByMonitorKey(IEnumerable<(IJobDetail Job, ITrigger Trigger)> triggers, ILogger logger)
+    private static IEnumerable<IGrouping<MonitorKey, ITrigger>> ByMonitorKey(IEnumerable<(IJobDetail Job, ITrigger Trigger)> triggers, ILogger logger)
     {
-        var keyed = new List<(string MonitorKey, ITrigger Trigger)>();
+        var keyed = new List<(MonitorKey MonitorKey, ITrigger Trigger)>();
         foreach (var (job, trigger) in triggers)
         {
             if (job.TryGetMonitorKey(trigger, out var monitorKey))
             {
-                keyed.Add((monitorKey.ToString(), trigger));
+                keyed.Add((monitorKey, trigger));
             }
             else
             {
@@ -41,7 +41,7 @@ internal static class TriggerSchedules
         return keyed.GroupBy(entry => entry.MonitorKey, entry => entry.Trigger);
     }
 
-    private static bool TryScheduleOf(string monitorKey, IReadOnlyList<ITrigger> triggers, ILogger logger, out MonitorSchedule schedule)
+    private static bool TryScheduleOf(MonitorKey monitorKey, IReadOnlyList<ITrigger> triggers, ILogger logger, out MonitorSchedule schedule)
     {
         schedule = null;
         var expressions = new List<string>();

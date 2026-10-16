@@ -25,14 +25,14 @@ internal static class RecurringJobSchedules
         return schedules;
     }
 
-    private static IEnumerable<IGrouping<string, RecurringJobDto>> ByMonitorKey(IEnumerable<RecurringJobDto> recurringJobs, ILogger logger)
+    private static IEnumerable<IGrouping<MonitorKey, RecurringJobDto>> ByMonitorKey(IEnumerable<RecurringJobDto> recurringJobs, ILogger logger)
     {
-        var keyed = new List<(string MonitorKey, RecurringJobDto RecurringJob)>();
+        var keyed = new List<(MonitorKey MonitorKey, RecurringJobDto RecurringJob)>();
         foreach (var recurringJob in recurringJobs)
         {
             if (MonitorKey.TryFromName(recurringJob.Id, out var monitorKey))
             {
-                keyed.Add((monitorKey.ToString(), recurringJob));
+                keyed.Add((monitorKey, recurringJob));
             }
             else
             {
@@ -43,7 +43,7 @@ internal static class RecurringJobSchedules
         return keyed.GroupBy(entry => entry.MonitorKey, entry => entry.RecurringJob);
     }
 
-    private static bool TryScheduleOf(string monitorKey, IReadOnlyList<RecurringJobDto> recurringJobs, ILogger logger, out MonitorSchedule schedule)
+    private static bool TryScheduleOf(MonitorKey monitorKey, IReadOnlyList<RecurringJobDto> recurringJobs, ILogger logger, out MonitorSchedule schedule)
     {
         schedule = null;
         var expressions = new List<string>();

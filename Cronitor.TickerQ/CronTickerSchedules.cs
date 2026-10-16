@@ -23,14 +23,14 @@ internal static class CronTickerSchedules
         return schedules;
     }
 
-    private static IEnumerable<IGrouping<string, CronTickerEntity>> ByMonitorKey(IEnumerable<CronTickerEntity> cronTickers, ILogger logger)
+    private static IEnumerable<IGrouping<MonitorKey, CronTickerEntity>> ByMonitorKey(IEnumerable<CronTickerEntity> cronTickers, ILogger logger)
     {
-        var keyed = new List<(string MonitorKey, CronTickerEntity CronTicker)>();
+        var keyed = new List<(MonitorKey MonitorKey, CronTickerEntity CronTicker)>();
         foreach (var cronTicker in cronTickers)
         {
             if (MonitorKey.TryFromName(cronTicker.Function, out var monitorKey))
             {
-                keyed.Add((monitorKey.ToString(), cronTicker));
+                keyed.Add((monitorKey, cronTicker));
             }
             else
             {
@@ -41,7 +41,7 @@ internal static class CronTickerSchedules
         return keyed.GroupBy(entry => entry.MonitorKey, entry => entry.CronTicker);
     }
 
-    private static bool TryScheduleOf(string monitorKey, IReadOnlyList<CronTickerEntity> cronTickers, TimeZoneInfo timeZone, ILogger logger, out MonitorSchedule schedule)
+    private static bool TryScheduleOf(MonitorKey monitorKey, IReadOnlyList<CronTickerEntity> cronTickers, TimeZoneInfo timeZone, ILogger logger, out MonitorSchedule schedule)
     {
         schedule = null;
         var expressions = new List<string>();
