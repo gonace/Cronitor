@@ -16,7 +16,7 @@ public class MonitorAttributes
 
     [JsonInclude]
     [JsonPropertyName("key")]
-    public string Key { get; private set; }
+    public MonitorKey Key { get; private set; }
 
     [JsonInclude]
     [JsonPropertyName("code")]

@@ -9,7 +9,7 @@ public class Activity
     [JsonPropertyName("monitor_name")]
     public string MonitorName { get; set; }
     [JsonPropertyName("monitor_code")]
-    public string MonitorKey { get; set; }
+    public MonitorKey MonitorKey { get; set; }
     [JsonPropertyName("description")]
     public string Description { get; set; }
     [JsonPropertyName("from")]
