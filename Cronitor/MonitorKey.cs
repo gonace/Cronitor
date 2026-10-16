@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using System.Text.Json.Serialization;
 
 namespace Cronitor;
@@ -81,19 +82,7 @@ public sealed class MonitorKey : IEquatable<MonitorKey>
         return null;
     }
 
-    private static int CodePointsIn(string value)
-    {
-        var lowSurrogates = 0;
-        foreach (var character in value)
-        {
-            if (char.IsLowSurrogate(character))
-            {
-                lowSurrogates++;
-            }
-        }
-
-        return value.Length - lowSurrogates;
-    }
+    private static int CodePointsIn(string value) => value.Length - value.Count(char.IsLowSurrogate);
 
     public bool Equals(MonitorKey other) => other is not null && StringComparer.OrdinalIgnoreCase.Equals(_value, other._value);
 
