@@ -1,3 +1,6 @@
+using System;
+using System.Globalization;
+
 namespace Cronitor.Assertions;
 
 public class AssertionBuilder
@@ -18,9 +21,10 @@ public class AssertionBuilder
 
     private AssertionRule Build(string op, object value)
     {
+        var text = Convert.ToString(value, CultureInfo.InvariantCulture);
         var assertion = _key != null
-            ? $"{_assertion} {_key} {op} {value}"
-            : $"{_assertion} {op} {value}";
+            ? $"{_assertion} {_key} {op} {text}"
+            : $"{_assertion} {op} {text}";
 
         return new AssertionRule(assertion);
     }
