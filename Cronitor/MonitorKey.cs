@@ -14,40 +14,46 @@ public sealed class MonitorKey
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(value);
 
-        if (value.IndexOf('/') >= 0)
+        var problem = ProblemWith(value);
+        if (problem != null)
         {
-            throw new ArgumentException($"Cronitor doesn't accept '/' in a monitor key: '{value}'.", nameof(value));
-        }
-
-        if (HasIncompleteCharacter(value))
-        {
-            throw new ArgumentException($"A monitor key must be valid Unicode, but '{value}' has an incomplete character.", nameof(value));
-        }
-
-        if (CodePointsIn(value) > MaxLength)
-        {
-            throw new ArgumentException($"Cronitor accepts at most {MaxLength} characters in a monitor key: '{value}'.", nameof(value));
-        }
-
-        if (value.Trim() != value)
-        {
-            throw new ArgumentException($"Cronitor removes whitespace from the start and end of a monitor key, so it can't have any: '{value}'.", nameof(value));
+            throw new ArgumentException(problem, nameof(value));
         }
 
         _value = value;
     }
 
-    public static bool TryFromName(string name, out MonitorKey key)
+    public static bool TryCreate(string value, out MonitorKey key)
     {
-        key = null;
-        var candidate = name?.Replace('/', '-').Trim();
-        if (string.IsNullOrWhiteSpace(candidate) || HasIncompleteCharacter(candidate) || CodePointsIn(candidate) > MaxLength)
+        key = string.IsNullOrWhiteSpace(value) || ProblemWith(value) != null ? null : new MonitorKey(value);
+        return key != null;
+    }
+
+    public static bool TryFromName(string name, out MonitorKey key) => TryCreate(name?.Replace('/', '-').Trim(), out key);
+
+    private static string ProblemWith(string value)
+    {
+        if (value.IndexOf('/') >= 0)
         {
-            return false;
+            return $"Cronitor doesn't accept '/' in a monitor key: '{value}'.";
         }
 
-        key = new MonitorKey(candidate);
-        return true;
+        if (HasIncompleteCharacter(value))
+        {
+            return $"A monitor key must be valid Unicode, but '{value}' has an incomplete character.";
+        }
+
+        if (CodePointsIn(value) > MaxLength)
+        {
+            return $"Cronitor accepts at most {MaxLength} characters in a monitor key: '{value}'.";
+        }
+
+        if (value.Trim() != value)
+        {
+            return $"Cronitor removes whitespace from the start and end of a monitor key, so it can't have any: '{value}'.";
+        }
+
+        return null;
     }
 
     private static bool HasIncompleteCharacter(string value)

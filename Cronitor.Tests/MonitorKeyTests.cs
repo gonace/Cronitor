@@ -125,6 +125,46 @@ public class MonitorKeyTests
     }
 
     [Fact]
+    public void Should_create_a_key_that_follows_the_rules()
+    {
+        var created = MonitorKey.TryCreate("Nightly-Backup", out var key);
+
+        Assert.True(created);
+        Assert.Equal("Nightly-Backup", key.ToString());
+    }
+
+    [Fact]
+    public void Should_not_create_a_key_containing_a_slash_instead_of_changing_it()
+    {
+        var created = MonitorKey.TryCreate("reports/daily", out var key);
+
+        Assert.False(created);
+        Assert.Null(key);
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData("")]
+    [InlineData("  ")]
+    [InlineData(" nightly-backup")]
+    public void Should_not_create_an_invalid_key(string value)
+    {
+        var created = MonitorKey.TryCreate(value, out var key);
+
+        Assert.False(created);
+        Assert.Null(key);
+    }
+
+    [Fact]
+    public void Should_not_create_a_key_longer_than_100_characters()
+    {
+        var created = MonitorKey.TryCreate(new string('x', 101), out var key);
+
+        Assert.False(created);
+        Assert.Null(key);
+    }
+
+    [Fact]
     public void Should_replace_slashes_in_a_name()
     {
         var derived = MonitorKey.TryFromName("reports/daily", out var key);
