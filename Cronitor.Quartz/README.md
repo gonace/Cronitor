@@ -56,7 +56,9 @@ job => job.WithIdentity(tenantId.ToString()).WithCronitorMonitorKey($"sync-{tena
 ```
 
 ## Retries
-Quartz 4 retries a failed job when its trigger, its job class or the scheduler has a retry policy, such as `.WithRetryPolicy(RetryPolicy.Fixed(3, TimeSpan.FromMinutes(5)))`. Each attempt is reported as its own run, and a retry's fail message ends with its attempt, for example `Disk is full (attempt 2)`. A job that fails twice and then succeeds is therefore reported as two failed runs followed by a completed one. Quartz 3 doesn't retry failed jobs.
+Quartz 4 retries a failed job when its trigger, its job class or the scheduler has a retry policy, such as `.WithRetryPolicy(RetryPolicy.Fixed(3, TimeSpan.FromMinutes(5)))`. Each attempt is reported as its own run, and a retry's fail message ends with its attempt, for example `Disk is full (attempt 2)`. A job that fails twice and then succeeds is therefore reported as two failed runs followed by a completed one. Quartz 3 has no retry policies.
+
+In both Quartz 3 and 4, a job that throws a `JobExecutionException` with `RefireImmediately = true` is run again at once. Quartz doesn't tell listeners why that attempt failed, so it's reported as a failed run with the message `The job failed and Quartz ran it again`, and the next attempt as a run of its own.
 
 ## Schedules
 A monitor created by a job's first report has no schedule, so Cronitor alerts when the job fails but not when it doesn't run at all. To give each job's monitor the schedules of its triggers, add schedule sync:
@@ -66,7 +68,7 @@ services.AddCronitorQuartzScheduleSync();
 ```
 Once the application has started, the triggers of every scheduler are sent to Cronitor in one request, in the background. Only the schedules and time zone are set; everything else on the monitor, such as its name and alerts, is kept. Jobs and triggers scheduled later get their schedules at the next start.
 
-A cron trigger is synced with its own time zone, and a simple trigger that repeats forever as an interval, such as `every 5 minutes`. A schedule is only synced when Cronitor reads it the same way as Quartz: a cron expression whose seconds aren't 0, that's limited to certain years, or that uses something Cronitor doesn't support, such as the nearest weekday (`15W`), isn't synced, and neither is a simple trigger that stops repeating; the reason is logged. All the triggers of a monitor are synced together, as long as their cron triggers share a time zone. Schedule sync needs dependency injection.
+A cron trigger is synced with its own time zone, and a simple trigger that repeats forever as an interval, such as `every 5 minutes`. A schedule is only synced when Cronitor reads it the same way as Quartz: a cron expression whose seconds aren't 0, that's limited to certain years, or that uses something Cronitor doesn't support, such as the nearest weekday (`15W`), isn't synced, and neither is a simple trigger that stops repeating, or a trigger with a calendar or an end time, since Cronitor can't leave out the times a calendar excludes or stop expecting runs at an end time; the reason is logged. A paused trigger is left out, so a job gets the schedules of its other triggers, and a job whose triggers are all paused isn't synced. All the triggers of a monitor are synced together, as long as their cron triggers share a time zone. Schedule sync needs dependency injection.
 
 ## Errors
 Reporting never affects your jobs: reports are sent in the background, so a job never waits for Cronitor. If a report can't be sent, the job still runs, and the error is logged through the host's logging. When the scheduler shuts down, it waits up to five seconds for reports that are still being sent, so the outcome of the last jobs isn't lost.

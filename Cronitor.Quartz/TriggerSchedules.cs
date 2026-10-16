@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Quartz;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace Cronitor.Quartz;
@@ -84,6 +85,18 @@ internal static class TriggerSchedules
         expression = null;
         timeZone = null;
         reason = null;
+        if (trigger.CalendarName != null)
+        {
+            reason = $"the trigger skips the times its calendar '{trigger.CalendarName}' excludes, which Cronitor can't express";
+            return false;
+        }
+
+        if (trigger.EndTimeUtc != null)
+        {
+            reason = $"the trigger stops at {trigger.EndTimeUtc.Value.ToString("u", CultureInfo.InvariantCulture)}, after which Cronitor would keep expecting runs";
+            return false;
+        }
+
         switch (trigger)
         {
             case ICronTrigger cronTrigger when QuartzCron.TryConvert(cronTrigger.CronExpressionString, out expression):

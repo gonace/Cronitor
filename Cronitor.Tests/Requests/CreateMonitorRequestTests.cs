@@ -4,6 +4,7 @@ using Cronitor.Assertions;
 using Cronitor.Constants;
 using Cronitor.Scheduling;
 using Cronitor.Models;
+using Cronitor.Models.Monitors;
 using Cronitor.Requests;
 using Cronitor.Tests.Helpers;
 using Xunit;
@@ -36,5 +37,20 @@ public class CreateMonitorRequestTests
         var actual = await request.Content.ReadAsStringAsync();
 #endif
         Assert.Equal(expected, actual);
+    }
+
+    [Fact]
+    public async Task Should_send_the_url_and_regions_of_a_check()
+    {
+        var check = new Check("api-health", new Request("https://example.com/health", new[] { Region.Frankfurt, Region.Virginia }));
+        var request = new CreateMonitorRequest(check);
+
+#if NET8_0_OR_GREATER
+        var actual = await request.Content.ReadAsStringAsync(TestContext.Current.CancellationToken);
+#else
+        var actual = await request.Content.ReadAsStringAsync();
+#endif
+        Assert.Contains("\"url\":\"https://example.com/health\"", actual);
+        Assert.Contains("\"regions\":[\"eu-central-1\",\"us-east-1\"]", actual);
     }
 }

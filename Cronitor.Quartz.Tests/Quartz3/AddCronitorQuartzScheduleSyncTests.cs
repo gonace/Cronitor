@@ -41,6 +41,34 @@ public class AddCronitorQuartzScheduleSyncTests : IDisposable
     }
 
     [Fact]
+    public async Task Should_leave_a_paused_trigger_out_of_the_job_s_schedules()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddQuartz(q => q.SchedulerName = Guid.NewGuid().ToString("N"));
+        var monitors = new FakeMonitorsClient();
+        var lifetime = new TestLifetime();
+
+        using (var provider = services.BuildServiceProvider())
+        {
+            var scheduler = await provider.GetRequiredService<ISchedulerFactory>().GetScheduler(TestContext.Current.CancellationToken);
+            var job = JobBuilder.Create<NoopJob>().WithIdentity("quartz3-paused-trigger").Build();
+            await scheduler.ScheduleJob(job, TriggerBuilder.Create().WithCronSchedule("0 0 3 ? * 2", schedule => schedule.InTimeZone(TimeZoneInfo.Utc)).Build(), TestContext.Current.CancellationToken);
+            var paused = TriggerBuilder.Create().ForJob(job).WithCronSchedule("0 0 4 ? * 3", schedule => schedule.InTimeZone(TimeZoneInfo.Utc)).Build();
+            await scheduler.ScheduleJob(paused, TestContext.Current.CancellationToken);
+            await scheduler.PauseTrigger(paused.Key, TestContext.Current.CancellationToken);
+            var service = new CronitorScheduleSyncService(provider.GetRequiredService<ISchedulerFactory>(), new ScheduleSync(monitors), lifetime);
+
+            await service.StartAsync(TestContext.Current.CancellationToken);
+            lifetime.NotifyStarted();
+            await service.Synced;
+            await scheduler.Shutdown(TestContext.Current.CancellationToken);
+        }
+
+        Assert.Contains("""{"key":"quartz3-paused-trigger","schedules":["0 3 * * 1"],"timezone":"UTC","type":"job"}""", Assert.Single(monitors.Updates));
+    }
+
+    [Fact]
     public void Should_register_the_sync_as_a_hosted_service()
     {
         var services = new ServiceCollection();

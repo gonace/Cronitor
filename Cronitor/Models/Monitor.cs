@@ -259,7 +259,7 @@ public class Monitor
     [JsonInclude]
     [ResponseOnly]
     [JsonPropertyName("next_expected_at")]
-    public long? ExpectedAt { get; protected set; }
+    public decimal? ExpectedAt { get; protected set; }
 
     /// <summary>
     /// ISO 8601 formatted timestamp of when the monitor was created.
