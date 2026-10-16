@@ -28,7 +28,7 @@ internal sealed class TelemetryRun : ITelemetryRun
     internal static async Task<TelemetryRun> StartAsync(TelemetriesClient client, MonitorKey monitorKey, string environment = null)
     {
         var run = new TelemetryRun(client, monitorKey, environment);
-        await run.SendAsync(new RunCommand(), null);
+        await run.SendAsync(new RunCommand(), null).ConfigureAwait(false);
 
         return run;
     }
@@ -43,7 +43,7 @@ internal sealed class TelemetryRun : ITelemetryRun
             return false;
         }
 
-        return await SendAsync(new CompleteCommand(), message);
+        return await SendAsync(new CompleteCommand(), message).ConfigureAwait(false);
     }
 
     public bool Fail(string message = null) =>
@@ -56,7 +56,7 @@ internal sealed class TelemetryRun : ITelemetryRun
             return false;
         }
 
-        return await SendAsync(new FailCommand(), message);
+        return await SendAsync(new FailCommand(), message).ConfigureAwait(false);
     }
 
     /// <summary>

@@ -50,3 +50,7 @@ dotnet_naming_style.underscore_camel_case.capitalization = camel_case
 
 [*.{json,yml,yaml,csproj,props,slnx}]
 indent_size = 2
+
+# The library continues awaited work on any thread, so sync methods never wait for a blocked caller
+[Cronitor/**.cs]
+dotnet_diagnostic.CA2007.severity = error

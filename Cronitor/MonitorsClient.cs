@@ -74,7 +74,7 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
             throw new ArgumentNullException(nameof(request));
         }
 
-        return await SendAsync<ListMonitorResponse>(request);
+        return await SendAsync<ListMonitorResponse>(request).ConfigureAwait(false);
     }
 
     public Monitor Get(MonitorKey key) =>
@@ -86,7 +86,7 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
 
         var request = new GetMonitorRequest(key);
 
-        return await SendAsync<Monitor>(request);
+        return await SendAsync<Monitor>(request).ConfigureAwait(false);
     }
 
     public IEnumerable<Monitor> Create(CreateMonitorRequest request) =>
@@ -94,7 +94,7 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
 
     public async Task<IEnumerable<Monitor>> CreateAsync(CreateMonitorRequest request)
     {
-        var response = await SendAsync<CreateMonitorResponse>(request);
+        var response = await SendAsync<CreateMonitorResponse>(request).ConfigureAwait(false);
 
         return response?.Monitors;
     }
@@ -108,7 +108,7 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
 
         var request = new CloneMonitorRequest(key, name);
 
-        return await SendAsync<Monitor>(request);
+        return await SendAsync<Monitor>(request).ConfigureAwait(false);
     }
 
     public IEnumerable<Monitor> Update(UpdateMonitorRequest request) =>
@@ -116,7 +116,7 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
 
     public async Task<IEnumerable<Monitor>> UpdateAsync(UpdateMonitorRequest request)
     {
-        var response = await SendAsync<UpdateMonitorResponse>(request);
+        var response = await SendAsync<UpdateMonitorResponse>(request).ConfigureAwait(false);
 
         return response.Monitors;
     }
@@ -130,7 +130,7 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
 
         var request = new DeleteMonitorRequest(key);
 
-        await SendAsync(request);
+        await SendAsync(request).ConfigureAwait(false);
     }
 
     public void Pause(MonitorKey key, int? hours = null) =>
@@ -142,7 +142,7 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
 
         var request = new PauseMonitorRequest(key, hours);
 
-        await SendAsync(request);
+        await SendAsync(request).ConfigureAwait(false);
     }
 
     public void Unpause(MonitorKey key) =>
@@ -154,7 +154,7 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
 
         var request = new UnpauseMonitorRequest(key);
 
-        await SendAsync(request);
+        await SendAsync(request).ConfigureAwait(false);
     }
 
     public IEnumerable<Activity> Activities(MonitorKey key) =>
@@ -166,7 +166,7 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
 
         var request = new ListActivitiesRequest(key);
 
-        return await SendAsync<IEnumerable<Activity>>(request);
+        return await SendAsync<IEnumerable<Activity>>(request).ConfigureAwait(false);
     }
 
     public IEnumerable<Alert> Alerts(MonitorKey key) =>
@@ -176,7 +176,7 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
     {
         var request = new ListAlertsRequest(key);
 
-        return await SendAsync<IEnumerable<Alert>>(request);
+        return await SendAsync<IEnumerable<Alert>>(request).ConfigureAwait(false);
     }
 
     public IEnumerable<Ping> Pings(MonitorKey key) =>
@@ -185,7 +185,7 @@ public class MonitorsClient : BaseClient<MonitorsClient>, IMonitorsClient
     public async Task<IEnumerable<Ping>> PingsAsync(MonitorKey key)
     {
         var request = new ListPingsRequest(key);
-        var response = await SendAsync<Dictionary<string, IEnumerable<Ping>>>(request);
+        var response = await SendAsync<Dictionary<string, IEnumerable<Ping>>>(request).ConfigureAwait(false);
 
         return response?.FirstOrDefault().Value;
     }

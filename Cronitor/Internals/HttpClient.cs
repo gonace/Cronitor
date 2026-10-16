@@ -77,7 +77,7 @@ internal class HttpClient : IDisposable
         };
         var task = _httpClient.SendAsync(message);
 
-        await PerformRequestAsync(task);
+        await PerformRequestAsync(task).ConfigureAwait(false);
     }
 
     public async Task SendAsync(BaseRequest request)
@@ -91,7 +91,7 @@ internal class HttpClient : IDisposable
         };
         var task = _httpClient.SendAsync(message);
 
-        await PerformRequestAsync(task);
+        await PerformRequestAsync(task).ConfigureAwait(false);
     }
 
     public async Task<TReturn> SendAsync<TReturn>(BaseRequest request)
@@ -105,35 +105,35 @@ internal class HttpClient : IDisposable
         };
         var task = _httpClient.SendAsync(message);
 
-        return await PerformRequestAsync<TReturn>(task);
+        return await PerformRequestAsync<TReturn>(task).ConfigureAwait(false);
     }
 
 
     private async Task PerformRequestAsync(Task<HttpResponseMessage> request)
     {
-        var response = await request;
+        var response = await request.ConfigureAwait(false);
         if (response.IsSuccessStatusCode)
         {
             return;
         }
 
-        throw await ErrorOfAsync(response);
+        throw await ErrorOfAsync(response).ConfigureAwait(false);
     }
 
     private async Task<TReturn> PerformRequestAsync<TReturn>(Task<HttpResponseMessage> request)
     {
-        var response = await request;
+        var response = await request.ConfigureAwait(false);
         if (response.IsSuccessStatusCode)
         {
-            return Serializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync());
+            return Serializer.Deserialize<TReturn>(await response.Content.ReadAsStringAsync().ConfigureAwait(false));
         }
 
-        throw await ErrorOfAsync(response);
+        throw await ErrorOfAsync(response).ConfigureAwait(false);
     }
 
     private static async Task<ApiException> ErrorOfAsync(HttpResponseMessage response)
     {
-        var body = await response.Content.ReadAsStringAsync();
+        var body = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
         return new ApiException(DetailOf(body), response.StatusCode, body);
     }
 

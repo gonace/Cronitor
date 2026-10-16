@@ -98,7 +98,7 @@ public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClie
             command.WithEnvironment(environment);
         }
 
-        return await PingAsync(command);
+        return await PingAsync(command).ConfigureAwait(false);
     }
 
     public bool Complete(MonitorKey monitorKey, string message = null, string environment = null) =>
@@ -122,7 +122,7 @@ public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClie
             command.WithEnvironment(environment);
         }
 
-        return await PingAsync(command);
+        return await PingAsync(command).ConfigureAwait(false);
     }
 
     public bool Fail(MonitorKey monitorKey, string message = null, string environment = null) =>
@@ -146,7 +146,7 @@ public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClie
             command.WithEnvironment(environment);
         }
 
-        return await PingAsync(command);
+        return await PingAsync(command).ConfigureAwait(false);
     }
 
     public bool Tick(MonitorKey monitorKey, string message = null, string environment = null) =>
@@ -170,7 +170,7 @@ public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClie
             command.WithEnvironment(environment);
         }
 
-        return await PingAsync(command);
+        return await PingAsync(command).ConfigureAwait(false);
     }
 
     public bool Ping(Command command) =>
@@ -180,7 +180,7 @@ public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClie
     {
         try
         {
-            await SendAsync(command);
+            await SendAsync(command).ConfigureAwait(false);
             return true;
         }
         catch (Exception exception) when (IsDeliveryFailure(exception))
@@ -194,7 +194,7 @@ public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClie
         TelemetryRun.Start(this, monitorKey, environment);
 
     public async Task<ITelemetryRun> StartAsync(MonitorKey monitorKey, string environment = null) =>
-        await TelemetryRun.StartAsync(this, monitorKey, environment);
+        await TelemetryRun.StartAsync(this, monitorKey, environment).ConfigureAwait(false);
 
     /// <summary>
     /// Sends <paramref name="command"/> authenticated with this client's API key.
