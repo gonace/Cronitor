@@ -1,4 +1,5 @@
 using System;
+using System.Text.Json;
 using Xunit;
 
 namespace Cronitor.Tests;
@@ -113,6 +114,30 @@ public class MonitorKeyTests
         var weekly = new MonitorKey("weekly-backup");
 
         Assert.False(nightly.Equals(weekly));
+    }
+
+    [Fact]
+    public void Should_write_a_key_as_a_JSON_string()
+    {
+        var json = JsonSerializer.Serialize(new MonitorKey("nightly-backup"));
+
+        Assert.Equal("\"nightly-backup\"", json);
+    }
+
+    [Fact]
+    public void Should_read_a_key_from_Cronitor_without_validating_it()
+    {
+        var key = JsonSerializer.Deserialize<MonitorKey>("\"reports/daily\"");
+
+        Assert.Equal("reports/daily", key.ToString());
+    }
+
+    [Fact]
+    public void Should_read_a_JSON_null_as_null()
+    {
+        var key = JsonSerializer.Deserialize<MonitorKey>("null");
+
+        Assert.Null(key);
     }
 
     [Fact]

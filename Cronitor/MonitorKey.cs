@@ -1,9 +1,11 @@
 using Cronitor.Extensions;
 using System;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace Cronitor;
 
+[JsonConverter(typeof(MonitorKeyConverter))]
 public sealed class MonitorKey
 {
     private const int MaxLength = 100;
@@ -11,6 +13,18 @@ public sealed class MonitorKey
     private readonly string _value;
 
     public MonitorKey(string value)
+        : this(value, validate: true)
+    {
+    }
+
+    private MonitorKey(string value, bool validate)
+    {
+        _value = validate ? Validated(value) : value;
+    }
+
+    internal static MonitorKey FromCronitor(string value) => new MonitorKey(value, validate: false);
+
+    private static string Validated(string value)
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(value);
 
@@ -20,7 +34,7 @@ public sealed class MonitorKey
             throw new ArgumentException(problem, nameof(value));
         }
 
-        _value = value;
+        return value;
     }
 
     public static bool TryCreate(string value, out MonitorKey key)
