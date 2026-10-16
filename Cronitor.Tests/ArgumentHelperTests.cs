@@ -43,4 +43,14 @@ public class ArgumentHelperTests
     {
         Assert.Throws<ArgumentNullException>(() => ArgumentHelper.ThrowIfNullOrWhiteSpace("\n"));
     }
+
+    [Fact]
+    public void Should_name_the_argument_when_ThrowIfNullOrWhiteSpace_throws()
+    {
+        var monitorKey = "   ";
+
+        var exception = Assert.Throws<ArgumentNullException>(() => ArgumentHelper.ThrowIfNullOrWhiteSpace(monitorKey));
+
+        Assert.Equal("monitorKey", exception.ParamName);
+    }
 }
