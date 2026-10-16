@@ -86,6 +86,19 @@ public class CronitorJobFilterTests
     }
 
     [Fact]
+    public async Task Should_not_report_a_recurring_job_whose_ID_is_too_long_for_a_monitor_key_and_log_a_warning()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var logger = new FakeLogger<CronitorJobFilter>();
+
+        var storage = await RunRecurringJob(new string('x', 101), () => TestJobs.Succeed(), new CronitorJobFilter(telemetries, logger));
+
+        Assert.Equal(1, storage.GetMonitoringApi().SucceededListCount());
+        Assert.Empty(telemetries.Sent);
+        Assert.Equal(LogLevel.Warning, Assert.Single(logger.Entries).Level);
+    }
+
+    [Fact]
     public async Task Should_still_run_the_job_and_log_the_error_when_the_filter_fails_before_it()
     {
         var telemetries = new FakeTelemetriesClient { ThrowOnStart = true };

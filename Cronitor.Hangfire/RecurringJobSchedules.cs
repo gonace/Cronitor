@@ -14,7 +14,7 @@ internal static class RecurringJobSchedules
     internal static IReadOnlyList<MonitorSchedule> Of(IEnumerable<RecurringJobDto> recurringJobs, ILogger logger)
     {
         var schedules = new List<MonitorSchedule>();
-        foreach (var monitor in recurringJobs.Where(job => !job.Removed).GroupBy(job => MonitorKey.Of(job.Id)))
+        foreach (var monitor in ByMonitorKey(recurringJobs.Where(job => !job.Removed), logger))
         {
             if (TryScheduleOf(monitor.Key, monitor.ToList(), logger, out var schedule))
             {
@@ -23,6 +23,24 @@ internal static class RecurringJobSchedules
         }
 
         return schedules;
+    }
+
+    private static IEnumerable<IGrouping<string, RecurringJobDto>> ByMonitorKey(IEnumerable<RecurringJobDto> recurringJobs, ILogger logger)
+    {
+        var keyed = new List<(string MonitorKey, RecurringJobDto RecurringJob)>();
+        foreach (var recurringJob in recurringJobs)
+        {
+            if (MonitorKey.TryFromName(recurringJob.Id, out var monitorKey))
+            {
+                keyed.Add((monitorKey.ToString(), recurringJob));
+            }
+            else
+            {
+                logger.ScheduleNotSynced(recurringJob.Id, "the ID of the recurring job can't be a monitor key, which can't be blank or longer than 100 characters");
+            }
+        }
+
+        return keyed.GroupBy(entry => entry.MonitorKey, entry => entry.RecurringJob);
     }
 
     private static bool TryScheduleOf(string monitorKey, IReadOnlyList<RecurringJobDto> recurringJobs, ILogger logger, out MonitorSchedule schedule)

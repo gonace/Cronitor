@@ -73,6 +73,18 @@ public class RecurringJobSchedulesTests
     }
 
     [Fact]
+    public void Should_not_sync_a_recurring_job_whose_ID_is_too_long_for_a_monitor_key_and_sync_the_others()
+    {
+        var logger = new FakeLogger<RecurringJobSchedulesTests>();
+        var recurringJobs = new[] { RecurringJob(new string('x', 101), "0 3 * * *"), RecurringJob("nightly-backup", "0 3 * * *") };
+
+        var schedules = RecurringJobSchedules.Of(recurringJobs, logger);
+
+        Assert.Equal(new[] { "nightly-backup" }, schedules.Select(schedule => schedule.MonitorKey));
+        Assert.Equal(LogLevel.Information, Assert.Single(logger.Entries).Level);
+    }
+
+    [Fact]
     public void Should_not_sync_a_removed_recurring_job()
     {
         var recurringJob = RecurringJob("nightly-backup", "0 3 * * *");
