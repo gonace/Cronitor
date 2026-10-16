@@ -11,8 +11,8 @@ namespace Cronitor;
 
 public interface INotificationsClient
 {
-    ListNotificationResponse List();
-    Task<ListNotificationResponse> ListAsync();
+    ListNotificationResponse List(int page = 1);
+    Task<ListNotificationResponse> ListAsync(int page = 1);
     Notification Get(string name);
     Task<Notification> GetAsync(string name);
     Notification Create(CreateNotificationRequest request);
@@ -35,12 +35,12 @@ public class NotificationsClient : BaseClient<NotificationsClient>, INotificatio
     {
     }
 
-    public ListNotificationResponse List() =>
-        ListAsync().GetAwaiter().GetResult();
+    public ListNotificationResponse List(int page = 1) =>
+        ListAsync(page).GetAwaiter().GetResult();
 
-    public async Task<ListNotificationResponse> ListAsync()
+    public async Task<ListNotificationResponse> ListAsync(int page = 1)
     {
-        var request = new ListNotificationRequest();
+        var request = new ListNotificationRequest { Page = page };
         var response = await SendAsync<ListNotificationResponse>(request).ConfigureAwait(false);
 
         return response;
