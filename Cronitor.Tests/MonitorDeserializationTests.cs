@@ -1,3 +1,4 @@
+using Cronitor.Models;
 using Cronitor.Models.Monitors;
 using Cronitor.Responses;
 using Cronitor.Scheduling;
@@ -191,5 +192,51 @@ public class MonitorDeserializationTests
         Assert.DoesNotContain("\"latest_issue\":", body);
         Assert.DoesNotContain("\"badges\":", body);
         Assert.DoesNotContain("\"metric_names\":", body);
+    }
+
+    [Fact]
+    public void Should_read_a_check_with_its_request_when_the_type_comes_last()
+    {
+        var monitor = Serializer.Deserialize<Monitor>("{\"key\":\"api-health\",\"request\":{\"url\":\"https://example.com/health\",\"regions\":[\"eu-central-1\",\"us-east-1\"]},\"type\":\"check\"}");
+
+        var check = Assert.IsType<Check>(monitor);
+        Assert.Equal("https://example.com/health", check.Request.Url);
+        Assert.Equal(new[] { "eu-central-1", "us-east-1" }, check.Request.Regions);
+    }
+
+    [Fact]
+    public void Should_read_a_job_as_a_Job()
+    {
+        var monitor = Serializer.Deserialize<Monitor>("{\"key\":\"nightly-backup\",\"type\":\"job\"}");
+
+        Assert.IsType<Job>(monitor);
+    }
+
+    [Fact]
+    public void Should_read_a_heartbeat_as_a_Heartbeat()
+    {
+        var monitor = Serializer.Deserialize<Monitor>("{\"key\":\"queue-worker\",\"type\":\"heartbeat\"}");
+
+        Assert.IsType<Heartbeat>(monitor);
+    }
+
+    [Theory]
+    [InlineData("{\"key\":\"homepage\",\"type\":\"site\"}")]
+    [InlineData("{\"key\":\"homepage\"}")]
+    public void Should_read_a_monitor_of_another_or_no_type_as_a_Monitor(string json)
+    {
+        var monitor = Serializer.Deserialize<Monitor>(json);
+
+        Assert.IsType<Monitor>(monitor);
+    }
+
+    [Fact]
+    public void Should_read_each_monitor_in_a_list_as_its_own_type()
+    {
+        var json = "{\"monitors\":[{\"key\":\"nightly-backup\",\"type\":\"job\"},{\"key\":\"queue-worker\",\"type\":\"heartbeat\"},{\"key\":\"api-health\",\"type\":\"check\"},{\"key\":\"homepage\",\"type\":\"site\"}]}";
+
+        var monitors = Serializer.Deserialize<ListMonitorResponse>(json).Items.ToList();
+
+        Assert.Equal(new[] { typeof(Job), typeof(Heartbeat), typeof(Check), typeof(Monitor) }, monitors.Select(monitor => monitor.GetType()));
     }
 }
