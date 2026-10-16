@@ -258,7 +258,7 @@ These packages report a scheduler's jobs to Cronitor without any reporting code 
 | [`Cronitor.Coravel`](Cronitor.Coravel/README.md) | [Coravel](https://docs.coravel.net) | every job scheduled with `ScheduleWithCronitor` |
 
 ## Contributing
-Pull requests and features are happily considered! By participating in this project you agree to abide by the [Code of Conduct](http://contributor-covenant.org/version/2/0).
+Pull requests and features are happily considered! By participating in this project you agree to abide by the [Code of Conduct](https://www.contributor-covenant.org/version/3/0).
 
 ### To contribute
 
