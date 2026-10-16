@@ -25,7 +25,7 @@ public abstract class BaseClient<T> : IDisposable
 
     protected async Task SendAsync(Command command)
     {
-        await _httpClient.SendAsync(command);
+        await _httpClient.SendAsync(command).ConfigureAwait(false);
     }
 
     protected TResponse Send<TResponse>(BaseRequest request) =>
@@ -33,7 +33,7 @@ public abstract class BaseClient<T> : IDisposable
 
     protected async Task<TResponse> SendAsync<TResponse>(BaseRequest request)
     {
-        return await _httpClient.SendAsync<TResponse>(request);
+        return await _httpClient.SendAsync<TResponse>(request).ConfigureAwait(false);
     }
 
     protected void Send(BaseRequest request) =>
@@ -41,7 +41,7 @@ public abstract class BaseClient<T> : IDisposable
 
     protected async Task SendAsync(BaseRequest request)
     {
-        await _httpClient.SendAsync(request);
+        await _httpClient.SendAsync(request).ConfigureAwait(false);
     }
 
     public void Dispose()

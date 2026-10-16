@@ -58,7 +58,7 @@ public class IssuesClient : BaseClient<IssuesClient>, IIssuesClient
             throw new ArgumentNullException(nameof(request));
         }
 
-        return await SendAsync<ListIssueResponse>(request);
+        return await SendAsync<ListIssueResponse>(request).ConfigureAwait(false);
     }
 
     public Issue Get(string key) =>
@@ -70,7 +70,7 @@ public class IssuesClient : BaseClient<IssuesClient>, IIssuesClient
 
         var request = new GetIssueRequest(key);
 
-        return await SendAsync<Issue>(request);
+        return await SendAsync<Issue>(request).ConfigureAwait(false);
     }
 
     public Issue Create(CreateIssueRequest request) =>
@@ -78,7 +78,7 @@ public class IssuesClient : BaseClient<IssuesClient>, IIssuesClient
 
     public async Task<Issue> CreateAsync(CreateIssueRequest request)
     {
-        return await SendAsync<Issue>(request);
+        return await SendAsync<Issue>(request).ConfigureAwait(false);
     }
 
     public Issue Update(UpdateIssueRequest request) =>
@@ -86,7 +86,7 @@ public class IssuesClient : BaseClient<IssuesClient>, IIssuesClient
 
     public async Task<Issue> UpdateAsync(UpdateIssueRequest request)
     {
-        return await SendAsync<Issue>(request);
+        return await SendAsync<Issue>(request).ConfigureAwait(false);
     }
 
     public void Delete(string key) =>
@@ -98,6 +98,6 @@ public class IssuesClient : BaseClient<IssuesClient>, IIssuesClient
 
         var request = new DeleteIssueRequest(key);
 
-        await SendAsync(request);
+        await SendAsync(request).ConfigureAwait(false);
     }
 }

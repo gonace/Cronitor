@@ -41,7 +41,7 @@ public class NotificationsClient : BaseClient<NotificationsClient>, INotificatio
     public async Task<ListNotificationResponse> ListAsync()
     {
         var request = new ListNotificationRequest();
-        var response = await SendAsync<ListNotificationResponse>(request);
+        var response = await SendAsync<ListNotificationResponse>(request).ConfigureAwait(false);
 
         return response;
     }
@@ -55,20 +55,20 @@ public class NotificationsClient : BaseClient<NotificationsClient>, INotificatio
 
         var request = new GetNotificationRequest(key);
 
-        return await SendAsync<Notification>(request);
+        return await SendAsync<Notification>(request).ConfigureAwait(false);
     }
 
     public Notification Create(CreateNotificationRequest request) =>
         CreateAsync(request).GetAwaiter().GetResult();
 
     public async Task<Notification> CreateAsync(CreateNotificationRequest request) =>
-        await SendAsync<Notification>(request);
+        await SendAsync<Notification>(request).ConfigureAwait(false);
 
     public Notification Update(UpdateNotificationRequest request) =>
         UpdateAsync(request).GetAwaiter().GetResult();
 
     public async Task<Notification> UpdateAsync(UpdateNotificationRequest request) =>
-        await SendAsync<Notification>(request);
+        await SendAsync<Notification>(request).ConfigureAwait(false);
 
     public void Delete(string key) =>
         DeleteAsync(key).GetAwaiter().GetResult();
@@ -79,6 +79,6 @@ public class NotificationsClient : BaseClient<NotificationsClient>, INotificatio
 
         var request = new DeleteNotificationRequest(key);
 
-        await SendAsync(request);
+        await SendAsync(request).ConfigureAwait(false);
     }
 }
