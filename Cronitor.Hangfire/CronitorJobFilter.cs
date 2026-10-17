@@ -44,7 +44,7 @@ public class CronitorJobFilter : IServerFilter
     {
         try
         {
-            var recurringJobId = context.GetJobParameter<string>(RecurringJobIdParameter);
+            var recurringJobId = context.GetJobParameter<string>(RecurringJobIdParameter, allowStale: true);
             if (string.IsNullOrWhiteSpace(recurringJobId))
             {
                 return;
@@ -86,7 +86,7 @@ public class CronitorJobFilter : IServerFilter
     private static string FailureOf(PerformedContext context)
     {
         var failure = ReasonOf(context);
-        var retries = context.GetJobParameter<int>(RetryCountParameter);
+        var retries = context.GetJobParameter<int>(RetryCountParameter, allowStale: true);
 
         return failure != null && retries > 0 ? $"{failure} (attempt {retries + 1})" : failure;
     }

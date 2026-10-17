@@ -4,6 +4,7 @@ using Hangfire.InMemory;
 using Hangfire.Server;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading.Tasks;
 using Xunit;
@@ -21,6 +22,21 @@ public class CronitorJobFilterTests
         var telemetries = new FakeTelemetriesClient();
 
         await RunRecurringJob("nightly-backup", () => TestJobs.Succeed(), new CronitorJobFilter(telemetries));
+
+        Assert.Equal(new[] { "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public void Should_read_the_job_s_parameters_from_what_Hangfire_fetched_with_the_job_without_asking_storage()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var filter = new CronitorJobFilter(telemetries);
+        var parameters = new Dictionary<string, string> { ["RecurringJobId"] = "\"nightly-backup\"" };
+        var job = new BackgroundJob("1", Job.FromExpression(() => TestJobs.Succeed()), DateTime.UtcNow, parameters);
+        var context = new PerformContext(new InMemoryStorage(), new UnreachableStorageConnection(), job, new JobCancellationToken(false));
+
+        filter.OnPerforming(new PerformingContext(context));
+        filter.OnPerformed(new PerformedContext(context, null, false, null));
 
         Assert.Equal(new[] { "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
     }
