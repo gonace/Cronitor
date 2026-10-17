@@ -42,7 +42,7 @@ public class ShutdownTests
         var telemetries = new FakeTelemetriesClient { FinishGate = finishGate.Task };
         var logger = new FakeLogger<CronitorReporter>();
         var reporter = new CronitorReporter(telemetries, logger);
-        await reporter.RunAsync("nightly-backup", () => Task.CompletedTask);
+        await reporter.RunAsync("nightly-backup", () => Task.CompletedTask, CancellationToken.None);
 
         var waiting = reporter.WaitForPendingReportsAsync(TimeSpan.FromMilliseconds(200), TestContext.Current.CancellationToken);
         // 200 ms requested; a second allows for a slow test host but fails a wait that ignores the limit.
@@ -66,11 +66,23 @@ public class ShutdownTests
         {
             var reporter = new CronitorReporter(telemetries, applicationStopping: applicationStopping.Token);
 
-            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => reporter.RunAsync("nightly-backup", () => Task.FromCanceled(new CancellationToken(canceled: true))));
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => reporter.RunAsync("nightly-backup", () => Task.FromCanceled(new CancellationToken(canceled: true)), CancellationToken.None));
             await applicationStopping.CancelAsync();
             startGate.SetResult(true);
             await reporter.WaitForPendingReportsAsync(Limit, TestContext.Current.CancellationToken);
         }
+
+        Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: The job was cancelled" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public async Task Should_send_run_and_fail_when_a_job_cancels_itself_while_the_application_stops()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var reporter = new CronitorReporter(telemetries, applicationStopping: new CancellationToken(canceled: true));
+
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => reporter.RunAsync("nightly-backup", () => Task.FromCanceled(new CancellationToken(canceled: true)), CancellationToken.None));
+        await reporter.WaitForPendingReportsAsync(Limit, TestContext.Current.CancellationToken);
 
         Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: The job was cancelled" }, telemetries.Sent);
     }

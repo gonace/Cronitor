@@ -32,14 +32,14 @@ internal sealed class CronitorReporter
 
     /// <summary>
     /// Runs the job and reports it to the monitor with the given key. The returned task is the job's own, so Coravel
-    /// still sees the job's exception.
+    /// still sees the job's exception. The cancellation token is the one Coravel gave the job.
     /// </summary>
-    internal Task RunAsync(MonitorKey monitorKey, Func<Task> job)
+    internal Task RunAsync(MonitorKey monitorKey, Func<Task> job, CancellationToken cancellationToken)
     {
         var start = ReportStartAsync(monitorKey);
         var execution = ExecuteAsync(job);
 
-        Track(ReportEndAsync(start, execution, monitorKey));
+        Track(ReportEndAsync(start, execution, monitorKey, cancellationToken));
 
         return execution;
     }
@@ -104,11 +104,11 @@ internal sealed class CronitorReporter
     /// <summary>
     /// Sends abandon, complete or fail once the job has ended and the run event has been sent, so Cronitor always receives them in order.
     /// </summary>
-    private async Task ReportEndAsync(Task<ITelemetryRun> start, Task execution, MonitorKey monitorKey)
+    private async Task ReportEndAsync(Task<ITelemetryRun> start, Task execution, MonitorKey monitorKey, CancellationToken cancellationToken)
     {
         try
         {
-            var (abandonment, failure) = await OutcomeOfAsync(execution).ConfigureAwait(false);
+            var (abandonment, failure) = await OutcomeOfAsync(execution, cancellationToken).ConfigureAwait(false);
             using (var run = await start.ConfigureAwait(false))
             {
                 if (run == null)
@@ -138,17 +138,17 @@ internal sealed class CronitorReporter
 
     /// <summary>
     /// Why the job was stopped before it could end, or why it did not succeed; both null if it succeeded. Coravel
-    /// cancels the jobs still running when the application stops, so a job cancelled while the application is
+    /// cancels the jobs still running when the application stops, so a job Coravel cancelled while the application is
     /// stopping is abandoned instead of failed.
     /// </summary>
-    private async Task<(string Abandonment, string Failure)> OutcomeOfAsync(Task execution)
+    private async Task<(string Abandonment, string Failure)> OutcomeOfAsync(Task execution, CancellationToken cancellationToken)
     {
         try
         {
             await execution.ConfigureAwait(false);
             return (null, null);
         }
-        catch (OperationCanceledException) when (_applicationStopping.IsCancellationRequested)
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested && _applicationStopping.IsCancellationRequested)
         {
             return (OfflineMessage, null);
         }
