@@ -83,7 +83,7 @@ using (var run = await CronitorClient.StartAsync("monitorKey", environment: "pro
     await run.CompleteAsync();
 }
 ```
-Every run gets its own `series`, so overlapping runs of the same monitor are matched correctly. Use `run.Fail(message)` to report a failure with a reason. Use `run.Abandon(message)` for a run that was stopped before it could end, such as when the service goes offline: the message is reported as a tick, so the monitor keeps its state instead of failing. The message is required.
+Every run gets its own `series`, so overlapping runs of the same monitor are matched correctly. Use `run.Fail(message)` to report a failure with a reason. Use `run.Abandon(message)` for a run that was stopped before it could end, such as when the service goes offline: the message is reported as a tick, so the monitor keeps its state instead of failing, and Cronitor keeps the run open until the job runs again. The message is required. An abandoned run doesn't alert: if the job doesn't run again on schedule, Cronitor alerts on the missed run as usual; if it does, the work of the abandoned run isn't reported as failed.
 
 ### Static
 ```c#

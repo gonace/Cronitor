@@ -18,8 +18,9 @@ public interface ITelemetryRun : IDisposable
     Task<bool> FailAsync(string message = null);
 
     /// <summary>
-    /// Ends the run without completing or failing it, for a run that was stopped before it could end, such as when
-    /// the service went offline. The message is reported as a tick, so the monitor keeps its state.
+    /// Stops reporting the run without completing or failing it, for a run that was stopped before it could end, such as
+    /// when the service went offline. The message is reported as a tick, so the monitor keeps its state, and Cronitor
+    /// keeps the run open until the job's next run.
     /// </summary>
     bool Abandon(string message);
 
