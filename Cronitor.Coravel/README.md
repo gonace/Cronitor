@@ -39,7 +39,7 @@ await host.RunAsync();
 Jobs scheduled with `Schedule<TJob>()` are not reported, so you choose which jobs Cronitor monitors. Only invocable jobs can be reported: a job scheduled as a lambda, with `Schedule(() => …)`, has nothing that names it from one start of the application to the next.
 
 ## What is reported
-Every run of the job is reported: run when it starts, then complete when it succeeds, or fail when it throws, with the exception's message. A job Coravel cancels when the application stops fails with "The job was cancelled". The job's exception still reaches Coravel, so Coravel's own error handling, such as `.OnError()`, works as before.
+Every run of the job is reported: run when it starts, then complete when it succeeds, or fail when it throws, with the exception's message. A job Coravel cancels when the application stops isn't reported as failed: its run is abandoned with the message "The service went offline", so a deploy or restart doesn't make the monitor fail, and Cronitor keeps the run open until the job runs again. A job cancelled while the application keeps running fails with "The job was cancelled". The job's exception still reaches Coravel, so Coravel's own error handling, such as `.OnError()`, works as before.
 
 A run Coravel skips is not reported, since it never ran: a run skipped by `.PreventOverlapping()` because the previous run is still going, or by `.When()` because its condition is false.
 

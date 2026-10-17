@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -54,6 +55,24 @@ public class ShutdownTests
         Assert.Equal(new[] { "run nightly-backup" }, sentWhenStopped);
         var entry = Assert.Single(logger.Entries);
         Assert.Equal(LogLevel.Warning, entry.Level);
+    }
+
+    [Fact]
+    public async Task Should_send_run_and_fail_when_the_application_only_stops_after_a_cancelled_job_has_ended()
+    {
+        var startGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var telemetries = new FakeTelemetriesClient { StartGate = startGate.Task };
+        using (var applicationStopping = new CancellationTokenSource())
+        {
+            var reporter = new CronitorReporter(telemetries, applicationStopping: applicationStopping.Token);
+
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => reporter.RunAsync("nightly-backup", () => Task.FromCanceled(new CancellationToken(canceled: true))));
+            await applicationStopping.CancelAsync();
+            startGate.SetResult(true);
+            await reporter.WaitForPendingReportsAsync(Limit, TestContext.Current.CancellationToken);
+        }
+
+        Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: The job was cancelled" }, telemetries.Sent);
     }
 
     private static async Task<bool> FinishesWithin(Task task, TimeSpan limit) =>
