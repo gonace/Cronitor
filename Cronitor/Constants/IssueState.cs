@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json.Serialization;
 
 namespace Cronitor.Constants;
@@ -24,4 +25,12 @@ public class IssueState
     {
         return State;
     }
+
+    public override bool Equals(object obj) => obj is IssueState other && string.Equals(State, other.State, StringComparison.Ordinal);
+
+    public override int GetHashCode() => State != null ? StringComparer.Ordinal.GetHashCode(State) : 0;
+
+    public static bool operator ==(IssueState left, IssueState right) => Equals(left, right);
+
+    public static bool operator !=(IssueState left, IssueState right) => !Equals(left, right);
 }
