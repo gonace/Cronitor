@@ -4,6 +4,7 @@ using Hangfire.InMemory;
 using System;
 using System.Diagnostics;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -72,4 +73,24 @@ public static class TestJobs
     }
 
     public static void Throw() => throw new InvalidOperationException("Disk is full");
+
+    public static void ThrowOperationCanceled() => throw new OperationCanceledException("Gave up");
+
+    private static TaskCompletionSource<bool> _waiting = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    /// <summary>
+    /// Completes once <see cref="WaitForCancellation"/> is running.
+    /// </summary>
+    public static Task Waiting => _waiting.Task;
+
+    public static void ResetWaiting() => _waiting = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+    /// <summary>
+    /// Runs until Hangfire cancels it, as a job does that stops when its server shuts down or it is deleted.
+    /// </summary>
+    public static async Task WaitForCancellation(CancellationToken cancellationToken)
+    {
+        _waiting.TrySetResult(true);
+        await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
+    }
 }

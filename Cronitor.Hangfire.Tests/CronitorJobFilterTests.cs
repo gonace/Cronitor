@@ -5,7 +5,9 @@ using Hangfire.Server;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
 
@@ -49,6 +51,52 @@ public class CronitorJobFilterTests
         await RunRecurringJob("nightly-backup", () => TestJobs.Throw(), new CronitorJobFilter(telemetries));
 
         Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: Disk is full" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public async Task Should_abandon_the_run_when_the_server_stops_while_a_recurring_job_runs()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var storage = new InMemoryStorage();
+        TestJobs.ResetWaiting();
+
+        using (var server = TestServer.Start(storage, new JobFilterCollection { new CronitorJobFilter(telemetries) }))
+        {
+            StartRecurringJob(storage, "nightly-backup", () => TestJobs.WaitForCancellation(CancellationToken.None));
+            await TestServer.WaitUntil(() => TestJobs.Waiting.IsCompleted);
+            server.SendStop();
+            await TestServer.WaitUntil(() => telemetries.Sent.Count == 2);
+        }
+
+        Assert.Equal(new[] { "run nightly-backup", "abandon nightly-backup: The service went offline" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public async Task Should_abandon_the_run_when_a_running_recurring_job_is_deleted()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var storage = new InMemoryStorage();
+        TestJobs.ResetWaiting();
+
+        using (TestServer.Start(storage, new JobFilterCollection { new CronitorJobFilter(telemetries) }))
+        {
+            StartRecurringJob(storage, "nightly-backup", () => TestJobs.WaitForCancellation(CancellationToken.None));
+            await TestServer.WaitUntil(() => TestJobs.Waiting.IsCompleted);
+            new BackgroundJobClient(storage).Delete(storage.GetMonitoringApi().ProcessingJobs(0, 1).Single().Key);
+            await TestServer.WaitUntil(() => telemetries.Sent.Count == 2);
+        }
+
+        Assert.Equal(new[] { "run nightly-backup", "abandon nightly-backup: The job was aborted" }, telemetries.Sent);
+    }
+
+    [Fact]
+    public async Task Should_send_fail_when_a_recurring_job_cancels_itself_while_the_server_keeps_running()
+    {
+        var telemetries = new FakeTelemetriesClient();
+
+        await RunRecurringJob("nightly-backup", () => TestJobs.ThrowOperationCanceled(), new CronitorJobFilter(telemetries));
+
+        Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: Gave up" }, telemetries.Sent);
     }
 
     [Fact]
@@ -213,6 +261,13 @@ public class CronitorJobFilterTests
 
     private static Task<InMemoryStorage> RunRecurringJob(string recurringJobId, Expression<Action> job, CronitorJobFilter filter) =>
         TestServer.RunRecurringJob(recurringJobId, job, new JobFilterCollection { filter });
+
+    private static void StartRecurringJob(JobStorage storage, string recurringJobId, Expression<Func<Task>> job)
+    {
+        var recurringJobs = new RecurringJobManager(storage);
+        recurringJobs.AddOrUpdate(recurringJobId, job, Cron.Never());
+        recurringJobs.Trigger(recurringJobId);
+    }
 
     /// <summary>
     /// Cancels every job before it runs, like a filter that decides a job should not run now.
