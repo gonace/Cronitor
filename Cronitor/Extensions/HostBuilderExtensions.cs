@@ -21,7 +21,7 @@ public static class HostBuilderExtensions
             services.AddTransient<IIssuesClient>((_) => new IssuesClient(apiKey));
             services.AddTransient<IMonitorsClient>((_) => new MonitorsClient(apiKey));
             services.AddTransient<INotificationsClient>((_) => new NotificationsClient(apiKey));
-            services.AddTransient<ITelemetriesClient>(provider => new TelemetriesClient(apiKey, LoggerFactory(provider)));
+            services.AddSingleton<ITelemetriesClient>(provider => new TelemetriesClient(apiKey, LoggerFactory(provider)));
         });
 
         return builder;
@@ -40,7 +40,7 @@ public static class HostBuilderExtensions
             services.AddTransient<IIssuesClient>((_) => new IssuesClient(apiKey));
             services.AddTransient<IMonitorsClient>((_) => new MonitorsClient(apiKey));
             services.AddTransient<INotificationsClient>((_) => new NotificationsClient(apiKey));
-            services.AddTransient<ITelemetriesClient>(provider => new TelemetriesClient(apiKey, LoggerFactory(provider)));
+            services.AddSingleton<ITelemetriesClient>(provider => new TelemetriesClient(apiKey, LoggerFactory(provider)));
         });
 
         return builder;

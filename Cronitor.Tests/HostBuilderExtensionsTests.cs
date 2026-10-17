@@ -57,6 +57,22 @@ public class HostBuilderExtensionsTests : BaseTest
     }
 
     [Fact]
+    public void Should_give_every_scope_the_same_telemetries_client_when_ConfigureCronitor_gets_an_api_key()
+    {
+        var host = Host.CreateDefaultBuilder().ConfigureCronitor(ApiKey).Build();
+
+        Assert.Same(TelemetriesClientOfAScope(host), TelemetriesClientOfAScope(host));
+    }
+
+    [Fact]
+    public void Should_give_every_scope_the_same_telemetries_client_when_ConfigureCronitor_gets_an_options_builder()
+    {
+        var host = Host.CreateDefaultBuilder().ConfigureCronitor(context => ApiKey).Build();
+
+        Assert.Same(TelemetriesClientOfAScope(host), TelemetriesClientOfAScope(host));
+    }
+
+    [Fact]
     public void Should_register_all_services_when_ConfigureCronitor_gets_an_options_builder()
     {
         var hostBuilder = Host.CreateDefaultBuilder();
@@ -206,5 +222,16 @@ public class HostBuilderExtensionsTests : BaseTest
 
         Assert.Throws<ArgumentNullException>(() =>
             builder.UseCronitor(context => ApiKey));
+    }
+
+    /// <summary>
+    /// Resolves the telemetries client in a scope of its own, which is disposed before returning, as a request's would be.
+    /// </summary>
+    private static ITelemetriesClient TelemetriesClientOfAScope(IHost host)
+    {
+        using (var scope = host.Services.CreateScope())
+        {
+            return scope.ServiceProvider.GetRequiredService<ITelemetriesClient>();
+        }
     }
 }
