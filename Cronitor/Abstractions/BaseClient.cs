@@ -7,7 +7,7 @@ namespace Cronitor.Abstractions;
 
 public abstract class BaseClient<T> : IDisposable
 {
-    private HttpClient _httpClient;
+    private readonly HttpClient _httpClient;
 
     protected BaseClient(Uri apiUri, string apiKey)
     {
@@ -47,7 +47,6 @@ public abstract class BaseClient<T> : IDisposable
     public void Dispose()
     {
         _httpClient?.Dispose();
-        _httpClient = null;
         GC.SuppressFinalize(this);
     }
 }
