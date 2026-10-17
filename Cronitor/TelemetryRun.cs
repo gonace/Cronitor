@@ -59,6 +59,21 @@ internal sealed class TelemetryRun : ITelemetryRun
         return await SendAsync(new FailCommand(), message).ConfigureAwait(false);
     }
 
+    public bool Abandon(string message) =>
+        AbandonAsync(message).GetAwaiter().GetResult();
+
+    public async Task<bool> AbandonAsync(string message)
+    {
+        ArgumentHelper.ThrowIfNullOrWhiteSpace(message);
+
+        if (!TryFinish())
+        {
+            return false;
+        }
+
+        return await SendAsync(new TickCommand(), message).ConfigureAwait(false);
+    }
+
     /// <summary>
     /// Reports the run as failed unless it was completed or failed already.
     /// Never throws, so it cannot replace an exception thrown by the job itself.

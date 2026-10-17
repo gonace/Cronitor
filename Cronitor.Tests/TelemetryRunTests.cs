@@ -1,5 +1,6 @@
 using Cronitor.Constants;
 using Cronitor.Tests.Helpers;
+using System;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -102,6 +103,53 @@ public class TelemetryRunTests : BaseTest
             run.Complete();
             run.Complete();
             run.Fail();
+        }
+
+        Assert.Equal(new[] { "run", "complete" }, handler.Requests.Select(Endpoint));
+    }
+
+    [Fact]
+    public async Task Should_send_tick_with_the_message_in_the_same_series_from_AbandonAsync()
+    {
+        var handler = new FakeHttpMessageHandler();
+
+        using (var run = await TelemetryRun.StartAsync(CreateClient(handler), MonitorKey))
+        {
+            await run.AbandonAsync("The service went offline");
+        }
+
+        Assert.Equal(new[] { "run", "tick" }, handler.Requests.Select(Endpoint));
+        Assert.Equal(Series(handler.Requests[0]), Series(handler.Requests[1]));
+        Assert.Equal("The service went offline", QueryString.Parse(handler.Requests[1].RequestUri)["message"]);
+    }
+
+    [Fact]
+    public void Should_send_nothing_more_after_a_run_is_abandoned()
+    {
+        var handler = new FakeHttpMessageHandler();
+
+        using (var run = TelemetryRun.Start(CreateClient(handler), MonitorKey))
+        {
+            run.Abandon("The service went offline");
+
+            Assert.False(run.Complete());
+        }
+
+        Assert.Equal(new[] { "run", "tick" }, handler.Requests.Select(Endpoint));
+    }
+
+    [Theory]
+    [InlineData(null)]
+    [InlineData(" ")]
+    public void Should_throw_and_keep_the_run_open_when_a_run_is_abandoned_without_a_message(string message)
+    {
+        var handler = new FakeHttpMessageHandler();
+
+        using (var run = TelemetryRun.Start(CreateClient(handler), MonitorKey))
+        {
+            Assert.Throws<ArgumentNullException>(() => run.Abandon(message));
+
+            Assert.True(run.Complete());
         }
 
         Assert.Equal(new[] { "run", "complete" }, handler.Requests.Select(Endpoint));

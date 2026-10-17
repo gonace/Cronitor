@@ -114,6 +114,18 @@ public class FakeTelemetriesClient : ITelemetriesClient
             return Fail(message);
         }
 
+        public bool Abandon(string message)
+        {
+            _client.Finish($"abandon {_monitorKey}: {message}");
+            return true;
+        }
+
+        public async Task<bool> AbandonAsync(string message)
+        {
+            await _client.FinishGate;
+            return Abandon(message);
+        }
+
         public void Dispose()
         {
         }
