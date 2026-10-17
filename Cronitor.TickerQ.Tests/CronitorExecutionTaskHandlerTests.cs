@@ -117,6 +117,24 @@ public class CronitorExecutionTaskHandlerTests
     }
 
     [Fact]
+    public async Task Should_send_run_and_fail_when_the_application_only_stops_after_a_cancelled_cron_job_has_ended()
+    {
+        var startGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var telemetries = new FakeTelemetriesClient { StartGate = startGate.Task };
+        using (var applicationStopping = new CancellationTokenSource())
+        {
+            var handler = new CronitorExecutionTaskHandler(EndsWith(TickerStatus.Cancelled), telemetries, applicationStopping: applicationStopping.Token);
+
+            await handler.ExecuteTaskAsync(CronJob(), false, TestContext.Current.CancellationToken);
+            await applicationStopping.CancelAsync();
+            startGate.SetResult(true);
+            await handler.WaitForPendingReportsAsync(Limit, TestContext.Current.CancellationToken);
+        }
+
+        Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: The job was cancelled" }, telemetries.Sent);
+    }
+
+    [Fact]
     public async Task Should_send_run_and_fail_with_the_status_when_TickerQ_ends_a_cron_job_with_an_unexpected_status()
     {
         var telemetries = new FakeTelemetriesClient();

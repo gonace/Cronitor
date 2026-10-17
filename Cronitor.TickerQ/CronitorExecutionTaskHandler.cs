@@ -126,6 +126,7 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
         try
         {
             var crash = await CrashOfAsync(execution).ConfigureAwait(false);
+            var stopping = _applicationStopping.IsCancellationRequested;
             using (var run = await start.ConfigureAwait(false))
             {
                 if (run == null)
@@ -133,7 +134,7 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
                     return;
                 }
 
-                await (crash == null ? SendEndAsync(run, context) : run.FailAsync(crash)).ConfigureAwait(false);
+                await (crash == null ? SendEndAsync(run, context, stopping) : run.FailAsync(crash)).ConfigureAwait(false);
             }
         }
         catch (Exception exception)
@@ -166,14 +167,14 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
     /// <summary>
     /// Reports the status TickerQ ended the job with. A job that skips itself, by throwing TickerQ's
     /// <c>TerminateExecutionException</c>, ended on purpose, so it completes with its reason. TickerQ cancels the jobs
-    /// still running when the application stops, so a job cancelled then is abandoned instead of failed.
+    /// still running when the application stops, so a job that ends cancelled while the application is stopping is abandoned instead of failed.
     /// </summary>
-    private Task<bool> SendEndAsync(ITelemetryRun run, InternalFunctionContext context) => context.Status switch
+    private static Task<bool> SendEndAsync(ITelemetryRun run, InternalFunctionContext context, bool stopping) => context.Status switch
     {
         TickerStatus.Done or TickerStatus.DueDone => run.CompleteAsync(),
         TickerStatus.Skipped => run.CompleteAsync(context.ExceptionDetails),
         TickerStatus.Failed => run.FailAsync(ErrorMessageOf(context.ExceptionDetails)),
-        TickerStatus.Cancelled when _applicationStopping.IsCancellationRequested => run.AbandonAsync(OfflineMessage),
+        TickerStatus.Cancelled when stopping => run.AbandonAsync(OfflineMessage),
         TickerStatus.Cancelled => run.FailAsync(CancelledMessage),
         var status => run.FailAsync($"TickerQ ended the job with status {status}"),
     };
