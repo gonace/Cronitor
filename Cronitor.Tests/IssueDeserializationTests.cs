@@ -23,6 +23,26 @@ public class IssueDeserializationTests
         Assert.Null(issue.Severity);
     }
 
+    [Fact]
+    public void Should_read_a_state_that_equals_the_constant_with_the_same_value()
+    {
+        var issue = Serializer.Deserialize<Issue>("{\"state\":\"resolved\"}");
+
+        Assert.True(issue.State == IssueState.Resolved);
+        Assert.False(issue.State != IssueState.Resolved);
+        Assert.True(issue.State != IssueState.Unresolved);
+    }
+
+    [Fact]
+    public void Should_read_a_severity_that_equals_the_constant_with_the_same_value()
+    {
+        var issue = Serializer.Deserialize<Issue>("{\"severity\":\"outage\"}");
+
+        Assert.True(issue.Severity == IssueSeverity.Outage);
+        Assert.False(issue.Severity != IssueSeverity.Outage);
+        Assert.True(issue.Severity != IssueSeverity.MinorOutage);
+    }
+
     [Theory]
     [JsonData("ListIssues.json")]
     public void Should_read_the_update_history(string json)
