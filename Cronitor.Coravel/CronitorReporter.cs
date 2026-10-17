@@ -16,27 +16,30 @@ namespace Cronitor.Coravel;
 internal sealed class CronitorReporter
 {
     private const string CancelledMessage = "The job was cancelled";
+    private const string OfflineMessage = "The service went offline";
 
     private readonly ITelemetriesClient _telemetries;
     private readonly ILogger<CronitorReporter> _logger;
+    private readonly CancellationToken _applicationStopping;
     private readonly ConcurrentDictionary<Task, bool> _pendingReports = new ConcurrentDictionary<Task, bool>();
 
-    public CronitorReporter(ITelemetriesClient telemetries, ILogger<CronitorReporter> logger = null)
+    public CronitorReporter(ITelemetriesClient telemetries, ILogger<CronitorReporter> logger = null, CancellationToken applicationStopping = default)
     {
         _telemetries = telemetries ?? throw new ArgumentNullException(nameof(telemetries));
         _logger = logger ?? NullLogger<CronitorReporter>.Instance;
+        _applicationStopping = applicationStopping;
     }
 
     /// <summary>
     /// Runs the job and reports it to the monitor with the given key. The returned task is the job's own, so Coravel
-    /// still sees the job's exception.
+    /// still sees the job's exception. The cancellation token is the one Coravel gave the job.
     /// </summary>
-    internal Task RunAsync(MonitorKey monitorKey, Func<Task> job)
+    internal Task RunAsync(MonitorKey monitorKey, Func<Task> job, CancellationToken cancellationToken)
     {
         var start = ReportStartAsync(monitorKey);
         var execution = ExecuteAsync(job);
 
-        Track(ReportEndAsync(start, execution, monitorKey));
+        Track(ReportEndAsync(start, execution, monitorKey, cancellationToken));
 
         return execution;
     }
@@ -99,13 +102,13 @@ internal sealed class CronitorReporter
     }
 
     /// <summary>
-    /// Sends complete or fail once the job has ended and the run event has been sent, so Cronitor always receives them in order.
+    /// Sends abandon, complete or fail once the job has ended and the run event has been sent, so Cronitor always receives them in order.
     /// </summary>
-    private async Task ReportEndAsync(Task<ITelemetryRun> start, Task execution, MonitorKey monitorKey)
+    private async Task ReportEndAsync(Task<ITelemetryRun> start, Task execution, MonitorKey monitorKey, CancellationToken cancellationToken)
     {
         try
         {
-            var failure = await FailureOfAsync(execution).ConfigureAwait(false);
+            var (abandonment, failure) = await OutcomeOfAsync(execution, cancellationToken).ConfigureAwait(false);
             using (var run = await start.ConfigureAwait(false))
             {
                 if (run == null)
@@ -113,7 +116,18 @@ internal sealed class CronitorReporter
                     return;
                 }
 
-                await (failure == null ? run.CompleteAsync() : run.FailAsync(failure)).ConfigureAwait(false);
+                if (abandonment != null)
+                {
+                    await run.AbandonAsync(abandonment).ConfigureAwait(false);
+                }
+                else if (failure == null)
+                {
+                    await run.CompleteAsync().ConfigureAwait(false);
+                }
+                else
+                {
+                    await run.FailAsync(failure).ConfigureAwait(false);
+                }
             }
         }
         catch (Exception exception)
@@ -123,22 +137,28 @@ internal sealed class CronitorReporter
     }
 
     /// <summary>
-    /// Why the job did not succeed, or null if it did. Coravel cancels jobs when the application stops.
+    /// Why the job was stopped before it could end, or why it did not succeed; both null if it succeeded. Coravel
+    /// cancels the jobs still running when the application stops, so a job Coravel cancelled while the application is
+    /// stopping is abandoned instead of failed.
     /// </summary>
-    private static async Task<string> FailureOfAsync(Task execution)
+    private async Task<(string Abandonment, string Failure)> OutcomeOfAsync(Task execution, CancellationToken cancellationToken)
     {
         try
         {
             await execution.ConfigureAwait(false);
-            return null;
+            return (null, null);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested && _applicationStopping.IsCancellationRequested)
+        {
+            return (OfflineMessage, null);
         }
         catch (OperationCanceledException)
         {
-            return CancelledMessage;
+            return (null, CancelledMessage);
         }
         catch (Exception exception)
         {
-            return exception.GetBaseException().Message;
+            return (null, exception.GetBaseException().Message);
         }
     }
 }

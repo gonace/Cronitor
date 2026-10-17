@@ -1,4 +1,5 @@
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 
@@ -18,7 +19,10 @@ public static class CronitorCoravelServiceCollectionExtensions
             throw new ArgumentNullException(nameof(services));
         }
 
-        services.AddSingleton(provider => new CronitorReporter(TelemetriesClient(provider), provider.GetService<ILogger<CronitorReporter>>()));
+        services.AddSingleton(provider => new CronitorReporter(
+            TelemetriesClient(provider),
+            provider.GetService<ILogger<CronitorReporter>>(),
+            provider.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping));
         services.AddHostedService(provider => new CronitorShutdownService(provider.GetRequiredService<CronitorReporter>()));
 
         return services;

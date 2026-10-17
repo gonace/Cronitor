@@ -35,6 +35,6 @@ internal sealed class CronitorInvocable<TInvocable> : IInvocable, ICancellableIn
             cancellable.CancellationToken = CancellationToken;
         }
 
-        return _reporter.RunAsync(_monitorKey, _invocable.Invoke);
+        return _reporter.RunAsync(_monitorKey, _invocable.Invoke, CancellationToken);
     }
 }

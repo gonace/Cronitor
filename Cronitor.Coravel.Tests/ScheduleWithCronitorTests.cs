@@ -160,7 +160,7 @@ public class ScheduleWithCronitorTests
     }
 
     [Fact]
-    public async Task Should_pass_Coravel_s_cancellation_to_a_cancellable_job_and_report_it_as_cancelled()
+    public async Task Should_pass_Coravel_s_cancellation_to_a_cancellable_job_and_abandon_the_run_when_the_application_stops()
     {
         var telemetries = new FakeTelemetriesClient();
 
@@ -171,7 +171,7 @@ public class ScheduleWithCronitorTests
             await Task.WhenAny(telemetries.Finished, Task.Delay(Limit, TestContext.Current.CancellationToken));
         }
 
-        Assert.Equal(new[] { "run CancellableJob", "fail CancellableJob: The job was cancelled" }, telemetries.Sent);
+        Assert.Equal(new[] { "run CancellableJob", "abandon CancellableJob: The service went offline" }, telemetries.Sent);
     }
 
     [Fact]
