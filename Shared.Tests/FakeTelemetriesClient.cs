@@ -16,7 +16,7 @@ public class FakeTelemetriesClient : ITelemetriesClient
     public ConcurrentQueue<string> Sent { get; } = new ConcurrentQueue<string>();
 
     /// <summary>
-    /// Completes when a run has been reported as completed or failed.
+    /// Completes when a run has ended: reported as completed, failed or abandoned.
     /// </summary>
     public Task Finished => _finished.Task;
 
@@ -112,6 +112,18 @@ public class FakeTelemetriesClient : ITelemetriesClient
         {
             await _client.FinishGate;
             return Fail(message);
+        }
+
+        public bool Abandon(string message)
+        {
+            _client.Finish($"abandon {_monitorKey}: {message}");
+            return true;
+        }
+
+        public async Task<bool> AbandonAsync(string message)
+        {
+            await _client.FinishGate;
+            return Abandon(message);
         }
 
         public void Dispose()

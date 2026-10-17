@@ -1,6 +1,7 @@
 using Cronitor.Commands;
 using Cronitor.Extensions;
 using System;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Cronitor;
@@ -11,7 +12,7 @@ internal sealed class TelemetryRun : ITelemetryRun
     private readonly MonitorKey _monitorKey;
     private readonly string _environment;
     private readonly string _series = Guid.NewGuid().ToString("N");
-    private bool _finished;
+    private int _finished;
 
     internal TelemetryRun(TelemetriesClient client, MonitorKey monitorKey, string environment)
     {
@@ -59,6 +60,21 @@ internal sealed class TelemetryRun : ITelemetryRun
         return await SendAsync(new FailCommand(), message).ConfigureAwait(false);
     }
 
+    public bool Abandon(string message) =>
+        AbandonAsync(message).GetAwaiter().GetResult();
+
+    public async Task<bool> AbandonAsync(string message)
+    {
+        ArgumentHelper.ThrowIfNullOrWhiteSpace(message);
+
+        if (!TryFinish())
+        {
+            return false;
+        }
+
+        return await SendAsync(new TickCommand(), message).ConfigureAwait(false);
+    }
+
     /// <summary>
     /// Reports the run as failed unless it was completed or failed already.
     /// Never throws, so it cannot replace an exception thrown by the job itself.
@@ -75,16 +91,10 @@ internal sealed class TelemetryRun : ITelemetryRun
         }
     }
 
-    private bool TryFinish()
-    {
-        if (_finished)
-        {
-            return false;
-        }
-
-        _finished = true;
-        return true;
-    }
+    /// <summary>
+    /// Marks the run finished, and tells whether this call did it, so only one of calls racing to end the run sends its event.
+    /// </summary>
+    private bool TryFinish() => Interlocked.Exchange(ref _finished, 1) == 0;
 
     private Task<bool> SendAsync(Command command, string message)
     {
