@@ -30,7 +30,7 @@ public partial class CronitorJobListener : IJobListener
 
     /// <summary>
     /// Quartz 3 puts the scheduler in standby before it cancels the running jobs on shutdown, and only marks it shut
-    /// down after them.
+    /// down after them, so <see cref="IScheduler.IsShutdown"/> can still be false when a cancelled job ends.
     /// </summary>
     private static bool IsShuttingDown(IScheduler scheduler) => scheduler.InStandbyMode;
 }
