@@ -109,6 +109,18 @@ public class TelemetryRunTests : BaseTest
     }
 
     [Fact]
+    public async Task Should_send_one_end_when_a_run_is_ended_from_two_threads_at_once()
+    {
+        var handler = new FakeHttpMessageHandler();
+        var client = CreateClient(handler);
+        var runs = Enumerable.Range(0, 500).Select(_ => TelemetryRun.Start(client, MonitorKey)).ToList();
+
+        await Task.WhenAll(runs.Select(run => Task.WhenAll(Task.Run(() => run.Complete()), Task.Run(() => run.Abandon("The service went offline")))));
+
+        Assert.Equal(500, handler.Requests.Count(request => Endpoint(request) != "run"));
+    }
+
+    [Fact]
     public async Task Should_send_tick_with_the_message_in_the_same_series_from_AbandonAsync()
     {
         var handler = new FakeHttpMessageHandler();
