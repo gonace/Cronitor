@@ -42,6 +42,17 @@ public class TelemetriesClientTests : BaseTest
     }
 
     [Fact]
+    public void Should_return_false_instead_of_throwing_when_a_run_is_completed_after_its_client_was_disposed()
+    {
+        var run = _telemetriesClient.Start(MonitorKey);
+        _telemetriesClient.Dispose();
+
+        var completed = run.Complete();
+
+        Assert.False(completed);
+    }
+
+    [Fact]
     public void Should_execute_in_a_using_block()
     {
         _telemetriesClient.Run(MonitorKey);

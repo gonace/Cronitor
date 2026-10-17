@@ -212,6 +212,7 @@ public class TelemetriesClient : BaseClient<TelemetriesClient>, ITelemetriesClie
             || exception is ApiException
             || exception is TaskCanceledException
             || exception is TimeoutException
-            || exception is JsonException;
+            || exception is JsonException
+            || exception is ObjectDisposedException;
     }
 }
