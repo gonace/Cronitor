@@ -22,17 +22,20 @@ namespace Cronitor.TickerQ;
 internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
 {
     private const string CancelledMessage = "The job was cancelled";
+    private const string OfflineMessage = "The service went offline";
 
     private readonly ITickerExecutionTaskHandler _inner;
     private readonly ITelemetriesClient _telemetries;
     private readonly ILogger<CronitorExecutionTaskHandler> _logger;
+    private readonly CancellationToken _applicationStopping;
     private readonly ConcurrentDictionary<Task, bool> _pendingReports = new ConcurrentDictionary<Task, bool>();
 
-    public CronitorExecutionTaskHandler(ITickerExecutionTaskHandler inner, ITelemetriesClient telemetries, ILogger<CronitorExecutionTaskHandler> logger = null)
+    public CronitorExecutionTaskHandler(ITickerExecutionTaskHandler inner, ITelemetriesClient telemetries, ILogger<CronitorExecutionTaskHandler> logger = null, CancellationToken applicationStopping = default)
     {
         _inner = inner ?? throw new ArgumentNullException(nameof(inner));
         _telemetries = telemetries ?? throw new ArgumentNullException(nameof(telemetries));
         _logger = logger ?? NullLogger<CronitorExecutionTaskHandler>.Instance;
+        _applicationStopping = applicationStopping;
     }
 
     public Task ExecuteTaskAsync(InternalFunctionContext context, bool isDue, CancellationToken cancellationToken = default)
@@ -162,13 +165,15 @@ internal sealed class CronitorExecutionTaskHandler : ITickerExecutionTaskHandler
 
     /// <summary>
     /// Reports the status TickerQ ended the job with. A job that skips itself, by throwing TickerQ's
-    /// <c>TerminateExecutionException</c>, ended on purpose, so it completes with its reason.
+    /// <c>TerminateExecutionException</c>, ended on purpose, so it completes with its reason. TickerQ cancels the jobs
+    /// still running when the application stops, so a job cancelled then is abandoned instead of failed.
     /// </summary>
-    private static Task<bool> SendEndAsync(ITelemetryRun run, InternalFunctionContext context) => context.Status switch
+    private Task<bool> SendEndAsync(ITelemetryRun run, InternalFunctionContext context) => context.Status switch
     {
         TickerStatus.Done or TickerStatus.DueDone => run.CompleteAsync(),
         TickerStatus.Skipped => run.CompleteAsync(context.ExceptionDetails),
         TickerStatus.Failed => run.FailAsync(ErrorMessageOf(context.ExceptionDetails)),
+        TickerStatus.Cancelled when _applicationStopping.IsCancellationRequested => run.AbandonAsync(OfflineMessage),
         TickerStatus.Cancelled => run.FailAsync(CancelledMessage),
         var status => run.FailAsync($"TickerQ ended the job with status {status}"),
     };

@@ -34,7 +34,8 @@ public static class CronitorTickerQServiceCollectionExtensions
         services.AddSingleton(provider => new CronitorExecutionTaskHandler(
             (ITickerExecutionTaskHandler)provider.GetRequiredService(tickerQHandlerType),
             TelemetriesClient(provider),
-            provider.GetService<ILogger<CronitorExecutionTaskHandler>>()));
+            provider.GetService<ILogger<CronitorExecutionTaskHandler>>(),
+            provider.GetRequiredService<IHostApplicationLifetime>().ApplicationStopping));
         services.AddSingleton<ITickerExecutionTaskHandler>(provider => provider.GetRequiredService<CronitorExecutionTaskHandler>());
         services.AddHostedService(provider => new CronitorShutdownService(provider.GetRequiredService<CronitorExecutionTaskHandler>()));
 
