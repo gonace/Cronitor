@@ -66,4 +66,20 @@ public class CommandTests
 
         Assert.Throws<ArgumentNullException>(() => command.ToUrl());
     }
+
+    [Fact]
+    public void Should_keep_the_first_2000_characters_of_a_longer_message()
+    {
+        var command = new RunCommand().WithMessage(new string('a', 2000) + "b");
+
+        Assert.Equal(new string('a', 2000), command.Message);
+    }
+
+    [Fact]
+    public void Should_not_cut_a_character_in_half_when_keeping_the_first_2000_characters()
+    {
+        var command = new RunCommand().WithMessage(new string('a', 1999) + "\U0001F600");
+
+        Assert.Equal(new string('a', 1999), command.Message);
+    }
 }
