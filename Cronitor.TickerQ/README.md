@@ -43,8 +43,11 @@ Every cron job occurrence is reported once: run when it starts, then, depending 
 | --- | --- |
 | Done | complete |
 | Failed | fail, with the exception's message |
-| Cancelled, for example when the application stops | fail, with "The job was cancelled" |
+| Cancelled while the application stops | abandoned, with "The service went offline" |
+| Cancelled while the application runs | fail, with "The job was cancelled" |
 | Skipped, when the job throws TickerQ's `TerminateExecutionException` | complete, with the job's message |
+
+A job abandoned because the application stops isn't reported as failed, so a deploy or restart doesn't make the monitor fail, and Cronitor keeps the run open until the job runs again.
 
 TickerQ retries a failing job within the same occurrence, so a job that succeeds on a retry is reported as complete. One-off jobs, scheduled with TickerQ's time tickers, are not reported, since they have no schedule for Cronitor to monitor.
 

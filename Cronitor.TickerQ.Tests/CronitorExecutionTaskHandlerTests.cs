@@ -106,6 +106,17 @@ public class CronitorExecutionTaskHandlerTests
     }
 
     [Fact]
+    public async Task Should_send_run_and_abandon_when_TickerQ_ends_a_cron_job_as_Cancelled_because_the_application_stops()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        var applicationStopping = new CancellationToken(canceled: true);
+
+        await Run(new CronitorExecutionTaskHandler(EndsWith(TickerStatus.Cancelled), telemetries, applicationStopping: applicationStopping), CronJob(), telemetries);
+
+        Assert.Equal(new[] { "run nightly-backup", "abandon nightly-backup: The service went offline" }, telemetries.Sent);
+    }
+
+    [Fact]
     public async Task Should_send_run_and_fail_with_the_status_when_TickerQ_ends_a_cron_job_with_an_unexpected_status()
     {
         var telemetries = new FakeTelemetriesClient();
