@@ -43,6 +43,21 @@ public partial class CronitorJobListenerTests
     }
 
     [Fact]
+    public async Task Should_report_a_refired_attempt_to_the_monitor_key_it_had_when_it_started()
+    {
+        var finishGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var telemetries = new FakeTelemetriesClient { FinishGate = finishGate.Task };
+        RefiredThenRekeyingJob.Reset();
+
+        var run = RunJob(JobBuilder.Create<RefiredThenRekeyingJob>().WithIdentity("nightly-backup").Build(), new CronitorJobListener(telemetries), HasSent(telemetries, 4));
+        await Task.WhenAny(RefiredThenRekeyingJob.Rekeyed, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
+        finishGate.SetResult(true);
+        await run;
+
+        Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: The job failed and Quartz ran it again", "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
+    }
+
+    [Fact]
     public async Task Should_send_a_refired_attempt_s_run_only_after_the_failure_of_the_attempt_before_it()
     {
         var finishGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
