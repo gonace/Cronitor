@@ -50,10 +50,11 @@ public partial class CronitorJobListenerTests
         RefiredThenRekeyingJob.Reset();
 
         var run = RunJob(JobBuilder.Create<RefiredThenRekeyingJob>().WithIdentity("nightly-backup").Build(), new CronitorJobListener(telemetries), HasSent(telemetries, 4));
-        await Task.WhenAny(RefiredThenRekeyingJob.Rekeyed, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
+        var rekeyed = await FinishesWithin(RefiredThenRekeyingJob.Rekeyed, TimeSpan.FromSeconds(10));
         finishGate.SetResult(true);
         await run;
 
+        Assert.True(rekeyed, "The second attempt never changed the monitor key.");
         Assert.Equal(new[] { "run nightly-backup", "fail nightly-backup: The job failed and Quartz ran it again", "run nightly-backup", "complete nightly-backup" }, telemetries.Sent);
     }
 
