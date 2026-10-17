@@ -66,7 +66,9 @@ public class ShutdownTests
         {
             var reporter = new CronitorReporter(telemetries, applicationStopping: applicationStopping.Token);
 
-            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => reporter.RunAsync("nightly-backup", () => Task.FromCanceled(new CancellationToken(canceled: true)), CancellationToken.None));
+            var cancelledByCoravel = new CancellationToken(canceled: true);
+
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => reporter.RunAsync("nightly-backup", () => Task.FromCanceled(cancelledByCoravel), cancelledByCoravel));
             await applicationStopping.CancelAsync();
             startGate.SetResult(true);
             await reporter.WaitForPendingReportsAsync(Limit, TestContext.Current.CancellationToken);
