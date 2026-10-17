@@ -16,7 +16,7 @@ public class FakeTelemetriesClient : ITelemetriesClient
     public ConcurrentQueue<string> Sent { get; } = new ConcurrentQueue<string>();
 
     /// <summary>
-    /// Completes when a run has been reported as completed or failed.
+    /// Completes when a run has ended: reported as completed, failed or abandoned.
     /// </summary>
     public Task Finished => _finished.Task;
 
