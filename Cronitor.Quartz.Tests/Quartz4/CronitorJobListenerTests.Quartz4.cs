@@ -72,6 +72,27 @@ public partial class CronitorJobListenerTests
         }
     }
 
+    private sealed class RefiredThenRekeyingJob : IJob
+    {
+        private static TaskCompletionSource<bool> _rekeyed = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public static Task Rekeyed => _rekeyed.Task;
+
+        public static void Reset() => _rekeyed = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        public ValueTask Execute(IJobExecutionContext context, CancellationToken cancellationToken)
+        {
+            if (context.RefireCount == 0)
+            {
+                throw new JobExecutionException("Network is down") { RefireImmediately = true };
+            }
+
+            context.MergedJobDataMap[CronitorJobBuilderExtensions.MonitorKey] = "other-key";
+            _rekeyed.TrySetResult(true);
+            return default;
+        }
+    }
+
     private sealed class InterruptibleJob : IJob
     {
         private static TaskCompletionSource<bool> _started = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);

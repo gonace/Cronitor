@@ -79,7 +79,7 @@ public partial class CronitorJobListener
                 Track(previousEnd);
             }
 
-            _starts[context.FireInstanceId] = (ReportStartAsync(context, previousEnd), RetryOf(context));
+            _starts[context.FireInstanceId] = (StartAsync(context, previousEnd), RetryOf(context));
         }
         catch (Exception exception)
         {
@@ -109,18 +109,27 @@ public partial class CronitorJobListener
     }
 
     /// <summary>
-    /// Sends the run event once the end of the attempt before it has been reported, so Cronitor receives a refired
-    /// job's events in order. The returned task completes with the run, or with null if it could not be reported.
+    /// Reads the monitor key now, before the job runs and can change its job data, and starts reporting the run.
+    /// The returned task completes with the run, or with null if it could not be reported.
     /// </summary>
-    private async Task<ITelemetryRun> ReportStartAsync(IJobExecutionContext context, Task previousEnd)
+    private Task<ITelemetryRun> StartAsync(IJobExecutionContext context, Task previousEnd)
     {
-        await previousEnd.ConfigureAwait(false);
-
         if (!context.JobDetail.TryGetMonitorKey(context.MergedJobDataMap, out var monitorKey))
         {
             _logger.NoValidMonitorKey(context.JobDetail.Key);
-            return null;
+            return Task.FromResult<ITelemetryRun>(null);
         }
+
+        return ReportStartAsync(monitorKey, context.JobDetail.Key, previousEnd);
+    }
+
+    /// <summary>
+    /// Sends the run event once the end of the attempt before it has been reported, so Cronitor receives a refired
+    /// job's events in order. The returned task completes with the run, or with null if it could not be reported.
+    /// </summary>
+    private async Task<ITelemetryRun> ReportStartAsync(MonitorKey monitorKey, JobKey jobKey, Task previousEnd)
+    {
+        await previousEnd.ConfigureAwait(false);
 
         try
         {
@@ -128,7 +137,7 @@ public partial class CronitorJobListener
         }
         catch (Exception exception)
         {
-            _logger.StartNotReported(exception, context.JobDetail.Key);
+            _logger.StartNotReported(exception, jobKey);
             return null;
         }
     }
