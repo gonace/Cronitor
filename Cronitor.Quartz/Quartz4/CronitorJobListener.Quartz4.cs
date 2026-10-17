@@ -27,4 +27,7 @@ public partial class CronitorJobListener : IJobListener
     /// Which retry of a failed job this run is, under the trigger's retry policy: 0 for the first attempt.
     /// </summary>
     private static int RetryOf(IJobExecutionContext context) => context.RetryAttempt;
+
+    private static bool IsShuttingDown(IScheduler scheduler) =>
+        scheduler.Status is SchedulerStatus.ShuttingDown or SchedulerStatus.Shutdown;
 }

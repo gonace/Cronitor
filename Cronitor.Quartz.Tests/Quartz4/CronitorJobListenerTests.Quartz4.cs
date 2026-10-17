@@ -1,6 +1,7 @@
 using Microsoft.Extensions.DependencyInjection;
 using Quartz;
 using System;
+using System.Collections.Specialized;
 using System.Threading;
 using System.Threading.Tasks;
 using Xunit;
@@ -22,6 +23,18 @@ public partial class CronitorJobListenerTests
         var services = new ServiceCollection();
         services.AddLogging();
         services.AddQuartz();
+
+        return await services.BuildServiceProvider().GetRequiredService<ISchedulerFactory>().GetScheduler(TestContext.Current.CancellationToken);
+    }
+
+    /// <summary>
+    /// A scheduler of its own that cancels the jobs still running when it's shut down without waiting for them.
+    /// </summary>
+    private static async Task<IScheduler> NewSchedulerThatInterruptsJobsOnShutdown()
+    {
+        var services = new ServiceCollection();
+        services.AddLogging();
+        services.AddQuartz(new NameValueCollection { ["quartz.scheduler.interruptJobsOnShutdown"] = "true" }, _ => { });
 
         return await services.BuildServiceProvider().GetRequiredService<ISchedulerFactory>().GetScheduler(TestContext.Current.CancellationToken);
     }

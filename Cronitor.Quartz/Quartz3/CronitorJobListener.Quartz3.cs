@@ -27,4 +27,10 @@ public partial class CronitorJobListener : IJobListener
     /// Quartz 3 doesn't retry failed jobs, so every run is a first attempt.
     /// </summary>
     private static int RetryOf(IJobExecutionContext context) => 0;
+
+    /// <summary>
+    /// Quartz 3 puts the scheduler in standby before it cancels the running jobs on shutdown, and only marks it shut
+    /// down after them.
+    /// </summary>
+    private static bool IsShuttingDown(IScheduler scheduler) => scheduler.InStandbyMode;
 }
