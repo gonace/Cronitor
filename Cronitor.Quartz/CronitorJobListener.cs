@@ -79,7 +79,7 @@ public partial class CronitorJobListener
                 Track(previousEnd);
             }
 
-            _starts[context.FireInstanceId] = (StartOf(context, previousEnd), RetryOf(context));
+            _starts[context.FireInstanceId] = (StartAsync(context, previousEnd), RetryOf(context));
         }
         catch (Exception exception)
         {
@@ -112,7 +112,7 @@ public partial class CronitorJobListener
     /// Reads the monitor key now, before the job runs and can change its job data, and starts reporting the run.
     /// The returned task completes with the run, or with null if it could not be reported.
     /// </summary>
-    private Task<ITelemetryRun> StartOf(IJobExecutionContext context, Task previousEnd)
+    private Task<ITelemetryRun> StartAsync(IJobExecutionContext context, Task previousEnd)
     {
         if (!context.JobDetail.TryGetMonitorKey(context.MergedJobDataMap, out var monitorKey))
         {
