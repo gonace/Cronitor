@@ -60,6 +60,8 @@ Quartz 4 retries a failed job when its trigger, its job class or the scheduler h
 
 In both Quartz 3 and 4, a job that throws a `JobExecutionException` with `RefireImmediately = true` is run again at once. Quartz doesn't tell listeners why that attempt failed, so it's reported as a failed run with the message `The job failed and Quartz ran it again`, and the next attempt as a run of its own.
 
+A job that Quartz interrupts with `Interrupt()` fails with `The job was interrupted`. A job interrupted because the scheduler shuts down isn't reported as failed: its run is abandoned with the message `The service went offline`, so a deploy or restart doesn't make the monitor fail, and Cronitor keeps the run open until the job runs again. Quartz only interrupts running jobs on shutdown when `quartz.scheduler.interruptJobsOnShutdown` (or, when it waits for jobs, `quartz.scheduler.interruptJobsOnShutdownWithWait`) is set; otherwise it lets them finish. The job has to stop when its cancellation token is cancelled. Quartz 3 doesn't say why a job was interrupted, so a job interrupted while the scheduler is paused with `Standby()` is reported as abandoned as well.
+
 ## Schedules
 A monitor created by a job's first report has no schedule, so Cronitor alerts when the job fails but not when it doesn't run at all. To give each job's monitor the schedules of its triggers, add schedule sync:
 ```c#

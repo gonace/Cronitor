@@ -29,6 +29,7 @@ namespace Cronitor.Quartz;
 public partial class CronitorJobListener
 {
     private const string RefiredFailure = "The job failed and Quartz ran it again";
+    private const string OfflineMessage = "The service went offline";
 
     private readonly ITelemetriesClient _telemetries;
     private readonly ILogger<CronitorJobListener> _logger;
@@ -75,7 +76,7 @@ public partial class CronitorJobListener
             var previousEnd = Task.CompletedTask;
             if (_starts.TryRemove(context.FireInstanceId, out var refired))
             {
-                previousEnd = ReportEndAsync(refired.Run, RefiredFailure, context.JobDetail.Key);
+                previousEnd = ReportEndAsync(refired.Run, null, RefiredFailure, context.JobDetail.Key);
                 Track(previousEnd);
             }
 
@@ -93,7 +94,7 @@ public partial class CronitorJobListener
         {
             if (_starts.TryRemove(context.FireInstanceId, out var start))
             {
-                Track(ReportEndAsync(start.Run, FailureOf(context, jobException, start.Retry), context.JobDetail.Key));
+                Track(ReportEndAsync(start.Run, AbandonmentOf(context, jobException), FailureOf(context, jobException, start.Retry), context.JobDetail.Key));
             }
         }
         catch (Exception exception)
@@ -167,9 +168,18 @@ public partial class CronitorJobListener
     }
 
     /// <summary>
-    /// Sends complete, or fail with the failure, once the run event has been sent, so Cronitor always receives them in order.
+    /// Why the job was stopped before it could end, or null if it wasn't: a job Quartz cancelled while the scheduler
+    /// shuts down, which it passes without an exception, as it does an interrupted job.
     /// </summary>
-    private async Task ReportEndAsync(Task<ITelemetryRun> start, string failure, JobKey jobKey)
+    private static string AbandonmentOf(IJobExecutionContext context, JobExecutionException jobException) =>
+        jobException == null && context.CancellationToken.IsCancellationRequested && IsShuttingDown(context.Scheduler)
+            ? OfflineMessage
+            : null;
+
+    /// <summary>
+    /// Sends abandon, complete, or fail with the failure, once the run event has been sent, so Cronitor always receives them in order.
+    /// </summary>
+    private async Task ReportEndAsync(Task<ITelemetryRun> start, string abandonment, string failure, JobKey jobKey)
     {
         try
         {
@@ -180,7 +190,11 @@ public partial class CronitorJobListener
                     return;
                 }
 
-                if (failure == null)
+                if (abandonment != null)
+                {
+                    await run.AbandonAsync(abandonment).ConfigureAwait(false);
+                }
+                else if (failure == null)
                 {
                     await run.CompleteAsync().ConfigureAwait(false);
                 }

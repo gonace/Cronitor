@@ -262,6 +262,24 @@ public partial class CronitorJobListenerTests
     }
 
     [Fact]
+    public async Task Should_abandon_the_run_when_the_scheduler_shuts_down_while_the_job_runs()
+    {
+        var telemetries = new FakeTelemetriesClient();
+        InterruptibleJob.Reset();
+        var scheduler = await NewSchedulerThatInterruptsJobsOnShutdown();
+        AddJobListener(scheduler, new CronitorJobListener(telemetries));
+        await scheduler.Start(TestContext.Current.CancellationToken);
+
+        var job = JobBuilder.Create<InterruptibleJob>().WithIdentity("nightly-backup").Build();
+        await scheduler.ScheduleJob(job, TriggerBuilder.Create().StartNow().Build(), cancellationToken: TestContext.Current.CancellationToken);
+        await Task.WhenAny(InterruptibleJob.Started, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
+        await scheduler.Shutdown(false, TestContext.Current.CancellationToken);
+        await Task.WhenAny(telemetries.Finished, Task.Delay(TimeSpan.FromSeconds(10), TestContext.Current.CancellationToken));
+
+        Assert.Equal(new[] { "run nightly-backup", "abandon nightly-backup: The service went offline" }, telemetries.Sent);
+    }
+
+    [Fact]
     public async Task Should_run_the_job_without_waiting_for_the_start_to_be_reported()
     {
         var startGate = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);

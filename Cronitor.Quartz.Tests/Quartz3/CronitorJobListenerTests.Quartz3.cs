@@ -22,6 +22,20 @@ public partial class CronitorJobListenerTests
         return new StdSchedulerFactory(properties).GetScheduler(TestContext.Current.CancellationToken);
     }
 
+    /// <summary>
+    /// A scheduler of its own that cancels the jobs still running when it's shut down without waiting for them.
+    /// </summary>
+    private static Task<IScheduler> NewSchedulerThatInterruptsJobsOnShutdown()
+    {
+        var properties = new NameValueCollection
+        {
+            ["quartz.scheduler.instanceName"] = Guid.NewGuid().ToString("N"),
+            ["quartz.scheduler.interruptJobsOnShutdown"] = "true",
+        };
+
+        return new StdSchedulerFactory(properties).GetScheduler(TestContext.Current.CancellationToken);
+    }
+
     private static void AddJobListener(IScheduler scheduler, IJobListener listener) => scheduler.ListenerManager.AddJobListener(listener);
 
     /// <summary>
