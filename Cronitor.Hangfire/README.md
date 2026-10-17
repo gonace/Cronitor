@@ -58,6 +58,8 @@ Jobs that are not recurring, such as those started with `BackgroundJob.Enqueue()
 ## Retries
 When a recurring job fails, Hangfire retries it by default, often minutes or hours later. Each attempt is reported as its own run, and a retry's fail message ends with its attempt, for example `Disk is full (attempt 2)`. A job that fails twice and then succeeds is therefore reported as two failed runs followed by a completed one.
 
+A job that stops when its server shuts down, or that is deleted while it runs, isn't reported as failed. Its run is abandoned with the message `The service went offline` or `The job was aborted`, so a deploy or restart doesn't make the monitor fail, and Cronitor keeps the run open until the job runs again; Hangfire runs a job interrupted by a shutdown again once a server is back. This needs the job to take a `CancellationToken` and stop when it's cancelled; a job that ignores it either finishes, or is left by Hangfire after its shutdown timeout without being reported.
+
 ## Schedules
 A monitor created by a job's first report has no schedule, so Cronitor alerts when the job fails but not when it doesn't run at all. To give each recurring job's monitor the job's schedule and time zone, add schedule sync:
 ```c#

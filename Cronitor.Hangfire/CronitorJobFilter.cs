@@ -11,7 +11,8 @@ namespace Cronitor.Hangfire;
 /// Reports every recurring job Hangfire runs to Cronitor: run when the job starts, then complete when it
 /// succeeds or fail when it throws. The recurring job's ID is used as the monitor key; other jobs are not reported.
 /// Each attempt is reported as its own run, so when Hangfire retries a failed job, the retry's fail message
-/// ends with its attempt, such as "(attempt 2)".
+/// ends with its attempt, such as "(attempt 2)". A job stopped because its server shuts down, or deleted while it
+/// runs, is abandoned instead of failed, so a deploy or restart doesn't make the monitor fail.
 /// Reporting never affects the job: Hangfire runs filters on the job's worker, skips a job when a filter throws
 /// before it, and marks a successful job as failed when a filter throws after it. So the run is reported in the
 /// background, the worker waits at most five seconds for the end to be reported, and every failure is logged
@@ -23,6 +24,8 @@ public class CronitorJobFilter : IServerFilter
     private const string StartKey = "Cronitor.Start";
     private const string RecurringJobIdParameter = "RecurringJobId";
     private const string RetryCountParameter = "RetryCount";
+    private const string AbortedMessage = "The job was aborted";
+    private const string OfflineMessage = "The service went offline";
 
     private readonly ITelemetriesClient _telemetries;
     private readonly ILogger<CronitorJobFilter> _logger;
@@ -69,7 +72,7 @@ public class CronitorJobFilter : IServerFilter
         try
         {
             if (context.Items.TryGetValue(StartKey, out var value) && value is Task<ITelemetryRun> start
-                && !ReportEndAsync(start, FailureOf(context), context.BackgroundJob.Id).Wait(_endReportLimit))
+                && !ReportEndAsync(start, AbandonmentOf(context), FailureOf(context), context.BackgroundJob.Id).Wait(_endReportLimit))
             {
                 _logger.EndReportStillPending(context.BackgroundJob.Id);
             }
@@ -78,6 +81,23 @@ public class CronitorJobFilter : IServerFilter
         {
             _logger.EndNotReported(exception, context.BackgroundJob.Id);
         }
+    }
+
+    /// <summary>
+    /// Why the job was stopped before it could end, or null if it wasn't. Hangfire cancels a running job when it's
+    /// deleted, with a <see cref="JobAbortedException"/>, and when its server stops; it cancels the shutdown token in
+    /// both cases, so a deletion is checked first.
+    /// </summary>
+    private static string AbandonmentOf(PerformedContext context)
+    {
+        if (context.Exception is JobAbortedException)
+        {
+            return AbortedMessage;
+        }
+
+        return context.Exception is OperationCanceledException && context.CancellationToken.ShutdownToken.IsCancellationRequested
+            ? OfflineMessage
+            : null;
     }
 
     /// <summary>
@@ -122,9 +142,9 @@ public class CronitorJobFilter : IServerFilter
     }
 
     /// <summary>
-    /// Sends complete, or fail with the failure, once the run event has been sent, so Cronitor always receives them in order.
+    /// Sends abandon, complete, or fail with the failure, once the run event has been sent, so Cronitor always receives them in order.
     /// </summary>
-    private async Task ReportEndAsync(Task<ITelemetryRun> start, string failure, string jobId)
+    private async Task ReportEndAsync(Task<ITelemetryRun> start, string abandonment, string failure, string jobId)
     {
         try
         {
@@ -135,7 +155,11 @@ public class CronitorJobFilter : IServerFilter
                     return;
                 }
 
-                if (failure == null)
+                if (abandonment != null)
+                {
+                    await run.AbandonAsync(abandonment).ConfigureAwait(false);
+                }
+                else if (failure == null)
                 {
                     await run.CompleteAsync().ConfigureAwait(false);
                 }
