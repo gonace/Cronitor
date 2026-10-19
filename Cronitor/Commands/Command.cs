@@ -10,6 +10,8 @@ namespace Cronitor.Commands;
 
 public class Command
 {
+    private const int MessageLength = 2000;
+
     private readonly List<string> _metrics = new List<string>();
 
     public HttpContent Content { get; set; }
@@ -33,7 +35,7 @@ public class Command
     [QueryStringProperty("host")]
     public string Host { get; set; }
     /// <summary>
-    /// A url-encoded message of up to 2000 characters.
+    /// A url-encoded message of up to 2000 characters. A longer message is cut to its first 2000.
     /// </summary>
     [QueryStringProperty("message")]
     public string Message { get; private set; }
@@ -116,8 +118,23 @@ public class Command
     {
         ArgumentHelper.ThrowIfNullOrWhiteSpace(message);
 
-        Message = message;
+        Message = KeptPartOf(message);
         return this;
+    }
+
+    /// <summary>
+    /// Cronitor keeps the first 2000 characters of a message and rejects a URL with a much longer one, so only those
+    /// are sent, without cutting a character made of two halves, such as an emoji.
+    /// </summary>
+    private static string KeptPartOf(string message)
+    {
+        if (message.Length <= MessageLength)
+        {
+            return message;
+        }
+
+        var length = char.IsHighSurrogate(message[MessageLength - 1]) ? MessageLength - 1 : MessageLength;
+        return message.Substring(0, length); // skipcq: CS-R1037 Range indexing doesn't exist on netstandard2.0.
     }
 
     public Command WithMonitorKey(MonitorKey monitorKey)

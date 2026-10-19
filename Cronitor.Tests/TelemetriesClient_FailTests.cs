@@ -114,4 +114,13 @@ public class TelemetriesClient_FailTests : BaseTest
         Assert.Equal(Environment, query["env"]);
         Assert.Equal(2, query.Count);
     }
+
+    [Fact]
+    public async Task Should_send_a_fail_whose_message_is_too_long_for_a_url()
+    {
+        var delivered = await _telemetriesClient.FailAsync(MonitorKey, new string('å', 70000));
+
+        Assert.True(delivered);
+        Assert.Equal(new string('å', 2000),QueryString.Parse(Assert.Single(_handler.Requests).RequestUri)["message"]);
+    }
 }
