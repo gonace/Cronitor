@@ -134,7 +134,7 @@ public class Command
         }
 
         var length = char.IsHighSurrogate(message[MessageLength - 1]) ? MessageLength - 1 : MessageLength;
-        return message.Substring(0, length);
+        return message.Substring(0, length); // skipcq: CS-R1037 Range indexing doesn't exist on netstandard2.0.
     }
 
     public Command WithMonitorKey(MonitorKey monitorKey)
